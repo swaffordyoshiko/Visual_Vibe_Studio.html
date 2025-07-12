@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual Vibe Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&components=buttons,marks,funding-eligibility"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <header class="bg-white shadow p-4 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-indigo-600">Visual Vibe Studio</h1>
+      <nav class="space-x-4">
+        <a href="#services" class="text-gray-700 hover:text-indigo-600">Services</a>
+        <a href="#order" class="text-gray-700 hover:text-indigo-600">Order</a>
+        <a href="#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="text-center py-16 bg-indigo-100">
+    <h2 class="text-4xl font-bold mb-4">Build Your Brand with Visual Vibe</h2>
+    <p class="text-lg text-gray-700">Professional designs that make your business stand out. Websites, flyers, business cards & more!</p>
+  </section>
+
+  <section id="services" class="max-w-6xl mx-auto py-12 px-4">
+    <h3 class="text-3xl font-bold text-center mb-10">Our Services</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h4 class="text-xl font-semibold text-indigo-600">Business Page Builder</h4>
+        <p class="mt-2 text-gray-700">Custom branded websites tailored to your business identity.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h4 class="text-xl font-semibold text-indigo-600">Flyer Builder</h4>
+        <p class="mt-2 text-gray-700">Eye-catching flyer designs for promotions, events, and more.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h4 class="text-xl font-semibold text-indigo-600">Business Card Builder</h4>
+        <p class="mt-2 text-gray-700">Unique and memorable business card designs.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="order" class="bg-white py-16 px-4">
+    <div class="max-w-4xl mx-auto">
+      <h3 class="text-3xl font-bold text-center mb-10">Place Your Order</h3>
+      <form class="space-y-6" id="orderForm">
+        <div>
+          <label class="block mb-1 font-medium">Business Name</label>
+          <input type="text" name="businessName" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Business Industry</label>
+          <input type="text" name="industry" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Upload Business Logo</label>
+          <input type="file" name="logo" accept="image/*" required class="w-full" />
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Choose Services</label>
+          <select name="services" multiple required class="w-full border border-gray-300 p-2 rounded">
+            <option value="website">Business Page Builder</option>
+            <option value="flyer">Flyer Builder</option>
+            <option value="card">Business Card Builder</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Preferred Completion Date</label>
+          <input type="date" name="dueDate" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Contact Email</label>
+          <input type="email" name="email" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Phone Number</label>
+          <input type="tel" name="phone" class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+        <div class="text-sm text-gray-600">
+          <p><strong>Payment Policy:</strong> 50% upfront payment is required. The remaining 50% is due after approval of the final design.</p>
+        </div>
+        <div id="paypal-button-container" class="mt-6"></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="contact" class="py-12 bg-gray-100 text-center">
+    <h3 class="text-2xl font-bold mb-4">Get in Touch</h3>
+    <p>Email: swaffordyoshiko@visualvibestudio.store</p>
+    <p>Phone: (531) 344-5994</p>
+  </section>
+
+  <footer class="text-center text-sm text-gray-500 py-4">
+    &copy; 2025 Visual Vibe Studio. All rights reserved.
+  </footer>
+
+  <script>
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: { value: '50.00' }, // 50% upfront sample
+            description: 'VisualVibe Service Order - 50% Deposit'
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          const form = document.getElementById('orderForm');
+          const formData = new FormData(form);
+
+          fetch('/send-email', {
+            method: 'POST',
+            body: formData
+          }).then(() => {
+            alert('Order placed successfully! A receipt has been sent to your email.');
+            form.reset();
+          });
+        });
+      }
+    }).render('#paypal-button-container');
+  </script>
+</body>
+</html>
