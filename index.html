@@ -190,6 +190,16 @@
           submitBtn.style.display = "none";
           paypalContainer.classList.remove("hidden");
 
+          // Check if PayPal SDK is loaded
+          if (typeof paypal === "undefined") {
+            alert(
+              "Payment system is currently unavailable. Please contact us directly at swaffordyoshiko@visualvibestudio.store",
+            );
+            submitBtn.style.display = "block";
+            paypalContainer.classList.add("hidden");
+            return;
+          }
+
           // Render PayPal buttons if not already rendered
           if (!paypalContainer.hasChildNodes()) {
             paypal
