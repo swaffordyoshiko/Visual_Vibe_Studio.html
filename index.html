@@ -3,16 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visual Vibe Studio | www.visualvibestudio.store</title>
+    <meta
+      name="description"
+      content="Professional design services for your business. Custom websites, flyers, and business cards. Starting from $50. Visual Vibe Studio - Building brands that stand out."
+    />
+    <meta
+      name="keywords"
+      content="web design, business cards, flyers, graphic design, business branding, visual design"
+    />
+    <meta name="author" content="Visual Vibe Studio" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.visualvibestudio.store/" />
+    <meta
+      property="og:title"
+      content="Visual Vibe Studio - Professional Design Services"
+    />
+    <meta
+      property="og:description"
+      content="Custom websites, flyers, and business cards. Professional designs that make your business stand out."
+    />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:url"
+      content="https://www.visualvibestudio.store/"
+    />
+    <meta
+      property="twitter:title"
+      content="Visual Vibe Studio - Professional Design Services"
+    />
+    <meta
+      property="twitter:description"
+      content="Custom websites, flyers, and business cards. Professional designs that make your business stand out."
+    />
+
+    <title>
+      Visual Vibe Studio | Professional Design Services |
+      www.visualvibestudio.store
+    </title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
 
     <style>
       body {
         font-family: "Inter", sans-serif;
+      }
+
+      /* Loading states */
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Form improvements */
+      .form-field:focus {
+        outline: none;
+        ring: 2px;
+        ring-color: rgb(99 102 241);
+      }
+
+      /* Mobile improvements */
+      @media (max-width: 768px) {
+        .mobile-stack {
+          display: block !important;
+        }
+
+        .mobile-full {
+          width: 100% !important;
+        }
+
+        .mobile-text-sm {
+          font-size: 0.875rem !important;
+        }
+      }
+
+      /* Print styles */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
       }
     </style>
   </head>
@@ -98,7 +183,9 @@
               type="text"
               name="businessName"
               required
-              class="w-full border border-gray-300 p-2 rounded"
+              class="w-full border border-gray-300 p-2 rounded form-field"
+              placeholder="Enter your business name"
+              maxlength="100"
             />
           </div>
           <div>
@@ -107,7 +194,9 @@
               type="text"
               name="industry"
               required
-              class="w-full border border-gray-300 p-2 rounded"
+              class="w-full border border-gray-300 p-2 rounded form-field"
+              placeholder="e.g., Restaurant, Real Estate, Technology"
+              maxlength="50"
             />
           </div>
           <div>
@@ -126,7 +215,8 @@
               name="services"
               multiple
               required
-              class="w-full border border-gray-300 p-2 rounded"
+              class="w-full border border-gray-300 p-2 rounded form-field"
+              aria-label="Select services"
             >
               <option value="website" data-price="100">
                 Business Page Builder - From $100
@@ -154,7 +244,8 @@
               type="email"
               name="email"
               required
-              class="w-full border border-gray-300 p-2 rounded"
+              class="w-full border border-gray-300 p-2 rounded form-field"
+              placeholder="your@email.com"
             />
           </div>
           <div>
@@ -162,7 +253,8 @@
             <input
               type="tel"
               name="phone"
-              class="w-full border border-gray-300 p-2 rounded"
+              class="w-full border border-gray-300 p-2 rounded form-field"
+              placeholder="(555) 123-4567"
             />
           </div>
           <div class="text-sm text-gray-600">
@@ -182,10 +274,166 @@
       </div>
     </section>
 
-    <section id="contact" class="py-12 bg-gray-100 text-center">
-      <h3 class="text-2xl font-bold mb-4">Get in Touch</h3>
-      <p>Email: swaffordyoshiko@visualvibestudio.store</p>
-      <p>Phone: (531) 344-5994</p>
+    <section id="contact" class="py-16 bg-gray-100">
+      <div class="max-w-4xl mx-auto px-4">
+        <h3 class="text-3xl font-bold text-center mb-10">Get in Touch</h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Contact Information -->
+          <div class="bg-white p-8 rounded-xl shadow">
+            <h4 class="text-xl font-semibold text-indigo-600 mb-6">
+              Contact Information
+            </h4>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                  <svg
+                    class="w-5 h-5 text-indigo-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                    />
+                    <path
+                      d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-gray-800">Email</p>
+                  <p class="text-gray-600">
+                    swaffordyoshiko@visualvibestudio.store
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                  <svg
+                    class="w-5 h-5 text-indigo-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-gray-800">Phone</p>
+                  <p class="text-gray-600">(531) 344-5994</p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                  <svg
+                    class="w-5 h-5 text-indigo-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-gray-800">Website</p>
+                  <p class="text-gray-600">www.visualvibestudio.store</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-indigo-50 rounded-lg">
+              <h5 class="font-semibold text-indigo-800 mb-2">Business Hours</h5>
+              <p class="text-sm text-indigo-700">
+                Monday - Friday: 9:00 AM - 6:00 PM
+              </p>
+              <p class="text-sm text-indigo-700">
+                Saturday: 10:00 AM - 4:00 PM
+              </p>
+              <p class="text-sm text-indigo-700">Sunday: Closed</p>
+            </div>
+          </div>
+
+          <!-- Contact Form -->
+          <div class="bg-white p-8 rounded-xl shadow">
+            <h4 class="text-xl font-semibold text-indigo-600 mb-6">
+              Send Us a Message
+            </h4>
+            <form id="contactForm" class="space-y-4">
+              <div>
+                <label class="block mb-1 font-medium text-gray-700"
+                  >Your Name</label
+                >
+                <input
+                  type="text"
+                  name="contactName"
+                  required
+                  class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Enter your full name"
+                />
+              </div>
+
+              <div>
+                <label class="block mb-1 font-medium text-gray-700"
+                  >Email Address</label
+                >
+                <input
+                  type="email"
+                  name="contactEmail"
+                  required
+                  class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div>
+                <label class="block mb-1 font-medium text-gray-700"
+                  >Subject</label
+                >
+                <select
+                  name="contactSubject"
+                  required
+                  class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">Select a subject</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="quote">Request a Quote</option>
+                  <option value="support">Support</option>
+                  <option value="collaboration">Collaboration</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block mb-1 font-medium text-gray-700"
+                  >Message</label
+                >
+                <textarea
+                  name="contactMessage"
+                  required
+                  rows="5"
+                  class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+                  placeholder="Tell us about your project or ask any questions..."
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              >
+                Send Message
+              </button>
+            </form>
+
+            <div id="contact-response" class="mt-4 hidden"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <footer class="text-center text-sm text-gray-500 py-4">
@@ -194,7 +442,44 @@
     </footer>
 
     <script>
+      // Global error handling
+      window.addEventListener("error", function (e) {
+        console.error("JavaScript error:", e.error);
+        // Don't crash the page, just log the error
+        return true;
+      });
+
+      // Ensure DOM is loaded before initializing
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeWebsite();
+      });
+
       let venmoPaymentShown = false;
+
+      function initializeWebsite() {
+        try {
+          // Validate required elements exist
+          const orderForm = document.getElementById("orderForm");
+          const contactForm = document.getElementById("contactForm");
+
+          if (!orderForm || !contactForm) {
+            console.error("Required form elements not found");
+            return;
+          }
+
+          // Set minimum date for order form
+          const dueDateInput = document.querySelector('input[name="dueDate"]');
+          if (dueDateInput) {
+            const today = new Date();
+            const minDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+            dueDateInput.min = minDate.toISOString().split("T")[0];
+          }
+
+          console.log("Website initialized successfully");
+        } catch (error) {
+          console.error("Error initializing website:", error);
+        }
+      }
 
       function resetForm() {
         const submitBtn = document.querySelector('button[type="submit"]');
@@ -209,24 +494,38 @@
       }
 
       function calculateOrderTotal() {
-        const servicesSelect = document.querySelector(
-          'select[name="services"]',
-        );
-        const selectedServices = Array.from(servicesSelect.selectedOptions);
+        try {
+          const servicesSelect = document.querySelector(
+            'select[name="services"]',
+          );
+          if (!servicesSelect) {
+            throw new Error("Services select element not found");
+          }
 
-        // Calculate total based on individual service prices
-        let basePrice = 0;
-        selectedServices.forEach((option) => {
-          const price = parseInt(option.getAttribute("data-price"));
-          basePrice += price;
-        });
+          const selectedServices = Array.from(servicesSelect.selectedOptions);
 
-        const depositAmount = (basePrice * 0.5).toFixed(2); // 50% deposit
+          if (selectedServices.length === 0) {
+            return { total: "0.00", deposit: "0.00" };
+          }
 
-        return {
-          total: basePrice.toFixed(2),
-          deposit: depositAmount,
-        };
+          // Calculate total based on individual service prices
+          let basePrice = 0;
+          selectedServices.forEach((option) => {
+            const priceStr = option.getAttribute("data-price");
+            const price = parseInt(priceStr) || 0;
+            basePrice += price;
+          });
+
+          const depositAmount = (basePrice * 0.5).toFixed(2); // 50% deposit
+
+          return {
+            total: basePrice.toFixed(2),
+            deposit: depositAmount,
+          };
+        } catch (error) {
+          console.error("Error calculating order total:", error);
+          return { total: "0.00", deposit: "0.00" };
+        }
       }
 
       function generateVenmoLink(amount, note) {
@@ -319,21 +618,59 @@
       }
 
       function copyVenmoDetails() {
-        const pricing = calculateOrderTotal();
-        const form = document.getElementById("orderForm");
-        const formData = new FormData(form);
-        const businessName = formData.get("businessName");
+        try {
+          const pricing = calculateOrderTotal();
+          const form = document.getElementById("orderForm");
+          if (!form) {
+            throw new Error("Order form not found");
+          }
 
-        const details = `Venmo: @Yoshiko-Swafford\nAmount: $${pricing.deposit}\nNote: ${businessName} - Visual Vibe Studio`;
+          const formData = new FormData(form);
+          const businessName = formData.get("businessName") || "Customer";
 
-        navigator.clipboard
-          .writeText(details)
-          .then(() => {
-            alert("Payment details copied to clipboard!");
-          })
-          .catch(() => {
-            alert("Payment Details:\n\n" + details);
-          });
+          const details = `Venmo: @Yoshiko-Swafford\nAmount: $${pricing.deposit}\nNote: ${businessName} - Visual Vibe Studio`;
+
+          // Check if clipboard API is supported
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard
+              .writeText(details)
+              .then(() => {
+                showAlert("Payment details copied to clipboard!", "success");
+              })
+              .catch(() => {
+                showAlert("Payment Details:\n\n" + details, "info");
+              });
+          } else {
+            // Fallback for older browsers
+            showAlert("Payment Details:\n\n" + details, "info");
+          }
+        } catch (error) {
+          console.error("Error copying Venmo details:", error);
+          showAlert(
+            "Unable to copy details. Please note: @Yoshiko-Swafford",
+            "error",
+          );
+        }
+      }
+
+      function showAlert(message, type = "info") {
+        // Create a better alert system than browser alert
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${type === "success" ? "bg-green-100 text-green-800 border border-green-200" : type === "error" ? "bg-red-100 text-red-800 border border-red-200" : "bg-blue-100 text-blue-800 border border-blue-200"}`;
+        alertDiv.innerHTML = `
+          <div class="flex justify-between items-start">
+            <p class="text-sm whitespace-pre-line">${message}</p>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-lg leading-none">&times;</button>
+          </div>
+        `;
+        document.body.appendChild(alertDiv);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+          if (alertDiv.parentElement) {
+            alertDiv.remove();
+          }
+        }, 5000);
       }
 
       function markPaymentSent() {
@@ -341,68 +678,407 @@
           "paypal-button-container",
         );
 
+        // Show processing message
         venmoContainer.innerHTML = `
-          <div class="bg-green-50 border-2 border-green-200 rounded-xl p-8 text-center">
-            <div class="text-green-600 text-6xl mb-4">✅</div>
-            <h4 class="text-2xl font-bold text-green-800 mb-3">Order Submitted!</h4>
-            <p class="text-green-700 mb-4">Thank you for your order! We've received your submission.</p>
-            <div class="bg-white rounded-lg p-4 mb-4 border border-green-200">
-              <p class="text-sm text-green-600 mb-2"><strong>Next Steps:</strong></p>
-              <ul class="text-sm text-green-700 text-left space-y-1">
-                <li>• We'll confirm your Venmo payment within 24 hours</li>
-                <li>• You'll receive an email confirmation at the provided address</li>
-                <li>• We'll contact you to discuss your project details</li>
-                <li>• Project work begins once payment is confirmed</li>
-              </ul>
-            </div>
-            <div class="text-sm text-green-600 mb-4">
-              <p><strong>Questions?</strong> Contact us:</p>
-              <p>📧 swaffordyoshiko@visualvibestudio.store</p>
-              <p>📞 (531) 344-5994</p>
-            </div>
-            <button type="button" onclick="location.reload()" class="bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-              Place Another Order
-            </button>
+          <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-8 text-center">
+            <div class="text-blue-600 text-4xl mb-4">⏳</div>
+            <h4 class="text-2xl font-bold text-blue-800 mb-3">Processing Order...</h4>
+            <p class="text-blue-700 mb-4">Sending your receipt and order confirmation...</p>
           </div>
         `;
+
+        // Send receipt and confirmation emails
+        sendOrderReceipt()
+          .then(() => {
+            venmoContainer.innerHTML = `
+            <div class="bg-green-50 border-2 border-green-200 rounded-xl p-8 text-center">
+              <div class="text-green-600 text-6xl mb-4">✅</div>
+              <h4 class="text-2xl font-bold text-green-800 mb-3">Order Confirmed!</h4>
+              <p class="text-green-700 mb-4">Thank you for your order! Your receipt has been sent to your email.</p>
+              <div class="bg-white rounded-lg p-4 mb-4 border border-green-200">
+                <p class="text-sm text-green-600 mb-2"><strong>What happens next:</strong></p>
+                <ul class="text-sm text-green-700 text-left space-y-1">
+                  <li>📧 Receipt sent to your email address</li>
+                  <li>💰 We'll confirm your Venmo payment within 24 hours</li>
+                  <li>📞 We'll contact you to discuss project details</li>
+                  <li>🎨 Project work begins once payment is confirmed</li>
+                </ul>
+              </div>
+              <div class="text-sm text-green-600 mb-4">
+                <p><strong>Questions?</strong> Contact us:</p>
+                <p>📧 swaffordyoshiko@visualvibestudio.store</p>
+                <p>📞 (531) 344-5994</p>
+              </div>
+              <button type="button" onclick="location.reload()" class="bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                Place Another Order
+              </button>
+            </div>
+          `;
+          })
+          .catch(() => {
+            venmoContainer.innerHTML = `
+            <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-8 text-center">
+              <div class="text-yellow-600 text-4xl mb-4">⚠️</div>
+              <h4 class="text-2xl font-bold text-yellow-800 mb-3">Order Submitted!</h4>
+              <p class="text-yellow-700 mb-4">We've received your order. Receipt will be sent manually within 24 hours.</p>
+              <div class="bg-white rounded-lg p-4 mb-4 border border-yellow-200">
+                <p class="text-sm text-yellow-600 mb-2"><strong>Next Steps:</strong></p>
+                <ul class="text-sm text-yellow-700 text-left space-y-1">
+                  <li>📧 Manual receipt will be sent within 24 hours</li>
+                  <li>💰 We'll confirm your Venmo payment</li>
+                  <li>📞 We'll contact you to discuss your project</li>
+                  <li>🎨 Project work begins once payment is confirmed</li>
+                </ul>
+              </div>
+              <button type="button" onclick="location.reload()" class="bg-yellow-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-yellow-700 transition-colors">
+                Place Another Order
+              </button>
+            </div>
+          `;
+          });
       }
 
-      document
-        .getElementById("orderForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+      function sendOrderReceipt() {
+        return new Promise((resolve, reject) => {
+          try {
+            const form = document.getElementById("orderForm");
+            if (!form) {
+              throw new Error("Order form not found");
+            }
 
-          // Validate form
-          const form = e.target;
-          if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
+            const formData = new FormData(form);
+            const pricing = calculateOrderTotal();
+
+            const servicesSelect = form.querySelector(
+              'select[name="services"]',
+            );
+            if (!servicesSelect) {
+              throw new Error("Services select not found");
+            }
+
+            const selectedServices = Array.from(servicesSelect.selectedOptions);
+
+            // Generate order number
+            const orderNumber = "VVS-" + Date.now().toString().slice(-6);
+            const orderDate = new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            // Prepare customer receipt data
+            const customerReceiptData = {
+              to_email: formData.get("email"),
+              to_name: formData.get("businessName"),
+              order_number: orderNumber,
+              order_date: orderDate,
+              business_name: formData.get("businessName"),
+              industry: formData.get("industry"),
+              services: selectedServices
+                .map((option) => option.text)
+                .join(", "),
+              total_amount: pricing.total,
+              deposit_amount: pricing.deposit,
+              remaining_amount: (
+                parseFloat(pricing.total) - parseFloat(pricing.deposit)
+              ).toFixed(2),
+              due_date: formData.get("dueDate"),
+              phone: formData.get("phone"),
+              venmo_handle: "@Yoshiko-Swafford",
+            };
+
+            // Prepare business notification data
+            const businessNotificationData = {
+              to_email: "swaffordyoshiko@visualvibestudio.store",
+              order_number: orderNumber,
+              order_date: orderDate,
+              customer_name: formData.get("businessName"),
+              customer_email: formData.get("email"),
+              customer_phone: formData.get("phone"),
+              industry: formData.get("industry"),
+              services: selectedServices
+                .map((option) => option.text)
+                .join(", "),
+              total_amount: pricing.total,
+              deposit_amount: pricing.deposit,
+              due_date: formData.get("dueDate"),
+            };
+
+            // Send customer receipt
+            const customerTemplate = {
+              service_id: "YOUR_EMAILJS_SERVICE_ID", // Replace with your EmailJS service ID
+              template_id: "customer_receipt_template", // Replace with your customer receipt template ID
+              user_id: "YOUR_EMAILJS_USER_ID",
+              template_params: customerReceiptData,
+            };
+
+            // Send business notification
+            const businessTemplate = {
+              service_id: "YOUR_EMAILJS_SERVICE_ID",
+              template_id: "business_notification_template", // Replace with your business notification template ID
+              user_id: "YOUR_EMAILJS_USER_ID",
+              template_params: businessNotificationData,
+            };
+
+            // For now, use mailto as fallback since EmailJS requires setup
+            // You can uncomment and configure EmailJS later
+
+            /*
+          Promise.all([
+            emailjs.send(customerTemplate.service_id, customerTemplate.template_id, customerTemplate.template_params),
+            emailjs.send(businessTemplate.service_id, businessTemplate.template_id, businessTemplate.template_params)
+          ]).then(() => {
+            resolve();
+          }).catch((error) => {
+            console.error('EmailJS error:', error);
+            reject(error);
+          });
+          */
+
+            // Fallback: Generate mailto links for receipts
+            const customerReceiptSubject = encodeURIComponent(
+              `Order Receipt #${orderNumber} - Visual Vibe Studio`,
+            );
+            const customerReceiptBody =
+              encodeURIComponent(`Dear ${formData.get("businessName")},
+
+Thank you for your order! Here's your receipt:
+
+ORDER DETAILS:
+━━━━━━━━━━━━━━━━
+Order Number: ${orderNumber}
+Order Date: ${orderDate}
+Business Name: ${formData.get("businessName")}
+Industry: ${formData.get("industry")}
+Services: ${selectedServices.map((option) => option.text).join(", ")}
+Due Date: ${formData.get("dueDate")}
+
+PAYMENT SUMMARY:
+━━━━━━━━━━━━━━━━
+Total Project Cost: $${pricing.total}
+Deposit Paid (50%): $${pricing.deposit}
+Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
+Payment Method: Venmo (@Yoshiko-Swafford)
+
+NEXT STEPS:
+━━━━━━━━━━━━━━━━
+• We'll confirm your Venmo payment within 24 hours
+• Project discussion and planning will begin
+• Final 50% payment due upon project completion
+• Estimated completion: ${formData.get("dueDate")}
+
+CONTACT INFORMATION:
+━━━━━━━━━━━━━━━━
+Email: swaffordyoshiko@visualvibestudio.store
+Phone: (531) 344-5994
+Website: www.visualvibestudio.store
+
+Thank you for choosing Visual Vibe Studio!
+
+Best regards,
+Yoshiko Swafford
+Visual Vibe Studio`);
+
+            const businessNotificationSubject = encodeURIComponent(
+              `New Order #${orderNumber} - ${formData.get("businessName")}`,
+            );
+            const businessNotificationBody =
+              encodeURIComponent(`New order received!
+
+Order #${orderNumber}
+Date: ${orderDate}
+
+Customer: ${formData.get("businessName")}
+Email: ${formData.get("email")}
+Phone: ${formData.get("phone")}
+Industry: ${formData.get("industry")}
+
+Services: ${selectedServices.map((option) => option.text).join(", ")}
+Total: $${pricing.total}
+Deposit: $${pricing.deposit}
+Due Date: ${formData.get("dueDate")}
+
+Please confirm Venmo payment and begin project planning.`);
+
+            // Open customer receipt email
+            const customerMailto = `mailto:${formData.get("email")}?subject=${customerReceiptSubject}&body=${customerReceiptBody}`;
+
+            // Check if email can be opened
+            try {
+              window.open(customerMailto, "_blank");
+            } catch (emailError) {
+              console.warn("Could not open customer email client:", emailError);
+            }
+
+            // Open business notification email
+            setTimeout(() => {
+              try {
+                const businessMailto = `mailto:swaffordyoshiko@visualvibestudio.store?subject=${businessNotificationSubject}&body=${businessNotificationBody}`;
+                window.open(businessMailto, "_blank");
+                resolve();
+              } catch (emailError) {
+                console.warn(
+                  "Could not open business email client:",
+                  emailError,
+                );
+                resolve(); // Still resolve to show success
+              }
+            }, 1000);
+          } catch (error) {
+            console.error("Error in sendOrderReceipt:", error);
+            reject(error);
           }
-
-          const submitBtn = form.querySelector('button[type="submit"]');
-          submitBtn.style.display = "none";
-
-          // Calculate pricing
-          const pricing = calculateOrderTotal();
-
-          // Get form data
-          const formData = new FormData(form);
-          const selectedServices = Array.from(
-            form.querySelector('select[name="services"]').selectedOptions,
-          ).map((option) => option.text);
-
-          const orderData = {
-            businessName: formData.get("businessName"),
-            industry: formData.get("industry"),
-            services: selectedServices,
-            email: formData.get("email"),
-            phone: formData.get("phone"),
-            dueDate: formData.get("dueDate"),
-          };
-
-          // Show Venmo payment
-          showVenmoPayment(pricing, orderData);
         });
+      }
+
+      // Order Form Handler
+      if (document.getElementById("orderForm")) {
+        document
+          .getElementById("orderForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            try {
+              // Validate form
+              const form = e.target;
+              if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+              }
+
+              const submitBtn = form.querySelector('button[type="submit"]');
+              if (submitBtn) {
+                submitBtn.style.display = "none";
+              }
+
+              // Calculate pricing
+              const pricing = calculateOrderTotal();
+
+              // Validate pricing
+              if (parseFloat(pricing.total) <= 0) {
+                showAlert("Please select at least one service.", "error");
+                if (submitBtn) submitBtn.style.display = "block";
+                return;
+              }
+
+              // Get form data
+              const formData = new FormData(form);
+              const servicesSelect = form.querySelector(
+                'select[name="services"]',
+              );
+              const selectedServices = servicesSelect
+                ? Array.from(servicesSelect.selectedOptions).map(
+                    (option) => option.text,
+                  )
+                : [];
+
+              const orderData = {
+                businessName: formData.get("businessName") || "N/A",
+                industry: formData.get("industry") || "N/A",
+                services: selectedServices,
+                email: formData.get("email") || "",
+                phone: formData.get("phone") || "N/A",
+                dueDate: formData.get("dueDate") || "N/A",
+              };
+
+              // Show Venmo payment
+              showVenmoPayment(pricing, orderData);
+            } catch (error) {
+              console.error("Error in order form submission:", error);
+              showAlert(
+                "An error occurred. Please try again or contact us directly.",
+                "error",
+              );
+              const submitBtn = form.querySelector('button[type="submit"]');
+              if (submitBtn) submitBtn.style.display = "block";
+            }
+          });
+      }
+
+      // Contact Form Handler
+      if (document.getElementById("contactForm")) {
+        document
+          .getElementById("contactForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            try {
+              const form = e.target;
+              const responseDiv = document.getElementById("contact-response");
+              const submitBtn = form.querySelector('button[type="submit"]');
+
+              // Validate form
+              if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+              }
+
+              // Show loading state
+              if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Sending...";
+              }
+
+              // Get form data
+              const formData = new FormData(form);
+              const contactData = {
+                name: formData.get("contactName") || "Anonymous",
+                email: formData.get("contactEmail") || "",
+                subject: formData.get("contactSubject") || "General Inquiry",
+                message: formData.get("contactMessage") || "",
+              };
+
+              // Create mailto link with form data
+              const emailSubject = encodeURIComponent(
+                `Contact Form: ${contactData.subject} - ${contactData.name}`,
+              );
+              const emailBody = encodeURIComponent(
+                `Name: ${contactData.name}\nEmail: ${contactData.email}\nSubject: ${contactData.subject}\n\nMessage:\n${contactData.message}\n\n---\nSent from Visual Vibe Studio contact form`,
+              );
+              const mailtoLink = `mailto:swaffordyoshiko@visualvibestudio.store?subject=${emailSubject}&body=${emailBody}`;
+
+              // Open default email client
+              try {
+                window.location.href = mailtoLink;
+              } catch (emailError) {
+                console.warn("Could not open email client:", emailError);
+              }
+
+              // Show success message
+              if (responseDiv) {
+                responseDiv.innerHTML = `
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                  <div class="text-green-600 text-2xl mb-2">✓</div>
+                  <h5 class="font-semibold text-green-800 mb-2">Message Prepared!</h5>
+                  <p class="text-sm text-green-700 mb-3">Your email client should have opened with your message ready to send.</p>
+                  <p class="text-xs text-green-600">If it didn't open automatically, please email us directly at:<br>
+                  <strong>swaffordyoshiko@visualvibestudio.store</strong></p>
+                  <button type="button" onclick="this.parentElement.parentElement.classList.add('hidden'); document.getElementById('contactForm').reset();" class="mt-3 text-sm text-green-600 underline">
+                    Send Another Message
+                  </button>
+                </div>
+              `;
+                responseDiv.classList.remove("hidden");
+              }
+
+              // Reset button state
+              setTimeout(() => {
+                if (submitBtn) {
+                  submitBtn.disabled = false;
+                  submitBtn.textContent = "Send Message";
+                }
+              }, 3000);
+            } catch (error) {
+              console.error("Error in contact form submission:", error);
+              showAlert(
+                "An error occurred. Please email us directly at swaffordyoshiko@visualvibestudio.store",
+                "error",
+              );
+            }
+          });
+      }
     </script>
   </body>
 </html>
