@@ -43,22 +43,42 @@
     <section id="services" class="max-w-6xl mx-auto py-12 px-4">
       <h3 class="text-3xl font-bold text-center mb-10">Our Services</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-xl shadow">
-          <h4 class="text-xl font-semibold text-indigo-600">
+        <div class="bg-white p-6 rounded-xl shadow relative">
+          <div
+            class="absolute top-4 right-4 bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            From $100
+          </div>
+          <h4 class="text-xl font-semibold text-indigo-600 pr-20">
             Business Page Builder
           </h4>
           <p class="mt-2 text-gray-700">
             Custom branded websites tailored to your business identity.
           </p>
+          <p class="mt-2 text-sm text-gray-500 italic">
+            *Final price depends on features and complexity
+          </p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow">
-          <h4 class="text-xl font-semibold text-indigo-600">Flyer Builder</h4>
+        <div class="bg-white p-6 rounded-xl shadow relative">
+          <div
+            class="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            $65
+          </div>
+          <h4 class="text-xl font-semibold text-indigo-600 pr-16">
+            Flyer Builder
+          </h4>
           <p class="mt-2 text-gray-700">
             Eye-catching flyer designs for promotions, events, and more.
           </p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow">
-          <h4 class="text-xl font-semibold text-indigo-600">
+        <div class="bg-white p-6 rounded-xl shadow relative">
+          <div
+            class="absolute top-4 right-4 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            $50
+          </div>
+          <h4 class="text-xl font-semibold text-indigo-600 pr-16">
             Business Card Builder
           </h4>
           <p class="mt-2 text-gray-700">
@@ -108,9 +128,13 @@
               required
               class="w-full border border-gray-300 p-2 rounded"
             >
-              <option value="website">Business Page Builder</option>
-              <option value="flyer">Flyer Builder</option>
-              <option value="card">Business Card Builder</option>
+              <option value="website" data-price="100">
+                Business Page Builder - From $100
+              </option>
+              <option value="flyer" data-price="65">Flyer Builder - $65</option>
+              <option value="card" data-price="50">
+                Business Card Builder - $50
+              </option>
             </select>
           </div>
           <div>
@@ -190,8 +214,13 @@
         );
         const selectedServices = Array.from(servicesSelect.selectedOptions);
 
-        // Base pricing: $100 per service
-        const basePrice = selectedServices.length * 100;
+        // Calculate total based on individual service prices
+        let basePrice = 0;
+        selectedServices.forEach((option) => {
+          const price = parseInt(option.getAttribute("data-price"));
+          basePrice += price;
+        });
+
         const depositAmount = (basePrice * 0.5).toFixed(2); // 50% deposit
 
         return {
