@@ -1119,7 +1119,7 @@
               "The logo design exceeded all expectations! It perfectly captures our innovative spirit. Brand recognition has increased by 300% since the rebrand. Worth every penny!"
             </p>
             <div class="text-green-400 font-semibold text-sm">
-              📈 +300% Brand Recognition
+              ��� +300% Brand Recognition
             </div>
           </div>
 
@@ -1183,7 +1183,7 @@
     <section id="reviews" style="background: #ffffff; padding: 80px 0; position: relative;">
       <div class="max-w-7xl mx-auto px-4">
         <div style="text-align: center; margin-bottom: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 40px; border-radius: 20px; border: 4px solid #ffffff; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);">
-          <h3 style="font-size: 48px; font-weight: bold; margin-bottom: 20px; color: #ffffff;">��� CUSTOMER REVIEWS ⭐</h3>
+          <h3 style="font-size: 48px; font-weight: bold; margin-bottom: 20px; color: #ffffff;">⭐ CUSTOMER REVIEWS ⭐</h3>
           <p style="font-size: 24px; color: #ffffff; max-width: 800px; margin: 0 auto;">
             See what our customers are saying and share your own experience!
           </p>
@@ -1480,7 +1480,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label class="block mb-2 font-semibold text-gray-700 flex items-center">
-                <span class="mr-2">����</span>
+                <span class="mr-2">📅</span>
                 Preferred Completion Date
               </label>
               <input
@@ -1697,7 +1697,6 @@
                   <span class="text-lg font-medium text-blue-600">
                     www.visualvibestudio.store
                   </span>
-                  <p class="text-sm text-gray-500 mt-1">Website coming soon</p>
                 </div>
 
                 <!-- Location -->
@@ -2036,11 +2035,32 @@
     </footer>
 
     <script>
-      // Global error handling
+      // Global error handling and recovery
       window.addEventListener("error", function (e) {
-        console.error("JavaScript error:", e.error);
+        console.error("JavaScript error:", e.error, "at", e.filename, ":", e.lineno);
+
+        // Try to provide helpful error recovery
+        const errorMsg = e.error ? e.error.message : 'Unknown error';
+
+        // Only show user-facing errors for critical functions
+        if (errorMsg.includes('element') || errorMsg.includes('null') || errorMsg.includes('undefined')) {
+          // This might be a DOM-related error
+          setTimeout(() => {
+            if (typeof showAlert === 'function') {
+              showAlert('A page element could not be loaded. Please refresh the page if features are not working properly.', 'info');
+            }
+          }, 2000);
+        }
+
         // Don't crash the page, just log the error
         return true;
+      });
+
+      // Global unhandled promise rejection handler
+      window.addEventListener("unhandledrejection", function(e) {
+        console.error("Unhandled promise rejection:", e.reason);
+        // Prevent the error from being logged to console as uncaught
+        e.preventDefault();
       });
 
       // Ensure DOM is loaded before initializing
@@ -2049,6 +2069,116 @@
       });
 
       let venmoPaymentShown = false;
+      let chatInitialized = false;
+
+      // Track Venmo app clicks for analytics and fallback handling
+      function trackVenmoClick() {
+        try {
+          console.log('Venmo app link clicked');
+
+          // Show a brief message to help users
+          setTimeout(() => {
+            showAlert('If Venmo app didn\'t open, you can manually send payment to @Yoshiko-Swafford', 'info');
+          }, 3000);
+        } catch (error) {
+          console.error('Error tracking Venmo click:', error);
+        }
+      }
+
+      // System diagnostic and auto-repair function
+      function diagnoseAndRepair() {
+        console.log('🔧 Running system diagnostics...');
+
+        let issues = [];
+        let repairs = [];
+
+        // Check critical DOM elements
+        const criticalElements = [
+          'orderForm',
+          'chatWindow',
+          'chatBubble',
+          'reviewForm',
+          'signInModal',
+          'signUpModal'
+        ];
+
+        criticalElements.forEach(id => {
+          if (!document.getElementById(id)) {
+            issues.push(`Missing element: ${id}`);
+          }
+        });
+
+        // Check if chat is initialized
+        if (!chatInitialized) {
+          issues.push('Chat system not initialized');
+          try {
+            forceInitializeChat();
+            repairs.push('Chat system reinitialized');
+          } catch (error) {
+            console.error('Failed to repair chat:', error);
+          }
+        }
+
+        // Check if auth system is working
+        try {
+          updateAuthUI();
+          repairs.push('Auth UI refreshed');
+        } catch (error) {
+          issues.push('Auth system error');
+        }
+
+        // Report results
+        console.log('🔍 Issues found:', issues);
+        console.log('🔧 Repairs completed:', repairs);
+
+        if (issues.length === 0 && repairs.length > 0) {
+          if (typeof showAlert === 'function') {
+            showAlert('System diagnostics completed. Some issues were automatically fixed.', 'success');
+          }
+        } else if (issues.length > 0) {
+          if (typeof showAlert === 'function') {
+            showAlert(`Found ${issues.length} system issues. Please refresh the page for optimal performance.`, 'warning');
+          }
+        }
+
+        return { issues, repairs };
+      }
+
+      // Manual chat initialization fallback
+      function forceInitializeChat() {
+        try {
+          console.log('🔄 Force initializing chat system...');
+
+          // Reset chat state
+          chatOpen = false;
+          hasUnreadMessages = false;
+
+          // Ensure chat window is hidden initially
+          const chatWindow = document.getElementById('chatWindow');
+          if (chatWindow) {
+            chatWindow.classList.remove('open');
+          }
+
+          // Reset button states
+          const chatBubble = document.getElementById('chatBubble');
+          const chatIcon = document.getElementById('chatIcon');
+          const closeIcon = document.getElementById('closeIcon');
+
+          if (chatBubble) chatBubble.classList.remove('active');
+          if (chatIcon) chatIcon.classList.remove('hidden');
+          if (closeIcon) closeIcon.classList.add('hidden');
+
+          // Initialize send button
+          updateSendButton();
+
+          chatInitialized = true;
+          console.log('✅ Chat force-initialized successfully');
+          showAlert('Chat system reinitialized successfully!', 'success');
+        } catch (error) {
+          console.error('❌ Error force-initializing chat:', error);
+          showAlert('Chat initialization still failed. Please refresh the page.', 'error');
+        }
+      }
 
       function initializeWebsite() {
         try {
@@ -2091,88 +2221,149 @@
           updateAuthUI();
         }
 
-        // Set up form event listeners
-        document.getElementById('signInForm').addEventListener('submit', handleSignIn);
-        document.getElementById('signUpForm').addEventListener('submit', handleSignUp);
+        // Set up form event listeners with error handling
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+
+        if (signInForm) {
+          signInForm.addEventListener('submit', handleSignIn);
+        } else {
+          console.warn('Sign in form not found during initialization');
+        }
+
+        if (signUpForm) {
+          signUpForm.addEventListener('submit', handleSignUp);
+        } else {
+          console.warn('Sign up form not found during initialization');
+        }
       }
 
       function updateAuthUI() {
-        const signedOutState = document.getElementById('signedOutState');
-        const signedInState = document.getElementById('signedInState');
-        const userDisplayName = document.getElementById('userDisplayName');
+        try {
+          const signedOutState = document.getElementById('signedOutState');
+          const signedInState = document.getElementById('signedInState');
+          const userDisplayName = document.getElementById('userDisplayName');
 
-        if (currentUser) {
-          signedOutState.classList.add('hidden');
-          signedInState.classList.remove('hidden');
-          userDisplayName.textContent = currentUser.name;
-        } else {
-          signedOutState.classList.remove('hidden');
-          signedInState.classList.add('hidden');
+          if (!signedOutState || !signedInState) {
+            console.warn('Auth UI elements not found');
+            return;
+          }
+
+          if (currentUser) {
+            signedOutState.classList.add('hidden');
+            signedInState.classList.remove('hidden');
+            if (userDisplayName) {
+              userDisplayName.textContent = currentUser.name;
+            }
+          } else {
+            signedOutState.classList.remove('hidden');
+            signedInState.classList.add('hidden');
+          }
+        } catch (error) {
+          console.error('Error updating auth UI:', error);
         }
       }
 
       function handleSignIn(e) {
         e.preventDefault();
 
-        const email = document.getElementById('signInEmail').value;
-        const password = document.getElementById('signInPassword').value;
+        try {
+          const emailInput = document.getElementById('signInEmail');
+          const passwordInput = document.getElementById('signInPassword');
 
-        // Get stored users
-        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-        const user = users.find(u => u.email === email && u.password === password);
+          if (!emailInput || !passwordInput) {
+            showAlert('Sign in form elements not found. Please refresh the page.', 'error');
+            return;
+          }
 
-        if (user) {
-          currentUser = { id: user.id, name: user.name, email: user.email };
-          localStorage.setItem('visualVibeUser', JSON.stringify(currentUser));
-          updateAuthUI();
-          closeSignInModal();
-          showAlert('Welcome back, ' + user.name + '!', 'success');
-        } else {
-          showAlert('Invalid email or password. Please try again.', 'error');
+          const email = emailInput.value;
+          const password = passwordInput.value;
+
+          if (!email || !password) {
+            showAlert('Please enter both email and password.', 'error');
+            return;
+          }
+
+          // Get stored users
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          const user = users.find(u => u.email === email && u.password === password);
+
+          if (user) {
+            currentUser = { id: user.id, name: user.name, email: user.email };
+            localStorage.setItem('visualVibeUser', JSON.stringify(currentUser));
+            updateAuthUI();
+            closeSignInModal();
+            showAlert('Welcome back, ' + user.name + '!', 'success');
+          } else {
+            showAlert('Invalid email or password. Please try again.', 'error');
+          }
+        } catch (error) {
+          console.error('Error in handleSignIn:', error);
+          showAlert('Sign in error. Please try again.', 'error');
         }
       }
 
       function handleSignUp(e) {
         e.preventDefault();
 
-        const name = document.getElementById('signUpName').value;
-        const email = document.getElementById('signUpEmail').value;
-        const password = document.getElementById('signUpPassword').value;
-        const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+        try {
+          const nameInput = document.getElementById('signUpName');
+          const emailInput = document.getElementById('signUpEmail');
+          const passwordInput = document.getElementById('signUpPassword');
+          const confirmPasswordInput = document.getElementById('signUpConfirmPassword');
 
-        if (password !== confirmPassword) {
-          showAlert('Passwords do not match. Please try again.', 'error');
-          return;
+          if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+            showAlert('Sign up form elements not found. Please refresh the page.', 'error');
+            return;
+          }
+
+          const name = nameInput.value.trim();
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+
+          if (!name || !email || !password || !confirmPassword) {
+            showAlert('Please fill in all fields.', 'error');
+            return;
+          }
+
+          if (password !== confirmPassword) {
+            showAlert('Passwords do not match. Please try again.', 'error');
+            return;
+          }
+
+          // Get existing users
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+
+          // Check if email already exists
+          if (users.find(u => u.email === email)) {
+            showAlert('An account with this email already exists. Please sign in.', 'error');
+            return;
+          }
+
+          // Create new user
+          const newUser = {
+            id: Date.now().toString(),
+            name: name,
+            email: email,
+            password: password,
+            orders: [],
+            createdAt: new Date().toISOString()
+          };
+
+          users.push(newUser);
+          localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+
+          // Sign in the new user
+          currentUser = { id: newUser.id, name: newUser.name, email: newUser.email };
+          localStorage.setItem('visualVibeUser', JSON.stringify(currentUser));
+          updateAuthUI();
+          closeSignUpModal();
+          showAlert('Account created successfully! Welcome, ' + name + '!', 'success');
+        } catch (error) {
+          console.error('Error in handleSignUp:', error);
+          showAlert('Sign up error. Please try again.', 'error');
         }
-
-        // Get existing users
-        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-
-        // Check if email already exists
-        if (users.find(u => u.email === email)) {
-          showAlert('An account with this email already exists. Please sign in.', 'error');
-          return;
-        }
-
-        // Create new user
-        const newUser = {
-          id: Date.now().toString(),
-          name: name,
-          email: email,
-          password: password,
-          orders: [],
-          createdAt: new Date().toISOString()
-        };
-
-        users.push(newUser);
-        localStorage.setItem('visualVibeUsers', JSON.stringify(users));
-
-        // Sign in the new user
-        currentUser = { id: newUser.id, name: newUser.name, email: newUser.email };
-        localStorage.setItem('visualVibeUser', JSON.stringify(currentUser));
-        updateAuthUI();
-        closeSignUpModal();
-        showAlert('Account created successfully! Welcome, ' + name + '!', 'success');
       }
 
       function signOut() {
@@ -2458,17 +2649,62 @@ ${'='.repeat(40)}
       }
 
       function generateVenmoLink(amount, note) {
-        const venmoHandle = "Yoshiko-Swafford";
-        // Venmo deep link format
-        return `venmo://paycharge?txn=pay&recipients=${venmoHandle}&amount=${amount}&note=${encodeURIComponent(note)}`;
+        try {
+          const venmoHandle = "Yoshiko-Swafford";
+
+          // Validate inputs
+          if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+            console.error('Invalid amount for Venmo link:', amount);
+            return null;
+          }
+
+          if (!note || typeof note !== 'string') {
+            note = 'Visual Vibe Studio Payment';
+          }
+
+          // Venmo deep link format
+          const venmoLink = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(venmoHandle)}&amount=${encodeURIComponent(amount)}&note=${encodeURIComponent(note)}`;
+
+          console.log('Generated Venmo link:', venmoLink);
+          return venmoLink;
+        } catch (error) {
+          console.error('Error generating Venmo link:', error);
+          return null;
+        }
       }
 
       function showVenmoPayment(pricing, orderData, orderNumber = null) {
-        const venmoContainer = document.getElementById(
-          "paypal-button-container",
-        );
-        const venmoNote = `Visual Vibe Studio - 50% Deposit for ${orderData.businessName} (${orderData.services.join(", ")})`;
-        const venmoLink = generateVenmoLink(pricing.deposit, venmoNote);
+        try {
+          // Validate inputs
+          if (!pricing || !orderData) {
+            throw new Error('Missing pricing or order data');
+          }
+
+          if (!pricing.deposit || isNaN(parseFloat(pricing.deposit)) || parseFloat(pricing.deposit) <= 0) {
+            throw new Error('Invalid deposit amount: ' + pricing.deposit);
+          }
+
+          if (!orderData.businessName || !orderData.services || !Array.isArray(orderData.services)) {
+            throw new Error('Invalid order data structure');
+          }
+
+          const venmoContainer = document.getElementById(
+            "paypal-button-container",
+          );
+
+          if (!venmoContainer) {
+            throw new Error('Venmo payment container not found');
+          }
+
+          // Sanitize business name and services for note
+          const businessName = orderData.businessName || 'Customer';
+          const services = orderData.services.length > 0 ? orderData.services.join(", ") : 'Services';
+          const venmoNote = `Visual Vibe Studio - 50% Deposit for ${businessName} (${services})`;
+          const venmoLink = generateVenmoLink(pricing.deposit, venmoNote);
+
+          if (!venmoLink) {
+            throw new Error('Failed to generate Venmo payment link');
+          }
 
         venmoContainer.innerHTML = `
                 <div class="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6">
@@ -2545,8 +2781,8 @@ ${'='.repeat(40)}
                     </div>
 
                     <div class="space-y-3">
-                      <a href="${venmoLink}" class="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                        ���� Open Venmo App
+                      <a href="${venmoLink}" class="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors" onclick="trackVenmoClick()">
+                        🏧 Open Venmo App
                       </a>
 
                       <button type="button" onclick="copyVenmoDetails()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
@@ -2576,13 +2812,52 @@ ${'='.repeat(40)}
                 </div>
               `;
 
-        venmoContainer.classList.remove("hidden");
-        venmoPaymentShown = true;
+          venmoContainer.classList.remove("hidden");
+          venmoPaymentShown = true;
+          console.log('Venmo payment displayed successfully');
+        } catch (error) {
+          console.error('Error showing Venmo payment:', error);
+          showAlert('Unable to display payment options. Please contact us directly at (402) 979-7184 or support@visualvibestudio.store', 'error');
+
+          // Show fallback payment instructions
+          const venmoContainer = document.getElementById("paypal-button-container");
+          if (venmoContainer) {
+            venmoContainer.innerHTML = `
+              <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
+                <div class="text-center mb-6">
+                  <div class="text-red-600 text-4xl mb-4">⚠️</div>
+                  <h4 class="text-xl font-bold text-red-800 mb-2">Payment System Issue</h4>
+                  <p class="text-red-700 mb-4">There was an error displaying the payment options. Please contact us directly to complete your order.</p>
+                </div>
+
+                <div class="bg-white rounded-lg p-4 mb-6 border border-red-200">
+                  <h5 class="font-semibold text-gray-800 mb-3">Contact Information</h5>
+                  <div class="space-y-2 text-sm">
+                    <p><strong>Phone:</strong> <a href="tel:+14029797184" class="text-blue-600">(402) 979-7184</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:support@visualvibestudio.store" class="text-blue-600">support@visualvibestudio.store</a></p>
+                    <p><strong>Venmo:</strong> @Yoshiko-Swafford</p>
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  <button type="button" onclick="resetForm()" class="bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
+                    ← Back to Form
+                  </button>
+                </div>
+              </div>
+            `;
+            venmoContainer.classList.remove("hidden");
+          }
+        }
       }
 
       function copyVenmoDetails() {
         try {
           const pricing = calculateOrderTotal();
+          if (!pricing || !pricing.deposit || isNaN(parseFloat(pricing.deposit))) {
+            throw new Error('Unable to calculate deposit amount');
+          }
+
           const form = document.getElementById("orderForm");
           if (!form) {
             throw new Error("Order form not found");
@@ -2810,7 +3085,7 @@ ${'='.repeat(40)}
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ���━━━━━━━━━━━━━━━
+      ━━━━━━━━━━━━━━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -2819,7 +3094,7 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      ━━━━━━━━━━━━━━��━
+      ━━━━━━━━━━━━━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
@@ -2903,19 +3178,48 @@ ${'='.repeat(40)}
       // Safe chat toggle with fallback
       function safeToggleChat() {
         try {
+          // Check if chat is initialized
+          if (!chatInitialized) {
+            console.log('Chat not initialized, attempting force initialization...');
+            forceInitializeChat();
+          }
+
+          // Ensure DOM elements exist before proceeding
+          const chatWindow = document.getElementById('chatWindow');
+          const chatBubble = document.getElementById('chatBubble');
+
+          if (!chatWindow || !chatBubble) {
+            console.error('Chat DOM elements not found');
+            showAlert('Chat system not ready. Trying to reinitialize...', 'info');
+            forceInitializeChat();
+            return;
+          }
+
           toggleChat();
         } catch (error) {
           console.error('Main toggleChat failed, using fallback:', error);
-          // Simple fallback
+
+          // Enhanced fallback
           const chatWindow = document.getElementById('chatWindow');
           if (chatWindow) {
             const isOpen = chatWindow.classList.contains('open');
             if (isOpen) {
               chatWindow.classList.remove('open');
+              chatOpen = false;
             } else {
               chatWindow.classList.add('open');
+              chatOpen = true;
+
+              // Try to focus input if available
+              setTimeout(() => {
+                const chatInput = document.getElementById('chatInput');
+                if (chatInput) {
+                  chatInput.focus();
+                }
+              }, 300);
             }
-            chatOpen = !isOpen;
+          } else {
+            showAlert('Chat widget not found. Please refresh the page.', 'error');
           }
         }
       }
@@ -2942,43 +3246,77 @@ ${'='.repeat(40)}
 
           // Check if required elements exist
           if (!chatWindow || !chatBubble || !chatIcon || !closeIcon) {
-            console.error('Chat elements not found');
-            return;
+            console.error('Chat elements not found:', {
+              chatWindow: !!chatWindow,
+              chatBubble: !!chatBubble,
+              chatIcon: !!chatIcon,
+              closeIcon: !!closeIcon
+            });
+            throw new Error('Required chat elements missing');
           }
 
           chatOpen = !chatOpen;
 
-        if (chatOpen) {
-          chatWindow.classList.add('open');
-          chatBubble.classList.add('active');
-          chatIcon.classList.add('hidden');
-          closeIcon.classList.remove('hidden');
-          notification.classList.add('hidden');
-          hasUnreadMessages = false;
+          if (chatOpen) {
+            chatWindow.classList.add('open');
+            chatBubble.classList.add('active');
+            chatIcon.classList.add('hidden');
+            closeIcon.classList.remove('hidden');
 
-          // Focus on input when opening
-          setTimeout(() => {
-            document.getElementById('chatInput').focus();
-          }, 300);
-
-          // Show welcome message with notification after 2 seconds if no interaction
-          setTimeout(() => {
-            if (chatOpen && !hasUserSentMessage()) {
-              addAgentMessage("Need help getting started? Feel free to ask about our services, pricing, or turnaround times! 😊");
+            if (notification) {
+              notification.classList.add('hidden');
             }
-          }, 2000);
-        } else {
-          chatWindow.classList.remove('open');
-          chatBubble.classList.remove('active');
-          chatIcon.classList.remove('hidden');
-          closeIcon.classList.add('hidden');
-        }
+            hasUnreadMessages = false;
+
+            // Focus on input when opening with better error handling
+            setTimeout(() => {
+              try {
+                const chatInput = document.getElementById('chatInput');
+                if (chatInput) {
+                  chatInput.focus();
+                } else {
+                  console.warn('Chat input not found for focus');
+                }
+              } catch (focusError) {
+                console.warn('Could not focus chat input:', focusError);
+              }
+            }, 300);
+
+            // Show welcome message with notification after 2 seconds if no interaction
+            setTimeout(() => {
+              try {
+                if (chatOpen && !hasUserSentMessage()) {
+                  addAgentMessage("Need help getting started? Feel free to ask about our services, pricing, or turnaround times! 😊");
+                }
+              } catch (welcomeError) {
+                console.warn('Could not show welcome message:', welcomeError);
+              }
+            }, 2000);
+          } else {
+            chatWindow.classList.remove('open');
+            chatBubble.classList.remove('active');
+            chatIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+          }
+
+          console.log('Chat toggled successfully. Open:', chatOpen);
         } catch (error) {
           console.error('Error in toggleChat:', error);
-          // Fallback: try to at least show/hide the chat window
+          showAlert('Chat system error. Please try refreshing the page or contact us directly at (402) 979-7184', 'error');
+
+          // Enhanced fallback
           const chatWindow = document.getElementById('chatWindow');
           if (chatWindow) {
-            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+            const currentDisplay = window.getComputedStyle(chatWindow).display;
+            if (currentDisplay === 'none' || !chatWindow.classList.contains('open')) {
+              chatWindow.style.display = 'flex';
+              chatWindow.classList.add('open');
+              chatOpen = true;
+            } else {
+              chatWindow.style.display = 'none';
+              chatWindow.classList.remove('open');
+              chatOpen = false;
+            }
           }
         }
       }
@@ -2989,61 +3327,103 @@ ${'='.repeat(40)}
       }
 
       function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const message = input.value.trim();
+        try {
+          const input = document.getElementById('chatInput');
+          if (!input) {
+            console.error('Chat input not found');
+            showAlert('Chat input error. Please refresh the page.', 'error');
+            return;
+          }
 
-        if (!message) return;
+          const message = input.value.trim();
+          if (!message) {
+            console.log('Empty message, not sending');
+            return;
+          }
 
-        // Add user message
-        addUserMessage(message);
-        input.value = '';
-        adjustTextareaHeight(input);
-        updateSendButton();
+          console.log('Sending message:', message);
 
-        // Show sending indicator
-        showSendingIndicator();
+          // Add user message
+          addUserMessage(message);
+          input.value = '';
+          adjustTextareaHeight(input);
+          updateSendButton();
 
-        // Send message to business owner's phone
-        sendMessageToBusinessOwner(message)
-          .then(() => {
-            hideTypingIndicator();
-            addAgentMessage("Thanks for your message! I've received it and will respond to you shortly. You can also call me directly at (402) 979-7184 for immediate assistance.");
-          })
-          .catch(() => {
-            hideTypingIndicator();
-            addAgentMessage("I've received your message! For the fastest response, please call me directly at (402) 979-7184 or email support@visualvibestudio.store. I'll get back to you as soon as possible!");
-          });
+          // Show sending indicator
+          showSendingIndicator();
+
+          // Send message to business owner's phone
+          sendMessageToBusinessOwner(message)
+            .then(() => {
+              hideTypingIndicator();
+              addAgentMessage("Thanks for your message! I've received it and will respond to you shortly. You can also call me directly at (402) 979-7184 for immediate assistance.");
+            })
+            .catch((error) => {
+              console.error('Error sending message:', error);
+              hideTypingIndicator();
+              addAgentMessage("I've received your message! For the fastest response, please call me directly at (402) 979-7184 or email support@visualvibestudio.store. I'll get back to you as soon as possible!");
+            });
+        } catch (error) {
+          console.error('Error in sendMessage function:', error);
+          showAlert('Error sending message. Please try again or contact us directly.', 'error');
+        }
       }
 
       function addUserMessage(message) {
-        const messagesContainer = document.getElementById('chatMessages');
-        const messageElement = document.createElement('div');
-        messageElement.className = 'chat-message user';
-        const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        messageElement.innerHTML = `
-          <div>
-            <div>${escapeHtml(message)}</div>
-            <div class="text-xs opacity-70 mt-1">Sent ${timestamp}</div>
-          </div>
-        `;
-        messagesContainer.appendChild(messageElement);
-        scrollToBottom();
+        try {
+          const messagesContainer = document.getElementById('chatMessages');
+          if (!messagesContainer) {
+            console.error('Chat messages container not found');
+            return;
+          }
 
-        // Save message to session storage for potential recovery
-        saveChatMessage('user', message, timestamp);
+          const messageElement = document.createElement('div');
+          messageElement.className = 'chat-message user';
+          const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          messageElement.innerHTML = `
+            <div>
+              <div>${escapeHtml(message)}</div>
+              <div class="text-xs opacity-70 mt-1">Sent ${timestamp}</div>
+            </div>
+          `;
+          messagesContainer.appendChild(messageElement);
+          scrollToBottom();
+
+          // Save message to session storage for potential recovery
+          try {
+            saveChatMessage('user', message, timestamp);
+          } catch (saveError) {
+            console.warn('Could not save chat message:', saveError);
+          }
+        } catch (error) {
+          console.error('Error adding user message:', error);
+        }
       }
 
       function addAgentMessage(message) {
-        const messagesContainer = document.getElementById('chatMessages');
-        const messageElement = document.createElement('div');
-        messageElement.className = 'chat-message agent';
-        messageElement.innerHTML = `<div>${message}</div>`;
-        messagesContainer.appendChild(messageElement);
-        scrollToBottom();
+        try {
+          const messagesContainer = document.getElementById('chatMessages');
+          if (!messagesContainer) {
+            console.error('Chat messages container not found');
+            return;
+          }
 
-        // Show notification if chat is closed
-        if (!chatOpen) {
-          showChatNotification();
+          const messageElement = document.createElement('div');
+          messageElement.className = 'chat-message agent';
+          messageElement.innerHTML = `<div>${message}</div>`;
+          messagesContainer.appendChild(messageElement);
+          scrollToBottom();
+
+          // Show notification if chat is closed
+          if (!chatOpen) {
+            try {
+              showChatNotification();
+            } catch (notificationError) {
+              console.warn('Could not show chat notification:', notificationError);
+            }
+          }
+        } catch (error) {
+          console.error('Error adding agent message:', error);
         }
       }
 
@@ -3489,7 +3869,7 @@ Please get back to me when you have a chance!
 Thanks,
 `);
         window.open(`mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`, '_blank');
-        addAgentMessage("��� Email opened! I'll respond to your email as soon as possible.");
+        addAgentMessage("📧 Email opened! I'll respond to your email as soon as possible.");
       }
 
       // Enhanced message sending with delivery confirmation
@@ -3580,14 +3960,30 @@ Thanks,
       }
 
       function showChatNotification() {
-        const notification = document.getElementById('chatNotification');
-        notification.classList.remove('hidden');
-        hasUnreadMessages = true;
+        try {
+          const notification = document.getElementById('chatNotification');
+          if (notification) {
+            notification.classList.remove('hidden');
+            hasUnreadMessages = true;
+          } else {
+            console.warn('Chat notification element not found');
+          }
+        } catch (error) {
+          console.error('Error showing chat notification:', error);
+        }
       }
 
       function scrollToBottom() {
-        const messagesContainer = document.getElementById('chatMessages');
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        try {
+          const messagesContainer = document.getElementById('chatMessages');
+          if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          } else {
+            console.warn('Messages container not found for scroll');
+          }
+        } catch (error) {
+          console.error('Error scrolling to bottom:', error);
+        }
       }
 
       function handleChatKeyPress(event) {
@@ -3604,9 +4000,19 @@ Thanks,
       }
 
       function updateSendButton() {
-        const input = document.getElementById('chatInput');
-        const sendBtn = document.getElementById('chatSendBtn');
-        sendBtn.disabled = !input.value.trim();
+        try {
+          const input = document.getElementById('chatInput');
+          const sendBtn = document.getElementById('chatSendBtn');
+
+          if (!input || !sendBtn) {
+            console.warn('Chat input or send button not found for update');
+            return;
+          }
+
+          sendBtn.disabled = !input.value.trim();
+        } catch (error) {
+          console.error('Error updating send button:', error);
+        }
       }
 
       function escapeHtml(text) {
@@ -4143,15 +4549,62 @@ Thanks,
 
       // Initialize chat input event listener
       document.addEventListener('DOMContentLoaded', function() {
-        const chatInput = document.getElementById('chatInput');
-        if (chatInput) {
-          chatInput.addEventListener('input', function() {
-            updateSendButton();
-          });
-        }
+        // Wait a bit to ensure all DOM elements are fully loaded
+        setTimeout(() => {
+          try {
+            // Verify all required chat elements exist
+            const requiredElements = [
+              'chatWindow',
+              'chatBubble',
+              'chatIcon',
+              'closeIcon',
+              'chatMessages',
+              'chatInput',
+              'chatSendBtn'
+            ];
 
-        // Initialize chat system
-        initializeChatSystem();
+            const missingElements = [];
+            requiredElements.forEach(id => {
+              if (!document.getElementById(id)) {
+                missingElements.push(id);
+              }
+            });
+
+            if (missingElements.length > 0) {
+              console.error('Missing chat elements:', missingElements);
+              showAlert('Chat system initialization failed. Some elements are missing. Please refresh the page.', 'error');
+              return;
+            }
+
+            // Set up chat input event listener
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+              chatInput.addEventListener('input', function() {
+                updateSendButton();
+              });
+
+              // Initialize send button state
+              updateSendButton();
+            }
+
+            // Initialize chat system
+            initializeChatSystem();
+
+            // Mark as initialized
+            chatInitialized = true;
+
+            console.log('✅ Chat system initialized successfully');
+
+            // Run diagnostics after everything is initialized
+            setTimeout(() => {
+              diagnoseAndRepair();
+            }, 1000);
+          } catch (error) {
+            console.error('❌ Error initializing chat system:', error);
+            showAlert('Chat system failed to initialize. Please refresh the page or contact us directly.', 'error');
+          }
+        }, 100);
+      });
 
         // Show notification after 10 seconds if user hasn't opened chat
         setTimeout(() => {
@@ -4182,34 +4635,74 @@ Thanks,
               }
 
               // Calculate pricing
-              const pricing = calculateOrderTotal();
+            const pricing = calculateOrderTotal();
 
-              // Validate pricing
-              if (parseFloat(pricing.total) <= 0) {
-                showAlert("Please select at least one service.", "error");
-                if (submitBtn) submitBtn.style.display = "block";
-                return;
-              }
+            // Validate pricing
+            if (!pricing || !pricing.total || !pricing.deposit) {
+              showAlert("Error calculating order total. Please refresh and try again.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
+
+            if (parseFloat(pricing.total) <= 0) {
+              showAlert("Please select at least one service.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
+
+            if (parseFloat(pricing.deposit) <= 0) {
+              showAlert("Error calculating deposit amount. Please contact us directly.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
 
               // Get form data
-              const formData = new FormData(form);
-              const servicesSelect = form.querySelector(
-                'select[name="services"]',
-              );
-              const selectedServices = servicesSelect
-                ? Array.from(servicesSelect.selectedOptions).map(
-                    (option) => option.text,
-                  )
-                : [];
+            const formData = new FormData(form);
+            const servicesSelect = form.querySelector(
+              'select[name="services"]',
+            );
+
+            if (!servicesSelect || servicesSelect.selectedOptions.length === 0) {
+              showAlert("Please select at least one service.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
+
+            const selectedServices = Array.from(servicesSelect.selectedOptions).map(
+              (option) => option.text || 'Unknown Service',
+            );
+
+            // Validate required fields
+            const businessName = formData.get("businessName");
+            const email = formData.get("email");
+            const industry = formData.get("industry");
+
+            if (!businessName || businessName.trim() === '') {
+              showAlert("Please enter your business name.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
+
+            if (!email || email.trim() === '' || !email.includes('@')) {
+              showAlert("Please enter a valid email address.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
+
+            if (!industry || industry.trim() === '') {
+              showAlert("Please enter your business industry.", "error");
+              if (submitBtn) submitBtn.style.display = "block";
+              return;
+            }
 
               const orderData = {
-                businessName: formData.get("businessName") || "N/A",
-                industry: formData.get("industry") || "N/A",
-                services: selectedServices,
-                email: formData.get("email") || "",
-                phone: formData.get("phone") || "N/A",
-                dueDate: formData.get("dueDate") || "N/A",
-              };
+              businessName: businessName.trim(),
+              industry: industry.trim(),
+              services: selectedServices,
+              email: email.trim(),
+              phone: formData.get("phone") || "N/A",
+              dueDate: formData.get("dueDate") || "N/A",
+            };
 
               // Save order to user account if signed in
               const orderNumber = saveOrderToAccount(orderData, pricing);
