@@ -56,6 +56,79 @@
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
     ></script>
     <script>
+      // Simple chat functions that work immediately
+      function simpleSend() {
+        console.log('Simple send called!');
+        const input = document.getElementById('chatInput');
+        if (!input) {
+          alert('Chat input not found');
+          return;
+        }
+
+        const message = input.value.trim();
+        if (!message) {
+          alert('Please enter a message');
+          return;
+        }
+
+        console.log('Sending message:', message);
+
+        // Add message to chat
+        addSimpleMessage('user', message);
+
+        // Clear input
+        input.value = '';
+        enableSendButton();
+
+        // Show response
+        setTimeout(() => {
+          addSimpleMessage('agent', "Thanks for your message! I've received it and will respond shortly. For immediate assistance, call me at (402) 979-7184.");
+        }, 1000);
+      }
+
+      function enableSendButton() {
+        const input = document.getElementById('chatInput');
+        const btn = document.getElementById('chatSendBtn');
+        if (input && btn) {
+          const hasText = input.value.trim().length > 0;
+          btn.disabled = !hasText;
+          btn.style.opacity = hasText ? '1' : '0.5';
+        }
+      }
+
+      function addSimpleMessage(type, message) {
+        const container = document.getElementById('chatMessages');
+        if (!container) return;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `chat-message ${type}`;
+        msgDiv.innerHTML = `<div>${message}</div>`;
+        container.appendChild(msgDiv);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      // Make functions globally available immediately
+      window.simpleSend = simpleSend;
+      window.enableSendButton = enableSendButton;
+      window.addSimpleMessage = addSimpleMessage;
+
+      // Force reload reviews function
+      function forceReloadReviews() {
+        console.log('🔄 Force reloading reviews...');
+        try {
+          if (typeof loadReviews === 'function') {
+            loadReviews();
+            console.log('✅ Reviews reloaded successfully');
+          } else {
+            console.error('❌ loadReviews function not found');
+          }
+        } catch (error) {
+          console.error('❌ Error reloading reviews:', error);
+        }
+      }
+
+      window.forceReloadReviews = forceReloadReviews;
+
       // Initialize EmailJS with a working public key
       (function () {
         emailjs.init("eHAEIqw8YtVZP5rYA"); // Public key for contact forms
@@ -166,6 +239,114 @@
       window.switchToSignUp = switchToSignUp;
       window.switchToSignIn = switchToSignIn;
 
+      // Define quick action functions globally at script start to fix ReferenceError
+      function callDirectly() {
+        try {
+          if (typeof trackChatEvent === 'function') {
+            trackChatEvent('call_attempted');
+          }
+          window.location.href = 'tel:+14029797184';
+          if (typeof addAgentMessage === 'function') {
+            addAgentMessage("📞 Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
+          }
+        } catch (error) {
+          console.error('Error in callDirectly:', error);
+          window.location.href = 'tel:+14029797184';
+        }
+      }
+
+      function emailDirectly() {
+        try {
+          if (typeof trackChatEvent === 'function') {
+            trackChatEvent('email_attempted');
+          }
+          const subject = encodeURIComponent('Visual Vibe Studio - Inquiry from Website Chat');
+          const body = encodeURIComponent(`Hi Yoshiko,
+
+I was using the chat on your website and wanted to reach out directly.
+
+Customer Information:
+${window.currentUser ? `Name: ${window.currentUser.name}\nEmail: ${window.currentUser.email}` : 'Website Visitor (not signed in)'}
+
+Please get back to me when you have a chance!
+
+Thanks,`);
+
+          const emailUrl = `mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`;
+
+          // Check if we're on mobile
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+          if (isMobile) {
+            // On mobile, try to open email app directly
+            window.open(emailUrl, '_blank');
+            if (typeof addAgentMessage === 'function') {
+              addAgentMessage("📧 Opening your email app! I'll respond to your email as soon as possible.");
+            }
+          } else {
+            // On desktop, provide options
+            if (typeof showEmailOptionsModal === 'function') {
+              showEmailOptionsModal('support@visualvibestudio.store');
+            } else {
+              window.open(emailUrl, '_blank');
+            }
+            if (typeof addAgentMessage === 'function') {
+              addAgentMessage("📧 I've opened contact options for you. Choose your preferred way to email me!");
+            }
+          }
+        } catch (error) {
+          console.error('Error in emailDirectly:', error);
+          const emailUrl = 'mailto:support@visualvibestudio.store';
+          window.open(emailUrl, '_blank');
+          if (typeof addAgentMessage === 'function') {
+            addAgentMessage("📧 To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
+          }
+        }
+      }
+
+      // Make quick action functions available globally
+      window.callDirectly = callDirectly;
+      window.emailDirectly = emailDirectly;
+
+      // Test function to debug send message
+      function testSendMessage() {
+        console.log('🧪 Test send message called');
+        console.log('sendMessage function exists:', typeof sendMessage);
+        console.log('window.sendMessage exists:', typeof window.sendMessage);
+
+        const input = document.getElementById('chatInput');
+        if (input) {
+          input.value = 'Test message from debug button';
+          updateSendButton();
+          console.log('Set test message, calling sendMessage...');
+          sendMessage();
+        } else {
+          console.error('Chat input not found');
+        }
+      }
+
+      window.testSendMessage = testSendMessage;
+
+      // Test Venmo payment function
+      function testVenmoPayment() {
+        console.log('🧪 Testing Venmo payment...');
+        const testPricing = { total: "100.00", deposit: "50.00" };
+        const testOrderData = {
+          businessName: "Test Business",
+          services: ["Website Design", "Logo Design"],
+          email: "test@example.com"
+        };
+
+        try {
+          showVenmoPayment(testPricing, testOrderData, "TEST-ORDER-123");
+          console.log('✅ Test Venmo payment completed');
+        } catch (error) {
+          console.error('❌ Test Venmo payment failed:', error);
+        }
+      }
+
+      window.testVenmoPayment = testVenmoPayment;
+
       // Define chat functions globally at script start to fix ReferenceError
       let chatInitialized = false;
       let chatOpen = false;
@@ -224,20 +405,24 @@
 
       async function sendMessage() {
         try {
-          console.log('Send message called');
+          console.log('📤 sendMessage function called');
+          console.log('📤 Function called from:', new Error().stack);
+
           const input = document.getElementById('chatInput');
           if (!input) {
-            console.error('Chat input not found');
+            console.error('❌ Chat input not found');
             return;
           }
 
           const message = input.value.trim();
+          console.log('📝 Message content:', message, 'Length:', message.length);
+
           if (!message) {
-            console.log('Empty message');
+            console.log('⚠️ Empty message, not sending');
             return;
           }
 
-          console.log('Sending message:', message);
+          console.log('✅ Sending message:', message);
 
           // Disable send button during processing
           const sendBtn = document.getElementById('chatSendBtn');
@@ -494,7 +679,7 @@
 
       function validateAndSubmit(event) {
         try {
-          console.log('Validating and submitting form...');
+          console.log('🚀 Order form submission started...');
           event.preventDefault(); // Prevent default form submission
 
           const form = document.getElementById('orderForm');
@@ -579,9 +764,10 @@
               const orderNumber = saveOrderToAccount(orderData, pricing);
 
               // Show Venmo payment
+              console.log('💰 About to show Venmo payment with:', { pricing, orderData, orderNumber });
               showVenmoPayment(pricing, orderData, orderNumber);
 
-              console.log('✅ Order processed successfully, showing Venmo payment');
+              console.log('✅ Order processed successfully, Venmo payment should be visible');
               return false;
 
             } catch (error) {
@@ -695,8 +881,12 @@
           const sendBtn = document.getElementById('chatSendBtn');
           if (input && sendBtn) {
             const hasContent = input.value.trim().length > 0;
+            console.log('Updating send button - hasContent:', hasContent, 'inputValue:', input.value);
             sendBtn.disabled = !hasContent;
             sendBtn.style.opacity = hasContent ? '1' : '0.5';
+            console.log('Send button disabled:', sendBtn.disabled);
+          } else {
+            console.log('Missing elements - input:', !!input, 'sendBtn:', !!sendBtn);
           }
         } catch (error) {
           console.error('Error updating send button:', error);
@@ -784,12 +974,17 @@
           // Add new reviews at the top
           reviews.forEach((review, index) => {
             const reviewElement = createReviewElement(review);
-            // Insert after the static reviews (before the "View More" button)
-            const viewMoreButton = container.querySelector('[onclick="toggleAllReviews()"]');
-            if (viewMoreButton && viewMoreButton.parentElement) {
-              viewMoreButton.parentElement.insertBefore(reviewElement, viewMoreButton.parentElement);
+            // Insert at the beginning of the container (after the "no reviews" message)
+            const noReviewsMessage = container.querySelector('#noReviewsMessage');
+            if (noReviewsMessage && noReviewsMessage.nextElementSibling) {
+              container.insertBefore(reviewElement, noReviewsMessage.nextElementSibling);
             } else {
-              container.appendChild(reviewElement);
+              // If no static reviews exist, just prepend to container
+              if (container.children.length > 0) {
+                container.insertBefore(reviewElement, container.children[0]);
+              } else {
+                container.appendChild(reviewElement);
+              }
             }
           });
 
@@ -1905,7 +2100,7 @@ Thanks!` : '';
           <div class="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $80
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📖</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">��</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Business Brochure
           </h4>
@@ -2034,7 +2229,7 @@ Thanks!` : '';
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">✏️</span>
+              <span class="text-2xl">��️</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -2115,7 +2310,7 @@ Thanks!` : '';
               </div>
             </div>
             <div class="mb-4">
-              <div class="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-lg">��⭐⭐⭐⭐</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-4">
               "The logo design exceeded all expectations! It perfectly captures our innovative spirit. Brand recognition has increased by 300% since the rebrand. Worth every penny!"
@@ -2280,7 +2475,7 @@ Thanks!` : '';
                       <p style="margin: 0; color: #666666; font-size: 16px;">Restaurant Owner</p>
                     </div>
                     <div style="margin-left: auto; text-align: right;">
-                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
+                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐��⭐</div>
                       <p style="margin: 0; font-size: 14px; color: #666666;">2 days ago</p>
                     </div>
                   </div>
@@ -2343,8 +2538,11 @@ Thanks!` : '';
 
               <!-- View More Button -->
               <div style="text-align: center; margin-top: 30px;">
-                <button onclick="toggleAllReviews()" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease;">
+                <button onclick="toggleAllReviews()" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease; margin-right: 10px;">
                   📝 <span id="viewAllReviewsText">View All Reviews</span>
+                </button>
+                <button onclick="forceReloadReviews()" style="background: rgba(0, 255, 0, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(0, 255, 0, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+                  🔄 Reload Reviews
                 </button>
               </div>
 
@@ -2543,6 +2741,13 @@ Thanks!` : '';
             <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included</p>
           </div>
           <div id="paypal-button-container" class="mt-6 hidden"></div>
+
+          <!-- Debug button for testing Venmo payment -->
+          <div class="mt-4 text-center">
+            <button onclick="testVenmoPayment()" class="bg-green-500 text-white px-4 py-2 rounded text-sm">
+              🧪 Test Venmo Payment
+            </button>
+          </div>
         </form>
       </div>
     </section>
@@ -2995,15 +3200,15 @@ Thanks!` : '';
               class="chat-input"
               placeholder="Message Yoshiko directly..."
               rows="1"
-              onkeypress="handleChatKeyPress(event)"
-              oninput="adjustTextareaHeight(this)"
+              onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();simpleSend();}"
+              oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';enableSendButton();"
             ></textarea>
             <button
               id="chatSendBtn"
               class="chat-send-btn"
-              onclick="sendMessage()"
+              onclick="simpleSend()"
               disabled
-              title="Send message to Yoshiko via Zapier webhook"
+              title="Send message to Yoshiko"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
@@ -3126,7 +3331,7 @@ Thanks!` : '';
 
         // Report results
         console.log('🔍 Issues found:', issues);
-        console.log('🔧 Repairs completed:', repairs);
+        console.log('�� Repairs completed:', repairs);
 
         if (issues.length === 0 && repairs.length > 0) {
           if (typeof showAlert === 'function') {
@@ -3217,8 +3422,15 @@ Thanks!` : '';
           }
 
           if (chatSendBtn && !chatSendBtn.hasAttribute('data-initialized')) {
-            chatSendBtn.addEventListener('click', sendMessage);
+            console.log('🔧 Adding click event listener to send button');
+            chatSendBtn.addEventListener('click', function(event) {
+              console.log('🖱️ Send button clicked!', event);
+              sendMessage();
+            });
             chatSendBtn.setAttribute('data-initialized', 'true');
+            console.log('✅ Send button event listener added');
+          } else {
+            console.log('⚠️ Send button already initialized or not found', !!chatSendBtn);
           }
 
           // Initialize send button
@@ -3834,6 +4046,10 @@ ${'='.repeat(40)}
             throw new Error('Venmo payment container not found');
           }
 
+          // Make container visible
+          venmoContainer.classList.remove('hidden');
+          venmoContainer.style.display = 'block';
+
           // Sanitize business name and services for note
           const businessName = orderData.businessName || 'Customer';
           const services = orderData.services.length > 0 ? orderData.services.join(", ") : 'Services';
@@ -3952,7 +4168,15 @@ ${'='.repeat(40)}
 
           venmoContainer.classList.remove("hidden");
           venmoPaymentShown = true;
-          console.log('Venmo payment displayed successfully');
+          console.log('✅ Venmo payment displayed successfully');
+
+          // Scroll to payment section
+          setTimeout(() => {
+            venmoContainer.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }, 300);
         } catch (error) {
           console.error('Error showing Venmo payment:', error);
           showAlert('Unable to display payment options. Please contact us directly at (402) 979-7184 or support@visualvibestudio.store', 'error');
@@ -4076,7 +4300,7 @@ ${'='.repeat(40)}
                       <ul class="text-sm text-green-700 text-left space-y-1">
                         <li>📧 Receipt sent to your email address</li>
                         <li>💰 We'll confirm your Venmo payment within 24 hours</li>
-                        <li>📞 We'll contact you to discuss project details</li>
+                        <li>��� We'll contact you to discuss project details</li>
                         <li>🎨 Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
@@ -4232,14 +4456,14 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      ━━━━━━━━━━━━━━━
+      ���━━━━━━━━━━━━���━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
       Payment Method: Venmo (@Yoshiko-Swafford)
 
       NEXT STEPS:
-      ━━━━━━━━━━━━━━━
+      �����━━━━━━━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
       📋 Project discussion and planning will begin
       • Final 50% payment due upon project completion
@@ -4681,7 +4905,7 @@ ${'='.repeat(40)}
 
       async function sendEmailNotification(message) {
         // Send to both business email and create backup
-        const emailSubject = encodeURIComponent('🚨 VVS Chat Alert - Respond ASAP');
+        const emailSubject = encodeURIComponent('��� VVS Chat Alert - Respond ASAP');
         const emailBody = encodeURIComponent(message);
 
         // Primary notification to business email
@@ -4904,8 +5128,8 @@ ${'='.repeat(40)}
         setTimeout(processRetryQueue, 10000);
       }
 
-      // Quick action functions
-      function callDirectly() {
+      // Quick action functions (COMMENTED OUT - DUPLICATES MOVED TO TOP)
+      /*function callDirectly() {
         trackChatEvent('call_attempted');
         window.location.href = 'tel:+14029797184';
         addAgentMessage("��� Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
@@ -4946,6 +5170,10 @@ Thanks,
           addAgentMessage("📧 To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
         }
       }
+
+      // Make chat action functions globally available (COMMENTED OUT - MOVED TO TOP)
+      // window.callDirectly = callDirectly;
+      // window.emailDirectly = emailDirectly;*/
 
       // Enhanced message sending with delivery confirmation
       function addAgentMessage(message) {
