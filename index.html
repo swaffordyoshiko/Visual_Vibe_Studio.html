@@ -1,4 +1,5 @@
 <!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -643,6 +644,7 @@
             src="https://cdn.builder.io/api/v1/image/assets%2F5015b2985ffe4a9ca5064ae99f72812a%2Fff0a451500144e83b9957a3f0ca320e8?format=webp&width=800"
             alt="Visual Vibe Studio Logo"
             class="h-10 w-10 object-contain"
+            loading="eager"
           />
           <h1 class="text-2xl font-bold text-indigo-600">Visual Vibe Studio</h1>
         </div>
@@ -1257,12 +1259,15 @@
                 <div style="font-size: 24px; color: #ffffff;">
                   <span style="font-size: 32px;">⭐⭐⭐⭐⭐</span>
                   <span style="font-size: 28px; font-weight: bold; margin-left: 15px;">4.9/5</span>
-                  <span style="font-size: 20px; margin-left: 10px;">(4 reviews)</span>
+                  <span style="font-size: 20px; margin-left: 10px;">(<span id="totalReviews">4</span> reviews)</span>
                 </div>
               </div>
 
               <!-- Reviews Container -->
               <div id="reviewsContainer" style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+                <div id="noReviewsMessage" class="hidden text-center py-8 text-gray-500">
+                  <p>No reviews yet. Be the first to leave a review!</p>
+                </div>
 
                 <!-- Review 1 -->
                 <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
@@ -1475,7 +1480,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label class="block mb-2 font-semibold text-gray-700 flex items-center">
-                <span class="mr-2">📅</span>
+                <span class="mr-2">����</span>
                 Preferred Completion Date
               </label>
               <input
@@ -1937,7 +1942,7 @@
 
     <!-- Live Chat Widget -->
     <div class="chat-widget no-print">
-      <div class="chat-bubble" onclick="toggleChat()" id="chatBubble">
+      <div class="chat-bubble" onclick="safeToggleChat()" id="chatBubble">
         <svg id="chatIcon" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.955 8.955 0 01-1.946-.273L3 21l1.273-8.054A8.955 8.955 0 013 12C3 7.582 6.582 4 11 4s8 3.582 8 8z"/>
         </svg>
@@ -1957,7 +1962,7 @@
               <span>Messages sent to (402) 979-7184</span>
             </div>
           </div>
-          <button onclick="toggleChat()" class="text-white hover:text-gray-200 transition-colors">
+          <button onclick="safeToggleChat()" class="text-white hover:text-gray-200 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -2894,6 +2899,26 @@ ${'='.repeat(40)}
       // Live Chat Functionality
       let chatOpen = false;
       let hasUnreadMessages = false;
+
+      // Safe chat toggle with fallback
+      function safeToggleChat() {
+        try {
+          toggleChat();
+        } catch (error) {
+          console.error('Main toggleChat failed, using fallback:', error);
+          // Simple fallback
+          const chatWindow = document.getElementById('chatWindow');
+          if (chatWindow) {
+            const isOpen = chatWindow.classList.contains('open');
+            if (isOpen) {
+              chatWindow.classList.remove('open');
+            } else {
+              chatWindow.classList.add('open');
+            }
+            chatOpen = !isOpen;
+          }
+        }
+      }
       const agentResponses = [
         "Thanks for reaching out! I'm here to help with your design needs. What type of project are you interested in?",
         "Great question! Our business websites start at $100 and the final price depends on features like e-commerce, multiple pages, and custom functionality. Would you like me to explain more about what's included?",
@@ -2908,13 +2933,20 @@ ${'='.repeat(40)}
       ];
 
       function toggleChat() {
-        const chatWindow = document.getElementById('chatWindow');
-        const chatBubble = document.getElementById('chatBubble');
-        const chatIcon = document.getElementById('chatIcon');
-        const closeIcon = document.getElementById('closeIcon');
-        const notification = document.getElementById('chatNotification');
+        try {
+          const chatWindow = document.getElementById('chatWindow');
+          const chatBubble = document.getElementById('chatBubble');
+          const chatIcon = document.getElementById('chatIcon');
+          const closeIcon = document.getElementById('closeIcon');
+          const notification = document.getElementById('chatNotification');
 
-        chatOpen = !chatOpen;
+          // Check if required elements exist
+          if (!chatWindow || !chatBubble || !chatIcon || !closeIcon) {
+            console.error('Chat elements not found');
+            return;
+          }
+
+          chatOpen = !chatOpen;
 
         if (chatOpen) {
           chatWindow.classList.add('open');
@@ -2940,6 +2972,14 @@ ${'='.repeat(40)}
           chatBubble.classList.remove('active');
           chatIcon.classList.remove('hidden');
           closeIcon.classList.add('hidden');
+        }
+        } catch (error) {
+          console.error('Error in toggleChat:', error);
+          // Fallback: try to at least show/hide the chat window
+          const chatWindow = document.getElementById('chatWindow');
+          if (chatWindow) {
+            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+          }
         }
       }
 
@@ -3364,19 +3404,24 @@ ${'='.repeat(40)}
       }
 
       function initializeChatSystem() {
-        // Track chat system initialization
-        trackChatEvent('chat_initialized');
+        try {
+          // Track chat system initialization
+          trackChatEvent('chat_initialized');
 
-        // Load previous chat history if exists
-        loadChatHistory();
+          // Load previous chat history if exists
+          loadChatHistory();
 
-        // Set up periodic connection check
-        setInterval(checkConnectionStatus, 30000); // Check every 30 seconds
+          // Set up periodic connection check
+          setInterval(checkConnectionStatus, 30000); // Check every 30 seconds
 
-        // Set up automatic message retry queue
-        processRetryQueue();
+          // Set up automatic message retry queue
+          processRetryQueue();
 
-        console.log('Chat system initialized with Zapier webhook to (402) 979-7184');
+          console.log('✅ Chat system initialized with Zapier webhook to (402) 979-7184');
+        } catch (error) {
+          console.error('❌ Error initializing chat system:', error);
+          console.log('💡 Chat will still work with basic functionality');
+        }
       }
 
       function checkConnectionStatus() {
