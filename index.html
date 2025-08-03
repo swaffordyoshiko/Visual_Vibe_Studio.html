@@ -131,16 +131,46 @@
 
       // Force reload reviews function
       function forceReloadReviews() {
-        console.log('��� Force reloading reviews...');
+        console.log('🔄 Force reloading reviews...');
+
+        // Show loading feedback
+        const reloadBtn = document.querySelector('button[onclick="forceReloadReviews()"]');
+        if (reloadBtn) {
+          const originalText = reloadBtn.innerHTML;
+          reloadBtn.innerHTML = '⏳ Reloading...';
+          reloadBtn.disabled = true;
+
+          setTimeout(() => {
+            reloadBtn.innerHTML = originalText;
+            reloadBtn.disabled = false;
+          }, 1500);
+        }
+
         try {
           if (typeof loadReviews === 'function') {
             loadReviews();
             console.log('✅ Reviews reloaded successfully');
+
+            // Show success message
+            if (typeof showAlert === 'function') {
+              showAlert('Reviews reloaded successfully!', 'success');
+            } else {
+              alert('Reviews reloaded successfully!');
+            }
+
+            // Scroll to reviews container to show the reload worked
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            if (reviewsContainer) {
+              reviewsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
           } else {
             console.error('❌ loadReviews function not found');
+            alert('Error: Review system not ready. Please refresh the page.');
           }
         } catch (error) {
           console.error('❌ Error reloading reviews:', error);
+          alert('Error reloading reviews. Please try again.');
         }
       }
 
@@ -1332,22 +1362,39 @@ Details: ${currentOrderData.details}`;
 
       function setRating(rating) {
         try {
-          console.log('Setting rating to:', rating);
+          console.log('🌟 Setting rating to:', rating);
 
           // Use both local and window variables for reliability
           const ratingValue = parseInt(rating);
           selectedRating = ratingValue;
           window.selectedRating = ratingValue;
 
+          // Update hidden input field
           const hiddenInput = document.getElementById('selectedRating');
           if (hiddenInput) {
             hiddenInput.value = ratingValue;
+            console.log('✅ Hidden input updated to:', hiddenInput.value);
+          } else {
+            console.error('❌ Hidden input field not found!');
           }
 
+          // Update star display
           updateStarDisplay();
 
           // Provide immediate feedback
           console.log(`✅ You selected ${rating} star${rating > 1 ? 's' : ''}!`);
+
+          // Visual feedback for user
+          const starContainer = document.querySelector('.star-rating').parentElement;
+          if (starContainer) {
+            // Add temporary glow effect
+            starContainer.style.transition = 'all 0.3s ease';
+            starContainer.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+              starContainer.style.transform = 'scale(1)';
+            }, 200);
+          }
+
         } catch (error) {
           console.error('Error setting rating:', error);
           // Fallback values
@@ -1377,89 +1424,99 @@ Details: ${currentOrderData.details}`;
       }
 
       function submitReview(event) {
-        try {
-          console.log('🚀 submitReview function called!', event);
+        console.log('🚀 Review submission started');
 
-          if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
 
-          console.log('📝 Submitting review...');
-
-        const reviewerName = document.getElementById('reviewerName').value.trim();
+        // Get form values
+        const name = document.getElementById('reviewerName').value.trim();
         const businessType = document.getElementById('businessType').value.trim();
-        const serviceUsed = document.getElementById('serviceUsed').value;
-        const reviewText = document.getElementById('reviewText').value.trim();
+        const service = document.getElementById('serviceUsed').value;
+        const text = document.getElementById('reviewText').value.trim();
+        const rating = parseInt(document.getElementById('selectedRating').value) || window.selectedRating || 0;
 
-        if (!reviewerName) {
+        console.log('Form data:', { name, businessType, service, text, rating });
+
+        // Basic validation
+        if (!name) {
           alert('Please enter your name.');
+          document.getElementById('reviewerName').focus();
           return false;
         }
 
-        const currentRating = window.selectedRating || selectedRating || 0;
-        if (!currentRating || currentRating === 0) {
+        if (!rating || rating === 0) {
           alert('Please select a star rating.');
           return false;
         }
 
-        if (!serviceUsed) {
+        if (!service) {
           alert('Please select a service.');
+          document.getElementById('serviceUsed').focus();
           return false;
         }
 
-        if (!reviewText) {
+        if (!text) {
           alert('Please write a review.');
+          document.getElementById('reviewText').focus();
           return false;
         }
 
-        // Create review object
+        // Create review
         const review = {
           id: Date.now().toString(),
-          name: reviewerName,
+          name: name,
           businessType: businessType || 'Customer',
-          service: serviceUsed,
-          rating: currentRating,
-          text: reviewText,
+          service: service,
+          rating: rating,
+          text: text,
           date: new Date().toISOString(),
-          approved: true // Auto-approve for immediate display
+          approved: true
         };
 
         console.log('Saving review:', review);
 
         // Save to localStorage
-        const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        reviews.unshift(review); // Add to beginning
-        localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
+        try {
+          const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+          reviews.unshift(review);
+          localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
+          console.log('Review saved to localStorage');
+        } catch (error) {
+          console.error('Error saving to localStorage:', error);
+        }
 
         // Clear form
         document.getElementById('reviewerName').value = '';
         document.getElementById('businessType').value = '';
         document.getElementById('serviceUsed').value = '';
         document.getElementById('reviewText').value = '';
-        selectedRating = 0;
-        window.selectedRating = 0;
         document.getElementById('selectedRating').value = '0';
-        updateStarDisplay();
+        window.selectedRating = 0;
+        selectedRating = 0;
 
-        alert('Thank you for your review! It has been added to our reviews section.');
-
-          // Try to reload reviews if the function exists
-          if (typeof loadReviews === 'function') {
-            loadReviews();
-            console.log('✅ Reviews reloaded successfully');
-          } else {
-            console.warn('⚠️ loadReviews function not found');
-          }
-
-          console.log('✅ Review submitted successfully!');
-          return false;
-
-        } catch (error) {
-          console.error('❌ Error submitting review:', error);
-          alert('Error submitting review. Please try again or contact support.');
-          return false;
+        // Reset stars
+        if (typeof updateStarDisplay === 'function') {
+          updateStarDisplay();
         }
+
+        alert('Thank you! Your review has been submitted successfully.');
+
+        // Reload reviews and update stats immediately
+        if (typeof loadReviews === 'function') {
+          setTimeout(() => {
+            loadReviews();
+            // Also immediately update stats with the new review count
+            const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+            if (typeof updateReviewStats === 'function') {
+              updateReviewStats(allReviews);
+            }
+          }, 300);
+        }
+
+        return false;
       }
 
       // Make rating functions available globally
@@ -1798,10 +1855,13 @@ Details: ${currentOrderData.details}`;
 
       // Define review functions globally to fix review display issues
       function loadReviews() {
+        console.log('📚 loadReviews() called');
         let reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+        console.log('📦 Raw reviews from localStorage:', reviews);
 
         // Add sample reviews if none exist
         if (reviews.length === 0) {
+          console.log('📝 No reviews found, adding sample reviews');
           const sampleReviews = [
             {
               id: 'sample-1',
@@ -1840,8 +1900,61 @@ Details: ${currentOrderData.details}`;
         }
 
         const approvedReviews = reviews.filter(review => review.approved);
+        console.log('✅ Approved reviews to display:', approvedReviews.length);
+
         displayReviews(approvedReviews);
         updateReviewStats(approvedReviews);
+
+        // Test localStorage write/read
+        try {
+          localStorage.setItem('reviewTest', 'working');
+          const test = localStorage.getItem('reviewTest');
+          console.log('💾 localStorage test:', test === 'working' ? 'WORKING' : 'FAILED');
+          localStorage.removeItem('reviewTest');
+        } catch (error) {
+          console.error('❌ localStorage not available:', error);
+        }
+      }
+
+      // Update star displays based on average rating
+      function updateStarDisplays(rating) {
+        try {
+          const numRating = parseFloat(rating);
+          const fullStars = Math.floor(numRating);
+          const hasHalfStar = numRating % 1 >= 0.5;
+
+          console.log(`⭐ Updating star displays for rating: ${rating} (${fullStars} full stars, half star: ${hasHalfStar})`);
+
+          // Generate star string based on rating
+          let starString = '⭐'.repeat(fullStars);
+          if (hasHalfStar && fullStars < 5) {
+            starString += '⭐'; // Add another star for half star (simplified)
+          }
+
+          // Pad to 5 stars if needed (use empty stars for visual consistency)
+          while (starString.length < 5) {
+            starString += '☆';
+          }
+
+          // Find and update star display elements
+          const starDisplays = [
+            { selector: '.text-2xl', content: starString },
+            { selector: '[style*="font-size: 32px"]', content: starString }
+          ];
+
+          starDisplays.forEach(({ selector, content }) => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+              if (el.textContent.includes('⭐') || el.textContent.includes('☆')) {
+                el.textContent = content;
+                console.log(`✅ Updated star display: ${content}`);
+              }
+            });
+          });
+
+        } catch (error) {
+          console.error('Error updating star displays:', error);
+        }
       }
 
       function displayReviews(reviews) {
@@ -1863,20 +1976,14 @@ Details: ${currentOrderData.details}`;
             return;
           }
 
-          // Add new reviews at the top
+          // Add new reviews at the very top of the container
           reviews.forEach((review, index) => {
             const reviewElement = createReviewElement(review);
-            // Insert at the beginning of the container (after the "no reviews" message)
-            const noReviewsMessage = container.querySelector('#noReviewsMessage');
-            if (noReviewsMessage && noReviewsMessage.nextElementSibling) {
-              container.insertBefore(reviewElement, noReviewsMessage.nextElementSibling);
+            // Always insert at the beginning to ensure dynamic reviews appear first
+            if (container.children.length > 0) {
+              container.insertBefore(reviewElement, container.children[0]);
             } else {
-              // If no static reviews exist, just prepend to container
-              if (container.children.length > 0) {
-                container.insertBefore(reviewElement, container.children[0]);
-              } else {
-                container.appendChild(reviewElement);
-              }
+              container.appendChild(reviewElement);
             }
           });
 
@@ -1915,20 +2022,64 @@ Details: ${currentOrderData.details}`;
 
       function updateReviewStats(reviews) {
         try {
-          const totalReviews = reviews.length;
+          // Count static reviews in HTML (non-dynamic reviews)
+          const reviewsContainer = document.getElementById('reviewsContainer');
+          const staticReviews = reviewsContainer ?
+            reviewsContainer.querySelectorAll('div[style*="background: rgba(255, 255, 255, 0.95)"]:not([data-dynamic-review])').length :
+            4; // fallback to 4 static reviews
+
+          const dynamicReviews = reviews.length;
+          const totalReviews = staticReviews + dynamicReviews;
+
+          console.log('📊 Review stats:', {
+            staticReviews,
+            dynamicReviews,
+            totalReviews
+          });
+
           const totalReviewsElement = document.getElementById('totalReviews');
           if (totalReviewsElement) {
-            totalReviewsElement.textContent = totalReviews + 3; // +3 for the static reviews already in HTML
+            totalReviewsElement.textContent = totalReviews;
+            console.log('✅ Updated total reviews count to:', totalReviews);
           }
 
-          // Calculate average rating
-          const avgRating = reviews.length > 0 ?
-            (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1) :
+          // Calculate average rating including static reviews (assume 5 stars each)
+          let totalRatingSum = reviews.reduce((sum, review) => sum + review.rating, 0);
+          let totalRatingCount = reviews.length;
+
+          // Add static reviews with 5-star ratings to average
+          totalRatingSum += (staticReviews * 5);
+          totalRatingCount += staticReviews;
+
+          const avgRating = totalRatingCount > 0 ?
+            (totalRatingSum / totalRatingCount).toFixed(1) :
             '4.9'; // default rating
 
-          // Update rating display if element exists
-          const ratingElements = document.querySelectorAll('.avg-rating');
-          ratingElements.forEach(el => el.textContent = avgRating);
+          console.log('⭐ Calculated average rating:', avgRating);
+
+          // Update all rating display elements
+          const ratingElements = [
+            { id: 'customerRating1', format: avgRating },
+            { id: 'averageRating1', format: avgRating },
+            { id: 'mainRating', format: `${avgRating}/5` }
+          ];
+
+          ratingElements.forEach(({ id, format }) => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.textContent = format;
+              console.log(`✅ Updated ${id} to: ${format}`);
+            } else {
+              console.warn(`⚠️ Rating element ${id} not found`);
+            }
+          });
+
+          // Also update any elements with .avg-rating class (fallback)
+          const avgRatingElements = document.querySelectorAll('.avg-rating');
+          avgRatingElements.forEach(el => el.textContent = avgRating);
+
+          // Update star displays based on average rating
+          updateStarDisplays(avgRating);
 
         } catch (error) {
           console.error('Error updating review stats:', error);
@@ -1981,6 +2132,7 @@ Details: ${currentOrderData.details}`;
       window.loadReviews = loadReviews;
       window.displayReviews = displayReviews;
       window.updateReviewStats = updateReviewStats;
+      window.updateStarDisplays = updateStarDisplays;
       window.formatDate = formatDate;
 
       // Make payment functions globally available
@@ -2846,7 +2998,7 @@ Thanks!` : '';
           <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
           <div class="flex justify-center items-center space-x-8 opacity-60">
             <div class="text-2xl">⭐⭐⭐����⭐</div>
-            <div class="text-sm">4.9/5 Customer Rating</div>
+            <div class="text-sm"><span id="customerRating1">4.9</span>/5 Customer Rating</div>
           </div>
         </div>
       </div>
@@ -2972,7 +3124,7 @@ Thanks!` : '';
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">✓</span>
+              <span class="text-green-500 mr-2">��</span>
               Mobile responsive design
             </div>
             <div class="flex items-center">
@@ -3121,7 +3273,7 @@ Thanks!` : '';
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">��️</span>
+              <span class="text-2xl">���️</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -3244,7 +3396,7 @@ Thanks!` : '';
                 <p class="text-purple-200">Happy Customers</p>
               </div>
               <div>
-                <div class="text-3xl font-bold text-green-400 mb-2">4.9/5</div>
+                <div class="text-3xl font-bold text-green-400 mb-2"><span id="averageRating1">4.9</span>/5</div>
                 <p class="text-purple-200">Average Rating</p>
               </div>
               <div>
@@ -3271,12 +3423,7 @@ Thanks!` : '';
     <!-- Customer Reviews Section -->
     <section id="reviews" style="background: #ffffff; padding: 80px 0; position: relative;">
       <div class="max-w-7xl mx-auto px-4">
-        <div style="text-align: center; margin-bottom: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 40px; border-radius: 20px; border: 4px solid #ffffff; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);">
-          <h3 style="font-size: 48px; font-weight: bold; margin-bottom: 20px; color: #ffffff;">⭐ CUSTOMER REVIEWS ⭐</h3>
-          <p style="font-size: 24px; color: #ffffff; max-width: 800px; margin: 0 auto;">
-            See what our customers are saying and share your own experience!
-          </p>
-        </div>
+
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <!-- Review Form -->
@@ -3302,11 +3449,11 @@ Thanks!` : '';
                   <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">⭐ Rating:</label>
                   <input type="hidden" id="selectedRating" value="0">
                   <div style="font-size: 40px; margin-bottom: 15px; text-align: center;">
-                    <span class="star-rating" data-rating="1" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(1)">⭐</span>
-                    <span class="star-rating" data-rating="2" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(2)">⭐</span>
-                    <span class="star-rating" data-rating="3" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(3)">⭐</span>
-                    <span class="star-rating" data-rating="4" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(4)">⭐</span>
-                    <span class="star-rating" data-rating="5" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(5)">⭐</span>
+                    <span class="star-rating" data-rating="1" onclick="window.setRating(1)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
+                    <span class="star-rating" data-rating="2" onclick="window.setRating(2)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
+                    <span class="star-rating" data-rating="3" onclick="window.setRating(3)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
+                    <span class="star-rating" data-rating="4" onclick="window.setRating(4)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
+                    <span class="star-rating" data-rating="5" onclick="window.setRating(5)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
                   </div>
                 </div>
 
@@ -3331,9 +3478,11 @@ Thanks!` : '';
                   </div>
                 </div>
 
-                <button type="submit" style="width: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; border: none; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); text-transform: uppercase; transition: all 0.3s ease; hover:from-indigo-700 hover:to-purple-700;">
+                <button type="submit" onclick="return window.submitReview(event)" style="width: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; border: none; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); text-transform: uppercase; transition: all 0.3s ease; hover:from-indigo-700 hover:to-purple-700;">
                   🚀 Submit Review Now
                 </button>
+
+
               </form>
             </div>
           </div>
@@ -3347,7 +3496,7 @@ Thanks!` : '';
                 <h4 style="font-size: 32px; font-weight: bold; color: #ffffff; margin-bottom: 20px; text-transform: uppercase;">⭐ Recent Customer Reviews ⭐</h4>
                 <div style="font-size: 24px; color: #ffffff;">
                   <span style="font-size: 32px;">⭐⭐⭐⭐⭐</span>
-                  <span style="font-size: 28px; font-weight: bold; margin-left: 15px;">4.9/5</span>
+                  <span style="font-size: 28px; font-weight: bold; margin-left: 15px;" id="mainRating">4.9/5</span>
                   <span style="font-size: 20px; margin-left: 10px;">(<span id="totalReviews">4</span> reviews)</span>
                 </div>
               </div>
@@ -6377,14 +6526,27 @@ Thanks,
 
           // Set up star rating functionality
           const starButtons = document.querySelectorAll('.star-rating');
-          console.log('Found', starButtons.length, 'star buttons');
+          console.log('⭐ Found', starButtons.length, 'star buttons');
 
+          // Remove any existing event listeners first
           starButtons.forEach(star => {
-            star.addEventListener('click', function() {
+            star.replaceWith(star.cloneNode(true));
+          });
+
+          // Re-select the newly cloned star buttons
+          const newStarButtons = document.querySelectorAll('.star-rating');
+
+          newStarButtons.forEach(star => {
+            // Click handler for setting rating
+            star.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
               const rating = parseInt(this.dataset.rating);
+              console.log('⭐ Star clicked:', rating);
               setRating(rating);
             });
 
+            // Hover effects
             star.addEventListener('mouseenter', function() {
               const hoverRating = parseInt(this.dataset.rating);
               highlightStars(hoverRating);
@@ -6395,13 +6557,29 @@ Thanks,
             });
           });
 
-          // Reset star display on mouse leave
+          // Reset star display on container mouse leave
           const starContainer = document.querySelector('.star-rating');
           if (starContainer && starContainer.parentElement) {
             starContainer.parentElement.addEventListener('mouseleave', function() {
               updateStarDisplay();
             });
           }
+
+          console.log('✅ Star rating event listeners attached successfully');
+
+          // Force initial star display update
+          updateStarDisplay();
+
+          // Test star functionality immediately
+          setTimeout(() => {
+            console.log('🧪 Testing star rating system...');
+            const testStarButtons = document.querySelectorAll('.star-rating');
+            if (testStarButtons.length === 5) {
+              console.log('✅ All 5 star buttons found and ready');
+            } else {
+              console.error('❌ Expected 5 star buttons, found:', testStarButtons.length);
+            }
+          }, 100);
 
           // Character counter for review text
           const reviewTextArea = document.getElementById('reviewText');
@@ -6453,6 +6631,18 @@ Thanks,
           // Load and display existing reviews
           console.log('Loading reviews...');
           loadReviews();
+
+          // Force reload after a short delay to ensure DOM is ready
+          setTimeout(() => {
+            console.log('🔄 Force loading reviews after delay...');
+            const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+            console.log('📦 Found stored reviews:', storedReviews.length);
+            if (storedReviews.length > 0) {
+              console.log('📋 First review:', storedReviews[0]);
+              loadReviews();
+            }
+          }, 1000);
+
           console.log('✅ Review system initialized successfully');
         } catch (error) {
           console.error('Error initializing review system:', error);
@@ -6487,12 +6677,84 @@ Thanks,
         submitReview();
       }
 
+      // Debug function for troubleshooting review system
+      function debugReviewSystem() {
+        console.log('🔧 DEBUG: Review System Status');
+        console.log('═══════════════════════════════════');
+
+        // Check form elements
+        const elements = {
+          reviewerName: document.getElementById('reviewerName'),
+          businessType: document.getElementById('businessType'),
+          serviceUsed: document.getElementById('serviceUsed'),
+          reviewText: document.getElementById('reviewText'),
+          selectedRating: document.getElementById('selectedRating')
+        };
+
+        console.log('📋 Form Elements:');
+        Object.keys(elements).forEach(key => {
+          const el = elements[key];
+          console.log(`  ${key}:`, el ? `✅ Found (value: "${el.value}")` : '❌ Not found');
+        });
+
+        // Check rating variables
+        console.log('⭐ Rating Variables:');
+        console.log('  selectedRating (local):', selectedRating);
+        console.log('  window.selectedRating:', window.selectedRating);
+        console.log('  hidden input value:', elements.selectedRating ? elements.selectedRating.value : 'N/A');
+
+        // Check star buttons
+        const starButtons = document.querySelectorAll('.star-rating');
+        console.log('⭐ Star Buttons:');
+        console.log('  Found:', starButtons.length, 'star buttons');
+        starButtons.forEach((star, index) => {
+          console.log(`  Star ${index + 1}:`, star.dataset.rating, star.classList.contains('active') ? '(active)' : '(inactive)');
+        });
+
+        // Check functions
+        console.log('🔧 Functions:');
+        console.log('  setRating:', typeof setRating);
+        console.log('  submitReview:', typeof submitReview);
+        console.log('  loadReviews:', typeof loadReviews);
+
+        // Check localStorage
+        const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+        console.log('��� Local Storage:');
+        console.log('  Stored reviews:', reviews.length);
+
+        alert(`Debug completed! Check console for details.\n\nQuick Status:\n- Form elements: ${Object.values(elements).filter(el => el).length}/5 found\n- Current rating: ${selectedRating || 'None'}\n- Stored reviews: ${reviews.length}\n- Star buttons: ${starButtons.length}`);
+      }
+
       // Make functions globally accessible
       window.submitReview = submitReview;
       window.setRating = setRating;
       window.toggleAllReviews = toggleAllReviews;
       window.loadReviews = loadReviews;
       window.testReviewSubmission = testReviewSubmission;
+      window.debugReviewSystem = debugReviewSystem;
+
+      // Quick test function
+      function quickTestReview() {
+        console.log('⚡ Quick test review starting...');
+
+        // Fill form with test data
+        document.getElementById('reviewerName').value = 'Test Customer';
+        document.getElementById('businessType').value = 'Test Business';
+        document.getElementById('serviceUsed').value = 'Business Website';
+        document.getElementById('reviewText').value = 'This is a test review to verify the system is working correctly.';
+
+        // Set rating
+        window.setRating(5);
+
+        console.log('Test data filled, submitting...');
+
+        // Submit after a short delay
+        setTimeout(() => {
+          window.submitReview();
+        }, 500);
+      }
+
+      window.quickTestReview = quickTestReview;
 
       // toggleAllReviews function (defined at script start to fix ReferenceError)
 
