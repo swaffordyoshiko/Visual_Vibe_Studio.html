@@ -1,13 +1,11 @@
 {
   "name": "visual-vibe-studio",
   "version": "1.0.0",
-  "description": "Visual Vibe Studio website with live chat",
+  "description": "Visual Vibe Studio website",
   "main": "visual_vibe_studio.html",
   "scripts": {
     "dev": "npx serve . -p 3000",
-    "start": "npx serve . -p 3000",
-    "build": "echo 'Static site - no build needed'",
-    "deploy": "echo 'Ready for deployment'"
+    "start": "npx serve . -p 3000"
   },
   "dependencies": {
     "serve": "^14.2.1"
