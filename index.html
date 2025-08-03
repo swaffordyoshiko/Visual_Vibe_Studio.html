@@ -3674,6 +3674,45 @@ Visual Vibe Studio Chat System`;
               );
               const submitBtn = form.querySelector('button[type="submit"]');
               if (submitBtn) submitBtn.style.display = "block";
+              <!-- Chat Widget -->
+<div class="chat-widget">
+    <button class="chat-toggle" onclick="toggleChat()">
+        <div class="status-indicator"></div>
+        <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v6l4-3 4-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+    </button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3>🎨 Visual Vibe Studio</h3>
+            <button class="close-chat" onclick="toggleChat()">×</button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                👋 Hi! Welcome to Visual Vibe Studio. How can we help with your visual content needs today?
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <form class="chat-form" onsubmit="sendMessage(event)">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="messageInput" 
+                    placeholder="Ask about our services..."
+                    required
+                >
+                <button type="submit" class="send-btn" id="sendBtn">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script src="chat-widget.js"></script>
             }
           });
       }
