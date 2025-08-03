@@ -346,7 +346,7 @@ Thanks,`);
           const emailUrl = 'mailto:support@visualvibestudio.store';
           window.open(emailUrl, '_blank');
           if (typeof addAgentMessage === 'function') {
-            addAgentMessage("📧 To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
+            addAgentMessage("�� To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
           }
         }
       }
@@ -386,7 +386,7 @@ Thanks,`);
 
         try {
           showVenmoPayment(testPricing, testOrderData, "TEST-ORDER-123");
-          console.log('✅ Test Venmo payment completed');
+          console.log('�� Test Venmo payment completed');
         } catch (error) {
           console.error('❌ Test Venmo payment failed:', error);
         }
@@ -396,16 +396,17 @@ Thanks,`);
 
       // Simple order submission that always works (prevents any redirects)
       function simpleOrderSubmit(event) {
-        // Prevent any form submission or page redirect
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
+        try {
+          console.log('🚀 Simple order submit clicked!');
 
-        console.log('🚀 Simple order submit clicked!');
+          // Prevent any form submission or page redirect
+          if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
 
-        // Get basic form data
-        const form = document.getElementById('orderForm');
+          // Get basic form data
+          const form = document.getElementById('orderForm');
         if (!form) {
           alert('Form not found');
           return;
@@ -417,30 +418,39 @@ Thanks,`);
         const email = form.querySelector('input[name="email"]')?.value?.trim();
         const services = form.querySelector('select[name="services"]');
 
+        console.log('📝 Form validation starting...');
+        console.log('📝 Form data:', { businessName, industry, email, services: services?.selectedOptions?.length });
+
         // Check required fields
         if (!businessName) {
+          console.log('❌ Missing business name');
           alert('Please enter your business name');
           form.querySelector('input[name="businessName"]')?.focus();
-          return;
+          return false;
         }
 
         if (!industry) {
+          console.log('❌ Missing industry');
           alert('Please enter your business industry');
           form.querySelector('input[name="industry"]')?.focus();
-          return;
+          return false;
         }
 
         if (!email || !email.includes('@')) {
+          console.log('❌ Invalid email');
           alert('Please enter a valid email address');
           form.querySelector('input[name="email"]')?.focus();
-          return;
+          return false;
         }
 
         if (!services || services.selectedOptions.length === 0) {
+          console.log('❌ No services selected');
           alert('Please select at least one service');
           services?.focus();
-          return;
+          return false;
         }
+
+        console.log('✅ Form validation passed');
 
         // Collect remaining form data
         const phone = form.querySelector('input[name="phone"]')?.value || 'Not provided';
@@ -486,10 +496,26 @@ Thanks,`);
           totalAmount: totalAmount.toFixed(2),
           depositAmount
         });
+
+        } catch (error) {
+          console.error('❌ Error in simpleOrderSubmit:', error);
+          alert('There was an error processing your order. Please try again or contact support at (402) 979-7184');
+
+          // Reset button state
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const submitBtnText = document.getElementById('submitBtnText');
+          if (submitBtn && submitBtnText) {
+            submitBtnText.textContent = 'Start My Project Now';
+            submitBtn.disabled = false;
+          }
+        }
+
+        // Always prevent form submission
+        return false;
       }
 
       function showSimpleVenmoPayment(depositAmount, businessName, services) {
-        console.log('�� Showing simple Venmo payment...');
+        console.log('💳 Showing simple Venmo payment...');
 
         const container = document.getElementById('paypal-button-container');
         if (!container) {
@@ -624,7 +650,7 @@ Thanks,`);
 
           } else {
             // On desktop, go directly to Venmo website
-            console.log('💻 Desktop detected, opening Venmo website');
+            console.log('🖥️ Desktop detected, opening Venmo website');
             openVenmoWebsite(cleanAmount, cleanBusinessName);
           }
 
@@ -669,7 +695,7 @@ Thanks,`);
 
 💳 Venmo Username: @Yoshiko-Swafford
 💰 Amount: $${amount}
-📝 Note: Visual Vibe Studio - 50% Deposit for ${businessName}
+�� Note: Visual Vibe Studio - 50% Deposit for ${businessName}
 
 Options:
 • Use the Venmo app on your phone
@@ -765,116 +791,249 @@ Reply to customer at: ${orderData.email}`;
         }
       }
 
-      // Automatically send order to business email using multiple methods
+      // Send order to business email automatically using multiple reliable methods
       function sendOrderToBusinessEmail(orderData, subject, emailBody) {
-        console.log('📧 Sending order to business email automatically...');
+        console.log('📧 Automatically sending order to business email...');
+        console.log('📧 Order data:', orderData);
+        console.log('📧 Subject:', subject);
 
-        // Method 1: Try EmailJS with proper configuration
-        if (typeof emailjs !== 'undefined') {
-          try {
-            emailjs.send('service_l4qcrmc', 'template_qdn6zf8', {
-              to_email: 'support@visualvibestudio.store',
-              subject: subject,
-              message: emailBody,
-              from_name: orderData.businessName,
-              customer_email: orderData.email,
-              customer_phone: orderData.phone,
-              order_total: orderData.totalAmount,
-              deposit_amount: orderData.depositAmount,
-              services: orderData.selectedServices.join(', ')
-            }).then(function(response) {
-              console.log('✅ Order email sent via EmailJS!', response);
-              showAlert('Order automatically sent to Visual Vibe Studio!', 'success');
-            }).catch(function(error) {
-              console.log('❌ EmailJS failed, trying fallback...', error);
-              sendOrderViaWebhook(orderData, subject, emailBody);
+        // Method 1: Try EmailJS with working configuration
+        sendViaEmailJS(orderData, subject, emailBody);
+
+        // Method 2: Backup with Web3Forms
+        setTimeout(() => {
+          sendViaWeb3Forms(orderData, subject, emailBody);
+        }, 2000);
+
+        // Method 3: Create downloadable backup
+        createDownloadableOrderBackup(orderData, subject, emailBody);
+      }
+
+      // Show order details for manual email sending
+      function showOrderDetailsForEmail(orderData, subject, emailBody) {
+        console.log('📧 Showing order details for manual email...');
+
+        // Create a simple alert with order details
+        const orderSummary = `ORDER DETAILS TO EMAIL:
+
+TO: support@visualvibestudio.store
+SUBJECT: ${subject}
+
+Business: ${orderData.businessName}
+Industry: ${orderData.industry}
+Email: ${orderData.email}
+Phone: ${orderData.phone}
+Services: ${orderData.selectedServices.join(', ')}
+Total: $${orderData.totalAmount}
+Deposit: $${orderData.depositAmount}
+Due Date: ${orderData.dueDate}
+
+Details: ${orderData.details}
+
+A backup file with complete details has been downloaded.
+Please email this information to support@visualvibestudio.store`;
+
+        // Show order details in a way that won't navigate away
+        if (confirm(orderSummary + '\n\nWould you like to copy this to your clipboard?')) {
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(`TO: support@visualvibestudio.store\nSUBJECT: ${subject}\n\n${emailBody}`).then(() => {
+              alert('Order details copied to clipboard! Please paste into your email client and send to support@visualvibestudio.store');
+            }).catch(() => {
+              alert('Please manually copy the order details shown above and email to support@visualvibestudio.store');
             });
-          } catch (error) {
-            console.log('❌ EmailJS error, trying fallback...', error);
-            sendOrderViaWebhook(orderData, subject, emailBody);
-          }
-        } else {
-          console.log('📧 EmailJS not available, using webhook...');
-          sendOrderViaWebhook(orderData, subject, emailBody);
-        }
-      }
-
-      // Send order via webhook to Zapier/Make.com
-      function sendOrderViaWebhook(orderData, subject, emailBody) {
-        const webhookData = {
-          subject: subject,
-          message: emailBody,
-          customer: {
-            businessName: orderData.businessName,
-            industry: orderData.industry,
-            email: orderData.email,
-            phone: orderData.phone
-          },
-          order: {
-            services: orderData.selectedServices,
-            total: orderData.totalAmount,
-            deposit: orderData.depositAmount,
-            dueDate: orderData.dueDate,
-            details: orderData.details,
-            timestamp: new Date().toISOString()
-          }
-        };
-
-        // Try webhook to automation service (this will send email immediately)
-        fetch('https://eo7l16mbckzc6cl.m.pipedream.net/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData)
-        }).then(response => {
-          if (response.ok) {
-            console.log('✅ Order sent via webhook!');
-            showAlert('Order sent to Visual Vibe Studio!', 'success');
           } else {
-            console.log('❌ Webhook failed, using email fallback...');
-            sendOrderViaDirectEmail(orderData, subject, emailBody);
+            alert('Please manually copy the order details shown above and email to support@visualvibestudio.store');
           }
-        }).catch(error => {
-          console.log('❌ Webhook error, using email fallback...', error);
-          sendOrderViaDirectEmail(orderData, subject, emailBody);
-        });
+        }
+
+        console.log('📧 Order details displayed successfully');
       }
 
-      // Direct email sending fallback using AJAX (no page redirect)
-      function sendOrderViaDirectEmail(orderData, subject, emailBody) {
-        console.log('📧 Using direct email fallback...');
+      // Send order via Web3Forms (reliable free email service)
+      function sendOrderViaWeb3Forms(orderData, subject, emailBody) {
+        console.log('📧 Attempting to send via Web3Forms...');
 
         const formData = new FormData();
-        formData.append('_subject', subject);
+        formData.append('access_key', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'); // You'll need to get a real access key from web3forms.com
+        formData.append('subject', subject);
+        formData.append('from_name', orderData.businessName);
+        formData.append('email', orderData.email);
         formData.append('message', emailBody);
+
+        // Additional order details as separate fields
         formData.append('business_name', orderData.businessName);
-        formData.append('customer_email', orderData.email);
-        formData.append('customer_phone', orderData.phone);
+        formData.append('industry', orderData.industry);
+        formData.append('phone', orderData.phone);
         formData.append('services', orderData.selectedServices.join(', '));
         formData.append('total_amount', orderData.totalAmount);
         formData.append('deposit_amount', orderData.depositAmount);
+        formData.append('due_date', orderData.dueDate);
+        formData.append('details', orderData.details);
 
-        // Use fetch instead of form.submit() to prevent page redirect
-        fetch('https://formspree.io/f/xanypjgn', {
+        console.log('📧 Sending to Web3Forms...');
+
+        fetch('https://api.web3forms.com/submit', {
           method: 'POST',
-          body: formData,
-          headers: {
-            'Accept': 'application/json'
-          }
+          body: formData
         }).then(response => {
+          console.log('📧 Web3Forms response status:', response.status);
           if (response.ok) {
-            console.log('✅ Order submitted via Formspree');
-            showAlert('Order details sent! You will be contacted within 24 hours.', 'success');
+            return response.json();
           } else {
-            console.log('❌ Formspree submission failed');
-            sendOrderViaSMSBackup(orderData, subject);
+            throw new Error(`Web3Forms failed with status: ${response.status}`);
           }
+        }).then(data => {
+          console.log('✅ Order sent via Web3Forms!', data);
+          showAlert('Order successfully sent to Visual Vibe Studio!', 'success');
         }).catch(error => {
-          console.log('�� Formspree error:', error);
-          sendOrderViaSMSBackup(orderData, subject);
+          console.log('❌ Web3Forms failed, trying Netlify fallback...', error);
+          sendOrderViaNetlify(orderData, subject, emailBody);
         });
       }
+
+      // Fallback: Send via Netlify Forms
+      function sendOrderViaNetlify(orderData, subject, emailBody) {
+        console.log('📧 Attempting to send via Netlify Forms...');
+
+        const formData = new FormData();
+        formData.append('form-name', 'order-submissions');
+        formData.append('subject', subject);
+        formData.append('business-name', orderData.businessName);
+        formData.append('industry', orderData.industry);
+        formData.append('email', orderData.email);
+        formData.append('phone', orderData.phone);
+        formData.append('services', orderData.selectedServices.join(', '));
+        formData.append('total-amount', orderData.totalAmount);
+        formData.append('deposit-amount', orderData.depositAmount);
+        formData.append('due-date', orderData.dueDate);
+        formData.append('details', orderData.details);
+        formData.append('message', emailBody);
+
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData)
+        }).then(response => {
+          console.log('📧 Netlify response status:', response.status);
+          if (response.ok) {
+            console.log('✅ Order sent via Netlify Forms!');
+            showAlert('Order successfully sent to Visual Vibe Studio!', 'success');
+          } else {
+            throw new Error(`Netlify failed with status: ${response.status}`);
+          }
+        }).catch(error => {
+          console.log('❌ Netlify failed, trying mailto fallback...', error);
+          sendOrderViaMailto(orderData, subject, emailBody);
+        });
+      }
+
+      // Primary method: Generate mailto link (most reliable)
+      function sendOrderViaMailto(orderData, subject, emailBody) {
+        console.log('📧 Sending order via email client...');
+
+        // Create a cleaner, shorter email body for mailto
+        const shortEmailBody = `NEW PROJECT ORDER
+
+Business: ${orderData.businessName}
+Industry: ${orderData.industry}
+Email: ${orderData.email}
+Phone: ${orderData.phone}
+Services: ${orderData.selectedServices.join(', ')}
+Total: $${orderData.totalAmount}
+Deposit: $${orderData.depositAmount}
+Due Date: ${orderData.dueDate}
+
+Project Details:
+${orderData.details}
+
+Payment Method: Venmo (@Yoshiko-Swafford)
+Order Date: ${new Date().toLocaleString()}`;
+
+        const mailtoUrl = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(shortEmailBody)}`;
+
+        console.log('📧 Opening email client...');
+
+        // Try to open default email client
+        const emailWindow = window.open(mailtoUrl, '_blank');
+
+        // Log complete order details for manual processing
+        console.log('📧 COMPLETE ORDER DETAILS:');
+        console.log('=====================================');
+        console.log('Business Name:', orderData.businessName);
+        console.log('Industry:', orderData.industry);
+        console.log('Email:', orderData.email);
+        console.log('Phone:', orderData.phone);
+        console.log('Services:', orderData.selectedServices.join(', '));
+        console.log('Total Amount:', orderData.totalAmount);
+        console.log('Deposit Amount:', orderData.depositAmount);
+        console.log('Due Date:', orderData.dueDate);
+        console.log('Details:', orderData.details);
+        console.log('Full Email Body:', emailBody);
+        console.log('=====================================');
+
+        // Save order to localStorage as backup
+        try {
+          const orders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+          orders.push({
+            ...orderData,
+            orderDate: new Date().toISOString(),
+            emailBody: emailBody,
+            subject: subject
+          });
+          localStorage.setItem('pendingOrders', JSON.stringify(orders));
+          console.log('📧 Order saved to localStorage for backup');
+        } catch (error) {
+          console.error('Error saving order to localStorage:', error);
+        }
+
+        // Show success message
+        showAlert('Order submitted! Your email client should open with the order details. Please send the email to complete your order.', 'success');
+      }
+
+      // Create downloadable backup of order details
+      function createDownloadableOrderBackup(orderData, subject, emailBody) {
+        console.log('�� Creating downloadable order backup...');
+
+        const orderText = `${emailBody}
+
+==========================================
+BACKUP ORDER DETAILS - ${new Date().toLocaleString()}
+==========================================
+
+To: support@visualvibestudio.store
+Subject: ${subject}
+
+If your email client didn't open automatically, please copy this information and email it to support@visualvibestudio.store
+
+Thank you for your order!
+Visual Vibe Studio`;
+
+        try {
+          // Create downloadable file
+          const blob = new Blob([orderText], { type: 'text/plain' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `order-backup-${orderData.businessName.replace(/[^a-zA-Z0-9]/g, '-')}-${Date.now()}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+
+          console.log('📥 Order backup file downloaded');
+
+          // Show additional message after a delay
+          setTimeout(() => {
+            showAlert('Order backup file downloaded! If email client didn\'t open, you can email the downloaded file to support@visualvibestudio.store', 'info');
+          }, 2000);
+
+        } catch (error) {
+          console.error('Error creating download backup:', error);
+        }
+      }
+
+      // Keep the SMS backup function for final fallback
+      // (This function is defined later in the code)
 
       // SMS backup notification
       function sendOrderViaSMSBackup(orderData, subject) {
@@ -971,11 +1130,11 @@ Reply to customer at: ${orderData.email}`;
                 <button onclick="copyOrderDetails()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
                   📋 Copy Order Details
                 </button>
-                <button onclick="sendOrderEmailNow()" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <button type="button" onclick="sendOrderEmailNow(); return false;" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                   📧 Send Email
                 </button>
               </div>
-              <button onclick="closeOrderModal()" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+              <button type="button" onclick="closeOrderModal(); return false;" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors">
                 ✅ Complete Order
               </button>
             </div>
@@ -1035,7 +1194,7 @@ Details: ${currentOrderData.details}`;
             return;
           }
 
-          console.log('������ Sending email manually...');
+          console.log('📧 Sending email manually...');
 
           const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(currentOrderSubject)}&body=${encodeURIComponent(currentOrderEmailBody)}`;
 
@@ -1058,38 +1217,41 @@ Details: ${currentOrderData.details}`;
         }
       }
 
-      // New function to actually send order email automatically
+      // Simple function to handle email sending without navigation
       function sendOrderEmailNow() {
         try {
-          console.log('📧 Sending order email automatically...');
+          console.log('📧 Processing email request...');
           if (!currentOrderData || !currentOrderSubject || !currentOrderEmailBody) {
             console.error('No order data available');
-            showAlert('No order data available', 'error');
-            return;
+            alert('No order data available. Please submit your order again.');
+            return false;
           }
 
           // Show loading state
           const sendButton = document.querySelector('button[onclick="sendOrderEmailNow()"]');
           if (sendButton) {
-            sendButton.textContent = '📧 Sending...';
+            sendButton.textContent = '📧 Processing...';
             sendButton.disabled = true;
           }
 
-          // Send the email automatically
-          sendOrderToBusinessEmail(currentOrderData, currentOrderSubject, currentOrderEmailBody);
+          // Show order details without navigating
+          showOrderDetailsForEmail(currentOrderData, currentOrderSubject, currentOrderEmailBody);
 
-          // Re-enable button after attempt
+          // Update button
           setTimeout(() => {
             if (sendButton) {
-              sendButton.textContent = '✅ Email Sent!';
+              sendButton.textContent = '✅ Details Shown!';
               sendButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
               sendButton.classList.add('bg-green-600', 'hover:bg-green-700');
             }
-          }, 2000);
+          }, 1000);
+
+          return false; // Prevent any form submission
 
         } catch (error) {
-          console.error('Error sending email:', error);
-          showAlert('Error sending email. Please call (402) 979-7184 instead.', 'error');
+          console.error('Error processing email:', error);
+          alert('Error processing email. Please call (402) 979-7184 for assistance.');
+          return false;
         }
       }
 
@@ -1184,8 +1346,82 @@ Details: ${currentOrderData.details}`;
 
 
 
+      // Test email sending functionality
+      function testEmailSending() {
+        console.log('🧪 Testing email sending functionality...');
+
+        const testOrderData = {
+          businessName: 'Test Business Ltd',
+          industry: 'Technology',
+          email: 'test@example.com',
+          phone: '(555) 123-4567',
+          dueDate: '2024-01-15',
+          details: 'This is a test order to verify email functionality.',
+          selectedServices: ['Website Design', 'Logo Design'],
+          totalAmount: '200.00',
+          depositAmount: '100.00'
+        };
+
+        console.log('🧪 Test order data:', testOrderData);
+
+        // Call the email sending function directly
+        sendOrderEmail(testOrderData);
+
+        console.log('🧪 Test email sending triggered. Check console for detailed logs.');
+      }
+
+      // Ensure form never submits
+      document.addEventListener('DOMContentLoaded', function() {
+        const orderForm = document.getElementById('orderForm');
+        if (orderForm) {
+          orderForm.addEventListener('submit', function(e) {
+            console.log('⚠️ Form submit event intercepted and prevented');
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          });
+          console.log('✅ Form submission prevention set up');
+        }
+      });
+
+      // Simple test function for debugging
+      function testButtonClick() {
+        console.log('🧪 Test button click function called!');
+        alert('Button click is working! Function is properly connected.');
+        return false;
+      }
+
       // Make functions globally available
       window.simpleOrderSubmit = simpleOrderSubmit;
+      window.testButtonClick = testButtonClick;
+
+      // Verify function is available
+      console.log('✅ simpleOrderSubmit function defined:', typeof window.simpleOrderSubmit);
+
+      // Test button availability
+      setTimeout(() => {
+        const submitBtn = document.getElementById('submitOrderBtn');
+        console.log('✅ Submit button found:', !!submitBtn);
+        if (submitBtn) {
+          console.log('✅ Submit button onclick:', submitBtn.onclick);
+          console.log('✅ Submit button disabled?', submitBtn.disabled);
+
+          // Add additional click handler for testing
+          submitBtn.addEventListener('click', function(e) {
+            console.log('🎯 Button click event detected via addEventListener!');
+            e.preventDefault();
+            e.stopPropagation();
+
+            // If onclick isn't working, use this as backup
+            if (typeof window.simpleOrderSubmit === 'function') {
+              console.log('🔄 Calling simpleOrderSubmit via addEventListener...');
+              window.simpleOrderSubmit(e);
+            }
+
+            return false;
+          });
+        }
+      }, 1000);
       window.showSimpleVenmoPayment = showSimpleVenmoPayment;
       window.copyVenmoInfo = copyVenmoInfo;
       window.copyVenmoInfoFromData = copyVenmoInfoFromData;
@@ -1200,10 +1436,16 @@ Details: ${currentOrderData.details}`;
       window.sendEmailManually = sendEmailManually;
       window.sendOrderEmailNow = sendOrderEmailNow;
       window.sendOrderToBusinessEmail = sendOrderToBusinessEmail;
+      window.showOrderDetailsForEmail = showOrderDetailsForEmail;
+      window.sendOrderViaWeb3Forms = sendOrderViaWeb3Forms;
+      window.sendOrderViaNetlify = sendOrderViaNetlify;
+      window.sendOrderViaMailto = sendOrderViaMailto;
+      window.createDownloadableOrderBackup = createDownloadableOrderBackup;
       window.sendOrderViaSMSBackup = sendOrderViaSMSBackup;
       window.calculateOrderTotal = calculateOrderTotal;
       window.closeOrderModal = closeOrderModal;
       window.sendOrderViaEmailJS = sendOrderViaEmailJS;
+      window.testEmailSending = testEmailSending;
 
       // Verify functions are properly defined
       setTimeout(() => {
@@ -1278,8 +1520,8 @@ Details: ${currentOrderData.details}`;
 
       async function sendMessage() {
         try {
-          console.log('���� sendMessage function called');
-          console.log('📤 Function called from:', new Error().stack);
+          console.log('📝 sendMessage function called');
+          console.log('🔍 Function called from:', new Error().stack);
 
           const input = document.getElementById('chatInput');
           if (!input) {
@@ -1288,7 +1530,7 @@ Details: ${currentOrderData.details}`;
           }
 
           const message = input.value.trim();
-          console.log('📝 Message content:', message, 'Length:', message.length);
+          console.log('💬 Message content:', message, 'Length:', message.length);
 
           if (!message) {
             console.log('⚠️ Empty message, not sending');
@@ -3265,7 +3507,7 @@ Thanks!` : '';
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a href="#services" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            🚀 See Our Services
+            ✨ See Our Services
           </a>
           <a href="#portfolio" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
             View Portfolio
@@ -3276,7 +3518,7 @@ Thanks!` : '';
         <div class="mt-16 pt-8 border-t border-white/20">
           <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
           <div class="flex justify-center items-center space-x-8 opacity-60">
-            <div class="text-2xl">⭐⭐⭐����⭐</div>
+            <div class="text-2xl">⭐⭐⭐⭐⭐</div>
             <div class="text-sm"><span id="customerRating1">4.9</span>/5 Customer Rating</div>
           </div>
         </div>
@@ -3403,7 +3645,7 @@ Thanks!` : '';
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">��</span>
+              <span class="text-green-500 mr-2">✓</span>
               Mobile responsive design
             </div>
             <div class="flex items-center">
@@ -3423,7 +3665,7 @@ Thanks!` : '';
           <div class="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $80
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">��</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📄</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Business Brochure
           </h4>
@@ -3494,7 +3736,7 @@ Thanks!` : '';
               Standard & premium finishes
             </div>
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">���</span>
+              <span class="text-green-500 mr-2">✓</span>
               QR codes for digital contact
             </div>
             <div class="flex items-center">
@@ -3552,7 +3794,7 @@ Thanks!` : '';
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">���️</span>
+              <span class="text-2xl">🎨</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -3657,7 +3899,7 @@ Thanks!` : '';
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-sm">⭐���⭐⭐⭐</div>
               <div class="bg-orange-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Marketing Flyer</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -3703,7 +3945,7 @@ Thanks!` : '';
               </div>
             </div>
             <div class="mb-4">
-              <div class="text-yellow-400 text-lg">��⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-4">
               "The logo design exceeded all expectations! It perfectly captures our innovative spirit. Brand recognition has increased by 300% since the rebrand. Worth every penny!"
@@ -3858,108 +4100,6 @@ Thanks!` : '';
             </div>
           </div>
 
-          <!-- Customer Reviews Display -->
-          <div class="lg:col-span-2 w-full">
-            <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 40px; border: 4px solid #ffffff; border-radius: 20px; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);">
-
-              <!-- Reviews Header -->
-              <div style="text-align: center; margin-bottom: 40px;">
-
-                <div style="font-size: 24px; color: #ffffff;">
-                  <span style="font-size: 32px;">⭐⭐⭐⭐⭐</span>
-                  <span style="font-size: 28px; font-weight: bold; margin-left: 15px;" id="mainRating">4.9/5</span>
-                  <span style="font-size: 20px; margin-left: 10px;">(<span id="totalReviews">4</span> reviews)</span>
-                </div>
-              </div>
-
-              <!-- Reviews Container -->
-              <div id="reviewsContainer" style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
-                <div id="noReviewsMessage" class="hidden text-center py-8 text-gray-500">
-                  <p>No reviews yet. Be the first to leave a review!</p>
-                </div>
-
-                <!-- Review 1 -->
-                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
-                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <div style="background: linear-gradient(45deg, #ff0000, #ff6600); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">S</div>
-                    <div>
-                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">Sarah M.</h5>
-                      <p style="margin: 0; color: #666666; font-size: 16px;">Restaurant Owner</p>
-                    </div>
-                    <div style="margin-left: auto; text-align: right;">
-                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐��⭐</div>
-                      <p style="margin: 0; font-size: 14px; color: #666666;">2 days ago</p>
-                    </div>
-                  </div>
-                  <div style="background: #6366f1; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Business Website</div>
-                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"Visual Vibe Studio completely transformed our restaurant's online presence! Our new website increased online orders by 200% in just 3 weeks. Yoshiko's attention to detail is incredible - she understood our brand perfectly!"</p>
-                </div>
-
-                <!-- Review 2 -->
-                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
-                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <div style="background: linear-gradient(45deg, #10b981, #059669); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">M</div>
-                    <div>
-                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">Marcus T.</h5>
-                      <p style="margin: 0; color: #666666; font-size: 16px;">Tech Startup CEO</p>
-                    </div>
-                    <div style="margin-left: auto; text-align: right;">
-                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
-                      <p style="margin: 0; font-size: 14px; color: #666666;">1 week ago</p>
-                    </div>
-                  </div>
-                  <div style="background: #8b5cf6; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Logo Design</div>
-                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"The logo design exceeded all our expectations! It perfectly captures our innovative spirit and has become instantly recognizable. Brand recognition increased by 400% since the rebrand. Worth every penny!"</p>
-                </div>
-
-                <!-- Review 3 -->
-                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
-                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <div style="background: linear-gradient(45deg, #ec4899, #be185d); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">L</div>
-                    <div>
-                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">Lisa R.</h5>
-                      <p style="margin: 0; color: #666666; font-size: 16px;">Fitness Center Manager</p>
-                    </div>
-                    <div style="margin-left: auto; text-align: right;">
-                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
-                      <p style="margin: 0; font-size: 14px; color: #666666;">3 days ago</p>
-                    </div>
-                  </div>
-                  <div style="background: #f59e0b; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Marketing Flyer</div>
-                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"The marketing flyers were absolutely stunning! Our new member sign-ups increased by 75% in the first month. The design perfectly captured the energy and motivation we wanted to convey. Highly recommend!"</p>
-                </div>
-
-                <!-- Review 4 -->
-                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
-                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <div style="background: linear-gradient(45deg, #3b82f6, #1d4ed8); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">D</div>
-                    <div>
-                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">David K.</h5>
-                      <p style="margin: 0; color: #666666; font-size: 16px;">Real Estate Agent</p>
-                    </div>
-                    <div style="margin-left: auto; text-align: right;">
-                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
-                      <p style="margin: 0; font-size: 14px; color: #666666;">5 days ago</p>
-                    </div>
-                  </div>
-                  <div style="background: #ef4444; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Business Cards</div>
-                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"Professional business cards that make a lasting impression! The design is clean, memorable, and perfectly represents my brand. I've gotten so many compliments and referrals from these cards. Amazing work!"</p>
-                </div>
-
-              </div>
-
-              <!-- View More Button -->
-              <div style="text-align: center; margin-top: 30px;">
-                <button onclick="toggleAllReviews()" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease; margin-right: 10px;">
-                  ��� <span id="viewAllReviewsText">View All Reviews</span>
-                </button>
-                <button onclick="forceReloadReviews()" style="background: rgba(0, 255, 0, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(0, 255, 0, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
-                  🔄 Reload Reviews
-                </button>
-              </div>
-
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -3988,7 +4128,7 @@ Thanks!` : '';
         <!-- Trust Indicators Row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-            <div class="text-2xl mb-2">����</div>
+            <div class="text-2xl mb-2">🔒</div>
             <h4 class="font-semibold text-green-800 mb-1">100% Secure</h4>
             <p class="text-green-600 text-sm">Your data is protected</p>
           </div>
@@ -4004,7 +4144,7 @@ Thanks!` : '';
           </div>
         </div>
 
-        <form class="space-y-6 bg-white rounded-2xl p-8 shadow-lg" id="orderForm" onsubmit="return false;">
+        <form class="space-y-6 bg-white rounded-2xl p-8 shadow-lg" id="orderForm" onsubmit="event.preventDefault(); return false;">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block mb-2 font-semibold text-gray-700 flex items-center">
@@ -4143,11 +4283,11 @@ Thanks!` : '';
               type="button"
               id="submitOrderBtn"
               class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3"
-              onclick="simpleOrderSubmit()"
+              onclick="console.log('🎯 Button clicked!'); simpleOrderSubmit(event); return false;"
             >
               <span>🚀</span>
               <span id="submitBtnText">Start My Project Now</span>
-              <span>��</span>
+              <span>🚀</span>
             </button>
             <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included</p>
           </div>
@@ -4376,7 +4516,7 @@ Thanks!` : '';
                   business hours.
                 </p>
 
-                <div class="flex items-center space-x-2">
+                <div id="onlineStatus" class="flex items-center space-x-2">
                   <div
                     class="w-2 h-2 bg-green-400 rounded-full animate-pulse"
                   ></div>
@@ -4737,7 +4877,7 @@ Thanks!` : '';
 
         // Report results
         console.log('🔍 Issues found:', issues);
-        console.log('�� Repairs completed:', repairs);
+        console.log('✅ Repairs completed:', repairs);
 
         if (issues.length === 0 && repairs.length > 0) {
           if (typeof showAlert === 'function') {
@@ -4836,7 +4976,7 @@ Thanks!` : '';
             chatSendBtn.setAttribute('data-initialized', 'true');
             console.log('✅ Send button event listener added');
           } else {
-            console.log('⚠��� Send button already initialized or not found', !!chatSendBtn);
+            console.log('⚠️ Send button already initialized or not found', !!chatSendBtn);
           }
 
           // Initialize send button
@@ -5104,7 +5244,7 @@ Thanks!` : '';
             console.log('✅ Sign up modal test passed');
             setTimeout(() => {
               closeSignUpModal();
-              console.log('��� All modal tests completed');
+              console.log('✅ All modal tests completed');
             }, 2000);
           }, 2000);
         } catch (error) {
@@ -5153,7 +5293,7 @@ Thanks!` : '';
           }
 
           if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
-            console.log('�� Order form functions are properly defined');
+            console.log('✅ Order form functions are properly defined');
           } else {
             console.error('❌ Order form functions not properly defined');
           }
@@ -5706,7 +5846,7 @@ ${'='.repeat(40)}
                       <ul class="text-sm text-green-700 text-left space-y-1">
                         <li>📧 Receipt sent to your email address</li>
                         <li>💰 We'll confirm your Venmo payment within 24 hours</li>
-                        <li>��� We'll contact you to discuss project details</li>
+                        <li>📞 We'll contact you to discuss project details</li>
                         <li>🎨 Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
@@ -5724,13 +5864,13 @@ ${'='.repeat(40)}
           .catch(() => {
             venmoContainer.innerHTML = `
                   <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-8 text-center">
-                    <div class="text-yellow-600 text-4xl mb-4">������</div>
+                    <div class="text-yellow-600 text-4xl mb-4">🎉</div>
                     <h4 class="text-2xl font-bold text-yellow-800 mb-3">Order Submitted!</h4>
                     <p class="text-yellow-700 mb-4">We've received your order. Receipt will be sent manually within 24 hours.</p>
                     <div class="bg-white rounded-lg p-4 mb-4 border border-yellow-200">
                       <p class="text-sm text-yellow-600 mb-2"><strong>Next Steps:</strong></p>
                       <ul class="text-sm text-yellow-700 text-left space-y-1">
-                        <li>��� Manual receipt will be sent within 24 hours</li>
+                        <li>📧 Manual receipt will be sent within 24 hours</li>
                         <li>💰 We'll confirm your Venmo payment</li>
                         <li>📞 We'll contact you to discuss your project</li>
                         <li>🎨 Project work begins once payment is confirmed</li>
@@ -5853,7 +5993,7 @@ ${'='.repeat(40)}
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━━━━━━━━━━━━━━━
+      ━━━━━━━━━━━━��━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -5862,21 +6002,21 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      ���━━━━━━━━━━━━���━
+      💰━━━━━━━━━━━━━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
       Payment Method: Venmo (@Yoshiko-Swafford)
 
       NEXT STEPS:
-      �������━━━━��━━━━━━━
+      ➡️━━━━━━���━━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
       📋 Project discussion and planning will begin
       • Final 50% payment due upon project completion
       • Estimated completion: ${formData.get("dueDate")}
 
       CONTACT INFORMATION:
-      ━━━━━━━━━━━��━━━
+      📞━━━━━━━━━━━━━━━
       Email: support@visualvibestudio.store
       Phone: (402) 979-7184
       Website: www.visualvibestudio.store
@@ -6311,7 +6451,7 @@ ${'='.repeat(40)}
 
       async function sendEmailNotification(message) {
         // Send to both business email and create backup
-        const emailSubject = encodeURIComponent('��� VVS Chat Alert - Respond ASAP');
+        const emailSubject = encodeURIComponent('🚨 VVS Chat Alert - Respond ASAP');
         const emailBody = encodeURIComponent(message);
 
         // Primary notification to business email
@@ -6538,7 +6678,7 @@ ${'='.repeat(40)}
       /*function callDirectly() {
         trackChatEvent('call_attempted');
         window.location.href = 'tel:+14029797184';
-        addAgentMessage("��� Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
+        addAgentMessage("📞 Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
       }
 
       function emailDirectly() {
@@ -7009,7 +7149,7 @@ Thanks,
             const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
             console.log('📦 Found stored reviews:', storedReviews.length);
             if (storedReviews.length > 0) {
-              console.log('📋 First review:', storedReviews[0]);
+              console.log('📝 First review:', storedReviews[0]);
               loadReviews();
             }
           }, 1000);
@@ -7090,7 +7230,7 @@ Thanks,
 
         // Check localStorage
         const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        console.log('��� Local Storage:');
+        console.log('💾 Local Storage:');
         console.log('  Stored reviews:', reviews.length);
 
         alert(`Debug completed! Check console for details.\n\nQuick Status:\n- Form elements: ${Object.values(elements).filter(el => el).length}/5 found\n- Current rating: ${selectedRating || 'None'}\n- Stored reviews: ${reviews.length}\n- Star buttons: ${starButtons.length}`);
@@ -7372,6 +7512,56 @@ Thanks,
           });
       }
       */
+
+      // Business hours check for online status
+      function isBusinessHours() {
+        const now = new Date();
+        const day = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const hour = now.getHours();
+
+        // Business hours: Monday-Friday 9 AM to 6 PM (18:00)
+        // Adjust timezone if needed - currently using local time
+        if (day >= 1 && day <= 5) { // Monday to Friday
+          return hour >= 9 && hour < 18; // 9 AM to 6 PM
+        }
+
+        return false; // Not business hours on weekends
+      }
+
+      function updateOnlineStatus() {
+        const onlineStatusElement = document.getElementById('onlineStatus');
+        if (!onlineStatusElement) return;
+
+        if (isBusinessHours()) {
+          onlineStatusElement.style.display = 'flex';
+        } else {
+          onlineStatusElement.style.display = 'none';
+        }
+      }
+
+      // Update online status immediately
+      updateOnlineStatus();
+
+      // Update online status every minute to handle hour changes
+      setInterval(updateOnlineStatus, 60000);
+
+      // Make functions globally available for testing
+      window.isBusinessHours = isBusinessHours;
+      window.updateOnlineStatus = updateOnlineStatus;
     </script>
+    <!-- Hidden Netlify form for order submissions -->
+    <form name="order-submissions" netlify style="display: none;">
+      <input type="text" name="business-name" />
+      <input type="text" name="industry" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <input type="text" name="services" />
+      <input type="text" name="total-amount" />
+      <input type="text" name="deposit-amount" />
+      <input type="date" name="due-date" />
+      <textarea name="details"></textarea>
+      <textarea name="message"></textarea>
+      <input type="text" name="subject" />
+    </form>
   </body>
 </html>
