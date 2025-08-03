@@ -222,7 +222,7 @@
         }
       }
 
-      function sendMessage() {
+      async function sendMessage() {
         try {
           console.log('Send message called');
           const input = document.getElementById('chatInput');
@@ -239,32 +239,51 @@
 
           console.log('Sending message:', message);
 
-          // Add user message to chat
-          const messagesContainer = document.getElementById('chatMessages');
-          if (messagesContainer) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'chat-message user';
-            messageDiv.innerHTML = `<div>${message}</div>`;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          // Disable send button during processing
+          const sendBtn = document.getElementById('chatSendBtn');
+          if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
           }
 
-          // Clear input
-          input.value = '';
+          // Add user message to chat using the proper function
+          addUserMessage(message);
 
-          // Show response after delay
-          setTimeout(() => {
-            if (messagesContainer) {
-              const responseDiv = document.createElement('div');
-              responseDiv.className = 'chat-message agent';
-              responseDiv.innerHTML = `<div>Thanks for your message! I've received it and will respond shortly. For immediate assistance, call me at (402) 979-7184.</div>`;
-              messagesContainer.appendChild(responseDiv);
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-          }, 1000);
+          // Clear input and update send button state
+          input.value = '';
+          updateSendButton();
+
+          // Show sending indicator
+          showSendingIndicator();
+
+          try {
+            // Actually send the message to the business owner
+            await sendMessageToBusinessOwner(message);
+
+            // Remove sending indicator
+            removeSendingIndicator();
+
+            // Show success response
+            addAgentMessage("Thanks for your message! I've received it and will respond shortly. For immediate assistance, call me at (402) 979-7184.");
+
+          } catch (error) {
+            console.error('Error sending message to business owner:', error);
+
+            // Remove sending indicator
+            removeSendingIndicator();
+
+            // Show error response with fallback options
+            addAgentMessage("I'm having trouble sending your message right now. Please try calling me directly at (402) 979-7184 or email support@visualvibestudio.store for immediate assistance.");
+          }
 
         } catch (error) {
           console.error('Error in sendMessage:', error);
+          // Re-enable send button on error
+          const sendBtn = document.getElementById('chatSendBtn');
+          if (sendBtn) {
+            sendBtn.disabled = false;
+            updateSendButton();
+          }
         }
       }
 
@@ -476,22 +495,27 @@
       function validateAndSubmit(event) {
         try {
           console.log('Validating and submitting form...');
+          event.preventDefault(); // Prevent default form submission
+
           const form = document.getElementById('orderForm');
           const submitBtn = document.getElementById('submitOrderBtn');
           const submitBtnText = document.getElementById('submitBtnText');
 
           if (!form || !submitBtn || !submitBtnText) {
             console.error('Form elements not found');
-            return true; // Allow default form submission
+            return false;
+          }
+
+          // Validate form first
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return false;
           }
 
           // Check services selection specifically
           const services = form.querySelector('select[name="services"]');
           if (!services || services.selectedOptions.length === 0) {
-            event.preventDefault();
             alert('Please select at least one service to continue.');
-
-            // Scroll to services section and focus
             services.scrollIntoView({ behavior: 'smooth', block: 'center' });
             services.focus();
             return false;
@@ -501,27 +525,533 @@
           submitBtnText.textContent = 'Processing...';
           submitBtn.disabled = true;
           submitBtn.classList.add('opacity-75');
+          submitBtn.style.display = "none";
 
-          // Reset button after 10 seconds if something goes wrong
-          setTimeout(() => {
-            if (submitBtn.disabled) {
-              submitBtnText.textContent = 'Start My Project Now';
-              submitBtn.disabled = false;
-              submitBtn.classList.remove('opacity-75');
+          // Check if the required functions are available
+          if (typeof calculateOrderTotal === 'function' &&
+              typeof saveOrderToAccount === 'function' &&
+              typeof showVenmoPayment === 'function') {
+
+            try {
+              // Calculate pricing
+              const pricing = calculateOrderTotal();
+
+              // Validate pricing
+              if (!pricing || !pricing.total || !pricing.deposit) {
+                showAlert("Error calculating order total. Please refresh and try again.", "error");
+                resetSubmitButton(submitBtn, submitBtnText);
+                return false;
+              }
+
+              if (parseFloat(pricing.total) <= 0) {
+                showAlert("Please select at least one service.", "error");
+                resetSubmitButton(submitBtn, submitBtnText);
+                return false;
+              }
+
+              if (parseFloat(pricing.deposit) <= 0) {
+                showAlert("Error calculating deposit amount. Please contact us directly.", "error");
+                resetSubmitButton(submitBtn, submitBtnText);
+                return false;
+              }
+
+              // Collect form data
+              const formData = new FormData(form);
+              const businessName = formData.get("businessName");
+              const industry = formData.get("industry");
+              const email = formData.get("email");
+              const phone = formData.get("phone");
+              const dueDate = formData.get("dueDate");
+
+              // Get selected services
+              const selectedServices = Array.from(services.selectedOptions).map(option => option.text);
+
+              const orderData = {
+                businessName: businessName.trim(),
+                industry: industry.trim(),
+                services: selectedServices,
+                email: email.trim(),
+                phone: phone || "N/A",
+                dueDate: dueDate || "N/A",
+              };
+
+              // Save order to user account if signed in
+              const orderNumber = saveOrderToAccount(orderData, pricing);
+
+              // Show Venmo payment
+              showVenmoPayment(pricing, orderData, orderNumber);
+
+              console.log('✅ Order processed successfully, showing Venmo payment');
+              return false;
+
+            } catch (error) {
+              console.error("Error processing order:", error);
+              showAlert("An error occurred. Please try again or contact us directly.", "error");
+              resetSubmitButton(submitBtn, submitBtnText);
+              return false;
             }
-          }, 10000);
+          } else {
+            // Functions not available yet, trigger form submit event to use the existing handler
+            console.log('Payment functions not ready, triggering form submit event');
+            resetSubmitButton(submitBtn, submitBtnText);
 
-          console.log('✅ Form validation passed, submitting...');
-          return true; // Allow form to submit
+            // Manually trigger the form submit event to use the existing addEventListener handler
+            const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+            form.dispatchEvent(submitEvent);
+            return false;
+          }
+
         } catch (error) {
           console.error('Error in validateAndSubmit:', error);
-          return true; // Allow default form submission
+          return false;
+        }
+      }
+
+      function resetSubmitButton(submitBtn, submitBtnText) {
+        if (submitBtn && submitBtnText) {
+          submitBtnText.textContent = 'Start My Project Now';
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-75');
+          submitBtn.style.display = "block";
         }
       }
 
       // Make order form functions available globally
       window.updateButtonState = updateButtonState;
       window.validateAndSubmit = validateAndSubmit;
+      window.resetSubmitButton = resetSubmitButton;
+
+      // Define clipboard functions globally at script start to fix ReferenceError
+      function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            showAlert(successMessage, 'success');
+          }).catch(() => {
+            fallbackCopyToClipboard(text, successMessage);
+          });
+        } else {
+          fallbackCopyToClipboard(text, successMessage);
+        }
+      }
+
+      function fallbackCopyToClipboard(text, successMessage) {
+        // Create a temporary text area
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+          document.execCommand('copy');
+          showAlert(successMessage, 'success');
+        } catch (err) {
+          showAlert(`Copy this: ${text}`, 'info');
+        } finally {
+          document.body.removeChild(textArea);
+        }
+      }
+
+      function showAlert(message, type = 'info') {
+        // Create alert element
+        const alert = document.createElement('div');
+        alert.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg font-medium text-white shadow-lg transform transition-all duration-300 ${
+          type === 'success' ? 'bg-green-500' :
+          type === 'error' ? 'bg-red-500' :
+          'bg-blue-500'
+        }`;
+        alert.textContent = message;
+
+        document.body.appendChild(alert);
+
+        // Animate in
+        setTimeout(() => alert.classList.add('translate-y-0'), 10);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+          alert.classList.add('opacity-0', 'translate-y-[-20px]');
+          setTimeout(() => document.body.removeChild(alert), 300);
+        }, 3000);
+      }
+
+      // Make clipboard functions available globally
+      window.copyToClipboard = copyToClipboard;
+      window.fallbackCopyToClipboard = fallbackCopyToClipboard;
+      window.showAlert = showAlert;
+
+      // Define textarea utility functions globally at script start to fix ReferenceError
+      function adjustTextareaHeight(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        updateSendButton();
+      }
+
+      function updateSendButton() {
+        try {
+          const input = document.getElementById('chatInput');
+          const sendBtn = document.getElementById('chatSendBtn');
+          if (input && sendBtn) {
+            const hasContent = input.value.trim().length > 0;
+            sendBtn.disabled = !hasContent;
+            sendBtn.style.opacity = hasContent ? '1' : '0.5';
+          }
+        } catch (error) {
+          console.error('Error updating send button:', error);
+        }
+      }
+
+      // Make textarea functions available globally
+      window.adjustTextareaHeight = adjustTextareaHeight;
+      window.updateSendButton = updateSendButton;
+
+      // Make message functions available globally
+      window.addUserMessage = addUserMessage;
+      window.addAgentMessage = addAgentMessage;
+      window.showSendingIndicator = showSendingIndicator;
+      window.removeSendingIndicator = removeSendingIndicator;
+      window.sendMessageToBusinessOwner = sendMessageToBusinessOwner;
+
+      // Define review functions globally to fix review display issues
+      function loadReviews() {
+        let reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+
+        // Add sample reviews if none exist
+        if (reviews.length === 0) {
+          const sampleReviews = [
+            {
+              id: 'sample-1',
+              name: 'Alex',
+              businessType: 'Restaurant Owner',
+              service: 'Business Website',
+              rating: 5,
+              text: 'Visual Vibe Studio created an amazing website for my restaurant! Online orders increased by 200% and customers love the design. Yoshiko was incredibly professional and delivered exactly what we needed.',
+              date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+              approved: true
+            },
+            {
+              id: 'sample-2',
+              name: 'Maria',
+              businessType: 'Tech Startup CEO',
+              service: 'Logo Design',
+              rating: 5,
+              text: 'The logo design exceeded all expectations! It perfectly captures our innovative spirit and has helped significantly with brand recognition. Great value for the price.',
+              date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+              approved: true
+            },
+            {
+              id: 'sample-3',
+              name: 'James',
+              businessType: 'Fitness Coach',
+              service: 'Business Cards',
+              rating: 5,
+              text: 'Professional business cards that really make an impression! The design is clean, modern, and represents my brand perfectly. Highly recommend Visual Vibe Studio.',
+              date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+              approved: true
+            }
+          ];
+
+          reviews = sampleReviews;
+          localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
+        }
+
+        const approvedReviews = reviews.filter(review => review.approved);
+        displayReviews(approvedReviews);
+        updateReviewStats(approvedReviews);
+      }
+
+      function displayReviews(reviews) {
+        try {
+          console.log('Displaying', reviews.length, 'reviews');
+          const container = document.getElementById('reviewsContainer');
+
+          if (!container) {
+            console.error('Reviews container not found');
+            return;
+          }
+
+          // Clear existing reviews but keep the static ones
+          const dynamicReviews = container.querySelectorAll('[data-dynamic-review]');
+          dynamicReviews.forEach(review => review.remove());
+
+          if (reviews.length === 0) {
+            console.log('No reviews to display');
+            return;
+          }
+
+          // Add new reviews at the top
+          reviews.forEach((review, index) => {
+            const reviewElement = createReviewElement(review);
+            // Insert after the static reviews (before the "View More" button)
+            const viewMoreButton = container.querySelector('[onclick="toggleAllReviews()"]');
+            if (viewMoreButton && viewMoreButton.parentElement) {
+              viewMoreButton.parentElement.insertBefore(reviewElement, viewMoreButton.parentElement);
+            } else {
+              container.appendChild(reviewElement);
+            }
+          });
+
+        } catch (error) {
+          console.error('Error displaying reviews:', error);
+        }
+      }
+
+      function createReviewElement(review) {
+        const reviewDiv = document.createElement('div');
+        reviewDiv.setAttribute('data-dynamic-review', 'true');
+        reviewDiv.style.cssText = 'background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);';
+
+        const timeAgo = getTimeAgo(new Date(review.date));
+        const stars = '⭐'.repeat(review.rating);
+        const initials = review.name.charAt(0).toUpperCase();
+
+        reviewDiv.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="background: linear-gradient(45deg, #6366f1, #8b5cf6); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">${initials}</div>
+            <div>
+              <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">${escapeHtml(review.name)}</h5>
+              <p style="margin: 0; color: #666666; font-size: 16px;">${escapeHtml(review.businessType)}</p>
+            </div>
+            <div style="margin-left: auto; text-align: right;">
+              <div style="font-size: 24px; color: #fbbf24;">${stars}</div>
+              <p style="margin: 0; font-size: 14px; color: #666666;">${timeAgo}</p>
+            </div>
+          </div>
+          <div style="background: #6366f1; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">${escapeHtml(review.service)}</div>
+          <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"${escapeHtml(review.text)}"</p>
+        `;
+
+        return reviewDiv;
+      }
+
+      function updateReviewStats(reviews) {
+        try {
+          const totalReviews = reviews.length;
+          const totalReviewsElement = document.getElementById('totalReviews');
+          if (totalReviewsElement) {
+            totalReviewsElement.textContent = totalReviews + 3; // +3 for the static reviews already in HTML
+          }
+
+          // Calculate average rating
+          const avgRating = reviews.length > 0 ?
+            (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1) :
+            '4.9'; // default rating
+
+          // Update rating display if element exists
+          const ratingElements = document.querySelectorAll('.avg-rating');
+          ratingElements.forEach(el => el.textContent = avgRating);
+
+        } catch (error) {
+          console.error('Error updating review stats:', error);
+        }
+      }
+
+      function getTimeAgo(date) {
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+        const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+        if (diffDays > 0) {
+          return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        } else if (diffHours > 0) {
+          return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+        } else if (diffMinutes > 0) {
+          return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+        } else {
+          return 'Just now';
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          return 'Yesterday';
+        } else if (diffDays < 7) {
+          return `${diffDays} days ago`;
+        } else if (diffDays < 30) {
+          const weeks = Math.floor(diffDays / 7);
+          return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+        } else {
+          return date.toLocaleDateString();
+        }
+      }
+
+      // Make review functions globally available
+      window.loadReviews = loadReviews;
+      window.displayReviews = displayReviews;
+      window.updateReviewStats = updateReviewStats;
+      window.formatDate = formatDate;
+
+      // Make payment functions globally available
+      window.calculateOrderTotal = calculateOrderTotal;
+      window.saveOrderToAccount = saveOrderToAccount;
+      window.showVenmoPayment = showVenmoPayment;
+
+      // Enhanced email handling function for main send email button
+      function handleEmailClick(event, emailAddress) {
+        // Check if we're on a mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // For main send email button, use pre-filled content
+        const isMainButton = event.target.closest('#mainSendEmailBtn');
+
+        if (isMobile) {
+          // On mobile, use mailto with pre-filled content if it's the main button
+          if (isMainButton) {
+            const subject = encodeURIComponent('Inquiry from Visual Vibe Studio Website');
+            const body = encodeURIComponent(`Hi Yoshiko,
+
+I'm interested in your design services. Please get back to me when you have a chance.
+
+Thanks!`);
+            window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+          } else {
+            // For other email buttons, use simple mailto
+            window.location.href = `mailto:${emailAddress}`;
+          }
+          return true;
+        }
+
+        // On desktop, provide enhanced options
+        event.preventDefault();
+        showEmailOptionsModal(emailAddress, isMainButton);
+      }
+
+      function showEmailOptionsModal(emailAddress, isMainButton = false) {
+        // Pre-filled content for main button
+        const subject = isMainButton ? 'Inquiry from Visual Vibe Studio Website' : '';
+        const body = isMainButton ? `Hi Yoshiko,
+
+I'm interested in your design services. Please get back to me when you have a chance.
+
+Thanks!` : '';
+
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.onclick = (e) => {
+          if (e.target === modal) closeEmailModal();
+        };
+
+        // Generate email platform links
+        const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const outlookLink = `https://outlook.live.com/mail/0/deeplink/compose?to=${emailAddress}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const yahooLink = `https://compose.mail.yahoo.com/?to=${emailAddress}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        modal.innerHTML = `
+          <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-2xl font-bold text-gray-800">Choose Email Platform</h3>
+              <button onclick="closeEmailModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="space-y-4">
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3 mb-3">
+                  <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                  </svg>
+                  <span class="font-medium text-gray-700">Email: ${emailAddress}</span>
+                </div>
+                ${isMainButton ? `
+                <div class="text-sm text-gray-600 mb-2">
+                  <strong>Subject:</strong> ${subject}
+                </div>
+                ` : ''}
+              </div>
+
+              <!-- Gmail Option -->
+              <button
+                onclick="window.open('${gmailLink}', '_blank'); closeEmailModal();"
+                class="w-full bg-red-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 4.5v15c0 .85-.65 1.5-1.5 1.5H21V7.387l-9 6.463-9-6.463V21H1.5C.649 21 0 20.35 0 19.5v-15C0 3.649.649 3 1.5 3H3l9 6.463L21 3h1.5c.85 0 1.5.649 1.5 1.5z"/>
+                </svg>
+                Open in Gmail
+              </button>
+
+              <!-- Outlook Option -->
+              <button
+                onclick="window.open('${outlookLink}', '_blank'); closeEmailModal();"
+                class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7.88 12.04q0 .45-.11.87-.1.41-.33.74-.22.33-.58.52-.37.2-.87.2t-.85-.2q-.35-.21-.57-.55-.22-.33-.33-.75-.1-.42-.1-.83 0-.42.1-.83.11-.42.33-.75.22-.34.57-.55.35-.2.85-.2t.87.2q.36.19.58.52.23.33.33.74.11.42.11.87zm-3.56 0q0 .56.2.94.2.38.58.38.37 0 .58-.38.2-.38.2-.94 0-.57-.2-.95-.21-.37-.58-.37-.38 0-.58.37-.2.38-.2.95z"/>
+                </svg>
+                Open in Outlook
+              </button>
+
+              <!-- Yahoo Option -->
+              <button
+                onclick="window.open('${yahooLink}', '_blank'); closeEmailModal();"
+                class="w-full bg-purple-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.35 7.35L12 14.7 6.65 9.35c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L12 11.88l3.94-3.94c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41z"/>
+                </svg>
+                Open in Yahoo Mail
+              </button>
+
+              <!-- Default Email Client Option -->
+              <button
+                onclick="window.open('${mailtoLink}', '_blank'); closeEmailModal();"
+                class="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                Default Email App
+              </button>
+
+              <!-- Copy Details Option -->
+              <button
+                onclick="copyToClipboard('${emailAddress}', 'Email address copied!'); closeEmailModal();"
+                class="w-full bg-indigo-100 text-indigo-600 py-3 px-4 rounded-lg font-semibold hover:bg-indigo-200 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+                Copy Email Address
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+      }
+
+      function closeEmailModal() {
+        const modal = document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Make email functions globally available
+      window.handleEmailClick = handleEmailClick;
+      window.showEmailOptionsModal = showEmailOptionsModal;
+      window.closeEmailModal = closeEmailModal;
     </script>
 
     <style>
@@ -1228,7 +1758,7 @@
         <div class="mt-16 pt-8 border-t border-white/20">
           <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
           <div class="flex justify-center items-center space-x-8 opacity-60">
-            <div class="text-2xl">⭐⭐��⭐⭐</div>
+            <div class="text-2xl">⭐⭐⭐⭐⭐</div>
             <div class="text-sm">4.9/5 Customer Rating</div>
           </div>
         </div>
@@ -1404,7 +1934,7 @@
           <div class="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $65
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">����</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📄</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Marketing Flyer
           </h4>
@@ -1442,7 +1972,7 @@
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">���</span>
+              <span class="text-green-500 mr-2">✓</span>
               Standard & premium finishes
             </div>
             <div class="flex items-center">
@@ -1504,7 +2034,7 @@
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">���</span>
+              <span class="text-2xl">✏️</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -1591,7 +2121,7 @@
               "The logo design exceeded all expectations! It perfectly captures our innovative spirit. Brand recognition has increased by 300% since the rebrand. Worth every penny!"
             </p>
             <div class="text-green-400 font-semibold text-sm">
-              ��� +300% Brand Recognition
+              📈 +300% Brand Recognition
             </div>
           </div>
 
@@ -1672,12 +2202,12 @@
                 <h5 style="color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 25px; text-align: center;">📝 LEAVE YOUR REVIEW</h5>
 
                 <div style="margin-bottom: 25px;">
-                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">�� Your Name:</label>
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">👤 Your Name:</label>
                   <input id="reviewerName" type="text" required style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151; focus:border-color: #6366f1;" placeholder="Enter your name">
                 </div>
 
                 <div style="margin-bottom: 25px;">
-                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">�� Business Type:</label>
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">🏢 Business Type:</label>
                   <input id="businessType" type="text" style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151;" placeholder="e.g., Restaurant, Tech Company">
                 </div>
 
@@ -1853,7 +2383,7 @@
             <p class="text-green-600 text-sm">Your data is protected</p>
           </div>
           <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-            <div class="text-2xl mb-2">���</div>
+            <div class="text-2xl mb-2">⚡</div>
             <h4 class="font-semibold text-blue-800 mb-1">Fast Delivery</h4>
             <p class="text-blue-600 text-sm">5-7 days completion</p>
           </div>
@@ -1988,7 +2518,7 @@
               <div>
                 <h4 class="font-semibold text-gray-800 mb-2">Simple Payment Process</h4>
                 <div class="space-y-1 text-sm text-gray-600">
-                  <p>���� <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
+                  <p>💳 <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
                   <p>🔄 <strong>3 free revisions</strong> - We'll perfect it until you're 100% satisfied</p>
                   <p>⚡ <strong>Venmo payment</strong> - Quick, secure, and convenient</p>
 
@@ -2008,7 +2538,7 @@
             >
               <span>🚀</span>
               <span id="submitBtnText">Start My Project Now</span>
-              <span>���</span>
+              <span>🚀</span>
             </button>
             <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included</p>
           </div>
@@ -2262,16 +2792,17 @@
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <div class="flex gap-2">
-              <a
-                href="mailto:support@visualvibestudio.store?subject=Inquiry%20from%20Visual%20Vibe%20Studio%20Website&body=Hi%20Yoshiko,%0A%0AI'm%20interested%20in%20your%20design%20services.%20Please%20get%20back%20to%20me%20when%20you%20have%20a%20chance.%0A%0AThanks!"
+              <button
+                onclick="handleEmailClick(event, 'support@visualvibestudio.store')"
                 id="mainSendEmailBtn"
+                type="button"
                 class="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2 active:scale-95"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
                 <span id="sendEmailBtnText">Send Email</span>
-              </a>
+              </button>
               <button
                 onclick="copyToClipboard('support@visualvibestudio.store', 'Email address copied to clipboard!')"
                 class="bg-indigo-100 text-indigo-600 px-4 py-4 rounded-lg font-semibold hover:bg-indigo-200 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
@@ -3000,7 +3531,7 @@
           if (typeof window.setRating === 'function' && typeof window.submitReview === 'function' && typeof window.toggleAllReviews === 'function') {
             console.log('✅ Rating and review functions are properly defined');
           } else {
-            console.error('�� Rating and review functions not properly defined');
+            console.error('❌ Rating and review functions not properly defined');
           }
 
           if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
@@ -3569,7 +4100,7 @@ ${'='.repeat(40)}
                     <div class="bg-white rounded-lg p-4 mb-4 border border-yellow-200">
                       <p class="text-sm text-yellow-600 mb-2"><strong>Next Steps:</strong></p>
                       <ul class="text-sm text-yellow-700 text-left space-y-1">
-                        <li>📧 Manual receipt will be sent within 24 hours</li>
+                        <li>��� Manual receipt will be sent within 24 hours</li>
                         <li>💰 We'll confirm your Venmo payment</li>
                         <li>📞 We'll contact you to discuss your project</li>
                         <li>🎨 Project work begins once payment is confirmed</li>
@@ -3692,7 +4223,7 @@ ${'='.repeat(40)}
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━━━━━���━━━━━━━━━
+      ━━━━━━━━━━━━━━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -3701,21 +4232,21 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      ━━━��━━━━━━━━━━━
+      ━━━━━━━━━━━━━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
       Payment Method: Venmo (@Yoshiko-Swafford)
 
       NEXT STEPS:
-      ━━━━━━━━━━━━━━━━
+      ━━━━━━━━━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
-      �� Project discussion and planning will begin
+      📋 Project discussion and planning will begin
       • Final 50% payment due upon project completion
       • Estimated completion: ${formData.get("dueDate")}
 
       CONTACT INFORMATION:
-      ━━━━━━━━━━━━━━━━
+      ━━━━━━━━━━━━━━━
       Email: support@visualvibestudio.store
       Phone: (402) 979-7184
       Website: www.visualvibestudio.store
@@ -3963,6 +4494,13 @@ ${'='.repeat(40)}
         `;
         messagesContainer.appendChild(typingElement);
         scrollToBottom();
+      }
+
+      function removeSendingIndicator() {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+          typingIndicator.remove();
+        }
       }
 
       function showTypingIndicator() {
@@ -4319,7 +4857,7 @@ ${'='.repeat(40)}
           console.log('✅ Chat system initialized with Zapier webhook to (402) 979-7184');
         } catch (error) {
           console.error('❌ Error initializing chat system:', error);
-          console.log('�� Chat will still work with basic functionality');
+          console.log('ℹ️ Chat will still work with basic functionality');
         }
       }
 
@@ -4370,7 +4908,7 @@ ${'='.repeat(40)}
       function callDirectly() {
         trackChatEvent('call_attempted');
         window.location.href = 'tel:+14029797184';
-        addAgentMessage("📞 Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
+        addAgentMessage("��� Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
       }
 
       function emailDirectly() {
@@ -4524,12 +5062,6 @@ Thanks,
       }
 
       // handleChatKeyPress function (defined at script start to fix ReferenceError)
-
-      function adjustTextareaHeight(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
-        updateSendButton();
-      }
 
       function updateSendButton() {
         try {
@@ -4717,39 +5249,6 @@ Thanks,
         }
       }
 
-      function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(text).then(() => {
-            showAlert(successMessage, 'success');
-          }).catch(() => {
-            fallbackCopyToClipboard(text, successMessage);
-          });
-        } else {
-          fallbackCopyToClipboard(text, successMessage);
-        }
-      }
-
-      function fallbackCopyToClipboard(text, successMessage) {
-        // Create a temporary text area
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        try {
-          document.execCommand('copy');
-          showAlert(successMessage, 'success');
-        } catch (err) {
-          showAlert(`Copy this: ${text}`, 'info');
-        } finally {
-          document.body.removeChild(textArea);
-        }
-      }
-
       // Review System Functionality (selectedRating defined at script start)
 
       function initializeReviewSystem() {
@@ -4840,164 +5339,9 @@ Thanks,
         localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
       }
 
-      function loadReviews() {
-        let reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
 
-        // Add sample reviews if none exist
-        if (reviews.length === 0) {
-          const sampleReviews = [
-            {
-              id: 'sample-1',
-              name: 'Alex',
-              businessType: 'Restaurant Owner',
-              service: 'Business Website',
-              rating: 5,
-              text: 'Visual Vibe Studio created an amazing website for my restaurant! Online orders increased by 200% and customers love the design. Yoshiko was incredibly professional and delivered exactly what we needed.',
-              date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
-              approved: true
-            },
-            {
-              id: 'sample-2',
-              name: 'Maria',
-              businessType: 'Tech Startup CEO',
-              service: 'Logo Design',
-              rating: 5,
-              text: 'The logo design exceeded all expectations! It perfectly captures our innovative spirit and has helped significantly with brand recognition. Great value for the price.',
-              date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-              approved: true
-            },
-            {
-              id: 'sample-3',
-              name: 'James',
-              businessType: 'Fitness Coach',
-              service: 'Business Cards',
-              rating: 5,
-              text: 'Professional business cards that really make an impression! The design is clean, modern, and represents my brand perfectly. Highly recommend Visual Vibe Studio.',
-              date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-              approved: true
-            }
-          ];
 
-          reviews = sampleReviews;
-          localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
-        }
 
-        const approvedReviews = reviews.filter(review => review.approved);
-
-        // For demo purposes, auto-approve reviews after 3 seconds
-        // In a real app, you'd have an admin panel to approve reviews
-        reviews.forEach(review => {
-          if (!review.approved) {
-            setTimeout(() => {
-              review.approved = true;
-              localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
-              loadReviews();
-            }, 3000);
-          }
-        });
-
-        displayReviews(approvedReviews);
-        updateReviewStats(approvedReviews);
-      }
-
-      function displayReviews(reviews) {
-        try {
-          console.log('Displaying', reviews.length, 'reviews');
-          const container = document.getElementById('reviewsContainer');
-          const noReviewsMessage = document.getElementById('noReviewsMessage');
-
-          if (!container) {
-            console.error('Reviews container not found');
-            return;
-          }
-
-          if (reviews.length === 0) {
-            console.log('No reviews to display, showing empty state');
-            container.innerHTML = '';
-            if (noReviewsMessage) {
-              noReviewsMessage.classList.remove('hidden');
-            }
-            return;
-          }
-
-          if (noReviewsMessage) {
-            noReviewsMessage.classList.add('hidden');
-          }
-
-          const reviewsHTML = reviews.map(review => `
-            <div class="review-card">
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center space-x-3">
-                  <div class="bg-gradient-to-br from-indigo-500 to-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
-                    <span class="text-white font-bold text-sm">${review.name.charAt(0).toUpperCase()}</span>
-                  </div>
-                  <div>
-                    <h5 class="review-author">${escapeHtml(review.name)}</h5>
-                    <p class="text-sm text-gray-500">${escapeHtml(review.businessType)}</p>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="review-stars">${'⭐'.repeat(review.rating)}</div>
-                  <p class="text-xs text-gray-500 mt-1">${formatDate(review.date)}</p>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <span class="review-service">${escapeHtml(review.service)}</span>
-              </div>
-
-              <p class="review-text">"${escapeHtml(review.text)}"</p>
-            </div>
-          `).join('');
-
-          container.innerHTML = reviewsHTML;
-          console.log('Reviews displayed successfully');
-        } catch (error) {
-          console.error('Error displaying reviews:', error);
-        }
-      }
-
-      function updateReviewStats(reviews) {
-        const totalReviewsSpan = document.getElementById('totalReviews');
-
-        // Add existing testimonials to count (3 from testimonials section)
-        const totalCount = reviews.length + 3;
-        totalReviewsSpan.textContent = totalCount;
-
-        // Calculate average rating (including testimonials which are all 5 stars)
-        if (reviews.length > 0) {
-          const customerRatingSum = reviews.reduce((sum, review) => sum + review.rating, 0);
-          const testimonialRatingSum = 15; // 3 testimonials × 5 stars each
-          const totalRatingSum = customerRatingSum + testimonialRatingSum;
-          const averageRating = (totalRatingSum / totalCount).toFixed(1);
-
-          // Update the rating display if significantly different
-          if (averageRating !== '5.0') {
-            const ratingElement = document.querySelector('#reviews .text-lg.font-semibold');
-            if (ratingElement) {
-              ratingElement.textContent = `${averageRating}/5`;
-            }
-          }
-        }
-      }
-
-      function formatDate(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffTime = Math.abs(now - date);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          return 'Yesterday';
-        } else if (diffDays < 7) {
-          return `${diffDays} days ago`;
-        } else if (diffDays < 30) {
-          const weeks = Math.floor(diffDays / 7);
-          return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-        } else {
-          return date.toLocaleDateString();
-        }
-      }
 
       // Advanced SMS Integration (Optional - requires Twilio setup)
       async function sendSMSViaTwilio(message) {
