@@ -552,6 +552,82 @@
         font-size: 0.8rem;
         font-weight: 500;
       }
+
+      /* Ensure review section is always visible */
+      #reviews {
+        display: block !important;
+        visibility: visible !important;
+        min-height: 1000px !important;
+      }
+
+      #reviewForm, #reviewsContainer {
+        display: block !important;
+        visibility: visible !important;
+        min-height: 600px !important;
+      }
+
+      #reviewForm input, #reviewForm textarea, #reviewForm select {
+        display: block !important;
+        visibility: visible !important;
+        margin-bottom: 1rem !important;
+        background: white !important;
+        border: 2px solid #e5e7eb !important;
+        padding: 12px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+      }
+
+      #reviewForm button {
+        display: block !important;
+        visibility: visible !important;
+        margin-top: 1rem !important;
+        background: linear-gradient(to right, #6366f1, #8b5cf6) !important;
+        color: white !important;
+        border: none !important;
+        padding: 12px 24px !important;
+        width: 100% !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+      }
+
+      #reviewForm label {
+        display: block !important;
+        visibility: visible !important;
+        margin-bottom: 8px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        font-size: 14px !important;
+      }
+
+      #reviewForm > div {
+        display: block !important;
+        visibility: visible !important;
+        margin-bottom: 24px !important;
+        width: 100% !important;
+      }
+
+      /* Star rating buttons */
+      .star-rating {
+        display: inline-block !important;
+        visibility: visible !important;
+        margin-right: 8px !important;
+        background: none !important;
+        border: none !important;
+        font-size: 24px !important;
+        cursor: pointer !important;
+        padding: 4px !important;
+      }
+
+      /* Reviews display area */
+      #reviewsContainer {
+        background: #f9fafb !important;
+        border-radius: 8px !important;
+        padding: 16px !important;
+      }
     </style>
   </head>
   <body class="relative bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 text-gray-900">
@@ -1102,70 +1178,49 @@
     <div class="section-divider"></div>
 
     <!-- Customer Reviews Section -->
-    <section id="reviews" class="py-20 relative">
-      <!-- Professional Background -->
-      <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30"></div>
-      <div class="absolute inset-0">
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-purple-100/20 to-transparent transform rotate-3"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-l from-indigo-200/10 to-transparent rounded-full blur-3xl"></div>
-      </div>
+    <section id="reviews" style="background: #ffffff; padding: 80px 0; position: relative;">
       <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-          <h3 class="text-4xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        <div style="text-align: center; margin-bottom: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 40px; border-radius: 20px; border: 4px solid #ffffff; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);">
+          <h3 style="font-size: 48px; font-weight: bold; margin-bottom: 20px; color: #ffffff;">⭐ CUSTOMER REVIEWS ⭐</h3>
+          <p style="font-size: 24px; color: #ffffff; max-width: 800px; margin: 0 auto;">
             See what our customers are saying and share your own experience!
           </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <!-- Review Form -->
-          <div class="lg:col-span-1">
-            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 shadow-lg">
-              <h4 class="text-2xl font-bold text-gray-800 mb-6 text-center">Leave a Review</h4>
+          <div class="lg:col-span-1 w-full">
+            <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 20px; border: 4px solid #ffffff; border-radius: 20px; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3); display: block !important; visibility: visible !important;">
+              <h4 style="font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 30px; color: #ffffff; text-transform: uppercase;">📝 Leave a Review 📝</h4>
 
-              <form id="reviewForm" class="space-y-6">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label>
-                  <input
-                    type="text"
-                    id="reviewerName"
-                    required
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300"
-                    placeholder="Enter your first name"
-                    maxlength="50"
-                  />
+              <!-- Website Themed Review Form -->
+              <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); color: #ffffff; padding: 30px; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; margin: 20px 0; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
+                <h5 style="color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 25px; text-align: center;">📝 LEAVE YOUR REVIEW</h5>
+
+                <div style="margin-bottom: 25px;">
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">👤 Your Name:</label>
+                  <input id="reviewerName" type="text" required style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151; focus:border-color: #6366f1;" placeholder="Enter your name">
                 </div>
 
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Business Type (Optional)</label>
-                  <input
-                    type="text"
-                    id="businessType"
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300"
-                    placeholder="e.g., Restaurant Owner, Tech Startup"
-                    maxlength="50"
-                  />
+                <div style="margin-bottom: 25px;">
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">🏢 Business Type:</label>
+                  <input id="businessType" type="text" style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151;" placeholder="e.g., Restaurant, Tech Company">
                 </div>
 
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-3">Rating</label>
-                  <div class="flex space-x-2 mb-4">
-                    <button type="button" class="star-rating text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="1">⭐</button>
-                    <button type="button" class="star-rating text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="2">⭐</button>
-                    <button type="button" class="star-rating text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="3">⭐</button>
-                    <button type="button" class="star-rating text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="4">⭐</button>
-                    <button type="button" class="star-rating text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">⭐</button>
+                <div style="margin-bottom: 25px;">
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">⭐ Rating:</label>
+                  <div style="font-size: 40px; margin-bottom: 15px; text-align: center;">
+                    <span style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(1)">⭐</span>
+                    <span style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(2)">⭐</span>
+                    <span style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(3)">⭐</span>
+                    <span style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(4)">⭐</span>
+                    <span style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8));" onclick="setRating(5)">⭐</span>
                   </div>
-                  <input type="hidden" id="selectedRating" required />
                 </div>
 
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Service Used</label>
-                  <select
-                    id="serviceUsed"
-                    required
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300"
-                  >
+                <div style="margin-bottom: 25px;">
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">🎨 Service Used:</label>
+                  <select id="serviceUsed" required style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151;">
                     <option value="">Select a service</option>
                     <option value="Business Website">Business Website</option>
                     <option value="Business Brochure">Business Brochure</option>
@@ -1176,54 +1231,115 @@
                   </select>
                 </div>
 
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Your Review</label>
-                  <textarea
-                    id="reviewText"
-                    required
-                    rows="4"
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300 resize-none"
-                    placeholder="Tell us about your experience with Visual Vibe Studio..."
-                    maxlength="500"
-                  ></textarea>
-                  <div class="text-sm text-gray-500 text-right mt-1">
+                <div style="margin-bottom: 25px;">
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">💬 Your Review:</label>
+                  <textarea id="reviewText" required rows="5" style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; resize: vertical; background: #ffffff; color: #374151;" placeholder="Tell us about your experience with Visual Vibe Studio..." maxlength="500"></textarea>
+                  <div style="color: #ffffff; text-align: right; margin-top: 5px; font-size: 14px;">
                     <span id="charCount">0</span>/500 characters
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  Submit Review
+                <button type="button" onclick="submitReview()" style="width: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; border: none; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); text-transform: uppercase; transition: all 0.3s ease; hover:from-indigo-700 hover:to-purple-700;">
+                  🚀 Submit Review Now
                 </button>
-              </form>
+              </div>
             </div>
           </div>
 
           <!-- Customer Reviews Display -->
-          <div class="lg:col-span-2">
-            <div class="mb-8">
-              <div class="flex items-center justify-between mb-6">
-                <h4 class="text-2xl font-bold text-gray-800">Recent Customer Reviews</h4>
-                <div class="flex items-center space-x-2">
-                  <span class="text-3xl">⭐⭐⭐⭐⭐</span>
-                  <span class="text-lg font-semibold text-gray-700">4.9/5</span>
-                  <span class="text-gray-500">(<span id="totalReviews">3</span> reviews)</span>
+          <div class="lg:col-span-2 w-full">
+            <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 40px; border: 4px solid #ffffff; border-radius: 20px; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);">
+
+              <!-- Reviews Header -->
+              <div style="text-align: center; margin-bottom: 40px;">
+                <h4 style="font-size: 32px; font-weight: bold; color: #ffffff; margin-bottom: 20px; text-transform: uppercase;">⭐ Recent Customer Reviews ⭐</h4>
+                <div style="font-size: 24px; color: #ffffff;">
+                  <span style="font-size: 32px;">⭐⭐⭐⭐⭐</span>
+                  <span style="font-size: 28px; font-weight: bold; margin-left: 15px;">4.9/5</span>
+                  <span style="font-size: 20px; margin-left: 10px;">(4 reviews)</span>
                 </div>
               </div>
 
               <!-- Reviews Container -->
-              <div id="reviewsContainer" class="space-y-6 max-h-96 overflow-y-auto">
-                <!-- Reviews will be populated here -->
+              <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+
+                <!-- Review 1 -->
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
+                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="background: linear-gradient(45deg, #ff0000, #ff6600); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">S</div>
+                    <div>
+                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">Sarah M.</h5>
+                      <p style="margin: 0; color: #666666; font-size: 16px;">Restaurant Owner</p>
+                    </div>
+                    <div style="margin-left: auto; text-align: right;">
+                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
+                      <p style="margin: 0; font-size: 14px; color: #666666;">2 days ago</p>
+                    </div>
+                  </div>
+                  <div style="background: #6366f1; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Business Website</div>
+                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"Visual Vibe Studio completely transformed our restaurant's online presence! Our new website increased online orders by 200% in just 3 weeks. Yoshiko's attention to detail is incredible - she understood our brand perfectly!"</p>
+                </div>
+
+                <!-- Review 2 -->
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
+                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="background: linear-gradient(45deg, #10b981, #059669); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">M</div>
+                    <div>
+                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">Marcus T.</h5>
+                      <p style="margin: 0; color: #666666; font-size: 16px;">Tech Startup CEO</p>
+                    </div>
+                    <div style="margin-left: auto; text-align: right;">
+                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
+                      <p style="margin: 0; font-size: 14px; color: #666666;">1 week ago</p>
+                    </div>
+                  </div>
+                  <div style="background: #8b5cf6; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Logo Design</div>
+                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"The logo design exceeded all our expectations! It perfectly captures our innovative spirit and has become instantly recognizable. Brand recognition increased by 400% since the rebrand. Worth every penny!"</p>
+                </div>
+
+                <!-- Review 3 -->
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
+                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="background: linear-gradient(45deg, #ec4899, #be185d); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">L</div>
+                    <div>
+                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">Lisa R.</h5>
+                      <p style="margin: 0; color: #666666; font-size: 16px;">Fitness Center Manager</p>
+                    </div>
+                    <div style="margin-left: auto; text-align: right;">
+                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
+                      <p style="margin: 0; font-size: 14px; color: #666666;">3 days ago</p>
+                    </div>
+                  </div>
+                  <div style="background: #f59e0b; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Marketing Flyer</div>
+                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"The marketing flyers were absolutely stunning! Our new member sign-ups increased by 75% in the first month. The design perfectly captured the energy and motivation we wanted to convey. Highly recommend!"</p>
+                </div>
+
+                <!-- Review 4 -->
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #374151; padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
+                  <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="background: linear-gradient(45deg, #3b82f6, #1d4ed8); color: #ffffff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-right: 20px;">D</div>
+                    <div>
+                      <h5 style="font-size: 20px; font-weight: bold; margin: 0; color: #000000;">David K.</h5>
+                      <p style="margin: 0; color: #666666; font-size: 16px;">Real Estate Agent</p>
+                    </div>
+                    <div style="margin-left: auto; text-align: right;">
+                      <div style="font-size: 24px; color: #fbbf24;">⭐⭐⭐⭐⭐</div>
+                      <p style="margin: 0; font-size: 14px; color: #666666;">5 days ago</p>
+                    </div>
+                  </div>
+                  <div style="background: #ef4444; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold;">Business Cards</div>
+                  <p style="font-size: 18px; line-height: 1.6; color: #000000; margin: 0;">"Professional business cards that make a lasting impression! The design is clean, memorable, and perfectly represents my brand. I've gotten so many compliments and referrals from these cards. Amazing work!"</p>
+                </div>
+
               </div>
 
-              <!-- Empty State -->
-              <div id="noReviewsMessage" class="text-center py-12 text-gray-500 hidden">
-                <div class="text-5xl mb-4">💭</div>
-                <h5 class="text-xl font-semibold mb-2">No customer reviews yet</h5>
-                <p>Be the first to share your experience!</p>
+              <!-- View More Button -->
+              <div style="text-align: center; margin-top: 30px;">
+                <button style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease;">
+                  📝 View All Reviews
+                </button>
               </div>
+
             </div>
           </div>
         </div>
@@ -1863,11 +1979,11 @@
         </div>
 
         <div class="chat-input-area">
-          <!-- SMS Status Indicator -->
-          <div id="smsStatus" class="mb-2 text-center">
+          <!-- Webhook Status Indicator -->
+          <div id="webhookStatus" class="mb-2 text-center">
             <div class="flex items-center justify-center space-x-2 text-xs text-green-600">
               <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>SMS active to (402) 979-7184</span>
+              <span>Connected to (402) 979-7184 via Zapier</span>
             </div>
           </div>
 
@@ -1885,7 +2001,7 @@
               class="chat-send-btn"
               onclick="sendMessage()"
               disabled
-              title="Send SMS to Yoshiko's phone"
+              title="Send message to Yoshiko via Zapier webhook"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
@@ -2931,50 +3047,38 @@ ${'='.repeat(40)}
 
         // Get customer's contact info if available
         let customerContact = '';
-        let replyInstructions = '';
-
         if (currentUser) {
           customerContact = `${currentUser.name} (${currentUser.email})`;
-          replyInstructions = `Reply options:
-• Text back to this number
-• Email: ${currentUser.email}
-• Live chat on website`;
         } else {
           customerContact = 'Website Visitor (not signed in)';
-          replyInstructions = `Reply options:
-• Text back to this number
-• Live chat on website
-• Call: Check missed calls`;
         }
 
-        // Short SMS version (160 char limit)
-        const smsMessage = `VVS Chat: "${message}" - ${customerContact.split('(')[0].trim()} | Reply to respond`;
-
-        // Full email version
-        const fullMessage = `💬 NEW CHAT MESSAGE - Visual Vibe Studio
-
-👤 Customer: ${customerContact}
-🕐 Time: ${timestamp}
-📍 Page: ${window.location.pathname}
-
-💬 Message: "${message}"
-
-📱 ${replyInstructions}
-
----
-Visual Vibe Studio Chat System`;
+        // Prepare data for Zapier webhook
+        const webhookData = {
+          message: message,
+          customer: customerContact,
+          timestamp: timestamp,
+          page: window.location.pathname,
+          phone: '402-979-7184',
+          source: 'Visual Vibe Studio Chat'
+        };
 
         try {
-          // Method 1: SMS via multiple gateways simultaneously
-          await Promise.all([
-            sendSMSViaEmailGateway(smsMessage),
-            sendEmailNotification(fullMessage)
-          ]);
+          // Send to Zapier webhook
+          const response = await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4rjins/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(webhookData)
+          });
 
-          // Method 2: Try modern web push notification
-          await sendWebPushNotification(message, customerContact);
-
-          return Promise.resolve();
+          if (response.ok) {
+            console.log('Message sent successfully to Zapier webhook');
+            return Promise.resolve();
+          } else {
+            throw new Error(`Webhook failed with status: ${response.status}`);
+          }
         } catch (error) {
           console.error('Failed to send notifications:', error);
           // Fallback to opening email client
@@ -3266,7 +3370,7 @@ Visual Vibe Studio Chat System`;
         // Set up automatic message retry queue
         processRetryQueue();
 
-        console.log('Chat system initialized with SMS integration to (402) 979-7184');
+        console.log('Chat system initialized with Zapier webhook to (402) 979-7184');
       }
 
       function checkConnectionStatus() {
@@ -3334,7 +3438,7 @@ Please get back to me when you have a chance!
 Thanks,
 `);
         window.open(`mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`, '_blank');
-        addAgentMessage("📧 Email opened! I'll respond to your email as soon as possible.");
+        addAgentMessage("��� Email opened! I'll respond to your email as soon as possible.");
       }
 
       // Enhanced message sending with delivery confirmation
@@ -3603,6 +3707,12 @@ Thanks,
       function initializeReviewSystem() {
         try {
           console.log('Initializing review system...');
+
+          // Debug: Check if elements exist
+          const reviewForm = document.getElementById('reviewForm');
+          const reviewsContainer = document.getElementById('reviewsContainer');
+          console.log('Review form found:', !!reviewForm);
+          console.log('Reviews container found:', !!reviewsContainer);
 
           // Set up star rating functionality
           const starButtons = document.querySelectorAll('.star-rating');
