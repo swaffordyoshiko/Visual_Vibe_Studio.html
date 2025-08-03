@@ -3673,8 +3673,12 @@ Visual Vibe Studio Chat System`;
                 "error",
               );
               const submitBtn = form.querySelector('button[type="submit"]');
-              if (submitBtn) submitBtn.style.display = "block";
-              <!-- Chat Widget -->
+              if (submitBtn) submitBtn.style.display = "block";              
+            }
+          });
+      }
+    </script>
+    <!-- Chat Widget -->
 <div class="chat-widget">
     <button class="chat-toggle" onclick="toggleChat()">
         <div class="status-indicator"></div>
@@ -3713,9 +3717,5 @@ Visual Vibe Studio Chat System`;
 <div class="notification" id="notification"></div>
 
 <script src="chat-widget.js"></script>
-            }
-          });
-      }
-    </script>
   </body>
 </html>
