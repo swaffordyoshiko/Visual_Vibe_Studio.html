@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="chat-widget.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -1864,11 +1863,19 @@
         </div>
 
         <div class="chat-input-area">
+          <!-- SMS Status Indicator -->
+          <div id="smsStatus" class="mb-2 text-center">
+            <div class="flex items-center justify-center space-x-2 text-xs text-green-600">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>SMS active to (531) 344-5994</span>
+            </div>
+          </div>
+
           <div class="chat-input-container">
             <textarea
               id="chatInput"
               class="chat-input"
-              placeholder="Type your message..."
+              placeholder="Message Yoshiko directly..."
               rows="1"
               onkeypress="handleChatKeyPress(event)"
               oninput="adjustTextareaHeight(this)"
@@ -1878,10 +1885,23 @@
               class="chat-send-btn"
               onclick="sendMessage()"
               disabled
+              title="Send SMS to Yoshiko's phone"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
               </svg>
+            </button>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="mt-3 flex justify-center space-x-4 text-xs">
+            <button onclick="callDirectly()" class="text-green-600 hover:text-green-800 flex items-center space-x-1 transition-colors">
+              <span>📞</span>
+              <span>Call (531) 344-5994</span>
+            </button>
+            <button onclick="emailDirectly()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors">
+              <span>📧</span>
+              <span>Email Support</span>
             </button>
           </div>
         </div>
@@ -2404,7 +2424,7 @@ ${'='.repeat(40)}
 
                     <div class="space-y-3">
                       <a href="${venmoLink}" class="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                        💳 Open Venmo App
+                        ���� Open Venmo App
                       </a>
 
                       <button type="button" onclick="copyVenmoDetails()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
@@ -2668,7 +2688,7 @@ ${'='.repeat(40)}
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━━━━��━━━━━━━━━━━
+      ���━━━━━━━━━━━━━━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -2677,7 +2697,7 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      ━━━━━━━━━━━━━━━━
+      ━━━━━━━━━━━━━━��━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
@@ -3109,8 +3129,236 @@ Visual Vibe Studio Chat System`;
         window.URL.revokeObjectURL(url);
       }
 
+      function saveChatMessage(sender, message, timestamp) {
+        const chatSession = {
+          id: Date.now().toString(),
+          sender: sender,
+          message: message,
+          timestamp: timestamp,
+          user: currentUser ? currentUser.name : 'Guest',
+          userEmail: currentUser ? currentUser.email : null,
+          page: window.location.pathname,
+          sent: sender === 'user'
+        };
+
+        // Save to session storage
+        const chatHistory = JSON.parse(sessionStorage.getItem('vvsChatHistory') || '[]');
+        chatHistory.push(chatSession);
+        sessionStorage.setItem('vvsChatHistory', JSON.stringify(chatHistory));
+
+        // Also save to local storage for persistence
+        const persistentChat = JSON.parse(localStorage.getItem('vvsPersistentChat') || '[]');
+        persistentChat.push(chatSession);
+
+        // Keep only last 50 messages to avoid storage bloat
+        if (persistentChat.length > 50) {
+          persistentChat.splice(0, persistentChat.length - 50);
+        }
+        localStorage.setItem('vvsPersistentChat', JSON.stringify(persistentChat));
+      }
+
+      function loadChatHistory() {
+        const chatHistory = JSON.parse(sessionStorage.getItem('vvsChatHistory') || '[]');
+        chatHistory.forEach(msg => {
+          if (msg.sender === 'user') {
+            addUserMessageFromHistory(msg.message, msg.timestamp);
+          } else {
+            addAgentMessageFromHistory(msg.message, msg.timestamp);
+          }
+        });
+      }
+
+      function addUserMessageFromHistory(message, timestamp) {
+        const messagesContainer = document.getElementById('chatMessages');
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message user';
+        messageElement.innerHTML = `
+          <div>
+            <div>${escapeHtml(message)}</div>
+            <div class="text-xs opacity-70 mt-1">${timestamp}</div>
+          </div>
+        `;
+        messagesContainer.appendChild(messageElement);
+      }
+
+      function addAgentMessageFromHistory(message, timestamp) {
+        const messagesContainer = document.getElementById('chatMessages');
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message agent';
+        messageElement.innerHTML = `
+          <div>
+            <div>${message}</div>
+            <div class="text-xs opacity-70 mt-1">${timestamp}</div>
+          </div>
+        `;
+        messagesContainer.appendChild(messageElement);
+      }
+
       function getCurrentUser() {
         return currentUser;
+      }
+
+      // Enhanced SMS delivery with retry logic
+      async function sendSMSWithRetry(message, maxRetries = 3) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            await sendSMSViaEmailGateway(message);
+            console.log(`SMS sent successfully on attempt ${attempt}`);
+            trackChatEvent('sms_sent', { attempt, message: message.substring(0, 50) });
+            return true;
+          } catch (error) {
+            console.log(`SMS attempt ${attempt} failed:`, error);
+            if (attempt === maxRetries) {
+              trackChatEvent('sms_failed', { attempts: maxRetries, error: error.message });
+              throw error;
+            }
+            // Wait before retry (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          }
+        }
+        return false;
+      }
+
+      // Chat analytics and tracking
+      function trackChatEvent(eventType, data = {}) {
+        const event = {
+          type: eventType,
+          timestamp: new Date().toISOString(),
+          user: currentUser ? currentUser.name : 'Guest',
+          userEmail: currentUser ? currentUser.email : null,
+          page: window.location.pathname,
+          sessionId: getSessionId(),
+          data: data
+        };
+
+        // Save to analytics storage
+        const analytics = JSON.parse(localStorage.getItem('vvsChatAnalytics') || '[]');
+        analytics.push(event);
+
+        // Keep only last 100 events
+        if (analytics.length > 100) {
+          analytics.splice(0, analytics.length - 100);
+        }
+        localStorage.setItem('vvsChatAnalytics', JSON.stringify(analytics));
+
+        console.log('Chat Event:', event);
+      }
+
+      function getSessionId() {
+        let sessionId = sessionStorage.getItem('vvsSessionId');
+        if (!sessionId) {
+          sessionId = 'vvs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+          sessionStorage.setItem('vvsSessionId', sessionId);
+        }
+        return sessionId;
+      }
+
+      function initializeChatSystem() {
+        // Track chat system initialization
+        trackChatEvent('chat_initialized');
+
+        // Load previous chat history if exists
+        loadChatHistory();
+
+        // Set up periodic connection check
+        setInterval(checkConnectionStatus, 30000); // Check every 30 seconds
+
+        // Set up automatic message retry queue
+        processRetryQueue();
+
+        console.log('Chat system initialized with SMS integration to (531) 344-5994');
+      }
+
+      function checkConnectionStatus() {
+        if (navigator.onLine) {
+          updateConnectionStatus('online');
+        } else {
+          updateConnectionStatus('offline');
+          // Queue messages for retry when back online
+          queueOfflineMessages();
+        }
+      }
+
+      function updateConnectionStatus(status) {
+        const statusElement = document.querySelector('.agent-status span');
+        if (statusElement) {
+          if (status === 'online') {
+            statusElement.textContent = 'Messages sent to (531) 344-5994';
+            statusElement.style.color = '';
+          } else {
+            statusElement.textContent = 'Offline - messages queued';
+            statusElement.style.color = '#ef4444';
+          }
+        }
+      }
+
+      let messageRetryQueue = [];
+
+      function queueOfflineMessages() {
+        // This would queue messages when offline
+        console.log('Queuing messages for retry when online');
+      }
+
+      function processRetryQueue() {
+        if (messageRetryQueue.length > 0 && navigator.onLine) {
+          const message = messageRetryQueue.shift();
+          sendSMSWithRetry(message).catch(() => {
+            // If still fails, put back in queue
+            messageRetryQueue.push(message);
+          });
+        }
+
+        // Process queue every 10 seconds
+        setTimeout(processRetryQueue, 10000);
+      }
+
+      // Quick action functions
+      function callDirectly() {
+        trackChatEvent('call_attempted');
+        window.location.href = 'tel:+15313445994';
+        addAgentMessage("📞 Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
+      }
+
+      function emailDirectly() {
+        trackChatEvent('email_attempted');
+        const subject = encodeURIComponent('Visual Vibe Studio - Inquiry from Website Chat');
+        const body = encodeURIComponent(`Hi Yoshiko,
+
+I was using the chat on your website and wanted to reach out directly.
+
+Customer Information:
+${currentUser ? `Name: ${currentUser.name}\nEmail: ${currentUser.email}` : 'Website Visitor (not signed in)'}
+
+Please get back to me when you have a chance!
+
+Thanks,
+`);
+        window.open(`mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`, '_blank');
+        addAgentMessage("📧 Email opened! I'll respond to your email as soon as possible.");
+      }
+
+      // Enhanced message sending with delivery confirmation
+      function addAgentMessage(message) {
+        const messagesContainer = document.getElementById('chatMessages');
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message agent';
+        const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        messageElement.innerHTML = `
+          <div>
+            <div>${message}</div>
+            <div class="text-xs opacity-70 mt-1">${timestamp}</div>
+          </div>
+        `;
+        messagesContainer.appendChild(messageElement);
+        scrollToBottom();
+
+        // Save message to history
+        saveChatMessage('agent', message, timestamp);
+
+        // Show notification if chat is closed
+        if (!chatOpen) {
+          showChatNotification();
+        }
       }
 
       function hideTypingIndicator() {
@@ -3603,6 +3851,9 @@ Visual Vibe Studio Chat System`;
           });
         }
 
+        // Initialize chat system
+        initializeChatSystem();
+
         // Show notification after 10 seconds if user hasn't opened chat
         setTimeout(() => {
           if (!chatOpen && !hasUnreadMessages) {
@@ -3673,49 +3924,10 @@ Visual Vibe Studio Chat System`;
                 "error",
               );
               const submitBtn = form.querySelector('button[type="submit"]');
-              if (submitBtn) submitBtn.style.display = "block";              
+              if (submitBtn) submitBtn.style.display = "block";
             }
           });
       }
     </script>
-    <!-- Chat Widget -->
-<div class="chat-widget">
-    <button class="chat-toggle" onclick="toggleChat()">
-        <div class="status-indicator"></div>
-        <svg viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v6l4-3 4-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-        </svg>
-    </button>
-
-    <div class="chat-window" id="chatWindow">
-        <div class="chat-header">
-            <h3>🎨 Visual Vibe Studio</h3>
-            <button class="close-chat" onclick="toggleChat()">×</button>
-        </div>
-        
-        <div class="chat-messages" id="chatMessages">
-            <div class="message bot">
-                👋 Hi! Welcome to Visual Vibe Studio. How can we help with your visual content needs today?
-            </div>
-        </div>
-        
-        <div class="chat-input-container">
-            <form class="chat-form" onsubmit="sendMessage(event)">
-                <input 
-                    type="text" 
-                    class="chat-input" 
-                    id="messageInput" 
-                    placeholder="Ask about our services..."
-                    required
-                >
-                <button type="submit" class="send-btn" id="sendBtn">Send</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="notification" id="notification"></div>
-
-<script src="chat-widget.js"></script>
   </body>
 </html>
