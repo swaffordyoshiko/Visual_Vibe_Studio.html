@@ -2850,11 +2850,11 @@ ${'='.repeat(40)}
         sendMessageToBusinessOwner(message)
           .then(() => {
             hideTypingIndicator();
-            addAgentMessage("Thanks for your message! I've received it and will respond to you shortly. You can also call me directly at (531) 344-5994 for immediate assistance.");
+            addAgentMessage("Thanks for your message! I've received it and will respond to you shortly. You can also call me directly at (402) 979-7184 for immediate assistance.");
           })
           .catch(() => {
             hideTypingIndicator();
-            addAgentMessage("I've received your message! For the fastest response, please call me directly at (531) 344-5994 or email support@visualvibestudio.store. I'll get back to you as soon as possible!");
+            addAgentMessage("I've received your message! For the fastest response, please call me directly at (402) 979-7184 or email support@visualvibestudio.store. I'll get back to you as soon as possible!");
           });
       }
 
@@ -3266,7 +3266,7 @@ Visual Vibe Studio Chat System`;
         // Set up automatic message retry queue
         processRetryQueue();
 
-        console.log('Chat system initialized with SMS integration to (531) 344-5994');
+        console.log('Chat system initialized with SMS integration to (402) 979-7184');
       }
 
       function checkConnectionStatus() {
@@ -3283,7 +3283,7 @@ Visual Vibe Studio Chat System`;
         const statusElement = document.querySelector('.agent-status span');
         if (statusElement) {
           if (status === 'online') {
-            statusElement.textContent = 'Messages sent to (531) 344-5994';
+            statusElement.textContent = 'Messages sent to (402) 979-7184';
             statusElement.style.color = '';
           } else {
             statusElement.textContent = 'Offline - messages queued';
@@ -3315,7 +3315,7 @@ Visual Vibe Studio Chat System`;
       // Quick action functions
       function callDirectly() {
         trackChatEvent('call_attempted');
-        window.location.href = 'tel:+15313445994';
+        window.location.href = 'tel:+14029797184';
         addAgentMessage("📞 Calling now... If I don't answer, please leave a voicemail and I'll call you back ASAP!");
       }
 
@@ -3887,7 +3887,7 @@ Thanks,
           // accountSid: 'your_account_sid_here',
           // authToken: 'your_auth_token_here',
           // fromNumber: 'your_twilio_phone_number',
-          toNumber: '+15313445994' // Yoshiko's phone number
+          toNumber: '+14029797184' // Yoshiko's phone number
         };
 
         // This would require a server-side endpoint due to CORS and security
