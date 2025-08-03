@@ -3601,40 +3601,58 @@ Thanks,
       let selectedRating = 0;
 
       function initializeReviewSystem() {
-        // Set up star rating functionality
-        const starButtons = document.querySelectorAll('.star-rating');
-        starButtons.forEach(star => {
-          star.addEventListener('click', function() {
-            selectedRating = parseInt(this.dataset.rating);
-            document.getElementById('selectedRating').value = selectedRating;
-            updateStarDisplay();
+        try {
+          console.log('Initializing review system...');
+
+          // Set up star rating functionality
+          const starButtons = document.querySelectorAll('.star-rating');
+          console.log('Found', starButtons.length, 'star buttons');
+
+          starButtons.forEach(star => {
+            star.addEventListener('click', function() {
+              selectedRating = parseInt(this.dataset.rating);
+              document.getElementById('selectedRating').value = selectedRating;
+              updateStarDisplay();
+            });
+
+            star.addEventListener('mouseenter', function() {
+              const hoverRating = parseInt(this.dataset.rating);
+              highlightStars(hoverRating);
+            });
           });
 
-          star.addEventListener('mouseenter', function() {
-            const hoverRating = parseInt(this.dataset.rating);
-            highlightStars(hoverRating);
-          });
-        });
+          // Reset star display on mouse leave
+          const starContainer = document.querySelector('.star-rating');
+          if (starContainer && starContainer.parentElement) {
+            starContainer.parentElement.addEventListener('mouseleave', function() {
+              updateStarDisplay();
+            });
+          }
 
-        // Reset star display on mouse leave
-        const starContainer = document.querySelector('.star-rating').parentElement;
-        starContainer.addEventListener('mouseleave', function() {
-          updateStarDisplay();
-        });
+          // Character counter for review text
+          const reviewTextArea = document.getElementById('reviewText');
+          const charCount = document.getElementById('charCount');
 
-        // Character counter for review text
-        const reviewTextArea = document.getElementById('reviewText');
-        const charCount = document.getElementById('charCount');
+          if (reviewTextArea && charCount) {
+            reviewTextArea.addEventListener('input', function() {
+              charCount.textContent = this.value.length;
+            });
+          }
 
-        reviewTextArea.addEventListener('input', function() {
-          charCount.textContent = this.value.length;
-        });
+          // Review form submission
+          const reviewForm = document.getElementById('reviewForm');
+          if (reviewForm) {
+            reviewForm.addEventListener('submit', handleReviewSubmission);
+            console.log('Review form event listener added');
+          }
 
-        // Review form submission
-        document.getElementById('reviewForm').addEventListener('submit', handleReviewSubmission);
-
-        // Load and display existing reviews
-        loadReviews();
+          // Load and display existing reviews
+          console.log('Loading reviews...');
+          loadReviews();
+          console.log('Review system initialized successfully');
+        } catch (error) {
+          console.error('Error initializing review system:', error);
+        }
       }
 
       function highlightStars(rating) {
@@ -3699,7 +3717,47 @@ Thanks,
       }
 
       function loadReviews() {
-        const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+        let reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+
+        // Add sample reviews if none exist
+        if (reviews.length === 0) {
+          const sampleReviews = [
+            {
+              id: 'sample-1',
+              name: 'Alex',
+              businessType: 'Restaurant Owner',
+              service: 'Business Website',
+              rating: 5,
+              text: 'Visual Vibe Studio created an amazing website for my restaurant! Online orders increased by 200% and customers love the design. Yoshiko was incredibly professional and delivered exactly what we needed.',
+              date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+              approved: true
+            },
+            {
+              id: 'sample-2',
+              name: 'Maria',
+              businessType: 'Tech Startup CEO',
+              service: 'Logo Design',
+              rating: 5,
+              text: 'The logo design exceeded all expectations! It perfectly captures our innovative spirit and has helped significantly with brand recognition. Great value for the price.',
+              date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+              approved: true
+            },
+            {
+              id: 'sample-3',
+              name: 'James',
+              businessType: 'Fitness Coach',
+              service: 'Business Cards',
+              rating: 5,
+              text: 'Professional business cards that really make an impression! The design is clean, modern, and represents my brand perfectly. Highly recommend Visual Vibe Studio.',
+              date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+              approved: true
+            }
+          ];
+
+          reviews = sampleReviews;
+          localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
+        }
+
         const approvedReviews = reviews.filter(review => review.approved);
 
         // For demo purposes, auto-approve reviews after 3 seconds
@@ -3719,44 +3777,60 @@ Thanks,
       }
 
       function displayReviews(reviews) {
-        const container = document.getElementById('reviewsContainer');
-        const noReviewsMessage = document.getElementById('noReviewsMessage');
+        try {
+          console.log('Displaying', reviews.length, 'reviews');
+          const container = document.getElementById('reviewsContainer');
+          const noReviewsMessage = document.getElementById('noReviewsMessage');
 
-        if (reviews.length === 0) {
-          container.innerHTML = '';
-          noReviewsMessage.classList.remove('hidden');
-          return;
+          if (!container) {
+            console.error('Reviews container not found');
+            return;
+          }
+
+          if (reviews.length === 0) {
+            console.log('No reviews to display, showing empty state');
+            container.innerHTML = '';
+            if (noReviewsMessage) {
+              noReviewsMessage.classList.remove('hidden');
+            }
+            return;
+          }
+
+          if (noReviewsMessage) {
+            noReviewsMessage.classList.add('hidden');
+          }
+
+          const reviewsHTML = reviews.map(review => `
+            <div class="review-card">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                  <div class="bg-gradient-to-br from-indigo-500 to-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">${review.name.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div>
+                    <h5 class="review-author">${escapeHtml(review.name)}</h5>
+                    <p class="text-sm text-gray-500">${escapeHtml(review.businessType)}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="review-stars">${'⭐'.repeat(review.rating)}</div>
+                  <p class="text-xs text-gray-500 mt-1">${formatDate(review.date)}</p>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <span class="review-service">${escapeHtml(review.service)}</span>
+              </div>
+
+              <p class="review-text">"${escapeHtml(review.text)}"</p>
+            </div>
+          `).join('');
+
+          container.innerHTML = reviewsHTML;
+          console.log('Reviews displayed successfully');
+        } catch (error) {
+          console.error('Error displaying reviews:', error);
         }
-
-        noReviewsMessage.classList.add('hidden');
-
-        const reviewsHTML = reviews.map(review => `
-          <div class="review-card">
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
-                  <span class="text-white font-bold text-sm">${review.name.charAt(0).toUpperCase()}</span>
-                </div>
-                <div>
-                  <h5 class="review-author">${escapeHtml(review.name)}</h5>
-                  <p class="text-sm text-gray-500">${escapeHtml(review.businessType)}</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="review-stars">${'⭐'.repeat(review.rating)}</div>
-                <p class="text-xs text-gray-500 mt-1">${formatDate(review.date)}</p>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <span class="review-service">${escapeHtml(review.service)}</span>
-            </div>
-
-            <p class="review-text">"${escapeHtml(review.text)}"</p>
-          </div>
-        `).join('');
-
-        container.innerHTML = reviewsHTML;
       }
 
       function updateReviewStats(reviews) {
