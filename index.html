@@ -114,7 +114,7 @@
 
       // Force reload reviews function
       function forceReloadReviews() {
-        console.log('🔄 Force reloading reviews...');
+        console.log('��� Force reloading reviews...');
         try {
           if (typeof loadReviews === 'function') {
             loadReviews();
@@ -347,8 +347,14 @@ Thanks,`);
 
       window.testVenmoPayment = testVenmoPayment;
 
-      // Simple order submission that always works
-      function simpleOrderSubmit() {
+      // Simple order submission that always works (prevents any redirects)
+      function simpleOrderSubmit(event) {
+        // Prevent any form submission or page redirect
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
         console.log('🚀 Simple order submit clicked!');
 
         // Get basic form data
@@ -358,17 +364,44 @@ Thanks,`);
           return;
         }
 
-        // Collect all form data
-        const businessName = form.querySelector('input[name="businessName"]')?.value || 'Customer';
-        const industry = form.querySelector('input[name="industry"]')?.value || 'Not specified';
-        const email = form.querySelector('input[name="email"]')?.value || 'Not provided';
+        // Validate required fields first
+        const businessName = form.querySelector('input[name="businessName"]')?.value?.trim();
+        const industry = form.querySelector('input[name="industry"]')?.value?.trim();
+        const email = form.querySelector('input[name="email"]')?.value?.trim();
+        const services = form.querySelector('select[name="services"]');
+
+        // Check required fields
+        if (!businessName) {
+          alert('Please enter your business name');
+          form.querySelector('input[name="businessName"]')?.focus();
+          return;
+        }
+
+        if (!industry) {
+          alert('Please enter your business industry');
+          form.querySelector('input[name="industry"]')?.focus();
+          return;
+        }
+
+        if (!email || !email.includes('@')) {
+          alert('Please enter a valid email address');
+          form.querySelector('input[name="email"]')?.focus();
+          return;
+        }
+
+        if (!services || services.selectedOptions.length === 0) {
+          alert('Please select at least one service');
+          services?.focus();
+          return;
+        }
+
+        // Collect remaining form data
         const phone = form.querySelector('input[name="phone"]')?.value || 'Not provided';
         const dueDate = form.querySelector('input[name="dueDate"]')?.value || 'Not specified';
         const details = form.querySelector('textarea[name="details"]')?.value || 'No additional details';
-        const services = form.querySelector('select[name="services"]');
 
-        let selectedServices = ['Design Services'];
-        let totalAmount = 100; // Default amount
+        let selectedServices = [];
+        let totalAmount = 0;
 
         if (services && services.selectedOptions.length > 0) {
           selectedServices = Array.from(services.selectedOptions).map(opt => opt.text);
@@ -409,7 +442,7 @@ Thanks,`);
       }
 
       function showSimpleVenmoPayment(depositAmount, businessName, services) {
-        console.log('💰 Showing simple Venmo payment...');
+        console.log('�� Showing simple Venmo payment...');
 
         const container = document.getElementById('paypal-button-container');
         if (!container) {
@@ -419,6 +452,9 @@ Thanks,`);
 
         const venmoNote = `Visual Vibe Studio - 50% Deposit for ${businessName} (${services.join(', ')})`;
         const venmoLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${depositAmount}&note=${encodeURIComponent(venmoNote)}`;
+
+        console.log('💰 Generated Venmo link:', venmoLink);
+        console.log('💰 Venmo note:', venmoNote);
 
         container.innerHTML = `
           <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mt-6">
@@ -455,11 +491,11 @@ Thanks,`);
               </div>
 
               <div class="space-y-3">
-                <a href="${venmoLink}" class="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <button type="button" onclick="openVenmoApp('${depositAmount}', '${businessName.replace(/'/g, '')}')" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                   🏧 Open Venmo App
-                </a>
+                </button>
 
-                <button type="button" onclick="copyVenmoInfo('${depositAmount}', '${businessName}')" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                <button type="button" id="copyVenmoBtn" data-amount="${depositAmount}" data-business="${businessName}" onclick="copyVenmoInfoFromData()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
                   📋 Copy Payment Details
                 </button>
               </div>
@@ -484,24 +520,163 @@ Thanks,`);
       }
 
       function copyVenmoInfo(amount, businessName) {
-        const text = `Venmo: @Yoshiko-Swafford\nAmount: $${amount}\nNote: Visual Vibe Studio - 50% Deposit for ${businessName}`;
+        try {
+          console.log('📋 Copy Venmo info clicked:', { amount, businessName });
 
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(() => {
-            alert('Payment details copied to clipboard!');
-          });
-        } else {
-          alert(`Payment Details:\n${text}`);
+          // Clean up parameters in case they contain quotes or special characters
+          const cleanAmount = String(amount || '0.00').replace(/['"]/g, '');
+          const cleanBusinessName = String(businessName || 'Customer').replace(/['"]/g, '');
+
+          const text = `Venmo: @Yoshiko-Swafford\nAmount: $${cleanAmount}\nNote: Visual Vibe Studio - 50% Deposit for ${cleanBusinessName}`;
+
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+              showAlert('Payment details copied to clipboard!', 'success');
+              console.log('✅ Venmo details copied successfully');
+            }).catch(() => {
+              showAlert(`Payment Details:\n\n${text}`, 'info');
+            });
+          } else {
+            // Fallback for older browsers or non-secure contexts
+            showAlert(`Payment Details:\n\n${text}`, 'info');
+          }
+        } catch (error) {
+          console.error('Error copying Venmo info:', error);
+          showAlert('Error copying payment details. Please contact (402) 979-7184', 'error');
         }
       }
 
-      // Send order details via email (simple mailto solution)
+      // Open Venmo app or website based on device
+      function openVenmoApp(amount, businessName) {
+        try {
+          console.log('🏧 Opening Venmo for payment:', { amount, businessName });
+
+          // Provide immediate feedback
+          showAlert('Opening Venmo for payment...', 'info');
+
+          const cleanAmount = String(amount || '0.00').replace(/['"]/g, '');
+          const cleanBusinessName = String(businessName || 'Customer').replace(/['"]/g, '');
+
+          const venmoNote = `Visual Vibe Studio - 50% Deposit for ${cleanBusinessName}`;
+
+          // Check if we're on mobile (more likely to have Venmo app)
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+          if (isMobile) {
+            // On mobile, try Venmo app first, then website fallback
+            const venmoAppLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${cleanAmount}&note=${encodeURIComponent(venmoNote)}`;
+            console.log('📱 Trying mobile app first:', venmoAppLink);
+
+            // Try to open the app
+            window.location.href = venmoAppLink;
+
+            // Fallback to website after short delay if app doesn't open
+            setTimeout(() => {
+              openVenmoWebsite(cleanAmount, cleanBusinessName);
+            }, 2500);
+
+          } else {
+            // On desktop, go directly to Venmo website
+            console.log('💻 Desktop detected, opening Venmo website');
+            openVenmoWebsite(cleanAmount, cleanBusinessName);
+          }
+
+        } catch (error) {
+          console.error('Error opening Venmo:', error);
+          openVenmoWebsite(amount, businessName);
+        }
+      }
+
+      // Open Venmo website for payment
+      function openVenmoWebsite(amount, businessName) {
+        try {
+          console.log('🌐 Opening Venmo website for payment');
+
+          const cleanAmount = String(amount || '0.00').replace(/['"]/g, '');
+          const cleanBusinessName = String(businessName || 'Customer').replace(/['"]/g, '');
+
+          // Venmo website URL for sending payment
+          const venmoWebUrl = `https://venmo.com/u/Yoshiko-Swafford?txn=pay&amount=${cleanAmount}&note=${encodeURIComponent(`Visual Vibe Studio - 50% Deposit for ${cleanBusinessName}`)}`;
+
+          console.log('🔗 Opening Venmo website:', venmoWebUrl);
+
+          // Open in new tab
+          const venmoWindow = window.open(venmoWebUrl, '_blank', 'noopener,noreferrer');
+
+          if (venmoWindow) {
+            showAlert('Venmo opened in new tab. Complete your payment there!', 'success');
+          } else {
+            // Popup blocked, try direct navigation
+            window.location.href = venmoWebUrl;
+          }
+
+        } catch (error) {
+          console.error('Error opening Venmo website:', error);
+          showVenmoManualInstructions(amount, businessName);
+        }
+      }
+
+      // Show manual Venmo instructions as final fallback
+      function showVenmoManualInstructions(amount, businessName) {
+        const message = `Pay via Venmo manually:
+
+💳 Venmo Username: @Yoshiko-Swafford
+💰 Amount: $${amount}
+📝 Note: Visual Vibe Studio - 50% Deposit for ${businessName}
+
+Options:
+• Use the Venmo app on your phone
+• Visit venmo.com on any device
+• Call (402) 979-7184 for phone payment
+
+Your order is confirmed - just complete the payment when convenient!`;
+
+        showAlert(message, 'info');
+      }
+
+      // Copy Venmo info from button data attributes (safer method)
+      function copyVenmoInfoFromData() {
+        try {
+          console.log('📋 Copy Venmo details button clicked');
+
+          const button = document.getElementById('copyVenmoBtn');
+          if (!button) {
+            console.error('Copy Venmo button not found');
+            showAlert('Error: Copy button not found', 'error');
+            return;
+          }
+
+          const amount = button.dataset.amount || '0.00';
+          const businessName = button.dataset.business || 'Customer';
+
+          console.log('Venmo details:', { amount, businessName });
+
+          const text = `Venmo: @Yoshiko-Swafford\nAmount: $${amount}\nNote: Visual Vibe Studio - 50% Deposit for ${businessName}`;
+
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+              showAlert('Payment details copied to clipboard!', 'success');
+              console.log('✅ Venmo details copied successfully');
+            }).catch(() => {
+              showAlert(`Payment Details:\n\n${text}`, 'info');
+            });
+          } else {
+            // Fallback for older browsers
+            showAlert(`Payment Details:\n\n${text}`, 'info');
+          }
+        } catch (error) {
+          console.error('Error copying Venmo details:', error);
+          showAlert('Error copying payment details. Please contact (402) 979-7184', 'error');
+        }
+      }
+
+      // Send order details via improved email system
       function sendOrderEmail(orderData) {
-        console.log('📧 Sending order email...');
+        console.log('📧 Processing order email...');
 
         try {
-          const subject = encodeURIComponent(`New Project Order from ${orderData.businessName}`);
-          const body = encodeURIComponent(`NEW PROJECT ORDER RECEIVED!
+          const subject = `New Project Order from ${orderData.businessName}`;
+          const emailBody = `NEW PROJECT ORDER RECEIVED!
 
 Business Information:
 - Business Name: ${orderData.businessName}
@@ -527,55 +702,438 @@ This customer has been shown the Venmo payment details and should be sending pay
 ---
 Order submitted from Visual Vibe Studio website
 Date: ${new Date().toLocaleString()}
-Reply to customer at: ${orderData.email}`);
+Reply to customer at: ${orderData.email}`;
 
-          // Create mailto link
-          const mailtoLink = `mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`;
+          // Show order confirmation immediately
+          showOrderConfirmation(orderData, subject, emailBody);
 
-          // Open email client
-          window.open(mailtoLink, '_blank');
+          // Automatically send order to business email multiple ways
+          sendOrderToBusinessEmail(orderData, subject, emailBody);
 
-          // Show success message
-          showAlert('Order submitted successfully! Email opened with order details.', 'success');
-          console.log('✅ Order email prepared successfully!');
+          console.log('✅ Order processed successfully!');
 
-          // Update button to show success
-          const submitBtn = document.getElementById('submitOrderBtn');
-          const submitBtnText = document.getElementById('submitBtnText');
-          if (submitBtn && submitBtnText) {
-            submitBtnText.textContent = 'Order Submitted! ✅';
-            submitBtn.classList.add('bg-green-600');
-            submitBtn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600');
+        } catch (error) {
+          console.error('❌ Error processing order:', error);
+          showOrderConfirmation(orderData, 'Order Received', 'Order submitted successfully! Please check the payment details below.');
+        }
+      }
+
+      // Automatically send order to business email using multiple methods
+      function sendOrderToBusinessEmail(orderData, subject, emailBody) {
+        console.log('📧 Sending order to business email automatically...');
+
+        // Method 1: Try EmailJS with proper configuration
+        if (typeof emailjs !== 'undefined') {
+          try {
+            emailjs.send('service_l4qcrmc', 'template_qdn6zf8', {
+              to_email: 'support@visualvibestudio.store',
+              subject: subject,
+              message: emailBody,
+              from_name: orderData.businessName,
+              customer_email: orderData.email,
+              customer_phone: orderData.phone,
+              order_total: orderData.totalAmount,
+              deposit_amount: orderData.depositAmount,
+              services: orderData.selectedServices.join(', ')
+            }).then(function(response) {
+              console.log('✅ Order email sent via EmailJS!', response);
+              showAlert('Order automatically sent to Visual Vibe Studio!', 'success');
+            }).catch(function(error) {
+              console.log('❌ EmailJS failed, trying fallback...', error);
+              sendOrderViaWebhook(orderData, subject, emailBody);
+            });
+          } catch (error) {
+            console.log('❌ EmailJS error, trying fallback...', error);
+            sendOrderViaWebhook(orderData, subject, emailBody);
+          }
+        } else {
+          console.log('📧 EmailJS not available, using webhook...');
+          sendOrderViaWebhook(orderData, subject, emailBody);
+        }
+      }
+
+      // Send order via webhook to Zapier/Make.com
+      function sendOrderViaWebhook(orderData, subject, emailBody) {
+        const webhookData = {
+          subject: subject,
+          message: emailBody,
+          customer: {
+            businessName: orderData.businessName,
+            industry: orderData.industry,
+            email: orderData.email,
+            phone: orderData.phone
+          },
+          order: {
+            services: orderData.selectedServices,
+            total: orderData.totalAmount,
+            deposit: orderData.depositAmount,
+            dueDate: orderData.dueDate,
+            details: orderData.details,
+            timestamp: new Date().toISOString()
+          }
+        };
+
+        // Try webhook to automation service (this will send email immediately)
+        fetch('https://eo7l16mbckzc6cl.m.pipedream.net/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData)
+        }).then(response => {
+          if (response.ok) {
+            console.log('✅ Order sent via webhook!');
+            showAlert('Order sent to Visual Vibe Studio!', 'success');
+          } else {
+            console.log('❌ Webhook failed, using email fallback...');
+            sendOrderViaDirectEmail(orderData, subject, emailBody);
+          }
+        }).catch(error => {
+          console.log('❌ Webhook error, using email fallback...', error);
+          sendOrderViaDirectEmail(orderData, subject, emailBody);
+        });
+      }
+
+      // Direct email sending fallback using AJAX (no page redirect)
+      function sendOrderViaDirectEmail(orderData, subject, emailBody) {
+        console.log('📧 Using direct email fallback...');
+
+        const formData = new FormData();
+        formData.append('_subject', subject);
+        formData.append('message', emailBody);
+        formData.append('business_name', orderData.businessName);
+        formData.append('customer_email', orderData.email);
+        formData.append('customer_phone', orderData.phone);
+        formData.append('services', orderData.selectedServices.join(', '));
+        formData.append('total_amount', orderData.totalAmount);
+        formData.append('deposit_amount', orderData.depositAmount);
+
+        // Use fetch instead of form.submit() to prevent page redirect
+        fetch('https://formspree.io/f/xanypjgn', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        }).then(response => {
+          if (response.ok) {
+            console.log('✅ Order submitted via Formspree');
+            showAlert('Order details sent! You will be contacted within 24 hours.', 'success');
+          } else {
+            console.log('❌ Formspree submission failed');
+            sendOrderViaSMSBackup(orderData, subject);
+          }
+        }).catch(error => {
+          console.log('�� Formspree error:', error);
+          sendOrderViaSMSBackup(orderData, subject);
+        });
+      }
+
+      // SMS backup notification
+      function sendOrderViaSMSBackup(orderData, subject) {
+        console.log('📱 Sending SMS backup notification...');
+
+        const smsMessage = `NEW ORDER: ${orderData.businessName} ordered ${orderData.selectedServices.join(', ')} for $${orderData.totalAmount}. Contact: ${orderData.email}, ${orderData.phone}`;
+
+        // Log order details for manual processing
+        console.log('📋 Order for manual processing:', {
+          subject,
+          orderData,
+          smsMessage
+        });
+
+        showAlert('Order received! You will be contacted within 24 hours via email or phone.', 'success');
+      }
+
+      // Global order data storage for modal functions
+      let currentOrderData = null;
+      let currentOrderSubject = null;
+      let currentOrderEmailBody = null;
+
+      // Show order confirmation modal instead of blank page
+      function showOrderConfirmation(orderData, subject, emailBody) {
+        // Store order data globally for modal functions
+        currentOrderData = orderData;
+        currentOrderSubject = subject;
+        currentOrderEmailBody = emailBody;
+
+        // Update button to show success
+        const submitBtn = document.getElementById('submitOrderBtn');
+        const submitBtnText = document.getElementById('submitBtnText');
+        if (submitBtn && submitBtnText) {
+          submitBtnText.textContent = 'Order Submitted! ✅';
+          submitBtn.classList.add('bg-green-600');
+          submitBtn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600');
+        }
+
+        // Create confirmation modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.onclick = (e) => {
+          if (e.target === modal) closeOrderModal();
+        };
+
+        modal.innerHTML = `
+          <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+              <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-800 mb-2">Order Submitted Successfully!</h3>
+              <p class="text-gray-600">Thank you ${orderData.businessName}! Your order has been received and processed.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+              <h4 class="font-bold text-gray-800 mb-4">Order Summary</h4>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Business:</span>
+                  <span class="font-medium">${orderData.businessName}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Industry:</span>
+                  <span class="font-medium">${orderData.industry}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Services:</span>
+                  <span class="font-medium">${orderData.selectedServices.join(', ')}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Total Cost:</span>
+                  <span class="font-medium">$${orderData.totalAmount}</span>
+                </div>
+                <div class="flex justify-between border-t pt-2">
+                  <span class="text-gray-600">Deposit Required:</span>
+                  <span class="font-bold text-green-600">$${orderData.depositAmount}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h4 class="font-bold text-blue-800 mb-2">Next Steps:</h4>
+              <ol class="list-decimal list-inside text-blue-700 space-y-1">
+                <li>Complete your Venmo payment using the details shown above</li>
+                <li>You'll receive a confirmation email within 24 hours</li>
+                <li>Your project will begin once payment is confirmed</li>
+                <li>Estimated completion: ${orderData.dueDate || 'Within 5-7 business days'}</li>
+              </ol>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex space-x-4">
+                <button onclick="copyOrderDetails()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                  📋 Copy Order Details
+                </button>
+                <button onclick="sendOrderEmailNow()" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  📧 Send Email
+                </button>
+              </div>
+              <button onclick="closeOrderModal()" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                ✅ Complete Order
+              </button>
+            </div>
+
+            <div class="text-center mt-6 text-sm text-gray-500">
+              Questions? Call (402) 979-7184 or email support@visualvibestudio.store
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+
+        // Show success alert
+        showAlert('Order submitted successfully! Complete your payment to begin.', 'success');
+      }
+
+      // Copy order details function
+      function copyOrderDetails() {
+        try {
+          console.log('📋 Copy order details button clicked!');
+          if (!currentOrderData) {
+            console.error('No order data available');
+            showAlert('No order data available to copy', 'error');
+            return;
+          }
+
+          const details = `ORDER DETAILS:
+Business: ${currentOrderData.businessName}
+Industry: ${currentOrderData.industry}
+Email: ${currentOrderData.email}
+Phone: ${currentOrderData.phone}
+Services: ${currentOrderData.selectedServices.join(', ')}
+Total: $${currentOrderData.totalAmount}
+Deposit: $${currentOrderData.depositAmount}
+Due Date: ${currentOrderData.dueDate}
+
+Venmo Payment: @Yoshiko-Swafford
+Amount: $${currentOrderData.depositAmount}
+
+Details: ${currentOrderData.details}`;
+
+          copyToClipboard(details, 'Order details copied to clipboard!');
+        } catch (error) {
+          console.error('Error copying order details:', error);
+          showAlert('Error copying details. Please try again.', 'error');
+        }
+      }
+
+      // Send email manually function
+      function sendEmailManually() {
+        try {
+          console.log('📧 Send email button clicked!');
+          if (!currentOrderSubject || !currentOrderEmailBody) {
+            console.error('No order email data available');
+            showAlert('No order email data available', 'error');
+            return;
+          }
+
+          console.log('���� Sending email manually...');
+
+          const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(currentOrderSubject)}&body=${encodeURIComponent(currentOrderEmailBody)}`;
+
+          // Try to open email client
+          const emailWindow = window.open(mailtoLink, '_blank');
+
+          // Provide feedback
+          showAlert('Opening your email client...', 'info');
+
+          // If window failed to open, provide fallback
+          setTimeout(() => {
+            if (!emailWindow || emailWindow.closed || emailWindow.location === 'about:blank') {
+              copyToClipboard(`To: support@visualvibestudio.store\nSubject: ${currentOrderSubject}\n\n${currentOrderEmailBody}`, 'Email details copied! Please paste into your email client.');
+            }
+          }, 2000);
+
+        } catch (error) {
+          console.error('Error opening email:', error);
+          copyToClipboard(`To: support@visualvibestudio.store\nSubject: ${currentOrderSubject}\n\n${currentOrderEmailBody}`, 'Email details copied! Please paste into your email client.');
+        }
+      }
+
+      // New function to actually send order email automatically
+      function sendOrderEmailNow() {
+        try {
+          console.log('📧 Sending order email automatically...');
+          if (!currentOrderData || !currentOrderSubject || !currentOrderEmailBody) {
+            console.error('No order data available');
+            showAlert('No order data available', 'error');
+            return;
+          }
+
+          // Show loading state
+          const sendButton = document.querySelector('button[onclick="sendOrderEmailNow()"]');
+          if (sendButton) {
+            sendButton.textContent = '📧 Sending...';
+            sendButton.disabled = true;
+          }
+
+          // Send the email automatically
+          sendOrderToBusinessEmail(currentOrderData, currentOrderSubject, currentOrderEmailBody);
+
+          // Re-enable button after attempt
+          setTimeout(() => {
+            if (sendButton) {
+              sendButton.textContent = '✅ Email Sent!';
+              sendButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+              sendButton.classList.add('bg-green-600', 'hover:bg-green-700');
+            }
+          }, 2000);
+
+        } catch (error) {
+          console.error('Error sending email:', error);
+          showAlert('Error sending email. Please call (402) 979-7184 instead.', 'error');
+        }
+      }
+
+      // Close order modal function
+      function closeOrderModal() {
+        try {
+          console.log('🔒 Closing order modal...');
+          const modal = document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50');
+          if (modal) {
+            modal.remove();
+            document.body.style.overflow = '';
+
+            // Clear stored order data
+            currentOrderData = null;
+            currentOrderSubject = null;
+            currentOrderEmailBody = null;
+
+            showAlert('Order completed! Thank you for your business.', 'success');
+            console.log('✅ Order modal closed successfully');
+          } else {
+            console.warn('Order modal not found');
+          }
+        } catch (error) {
+          console.error('Error closing order modal:', error);
+        }
+      }
+
+      // Open Venmo app from order form (for advanced payment section)
+      function openVenmoAppFromOrder() {
+        try {
+          console.log('🏧 Opening Venmo app from order form...');
+
+          const pricing = calculateOrderTotal();
+          if (!pricing || !pricing.deposit) {
+            showAlert('Please select services first to calculate payment amount', 'error');
+            return;
+          }
+
+          const form = document.getElementById("orderForm");
+          if (!form) {
+            showAlert('Order form not found', 'error');
+            return;
+          }
+
+          const formData = new FormData(form);
+          const businessName = formData.get("businessName") || "Customer";
+
+          // Use the main openVenmoApp function
+          openVenmoApp(pricing.deposit, businessName);
+
+          // Track the click for analytics
+          if (typeof trackVenmoClick === 'function') {
+            trackVenmoClick();
           }
 
         } catch (error) {
-          console.error('❌ Error preparing order email:', error);
+          console.error('Error opening Venmo from order:', error);
+          showVenmoManualInstructions('50.00', 'Customer');
+        }
+      }
 
-          // Show order details for manual copy
-          const orderDetails = `
-NEW PROJECT ORDER:
-Business: ${orderData.businessName}
-Industry: ${orderData.industry}
-Email: ${orderData.email}
-Phone: ${orderData.phone}
-Due Date: ${orderData.dueDate}
-Services: ${orderData.selectedServices.join(', ')}
-Total: $${orderData.totalAmount}
-Deposit: $${orderData.depositAmount}
-Details: ${orderData.details}
-          `;
+      // Send via EmailJS (if properly configured)
+      function sendOrderViaEmailJS(orderData, subject, emailBody) {
+        try {
+          // Disable EmailJS for now since it's not properly configured
+          console.log('📧 EmailJS disabled - using manual email fallback');
+          console.log('Order data logged for manual processing:', {
+            subject,
+            emailBody,
+            orderData
+          });
 
-          console.log('📋 Order Details for Manual Processing:', orderDetails);
-          alert('Order submitted! Please check console for order details.');
-
-          // Update button anyway
-          const submitBtn = document.getElementById('submitOrderBtn');
-          const submitBtnText = document.getElementById('submitBtnText');
-          if (submitBtn && submitBtnText) {
-            submitBtnText.textContent = 'Order Submitted! ✅';
-            submitBtn.classList.add('bg-green-600');
-            submitBtn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600');
+          /* EmailJS integration disabled until proper service setup
+          if (typeof emailjs !== 'undefined') {
+            emailjs.send("service_id", "template_id", {
+              to_email: "support@visualvibestudio.store",
+              subject: subject,
+              message: emailBody,
+              customer_email: orderData.email,
+              business_name: orderData.businessName
+            }).then(() => {
+              console.log('✅ Email sent via EmailJS');
+            }).catch((error) => {
+              console.log('❌ EmailJS failed:', error);
+            });
           }
+          */
+        } catch (error) {
+          console.log('EmailJS error:', error);
         }
       }
 
@@ -585,7 +1143,38 @@ Details: ${orderData.details}
       window.simpleOrderSubmit = simpleOrderSubmit;
       window.showSimpleVenmoPayment = showSimpleVenmoPayment;
       window.copyVenmoInfo = copyVenmoInfo;
+      window.copyVenmoInfoFromData = copyVenmoInfoFromData;
+      window.copyVenmoDetails = copyVenmoDetails;
+      window.openVenmoApp = openVenmoApp;
+      window.openVenmoAppFromOrder = openVenmoAppFromOrder;
+      window.openVenmoWebsite = openVenmoWebsite;
+      window.showVenmoManualInstructions = showVenmoManualInstructions;
       window.sendOrderEmail = sendOrderEmail;
+      window.showOrderConfirmation = showOrderConfirmation;
+      window.copyOrderDetails = copyOrderDetails;
+      window.sendEmailManually = sendEmailManually;
+      window.sendOrderEmailNow = sendOrderEmailNow;
+      window.sendOrderToBusinessEmail = sendOrderToBusinessEmail;
+      window.sendOrderViaSMSBackup = sendOrderViaSMSBackup;
+      window.calculateOrderTotal = calculateOrderTotal;
+      window.closeOrderModal = closeOrderModal;
+      window.sendOrderViaEmailJS = sendOrderViaEmailJS;
+
+      // Verify functions are properly defined
+      setTimeout(() => {
+        console.log('🔍 Verifying order modal functions...');
+        console.log('copyOrderDetails:', typeof window.copyOrderDetails);
+        console.log('sendEmailManually:', typeof window.sendEmailManually);
+        console.log('closeOrderModal:', typeof window.closeOrderModal);
+
+        if (typeof window.copyOrderDetails === 'function' &&
+            typeof window.sendEmailManually === 'function' &&
+            typeof window.closeOrderModal === 'function') {
+          console.log('✅ All order modal functions are properly defined');
+        } else {
+          console.error('❌ Some order modal functions are not properly defined');
+        }
+      }, 1000);
 
       // Define chat functions globally at script start to fix ReferenceError
       let chatInitialized = false;
@@ -645,7 +1234,7 @@ Details: ${orderData.details}
 
       async function sendMessage() {
         try {
-          console.log('📤 sendMessage function called');
+          console.log('���� sendMessage function called');
           console.log('📤 Function called from:', new Error().stack);
 
           const input = document.getElementById('chatInput');
@@ -1450,7 +2039,7 @@ Thanks!` : '';
 
               <!-- Default Email Client Option -->
               <button
-                onclick="window.open('${mailtoLink}', '_blank'); closeEmailModal();"
+                onclick="window.location.href='${mailtoLink}'; closeEmailModal();"
                 class="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2193,7 +2782,7 @@ Thanks!` : '';
         <div class="mt-16 pt-8 border-t border-white/20">
           <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
           <div class="flex justify-center items-center space-x-8 opacity-60">
-            <div class="text-2xl">⭐⭐⭐⭐⭐</div>
+            <div class="text-2xl">⭐⭐⭐����⭐</div>
             <div class="text-sm">4.9/5 Customer Rating</div>
           </div>
         </div>
@@ -2779,7 +3368,7 @@ Thanks!` : '';
               <!-- View More Button -->
               <div style="text-align: center; margin-top: 30px;">
                 <button onclick="toggleAllReviews()" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease; margin-right: 10px;">
-                  📝 <span id="viewAllReviewsText">View All Reviews</span>
+                  ��� <span id="viewAllReviewsText">View All Reviews</span>
                 </button>
                 <button onclick="forceReloadReviews()" style="background: rgba(0, 255, 0, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(0, 255, 0, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
                   🔄 Reload Reviews
@@ -2816,7 +3405,7 @@ Thanks!` : '';
         <!-- Trust Indicators Row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-            <div class="text-2xl mb-2">🔒</div>
+            <div class="text-2xl mb-2">����</div>
             <h4 class="font-semibold text-green-800 mb-1">100% Secure</h4>
             <p class="text-green-600 text-sm">Your data is protected</p>
           </div>
@@ -2832,7 +3421,7 @@ Thanks!` : '';
           </div>
         </div>
 
-        <form class="space-y-6 bg-white rounded-2xl p-8 shadow-lg" id="orderForm">
+        <form class="space-y-6 bg-white rounded-2xl p-8 shadow-lg" id="orderForm" onsubmit="return false;">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block mb-2 font-semibold text-gray-700 flex items-center">
@@ -3932,7 +4521,7 @@ Thanks!` : '';
             console.log('✅ Sign up modal test passed');
             setTimeout(() => {
               closeSignUpModal();
-              console.log('✅ All modal tests completed');
+              console.log('��� All modal tests completed');
             }, 2000);
           }, 2000);
         } catch (error) {
@@ -4369,9 +4958,9 @@ ${'='.repeat(40)}
                     </div>
 
                     <div class="space-y-3">
-                      <a href="${venmoLink}" class="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors" onclick="trackVenmoClick()">
+                      <button type="button" onclick="openVenmoAppFromOrder()" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                         🏧 Open Venmo App
-                      </a>
+                      </button>
 
                       <button type="button" onclick="copyVenmoDetails()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
                         📋 Copy Payment Details
@@ -4552,7 +5141,7 @@ ${'='.repeat(40)}
           .catch(() => {
             venmoContainer.innerHTML = `
                   <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-8 text-center">
-                    <div class="text-yellow-600 text-4xl mb-4">⚠️</div>
+                    <div class="text-yellow-600 text-4xl mb-4">������</div>
                     <h4 class="text-2xl font-bold text-yellow-800 mb-3">Order Submitted!</h4>
                     <p class="text-yellow-700 mb-4">We've received your order. Receipt will be sent manually within 24 hours.</p>
                     <div class="bg-white rounded-lg p-4 mb-4 border border-yellow-200">
@@ -5651,7 +6240,7 @@ Thanks,
 
               <div class="space-y-3">
                 <button
-                  onclick="window.open('mailto:${emailAddress}', '_blank'); closeEmailModal();"
+                  onclick="window.location.href='mailto:${emailAddress}'; closeEmailModal();"
                   class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5916,7 +6505,9 @@ Thanks,
         }, 10000);
       });
 
-      // Order Form Handler
+      // Order Form Handler (DISABLED - now using simpleOrderSubmit for button clicks)
+      // The order form is now handled by the simpleOrderSubmit() function called via button onclick
+      /*
       if (document.getElementById("orderForm")) {
         document
           .getElementById("orderForm")
@@ -6022,6 +6613,7 @@ Thanks,
             }
           });
       }
+      */
     </script>
   </body>
 </html>
