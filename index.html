@@ -1840,7 +1840,7 @@
             <h4 class="font-semibold">Chat with Yoshiko</h4>
             <div class="agent-status">
               <div class="status-dot"></div>
-              <span>Messages sent to (531) 344-5994</span>
+              <span>Messages sent to (402) 979-7184</span>
             </div>
           </div>
           <button onclick="toggleChat()" class="text-white hover:text-gray-200 transition-colors">
@@ -1858,7 +1858,7 @@
             <div>Your messages go directly to my phone so I can respond quickly. How can I help you with your design needs today?</div>
           </div>
           <div class="chat-message agent">
-            <div>💬 <strong>For immediate help:</strong> Call me at (531) 344-5994</div>
+            <div>💬 <strong>For immediate help:</strong> Call me at (402) 979-7184</div>
           </div>
         </div>
 
@@ -1867,7 +1867,7 @@
           <div id="smsStatus" class="mb-2 text-center">
             <div class="flex items-center justify-center space-x-2 text-xs text-green-600">
               <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>SMS active to (531) 344-5994</span>
+              <span>SMS active to (402) 979-7184</span>
             </div>
           </div>
 
@@ -1897,7 +1897,7 @@
           <div class="mt-3 flex justify-center space-x-4 text-xs">
             <button onclick="callDirectly()" class="text-green-600 hover:text-green-800 flex items-center space-x-1 transition-colors">
               <span>📞</span>
-              <span>Call (531) 344-5994</span>
+              <span>Call (402) 979-7184</span>
             </button>
             <button onclick="emailDirectly()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors">
               <span>📧</span>
@@ -2986,11 +2986,11 @@ Visual Vibe Studio Chat System`;
       async function sendSMSViaEmailGateway(message) {
         // Using multiple email-to-SMS gateways for reliability
         const smsGateways = [
-          '5313445994@vtext.com',    // Verizon
-          '5313445994@txt.att.net',   // AT&T
-          '5313445994@messaging.sprintpcs.com', // Sprint
-          '5313445994@tmomail.net',   // T-Mobile
-          '5313445994@mymetropcs.com' // Metro PCS
+          '4029797184@vtext.com',    // Verizon
+          '4029797184@txt.att.net',   // AT&T
+          '4029797184@messaging.sprintpcs.com', // Sprint
+          '4029797184@tmomail.net',   // T-Mobile
+          '4029797184@mymetropcs.com' // Metro PCS
         ];
 
         const emailSubject = 'VVS Chat';
@@ -3026,7 +3026,7 @@ Visual Vibe Studio Chat System`;
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              to: '5313445994',
+              to: '4029797184',
               message: shortMessage,
               from: 'VisualVibe'
             })
