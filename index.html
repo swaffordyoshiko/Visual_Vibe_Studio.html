@@ -1035,7 +1035,7 @@ Details: ${currentOrderData.details}`;
             return;
           }
 
-          console.log('���� Sending email manually...');
+          console.log('������ Sending email manually...');
 
           const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(currentOrderSubject)}&body=${encodeURIComponent(currentOrderEmailBody)}`;
 
@@ -1502,6 +1502,9 @@ Details: ${currentOrderData.details}`;
           updateStarDisplay();
         }
 
+        // Add review to "What Our Customers Say" section
+        addReviewToTestimonials(review);
+
         alert('Thank you! Your review has been submitted successfully.');
 
         // Reload reviews and update stats immediately
@@ -1519,12 +1522,130 @@ Details: ${currentOrderData.details}`;
         return false;
       }
 
+      // Function to add new reviews to the "What Our Customers Say" section
+      function addReviewToTestimonials(review) {
+        try {
+          console.log('Adding review to testimonials section:', review);
+
+          // Find the testimonials grid container
+          const testimonialsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-4.gap-6');
+
+          if (!testimonialsGrid) {
+            console.error('Testimonials grid not found');
+            return;
+          }
+
+          // Generate a random gradient color for the avatar
+          const avatarGradients = [
+            'from-purple-400 to-pink-500',
+            'from-blue-400 to-indigo-500',
+            'from-green-400 to-teal-500',
+            'from-yellow-400 to-orange-500',
+            'from-red-400 to-pink-500',
+            'from-indigo-400 to-purple-500'
+          ];
+          const randomGradient = avatarGradients[Math.floor(Math.random() * avatarGradients.length)];
+
+          // Generate service badge color
+          const serviceBadgeColors = [
+            'bg-blue-600',
+            'bg-purple-600',
+            'bg-green-600',
+            'bg-orange-600',
+            'bg-red-600',
+            'bg-indigo-600'
+          ];
+          const randomBadgeColor = serviceBadgeColors[Math.floor(Math.random() * serviceBadgeColors.length)];
+
+          // Generate stars based on rating
+          const starsText = '⭐'.repeat(review.rating);
+
+          // Get first letter of name for avatar
+          const avatarLetter = review.name.charAt(0).toUpperCase();
+
+          // Create the new review card HTML
+          const newReviewCard = document.createElement('div');
+          newReviewCard.className = 'bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300 new-review';
+          newReviewCard.style.animation = 'fadeInScale 0.6s ease-out';
+
+          newReviewCard.innerHTML = `
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br ${randomGradient} w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                <span class="text-white font-bold">${avatarLetter}</span>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm">${review.name}</h4>
+                <p class="text-purple-200 text-xs">${review.businessType}</p>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="text-yellow-400 text-sm">${starsText}</div>
+              <div class="${randomBadgeColor} text-white px-2 py-1 rounded-full text-xs inline-block mt-1">${review.service}</div>
+            </div>
+            <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+              "${review.text}"
+            </p>
+            <div class="text-green-400 font-semibold text-xs">
+              ✨ Just submitted
+            </div>
+          `;
+
+          // Add fadeIn animation styles if not already present
+          if (!document.getElementById('reviewAnimationStyles')) {
+            const style = document.createElement('style');
+            style.id = 'reviewAnimationStyles';
+            style.textContent = `
+              @keyframes fadeInScale {
+                0% {
+                  opacity: 0;
+                  transform: scale(0.8) translateY(20px);
+                }
+                100% {
+                  opacity: 1;
+                  transform: scale(1) translateY(0);
+                }
+              }
+              .new-review {
+                border: 2px solid rgba(34, 197, 94, 0.3);
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+              }
+            `;
+            document.head.appendChild(style);
+          }
+
+          // Insert the new review at the beginning of the grid
+          testimonialsGrid.insertBefore(newReviewCard, testimonialsGrid.firstChild);
+
+          // Scroll to the testimonials section to show the new review
+          setTimeout(() => {
+            const testimonialsSection = document.querySelector('section.py-20.brand-gradient-bg');
+            if (testimonialsSection) {
+              testimonialsSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          }, 100);
+
+          // Remove the highlight border after 5 seconds
+          setTimeout(() => {
+            newReviewCard.classList.remove('new-review');
+          }, 5000);
+
+          console.log('✅ Review added to testimonials section successfully');
+
+        } catch (error) {
+          console.error('Error adding review to testimonials:', error);
+        }
+      }
+
       // Make rating functions available globally
       window.selectedRating = selectedRating;
       window.setRating = setRating;
       window.highlightStars = highlightStars;
       window.updateStarDisplay = updateStarDisplay;
       window.submitReview = submitReview;
+      window.addReviewToTestimonials = addReviewToTestimonials;
 
       // Verify rating system is properly initialized
       console.log('⭐ Rating system initialized:', {
@@ -1576,6 +1697,164 @@ Details: ${currentOrderData.details}`;
       // Make review toggle function available globally
       window.showingAllReviews = showingAllReviews;
       window.toggleAllReviews = toggleAllReviews;
+
+      // Function to convert testimonials grid to horizontal scroll
+      function convertTestimonialsToHorizontalScroll() {
+        try {
+          console.log('Converting testimonials to horizontal scroll...');
+
+          // Find the testimonials grid container
+          const testimonialsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-4.gap-6');
+
+          if (!testimonialsGrid) {
+            console.error('Testimonials grid not found');
+            return;
+          }
+
+          // Create scroll indicator and container
+          const scrollContainer = document.createElement('div');
+          scrollContainer.className = 'relative';
+
+          const scrollIndicator = document.createElement('div');
+          scrollIndicator.className = 'text-center mb-6';
+          scrollIndicator.innerHTML = '<p class="text-purple-200 text-sm">← Scroll to see all reviews →</p>';
+
+          const horizontalScrollWrapper = document.createElement('div');
+          horizontalScrollWrapper.className = 'overflow-x-auto pb-4';
+          horizontalScrollWrapper.style.cssText = 'scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.3) transparent;';
+
+          const flexContainer = document.createElement('div');
+          flexContainer.className = 'flex gap-6';
+          flexContainer.style.cssText = 'width: fit-content; min-width: 100%;';
+
+          // Get all testimonial cards
+          const testimonialCards = Array.from(testimonialsGrid.children);
+
+          // Add fixed width to each card and move to flex container
+          testimonialCards.forEach(card => {
+            card.classList.add('flex-none', 'w-80');
+            flexContainer.appendChild(card);
+          });
+
+          // Build the new structure
+          scrollContainer.appendChild(scrollIndicator);
+          horizontalScrollWrapper.appendChild(flexContainer);
+          scrollContainer.appendChild(horizontalScrollWrapper);
+
+          // Replace the old grid with new scroll container
+          testimonialsGrid.parentNode.replaceChild(scrollContainer, testimonialsGrid);
+
+          // Update the addReviewToTestimonials function to work with new structure
+          const originalAddReview = window.addReviewToTestimonials;
+          window.addReviewToTestimonials = function(review) {
+            try {
+              console.log('Adding review to horizontal scroll testimonials:', review);
+
+              // Find the flex container
+              const flexContainer = document.querySelector('.overflow-x-auto .flex.gap-6');
+
+              if (!flexContainer) {
+                console.error('Horizontal scroll flex container not found');
+                return;
+              }
+
+              // Generate a random gradient color for the avatar
+              const avatarGradients = [
+                'from-purple-400 to-pink-500',
+                'from-blue-400 to-indigo-500',
+                'from-green-400 to-teal-500',
+                'from-yellow-400 to-orange-500',
+                'from-red-400 to-pink-500',
+                'from-indigo-400 to-purple-500'
+              ];
+              const randomGradient = avatarGradients[Math.floor(Math.random() * avatarGradients.length)];
+
+              // Generate service badge color
+              const serviceBadgeColors = [
+                'bg-blue-600',
+                'bg-purple-600',
+                'bg-green-600',
+                'bg-orange-600',
+                'bg-red-600',
+                'bg-indigo-600'
+              ];
+              const randomBadgeColor = serviceBadgeColors[Math.floor(Math.random() * serviceBadgeColors.length)];
+
+              // Generate stars based on rating
+              const starsText = '⭐'.repeat(review.rating);
+
+              // Get first letter of name for avatar
+              const avatarLetter = review.name.charAt(0).toUpperCase();
+
+              // Create the new review card HTML with fixed width for horizontal scroll
+              const newReviewCard = document.createElement('div');
+              newReviewCard.className = 'flex-none w-80 bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300 new-review';
+              newReviewCard.style.animation = 'fadeInScale 0.6s ease-out';
+
+              newReviewCard.innerHTML = `
+                <div class="flex items-center mb-4">
+                  <div class="bg-gradient-to-br ${randomGradient} w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-white font-bold">${avatarLetter}</span>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-white text-sm">${review.name}</h4>
+                    <p class="text-purple-200 text-xs">${review.businessType}</p>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="text-yellow-400 text-sm">${starsText}</div>
+                  <div class="${randomBadgeColor} text-white px-2 py-1 rounded-full text-xs inline-block mt-1">${review.service}</div>
+                </div>
+                <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+                  "${review.text}"
+                </p>
+                <div class="text-green-400 font-semibold text-xs">
+                  ✨ Just submitted
+                </div>
+              `;
+
+              // Insert the new review at the beginning of the flex container
+              flexContainer.insertBefore(newReviewCard, flexContainer.firstChild);
+
+              // Scroll to the new review in the horizontal container
+              setTimeout(() => {
+                newReviewCard.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'nearest',
+                  inline: 'start'
+                });
+              }, 100);
+
+              // Remove the highlight border after 5 seconds
+              setTimeout(() => {
+                newReviewCard.classList.remove('new-review');
+              }, 5000);
+
+              console.log('✅ Review added to horizontal scroll testimonials successfully');
+
+            } catch (error) {
+              console.error('Error adding review to horizontal testimonials:', error);
+            }
+          };
+
+          console.log('✅ Testimonials converted to horizontal scroll successfully');
+
+        } catch (error) {
+          console.error('Error converting testimonials to horizontal scroll:', error);
+        }
+      }
+
+      // Convert testimonials on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(convertTestimonialsToHorizontalScroll, 1000);
+      });
+
+      // Also try to convert immediately if DOM is already loaded
+      if (document.readyState === 'loading') {
+        setTimeout(convertTestimonialsToHorizontalScroll, 1000);
+      } else {
+        setTimeout(convertTestimonialsToHorizontalScroll, 500);
+      }
 
       // Verify review toggle system is properly initialized
       console.log('📖 Review toggle system initialized:', {
@@ -3319,26 +3598,96 @@ Thanks!` : '';
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Testimonial 1 -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 transform hover:scale-105 transition-all duration-300">
-            <div class="flex items-center mb-6">
-              <div class="bg-gradient-to-br from-yellow-400 to-orange-500 w-12 h-12 rounded-full flex items-center justify-center mr-4">
-                <span class="text-white font-bold text-lg">S</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Recent Review 1 - Sarah M. -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br from-red-400 to-orange-500 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                <span class="text-white font-bold">S</span>
               </div>
               <div>
-                <h4 class="font-semibold text-white">Sarah</h4>
-                <p class="text-purple-200 text-sm">Restaurant Owner</p>
+                <h4 class="font-semibold text-white text-sm">Sarah M.</h4>
+                <p class="text-purple-200 text-xs">Restaurant Owner</p>
               </div>
             </div>
-            <div class="mb-4">
-              <div class="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
+            <div class="mb-3">
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Business Website</div>
             </div>
-            <p class="text-purple-100 leading-relaxed mb-4">
-              "Visual Vibe Studio completely transformed our online presence! Our new website increased online orders by 150% in just 2 months. Yoshiko's attention to detail is incredible."
+            <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+              "Visual Vibe Studio completely transformed our restaurant's online presence! Our new website increased online orders by 200% in just 3 weeks."
             </p>
-            <div class="text-green-400 font-semibold text-sm">
-              🚀 +150% Online Orders
+            <div class="text-green-400 font-semibold text-xs">
+              🚀 +200% Online Orders
+            </div>
+          </div>
+
+          <!-- Recent Review 2 - Marcus T. -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br from-green-400 to-teal-500 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                <span class="text-white font-bold">M</span>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm">Marcus T.</h4>
+                <p class="text-purple-200 text-xs">Tech Startup CEO</p>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="bg-purple-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Logo Design</div>
+            </div>
+            <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+              "The logo design exceeded all our expectations! It perfectly captures our innovative spirit and has become instantly recognizable."
+            </p>
+            <div class="text-green-400 font-semibold text-xs">
+              📈 +400% Brand Recognition
+            </div>
+          </div>
+
+          <!-- Recent Review 3 - Lisa R. -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br from-pink-400 to-purple-500 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                <span class="text-white font-bold">L</span>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm">Lisa R.</h4>
+                <p class="text-purple-200 text-xs">Fitness Center Manager</p>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="bg-orange-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Marketing Flyer</div>
+            </div>
+            <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+              "The marketing flyers were absolutely stunning! Our new member sign-ups increased by 75% in the first month."
+            </p>
+            <div class="text-green-400 font-semibold text-xs">
+              💪 +75% New Members
+            </div>
+          </div>
+
+          <!-- Recent Review 4 - David K. -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br from-blue-400 to-indigo-500 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                <span class="text-white font-bold">D</span>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm">David K.</h4>
+                <p class="text-purple-200 text-xs">Real Estate Agent</p>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="bg-red-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Business Cards</div>
+            </div>
+            <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+              "Professional business cards that make a lasting impression! The design is clean, memorable, and perfectly represents my brand."
+            </p>
+            <div class="text-green-400 font-semibold text-xs">
+              ✨ Professional Impact
             </div>
           </div>
 
@@ -3385,6 +3734,28 @@ Thanks!` : '';
               💪 50+ New Members
             </div>
           </div>
+          <!-- Recent Review 8 - Jennifer -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br from-indigo-400 to-blue-500 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                <span class="text-white font-bold">J</span>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm">Jennifer</h4>
+                <p class="text-purple-200 text-xs">Marketing Director</p>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="bg-teal-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Brand Package</div>
+            </div>
+            <p class="text-purple-100 leading-relaxed mb-3 text-sm">
+              "The complete brand package exceeded expectations! Logo, website, and marketing materials all perfectly aligned. Our brand now looks incredibly professional."
+            </p>
+            <div class="text-green-400 font-semibold text-xs">
+              🎨 Complete Branding
+            </div>
+          </div>
         </div>
 
         <!-- Overall Stats -->
@@ -3392,7 +3763,7 @@ Thanks!` : '';
           <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 inline-block">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <div class="text-3xl font-bold text-yellow-400 mb-2">200+</div>
+                <div class="text-3xl font-bold text-yellow-400 mb-2">250+</div>
                 <p class="text-purple-200">Happy Customers</p>
               </div>
               <div>
@@ -3425,9 +3796,9 @@ Thanks!` : '';
       <div class="max-w-7xl mx-auto px-4">
 
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div class="flex justify-center">
           <!-- Review Form -->
-          <div class="lg:col-span-1 w-full">
+          <div class="w-full max-w-2xl">
             <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 20px; border: 4px solid #ffffff; border-radius: 20px; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3); display: block !important; visibility: visible !important;">
               <h4 style="font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 30px; color: #ffffff; text-transform: uppercase;">📝 Leave a Review 📝</h4>
 
@@ -3493,7 +3864,7 @@ Thanks!` : '';
 
               <!-- Reviews Header -->
               <div style="text-align: center; margin-bottom: 40px;">
-                <h4 style="font-size: 32px; font-weight: bold; color: #ffffff; margin-bottom: 20px; text-transform: uppercase;">⭐ Recent Customer Reviews ⭐</h4>
+
                 <div style="font-size: 24px; color: #ffffff;">
                   <span style="font-size: 32px;">⭐⭐⭐⭐⭐</span>
                   <span style="font-size: 28px; font-weight: bold; margin-left: 15px;" id="mainRating">4.9/5</span>
@@ -4465,7 +4836,7 @@ Thanks!` : '';
             chatSendBtn.setAttribute('data-initialized', 'true');
             console.log('✅ Send button event listener added');
           } else {
-            console.log('⚠️ Send button already initialized or not found', !!chatSendBtn);
+            console.log('⚠��� Send button already initialized or not found', !!chatSendBtn);
           }
 
           // Initialize send button
@@ -4782,7 +5153,7 @@ Thanks!` : '';
           }
 
           if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
-            console.log('✅ Order form functions are properly defined');
+            console.log('�� Order form functions are properly defined');
           } else {
             console.error('❌ Order form functions not properly defined');
           }
@@ -5498,14 +5869,14 @@ ${'='.repeat(40)}
       Payment Method: Venmo (@Yoshiko-Swafford)
 
       NEXT STEPS:
-      �����━━━━━��━━━━━━━
+      �������━━━━��━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
       📋 Project discussion and planning will begin
       • Final 50% payment due upon project completion
       • Estimated completion: ${formData.get("dueDate")}
 
       CONTACT INFORMATION:
-      ━━━━━━━━━━━━━━━
+      ━━━━━━━━━━━��━━━
       Email: support@visualvibestudio.store
       Phone: (402) 979-7184
       Website: www.visualvibestudio.store
