@@ -56,6 +56,23 @@
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
     ></script>
     <script>
+      // Initialize global variables first to prevent temporal dead zone issues
+      var selectedRating = 0;
+      var showingAllReviews = false;
+      var chatInitialized = false;
+      var chatOpen = false;
+      var currentUser = null;
+      var currentOrderData = null;
+      var currentOrderSubject = null;
+      var currentOrderEmailBody = null;
+
+      // Set window globals
+      window.selectedRating = 0;
+      window.showingAllReviews = false;
+      window.chatInitialized = false;
+      window.chatOpen = false;
+      window.currentUser = null;
+
       // Simple chat functions that work immediately
       function simpleSend() {
         console.log('Simple send called!');
@@ -846,9 +863,7 @@ Reply to customer at: ${orderData.email}`;
       }
 
       // Global order data storage for modal functions
-      let currentOrderData = null;
-      let currentOrderSubject = null;
-      let currentOrderEmailBody = null;
+      // currentOrderData, currentOrderSubject, currentOrderEmailBody already initialized at top of script
 
       // Show order confirmation modal instead of blank page
       function showOrderConfirmation(orderData, subject, emailBody) {
@@ -1177,8 +1192,7 @@ Details: ${currentOrderData.details}`;
       }, 1000);
 
       // Define chat functions globally at script start to fix ReferenceError
-      let chatInitialized = false;
-      let chatOpen = false;
+      // chatInitialized and chatOpen already initialized at top of script
 
       function safeToggleChat() {
         try {
@@ -1314,19 +1328,32 @@ Details: ${currentOrderData.details}`;
       window.handleChatKeyPress = handleChatKeyPress;
 
       // Define rating functions globally at script start to fix ReferenceError
-      let selectedRating = 0;
+      // selectedRating already initialized at top of script
 
       function setRating(rating) {
-        console.log('Setting rating to:', rating);
-        selectedRating = parseInt(rating);
-        const hiddenInput = document.getElementById('selectedRating');
-        if (hiddenInput) {
-          hiddenInput.value = selectedRating;
-        }
-        updateStarDisplay();
+        try {
+          console.log('Setting rating to:', rating);
 
-        // Provide immediate feedback
-        console.log(`✅ You selected ${rating} star${rating > 1 ? 's' : ''}!`);
+          // Use both local and window variables for reliability
+          const ratingValue = parseInt(rating);
+          selectedRating = ratingValue;
+          window.selectedRating = ratingValue;
+
+          const hiddenInput = document.getElementById('selectedRating');
+          if (hiddenInput) {
+            hiddenInput.value = ratingValue;
+          }
+
+          updateStarDisplay();
+
+          // Provide immediate feedback
+          console.log(`✅ You selected ${rating} star${rating > 1 ? 's' : ''}!`);
+        } catch (error) {
+          console.error('Error setting rating:', error);
+          // Fallback values
+          selectedRating = parseInt(rating) || 0;
+          window.selectedRating = selectedRating;
+        }
       }
 
       function highlightStars(rating) {
@@ -1350,11 +1377,15 @@ Details: ${currentOrderData.details}`;
       }
 
       function submitReview(event) {
-        if (event) {
-          event.preventDefault();
-        }
+        try {
+          console.log('🚀 submitReview function called!', event);
 
-        console.log('Submitting review...');
+          if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          console.log('📝 Submitting review...');
 
         const reviewerName = document.getElementById('reviewerName').value.trim();
         const businessType = document.getElementById('businessType').value.trim();
@@ -1366,7 +1397,8 @@ Details: ${currentOrderData.details}`;
           return false;
         }
 
-        if (!selectedRating || selectedRating === 0) {
+        const currentRating = window.selectedRating || selectedRating || 0;
+        if (!currentRating || currentRating === 0) {
           alert('Please select a star rating.');
           return false;
         }
@@ -1387,7 +1419,7 @@ Details: ${currentOrderData.details}`;
           name: reviewerName,
           businessType: businessType || 'Customer',
           service: serviceUsed,
-          rating: selectedRating,
+          rating: currentRating,
           text: reviewText,
           date: new Date().toISOString(),
           approved: true // Auto-approve for immediate display
@@ -1406,27 +1438,46 @@ Details: ${currentOrderData.details}`;
         document.getElementById('serviceUsed').value = '';
         document.getElementById('reviewText').value = '';
         selectedRating = 0;
+        window.selectedRating = 0;
         document.getElementById('selectedRating').value = '0';
         updateStarDisplay();
 
         alert('Thank you for your review! It has been added to our reviews section.');
 
-        // Try to reload reviews if the function exists
-        if (typeof loadReviews === 'function') {
-          loadReviews();
-        }
+          // Try to reload reviews if the function exists
+          if (typeof loadReviews === 'function') {
+            loadReviews();
+            console.log('✅ Reviews reloaded successfully');
+          } else {
+            console.warn('⚠️ loadReviews function not found');
+          }
 
-        return false;
+          console.log('✅ Review submitted successfully!');
+          return false;
+
+        } catch (error) {
+          console.error('❌ Error submitting review:', error);
+          alert('Error submitting review. Please try again or contact support.');
+          return false;
+        }
       }
 
       // Make rating functions available globally
+      window.selectedRating = selectedRating;
       window.setRating = setRating;
       window.highlightStars = highlightStars;
       window.updateStarDisplay = updateStarDisplay;
       window.submitReview = submitReview;
 
+      // Verify rating system is properly initialized
+      console.log('⭐ Rating system initialized:', {
+        selectedRating: selectedRating,
+        windowSelectedRating: window.selectedRating,
+        setRatingFunction: typeof setRating
+      });
+
       // Define review toggle function globally at script start to fix ReferenceError
-      let showingAllReviews = false;
+      // showingAllReviews already initialized at top of script
 
       function toggleAllReviews() {
         try {
@@ -1440,12 +1491,15 @@ Details: ${currentOrderData.details}`;
             return;
           }
 
-          if (!showingAllReviews) {
+          const currentState = window.showingAllReviews || showingAllReviews || false;
+
+          if (!currentState) {
             // Show all reviews
             reviewsContainer.style.maxHeight = 'none';
             reviewsContainer.style.overflow = 'visible';
             buttonText.textContent = 'Show Less Reviews';
             showingAllReviews = true;
+            window.showingAllReviews = true;
             console.log('✅ Showing all reviews');
           } else {
             // Show limited reviews
@@ -1453,6 +1507,7 @@ Details: ${currentOrderData.details}`;
             reviewsContainer.style.overflow = 'auto';
             buttonText.textContent = 'View All Reviews';
             showingAllReviews = false;
+            window.showingAllReviews = false;
             console.log('✅ Showing limited reviews');
           }
         } catch (error) {
@@ -1462,7 +1517,15 @@ Details: ${currentOrderData.details}`;
       }
 
       // Make review toggle function available globally
+      window.showingAllReviews = showingAllReviews;
       window.toggleAllReviews = toggleAllReviews;
+
+      // Verify review toggle system is properly initialized
+      console.log('📖 Review toggle system initialized:', {
+        showingAllReviews: showingAllReviews,
+        windowShowingAllReviews: window.showingAllReviews,
+        toggleFunction: typeof toggleAllReviews
+      });
 
       // Define order form functions globally at script start to fix ReferenceError
       function updateButtonState() {
@@ -3000,7 +3063,7 @@ Thanks!` : '';
               Standard & premium finishes
             </div>
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">✓</span>
+              <span class="text-green-500 mr-2">���</span>
               QR codes for digital contact
             </div>
             <div class="flex items-center">
@@ -3564,7 +3627,7 @@ Thanks!` : '';
             >
               <span>🚀</span>
               <span id="submitBtnText">Start My Project Now</span>
-              <span>🚀</span>
+              <span>��</span>
             </button>
             <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included</p>
           </div>
@@ -4093,8 +4156,8 @@ Thanks!` : '';
         initializeWebsite();
       });
 
-      let venmoPaymentShown = false;
-      let chatInitialized = false;
+      var venmoPaymentShown = false;
+      // chatInitialized already initialized at top of script
 
       // Track Venmo app clicks for analytics and fallback handling
       function trackVenmoClick() {
@@ -4345,7 +4408,7 @@ Thanks!` : '';
       }
 
       // User Authentication System
-      let currentUser = null;
+      // currentUser already initialized at top of script
 
       function initializeAuth() {
         // Check if user is already signed in
@@ -5357,8 +5420,8 @@ ${'='.repeat(40)}
       }
 
       // Live Chat Functionality
-      let chatOpen = false;
-      let hasUnreadMessages = false;
+      // chatOpen already initialized at top of script
+      var hasUnreadMessages = false;
 
       // Chat toggle function (defined at script start to fix ReferenceError)
       const agentResponses = [
@@ -6354,13 +6417,43 @@ Thanks,
           const reviewForm = document.getElementById('reviewForm');
           if (reviewForm) {
             reviewForm.addEventListener('submit', handleReviewSubmission);
-            console.log('Review form event listener added');
+            console.log('✅ Review form event listener added');
+
+            // Also add onclick to submit button as backup
+            const submitButton = reviewForm.querySelector('button[type="submit"]');
+            if (submitButton) {
+              // Add backup onclick handler
+              submitButton.onclick = function(e) {
+                console.log('📝 Submit button clicked directly');
+                e.preventDefault();
+                return submitReview(e);
+              };
+              console.log('✅ Review submit button onclick added as backup');
+            } else {
+              console.warn('⚠️ Review submit button not found');
+            }
+          } else {
+            console.error('❌ Review form not found');
           }
+
+          // Verify all review form elements exist
+          const formElements = {
+            reviewerName: document.getElementById('reviewerName'),
+            businessType: document.getElementById('businessType'),
+            serviceUsed: document.getElementById('serviceUsed'),
+            reviewText: document.getElementById('reviewText'),
+            selectedRating: document.getElementById('selectedRating')
+          };
+
+          console.log('📋 Review form elements verification:');
+          Object.keys(formElements).forEach(key => {
+            console.log(`  ${key}:`, !!formElements[key]);
+          });
 
           // Load and display existing reviews
           console.log('Loading reviews...');
           loadReviews();
-          console.log('Review system initialized successfully');
+          console.log('✅ Review system initialized successfully');
         } catch (error) {
           console.error('Error initializing review system:', error);
         }
@@ -6372,16 +6465,48 @@ Thanks,
 
       // submitReview function (defined at script start to fix ReferenceError)
 
+      // Test function for debugging review submission
+      function testReviewSubmission() {
+        console.log('🧪 Testing review submission...');
+
+        // Set test values
+        const testName = document.getElementById('reviewerName');
+        const testBusiness = document.getElementById('businessType');
+        const testService = document.getElementById('serviceUsed');
+        const testReview = document.getElementById('reviewText');
+
+        if (testName) testName.value = 'Test Customer';
+        if (testBusiness) testBusiness.value = 'Test Business';
+        if (testService) testService.value = 'Business Website';
+        if (testReview) testReview.value = 'This is a test review to verify the submission system is working.';
+
+        // Set test rating
+        setRating(5);
+
+        // Try to submit
+        submitReview();
+      }
+
       // Make functions globally accessible
       window.submitReview = submitReview;
       window.setRating = setRating;
       window.toggleAllReviews = toggleAllReviews;
       window.loadReviews = loadReviews;
+      window.testReviewSubmission = testReviewSubmission;
 
       // toggleAllReviews function (defined at script start to fix ReferenceError)
 
       function handleReviewSubmission(e) {
-        return submitReview(e);
+        try {
+          console.log('📝 Form submission event triggered:', e);
+          console.log('📝 Event type:', e.type);
+          return submitReview(e);
+        } catch (error) {
+          console.error('❌ Error in handleReviewSubmission:', error);
+          if (e) e.preventDefault();
+          alert('Error processing review submission. Please try again.');
+          return false;
+        }
       }
 
       function saveReview(review) {
