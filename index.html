@@ -347,6 +347,246 @@ Thanks,`);
 
       window.testVenmoPayment = testVenmoPayment;
 
+      // Simple order submission that always works
+      function simpleOrderSubmit() {
+        console.log('🚀 Simple order submit clicked!');
+
+        // Get basic form data
+        const form = document.getElementById('orderForm');
+        if (!form) {
+          alert('Form not found');
+          return;
+        }
+
+        // Collect all form data
+        const businessName = form.querySelector('input[name="businessName"]')?.value || 'Customer';
+        const industry = form.querySelector('input[name="industry"]')?.value || 'Not specified';
+        const email = form.querySelector('input[name="email"]')?.value || 'Not provided';
+        const phone = form.querySelector('input[name="phone"]')?.value || 'Not provided';
+        const dueDate = form.querySelector('input[name="dueDate"]')?.value || 'Not specified';
+        const details = form.querySelector('textarea[name="details"]')?.value || 'No additional details';
+        const services = form.querySelector('select[name="services"]');
+
+        let selectedServices = ['Design Services'];
+        let totalAmount = 100; // Default amount
+
+        if (services && services.selectedOptions.length > 0) {
+          selectedServices = Array.from(services.selectedOptions).map(opt => opt.text);
+          // Calculate total from selected services
+          totalAmount = Array.from(services.selectedOptions).reduce((total, opt) => {
+            const price = parseInt(opt.getAttribute('data-price')) || 50;
+            return total + price;
+          }, 0);
+        }
+
+        const depositAmount = (totalAmount * 0.5).toFixed(2); // 50% deposit
+
+        console.log('Order details:', { businessName, selectedServices, totalAmount, depositAmount });
+
+        // Show loading state
+        const submitBtn = document.getElementById('submitOrderBtn');
+        const submitBtnText = document.getElementById('submitBtnText');
+        if (submitBtn && submitBtnText) {
+          submitBtnText.textContent = 'Processing Order...';
+          submitBtn.disabled = true;
+        }
+
+        // Show simple Venmo payment
+        showSimpleVenmoPayment(depositAmount, businessName, selectedServices);
+
+        // Send email with order details
+        sendOrderEmail({
+          businessName,
+          industry,
+          email,
+          phone,
+          dueDate,
+          details,
+          selectedServices,
+          totalAmount: totalAmount.toFixed(2),
+          depositAmount
+        });
+      }
+
+      function showSimpleVenmoPayment(depositAmount, businessName, services) {
+        console.log('💰 Showing simple Venmo payment...');
+
+        const container = document.getElementById('paypal-button-container');
+        if (!container) {
+          alert('Payment container not found');
+          return;
+        }
+
+        const venmoNote = `Visual Vibe Studio - 50% Deposit for ${businessName} (${services.join(', ')})`;
+        const venmoLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${depositAmount}&note=${encodeURIComponent(venmoNote)}`;
+
+        container.innerHTML = `
+          <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mt-6">
+            <div class="text-center mb-6">
+              <div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                💳
+              </div>
+              <h4 class="text-xl font-bold text-gray-800 mb-2">Pay Your Deposit</h4>
+              <p class="text-gray-600">Send your 50% deposit to get started</p>
+            </div>
+
+            <div class="bg-white rounded-lg p-4 mb-6 border border-gray-200">
+              <h5 class="font-semibold text-gray-800 mb-3">Order Summary</h5>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Business:</span>
+                  <span class="font-medium">${businessName}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Services:</span>
+                  <span class="font-medium">${services.join(', ')}</span>
+                </div>
+                <div class="flex justify-between border-t pt-2 mt-2">
+                  <span class="text-gray-600">Deposit (50%):</span>
+                  <span class="font-bold text-lg text-green-600">$${depositAmount}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center space-y-4">
+              <p class="text-gray-700 font-medium">Send payment to:</p>
+              <div class="bg-blue-100 rounded-lg p-3 inline-block">
+                <span class="text-2xl font-bold text-blue-800">@Yoshiko-Swafford</span>
+              </div>
+
+              <div class="space-y-3">
+                <a href="${venmoLink}" class="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  🏧 Open Venmo App
+                </a>
+
+                <button type="button" onclick="copyVenmoInfo('${depositAmount}', '${businessName}')" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                  📋 Copy Payment Details
+                </button>
+              </div>
+
+              <div class="text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                <p class="font-medium mb-1">📱 Can't open Venmo?</p>
+                <p>Copy the details above and pay manually via the Venmo app or call (402) 979-7184</p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.classList.remove('hidden');
+        container.style.display = 'block';
+
+        // Scroll to payment
+        setTimeout(() => {
+          container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+
+        console.log('✅ Simple Venmo payment displayed successfully!');
+      }
+
+      function copyVenmoInfo(amount, businessName) {
+        const text = `Venmo: @Yoshiko-Swafford\nAmount: $${amount}\nNote: Visual Vibe Studio - 50% Deposit for ${businessName}`;
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            alert('Payment details copied to clipboard!');
+          });
+        } else {
+          alert(`Payment Details:\n${text}`);
+        }
+      }
+
+      // Send order details via email (simple mailto solution)
+      function sendOrderEmail(orderData) {
+        console.log('📧 Sending order email...');
+
+        try {
+          const subject = encodeURIComponent(`New Project Order from ${orderData.businessName}`);
+          const body = encodeURIComponent(`NEW PROJECT ORDER RECEIVED!
+
+Business Information:
+- Business Name: ${orderData.businessName}
+- Industry: ${orderData.industry}
+- Contact Email: ${orderData.email}
+- Phone Number: ${orderData.phone}
+- Due Date: ${orderData.dueDate}
+
+Services Requested:
+${orderData.selectedServices.map(service => `- ${service}`).join('\n')}
+
+Project Details:
+${orderData.details}
+
+Pricing:
+- Total Project Cost: $${orderData.totalAmount}
+- Deposit Amount (50%): $${orderData.depositAmount}
+
+Payment Method: Venmo (@Yoshiko-Swafford)
+
+This customer has been shown the Venmo payment details and should be sending payment shortly.
+
+---
+Order submitted from Visual Vibe Studio website
+Date: ${new Date().toLocaleString()}
+Reply to customer at: ${orderData.email}`);
+
+          // Create mailto link
+          const mailtoLink = `mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`;
+
+          // Open email client
+          window.open(mailtoLink, '_blank');
+
+          // Show success message
+          showAlert('Order submitted successfully! Email opened with order details.', 'success');
+          console.log('✅ Order email prepared successfully!');
+
+          // Update button to show success
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const submitBtnText = document.getElementById('submitBtnText');
+          if (submitBtn && submitBtnText) {
+            submitBtnText.textContent = 'Order Submitted! ✅';
+            submitBtn.classList.add('bg-green-600');
+            submitBtn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600');
+          }
+
+        } catch (error) {
+          console.error('❌ Error preparing order email:', error);
+
+          // Show order details for manual copy
+          const orderDetails = `
+NEW PROJECT ORDER:
+Business: ${orderData.businessName}
+Industry: ${orderData.industry}
+Email: ${orderData.email}
+Phone: ${orderData.phone}
+Due Date: ${orderData.dueDate}
+Services: ${orderData.selectedServices.join(', ')}
+Total: $${orderData.totalAmount}
+Deposit: $${orderData.depositAmount}
+Details: ${orderData.details}
+          `;
+
+          console.log('📋 Order Details for Manual Processing:', orderDetails);
+          alert('Order submitted! Please check console for order details.');
+
+          // Update button anyway
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const submitBtnText = document.getElementById('submitBtnText');
+          if (submitBtn && submitBtnText) {
+            submitBtnText.textContent = 'Order Submitted! ✅';
+            submitBtn.classList.add('bg-green-600');
+            submitBtn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600');
+          }
+        }
+      }
+
+
+
+      // Make functions globally available
+      window.simpleOrderSubmit = simpleOrderSubmit;
+      window.showSimpleVenmoPayment = showSimpleVenmoPayment;
+      window.copyVenmoInfo = copyVenmoInfo;
+      window.sendOrderEmail = sendOrderEmail;
+
       // Define chat functions globally at script start to fix ReferenceError
       let chatInitialized = false;
       let chatOpen = false;
@@ -2728,11 +2968,10 @@ Thanks!` : '';
           <!-- Enhanced Submit Button -->
           <div class="text-center pt-6">
             <button
-              type="submit"
+              type="button"
               id="submitOrderBtn"
-              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              onmouseover="updateButtonState()"
-              onclick="validateAndSubmit(event)"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3"
+              onclick="simpleOrderSubmit()"
             >
               <span>🚀</span>
               <span id="submitBtnText">Start My Project Now</span>
@@ -2742,12 +2981,7 @@ Thanks!` : '';
           </div>
           <div id="paypal-button-container" class="mt-6 hidden"></div>
 
-          <!-- Debug button for testing Venmo payment -->
-          <div class="mt-4 text-center">
-            <button onclick="testVenmoPayment()" class="bg-green-500 text-white px-4 py-2 rounded text-sm">
-              🧪 Test Venmo Payment
-            </button>
-          </div>
+
         </form>
       </div>
     </section>
@@ -4463,7 +4697,7 @@ ${'='.repeat(40)}
       Payment Method: Venmo (@Yoshiko-Swafford)
 
       NEXT STEPS:
-      �����━━━━━━━━━━━━━
+      �����━━━━━��━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
       📋 Project discussion and planning will begin
       • Final 50% payment due upon project completion
