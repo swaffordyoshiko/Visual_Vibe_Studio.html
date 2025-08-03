@@ -17,7 +17,7 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.visualvibestudio.store/" />
+    <meta property="og:url" content="/" />
     <meta
       property="og:title"
       content="Visual Vibe Studio - Professional Design Services"
@@ -31,7 +31,7 @@
     <meta property="twitter:card" content="summary_large_image" />
     <meta
       property="twitter:url"
-      content="https://www.visualvibestudio.store/"
+      content="/"
     />
     <meta
       property="twitter:title"
@@ -60,6 +60,468 @@
       (function () {
         emailjs.init("eHAEIqw8YtVZP5rYA"); // Public key for contact forms
       })();
+
+      // Define modal functions globally at script start to fix ReferenceError
+      function openSignInModal() {
+        try {
+          console.log('📝 Opening sign in modal...');
+
+          const modal = document.getElementById('signInModal');
+          if (!modal) {
+            console.error('❌ Sign in modal element not found in DOM');
+            alert('Sign in modal not available. Please refresh the page.');
+            return;
+          }
+
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+          modal.style.opacity = '1';
+
+          const emailInput = document.getElementById('signInEmail');
+          if (emailInput) {
+            setTimeout(() => emailInput.focus(), 100);
+          }
+
+          console.log('✅ Sign in modal opened successfully');
+        } catch (error) {
+          console.error('❌ Error opening sign in modal:', error);
+          alert('Error opening sign in form. Please refresh the page.');
+        }
+      }
+
+      function openSignUpModal() {
+        try {
+          console.log('📝 Opening sign up modal...');
+
+          const modal = document.getElementById('signUpModal');
+          if (!modal) {
+            console.error('❌ Sign up modal element not found in DOM');
+            alert('Sign up modal not available. Please refresh the page.');
+            return;
+          }
+
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+          modal.style.opacity = '1';
+
+          const nameInput = document.getElementById('signUpName');
+          if (nameInput) {
+            setTimeout(() => nameInput.focus(), 100);
+          }
+
+          console.log('✅ Sign up modal opened successfully');
+        } catch (error) {
+          console.error('❌ Error opening sign up modal:', error);
+          alert('Error opening sign up form. Please refresh the page.');
+        }
+      }
+
+      function closeSignInModal() {
+        try {
+          const modal = document.getElementById('signInModal');
+          if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+          }
+          const form = document.getElementById('signInForm');
+          if (form) {
+            form.reset();
+          }
+        } catch (error) {
+          console.error('Error closing sign in modal:', error);
+        }
+      }
+
+      function closeSignUpModal() {
+        try {
+          const modal = document.getElementById('signUpModal');
+          if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+          }
+          const form = document.getElementById('signUpForm');
+          if (form) {
+            form.reset();
+          }
+        } catch (error) {
+          console.error('Error closing sign up modal:', error);
+        }
+      }
+
+      function switchToSignUp() {
+        closeSignInModal();
+        openSignUpModal();
+      }
+
+      function switchToSignIn() {
+        closeSignUpModal();
+        openSignInModal();
+      }
+
+      // Make functions available globally
+      window.openSignInModal = openSignInModal;
+      window.openSignUpModal = openSignUpModal;
+      window.closeSignInModal = closeSignInModal;
+      window.closeSignUpModal = closeSignUpModal;
+      window.switchToSignUp = switchToSignUp;
+      window.switchToSignIn = switchToSignIn;
+
+      // Define chat functions globally at script start to fix ReferenceError
+      let chatInitialized = false;
+      let chatOpen = false;
+
+      function safeToggleChat() {
+        try {
+          console.log('Chat toggle clicked');
+
+          // Get chat elements
+          const chatWindow = document.getElementById('chatWindow');
+          const chatBubble = document.getElementById('chatBubble');
+          const chatIcon = document.getElementById('chatIcon');
+          const closeIcon = document.getElementById('closeIcon');
+
+          if (!chatWindow || !chatBubble) {
+            console.error('Chat elements not found');
+            alert('Chat system not available. Please refresh the page or call (402) 979-7184');
+            return;
+          }
+
+          // Toggle chat window
+          const isOpen = chatWindow.classList.contains('open');
+
+          if (isOpen) {
+            // Close chat
+            chatWindow.classList.remove('open');
+            chatWindow.style.display = 'none';
+            chatBubble.classList.remove('active');
+            if (chatIcon) chatIcon.classList.remove('hidden');
+            if (closeIcon) closeIcon.classList.add('hidden');
+            chatOpen = false;
+            console.log('Chat closed');
+          } else {
+            // Open chat
+            chatWindow.classList.add('open');
+            chatWindow.style.display = 'flex';
+            chatBubble.classList.add('active');
+            if (chatIcon) chatIcon.classList.add('hidden');
+            if (closeIcon) closeIcon.classList.remove('hidden');
+            chatOpen = true;
+            console.log('Chat opened');
+
+            // Focus input after animation
+            setTimeout(() => {
+              const chatInput = document.getElementById('chatInput');
+              if (chatInput) {
+                chatInput.focus();
+              }
+            }, 300);
+          }
+        } catch (error) {
+          console.error('Error in safeToggleChat:', error);
+          alert('Chat system error. Please call us directly at (402) 979-7184');
+        }
+      }
+
+      function sendMessage() {
+        try {
+          console.log('Send message called');
+          const input = document.getElementById('chatInput');
+          if (!input) {
+            console.error('Chat input not found');
+            return;
+          }
+
+          const message = input.value.trim();
+          if (!message) {
+            console.log('Empty message');
+            return;
+          }
+
+          console.log('Sending message:', message);
+
+          // Add user message to chat
+          const messagesContainer = document.getElementById('chatMessages');
+          if (messagesContainer) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message user';
+            messageDiv.innerHTML = `<div>${message}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          }
+
+          // Clear input
+          input.value = '';
+
+          // Show response after delay
+          setTimeout(() => {
+            if (messagesContainer) {
+              const responseDiv = document.createElement('div');
+              responseDiv.className = 'chat-message agent';
+              responseDiv.innerHTML = `<div>Thanks for your message! I've received it and will respond shortly. For immediate assistance, call me at (402) 979-7184.</div>`;
+              messagesContainer.appendChild(responseDiv);
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+          }, 1000);
+
+        } catch (error) {
+          console.error('Error in sendMessage:', error);
+        }
+      }
+
+      function handleChatKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      }
+
+      // Make chat functions available globally
+      window.safeToggleChat = safeToggleChat;
+      window.sendMessage = sendMessage;
+      window.handleChatKeyPress = handleChatKeyPress;
+
+      // Define rating functions globally at script start to fix ReferenceError
+      let selectedRating = 0;
+
+      function setRating(rating) {
+        console.log('Setting rating to:', rating);
+        selectedRating = parseInt(rating);
+        const hiddenInput = document.getElementById('selectedRating');
+        if (hiddenInput) {
+          hiddenInput.value = selectedRating;
+        }
+        updateStarDisplay();
+
+        // Provide immediate feedback
+        console.log(`✅ You selected ${rating} star${rating > 1 ? 's' : ''}!`);
+      }
+
+      function highlightStars(rating) {
+        const starButtons = document.querySelectorAll('.star-rating');
+        starButtons.forEach((star, index) => {
+          const starRating = parseInt(star.dataset.rating);
+          if (starRating <= rating) {
+            star.style.color = '#fbbf24';
+            star.style.filter = 'drop-shadow(2px 2px 4px rgba(251, 191, 36, 0.8))';
+            star.classList.add('active');
+          } else {
+            star.style.color = '#ffffff';
+            star.style.filter = 'drop-shadow(2px 2px 4px rgba(255,255,255,0.8))';
+            star.classList.remove('active');
+          }
+        });
+      }
+
+      function updateStarDisplay() {
+        highlightStars(selectedRating);
+      }
+
+      function submitReview(event) {
+        if (event) {
+          event.preventDefault();
+        }
+
+        console.log('Submitting review...');
+
+        const reviewerName = document.getElementById('reviewerName').value.trim();
+        const businessType = document.getElementById('businessType').value.trim();
+        const serviceUsed = document.getElementById('serviceUsed').value;
+        const reviewText = document.getElementById('reviewText').value.trim();
+
+        if (!reviewerName) {
+          alert('Please enter your name.');
+          return false;
+        }
+
+        if (!selectedRating || selectedRating === 0) {
+          alert('Please select a star rating.');
+          return false;
+        }
+
+        if (!serviceUsed) {
+          alert('Please select a service.');
+          return false;
+        }
+
+        if (!reviewText) {
+          alert('Please write a review.');
+          return false;
+        }
+
+        // Create review object
+        const review = {
+          id: Date.now().toString(),
+          name: reviewerName,
+          businessType: businessType || 'Customer',
+          service: serviceUsed,
+          rating: selectedRating,
+          text: reviewText,
+          date: new Date().toISOString(),
+          approved: true // Auto-approve for immediate display
+        };
+
+        console.log('Saving review:', review);
+
+        // Save to localStorage
+        const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+        reviews.unshift(review); // Add to beginning
+        localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
+
+        // Clear form
+        document.getElementById('reviewerName').value = '';
+        document.getElementById('businessType').value = '';
+        document.getElementById('serviceUsed').value = '';
+        document.getElementById('reviewText').value = '';
+        selectedRating = 0;
+        document.getElementById('selectedRating').value = '0';
+        updateStarDisplay();
+
+        alert('Thank you for your review! It has been added to our reviews section.');
+
+        // Try to reload reviews if the function exists
+        if (typeof loadReviews === 'function') {
+          loadReviews();
+        }
+
+        return false;
+      }
+
+      // Make rating functions available globally
+      window.setRating = setRating;
+      window.highlightStars = highlightStars;
+      window.updateStarDisplay = updateStarDisplay;
+      window.submitReview = submitReview;
+
+      // Define review toggle function globally at script start to fix ReferenceError
+      let showingAllReviews = false;
+
+      function toggleAllReviews() {
+        try {
+          console.log('Toggling reviews display...');
+          const reviewsContainer = document.getElementById('reviewsContainer');
+          const buttonText = document.getElementById('viewAllReviewsText');
+
+          if (!reviewsContainer || !buttonText) {
+            console.error('Review container or button text not found');
+            alert('Review system not available. Please refresh the page.');
+            return;
+          }
+
+          if (!showingAllReviews) {
+            // Show all reviews
+            reviewsContainer.style.maxHeight = 'none';
+            reviewsContainer.style.overflow = 'visible';
+            buttonText.textContent = 'Show Less Reviews';
+            showingAllReviews = true;
+            console.log('✅ Showing all reviews');
+          } else {
+            // Show limited reviews
+            reviewsContainer.style.maxHeight = '500px';
+            reviewsContainer.style.overflow = 'auto';
+            buttonText.textContent = 'View All Reviews';
+            showingAllReviews = false;
+            console.log('✅ Showing limited reviews');
+          }
+        } catch (error) {
+          console.error('Error toggling reviews:', error);
+          alert('Error toggling reviews display.');
+        }
+      }
+
+      // Make review toggle function available globally
+      window.toggleAllReviews = toggleAllReviews;
+
+      // Define order form functions globally at script start to fix ReferenceError
+      function updateButtonState() {
+        try {
+          console.log('Updating button state...');
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const form = document.getElementById('orderForm');
+
+          if (!submitBtn || !form) {
+            console.warn('Submit button or form not found');
+            return;
+          }
+
+          // Check if required fields are filled
+          const businessName = form.querySelector('input[name="businessName"]');
+          const industry = form.querySelector('input[name="industry"]');
+          const email = form.querySelector('input[name="email"]');
+          const services = form.querySelector('select[name="services"]');
+          const dueDate = form.querySelector('input[name="dueDate"]');
+
+          const hasBusinessName = businessName && businessName.value.trim();
+          const hasIndustry = industry && industry.value.trim();
+          const hasEmail = email && email.value.trim();
+          const hasServices = services && services.selectedOptions.length > 0;
+          const hasDueDate = dueDate && dueDate.value;
+
+          const isFormReady = hasBusinessName && hasIndustry && hasEmail && hasServices && hasDueDate;
+
+          if (isFormReady) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            submitBtn.classList.add('hover:scale-105');
+            console.log('✅ Form is ready for submission');
+          } else {
+            submitBtn.disabled = false; // Keep enabled for HTML5 validation
+            submitBtn.classList.remove('hover:scale-105');
+            console.log('ℹ️ Form not yet ready for submission');
+          }
+        } catch (error) {
+          console.error('Error updating button state:', error);
+        }
+      }
+
+      function validateAndSubmit(event) {
+        try {
+          console.log('Validating and submitting form...');
+          const form = document.getElementById('orderForm');
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const submitBtnText = document.getElementById('submitBtnText');
+
+          if (!form || !submitBtn || !submitBtnText) {
+            console.error('Form elements not found');
+            return true; // Allow default form submission
+          }
+
+          // Check services selection specifically
+          const services = form.querySelector('select[name="services"]');
+          if (!services || services.selectedOptions.length === 0) {
+            event.preventDefault();
+            alert('Please select at least one service to continue.');
+
+            // Scroll to services section and focus
+            services.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            services.focus();
+            return false;
+          }
+
+          // Provide visual feedback
+          submitBtnText.textContent = 'Processing...';
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-75');
+
+          // Reset button after 10 seconds if something goes wrong
+          setTimeout(() => {
+            if (submitBtn.disabled) {
+              submitBtnText.textContent = 'Start My Project Now';
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('opacity-75');
+            }
+          }, 10000);
+
+          console.log('✅ Form validation passed, submitting...');
+          return true; // Allow form to submit
+        } catch (error) {
+          console.error('Error in validateAndSubmit:', error);
+          return true; // Allow default form submission
+        }
+      }
+
+      // Make order form functions available globally
+      window.updateButtonState = updateButtonState;
+      window.validateAndSubmit = validateAndSubmit;
     </script>
 
     <style>
@@ -621,6 +1083,16 @@
         font-size: 24px !important;
         cursor: pointer !important;
         padding: 4px !important;
+        transition: all 0.3s ease !important;
+        transform: scale(1) !important;
+      }
+
+      .star-rating:hover {
+        transform: scale(1.2) !important;
+      }
+
+      .star-rating.active {
+        transform: scale(1.1) !important;
       }
 
       /* Reviews display area */
@@ -756,7 +1228,7 @@
         <div class="mt-16 pt-8 border-t border-white/20">
           <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
           <div class="flex justify-center items-center space-x-8 opacity-60">
-            <div class="text-2xl">⭐⭐⭐⭐⭐</div>
+            <div class="text-2xl">⭐⭐��⭐⭐</div>
             <div class="text-sm">4.9/5 Customer Rating</div>
           </div>
         </div>
@@ -932,7 +1404,7 @@
           <div class="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $65
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📋</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">����</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Marketing Flyer
           </h4>
@@ -970,7 +1442,7 @@
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">✓</span>
+              <span class="text-green-500 mr-2">���</span>
               Standard & premium finishes
             </div>
             <div class="flex items-center">
@@ -1032,7 +1504,7 @@
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">🔄</span>
+              <span class="text-2xl">���</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -1200,12 +1672,12 @@
                 <h5 style="color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 25px; text-align: center;">📝 LEAVE YOUR REVIEW</h5>
 
                 <div style="margin-bottom: 25px;">
-                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">👤 Your Name:</label>
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">�� Your Name:</label>
                   <input id="reviewerName" type="text" required style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151; focus:border-color: #6366f1;" placeholder="Enter your name">
                 </div>
 
                 <div style="margin-bottom: 25px;">
-                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">🏢 Business Type:</label>
+                  <label style="display: block; color: #ffffff; font-weight: bold; margin-bottom: 10px; font-size: 18px;">�� Business Type:</label>
                   <input id="businessType" type="text" style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 18px; box-sizing: border-box; background: #ffffff; color: #374151;" placeholder="e.g., Restaurant, Tech Company">
                 </div>
 
@@ -1242,7 +1714,7 @@
                   </div>
                 </div>
 
-                <button type="button" onclick="submitReview()" style="width: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; border: none; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); text-transform: uppercase; transition: all 0.3s ease; hover:from-indigo-700 hover:to-purple-700;">
+                <button type="submit" style="width: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; border: none; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); text-transform: uppercase; transition: all 0.3s ease; hover:from-indigo-700 hover:to-purple-700;">
                   🚀 Submit Review Now
                 </button>
               </form>
@@ -1341,8 +1813,8 @@
 
               <!-- View More Button -->
               <div style="text-align: center; margin-top: 30px;">
-                <button style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease;">
-                  📝 View All Reviews
+                <button onclick="toggleAllReviews()" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.3); padding: 15px 30px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s ease;">
+                  📝 <span id="viewAllReviewsText">View All Reviews</span>
                 </button>
               </div>
 
@@ -1354,21 +1826,12 @@
 
     <section id="order" class="bg-white py-16 px-4">
       <div class="max-w-4xl mx-auto">
-        <!-- Order Header with Guarantee -->
+        <!-- Order Header -->
         <div class="text-center mb-12">
           <h3 class="text-4xl font-bold text-gray-800 mb-4">Ready to Transform Your Business?</h3>
           <p class="text-xl text-gray-600 mb-6">Join 200+ satisfied customers who've boosted their business with our designs</p>
 
-          <!-- Guarantee Badge -->
-          <div class="inline-flex items-center bg-green-50 border-2 border-green-200 rounded-full px-6 py-3 mb-6">
-            <div class="bg-green-500 w-8 h-8 rounded-full flex items-center justify-center mr-3">
-              <span class="text-white text-sm font-bold">✓</span>
-            </div>
-            <div class="text-left">
-              <div class="font-semibold text-green-800">100% Satisfaction Guarantee</div>
-              <div class="text-sm text-green-600">Not happy? We'll refund your deposit, no questions asked.</div>
-            </div>
-          </div>
+
 
           <!-- Limited Time Offer -->
           <div class="bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl p-4 inline-block mb-8">
@@ -1390,7 +1853,7 @@
             <p class="text-green-600 text-sm">Your data is protected</p>
           </div>
           <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-            <div class="text-2xl mb-2">⚡</div>
+            <div class="text-2xl mb-2">���</div>
             <h4 class="font-semibold text-blue-800 mb-1">Fast Delivery</h4>
             <p class="text-blue-600 text-sm">5-7 days completion</p>
           </div>
@@ -1525,10 +1988,10 @@
               <div>
                 <h4 class="font-semibold text-gray-800 mb-2">Simple Payment Process</h4>
                 <div class="space-y-1 text-sm text-gray-600">
-                  <p>💰 <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
+                  <p>���� <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
                   <p>🔄 <strong>3 free revisions</strong> - We'll perfect it until you're 100% satisfied</p>
                   <p>⚡ <strong>Venmo payment</strong> - Quick, secure, and convenient</p>
-                  <p>✅ <strong>Money-back guarantee</strong> - Not happy? Get your deposit back</p>
+
                 </div>
               </div>
             </div>
@@ -1545,9 +2008,9 @@
             >
               <span>🚀</span>
               <span id="submitBtnText">Start My Project Now</span>
-              <span>→</span>
+              <span>���</span>
             </button>
-            <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included • 100% satisfaction guaranteed</p>
+            <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included</p>
           </div>
           <div id="paypal-button-container" class="mt-6 hidden"></div>
         </form>
@@ -1697,14 +2160,9 @@
                       <p class="text-sm text-gray-500">Visit us online</p>
                     </div>
                   </div>
-                  <a
-                    href="https://www.visualvibestudio.store"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-lg font-medium text-blue-600 hover:text-blue-800 transition-colors underline"
-                  >
+                  <span class="text-lg font-medium text-gray-800">
                     www.visualvibestudio.store
-                  </a>
+                  </span>
                 </div>
 
                 <!-- Location -->
@@ -1806,7 +2264,6 @@
             <div class="flex gap-2">
               <a
                 href="mailto:support@visualvibestudio.store?subject=Inquiry%20from%20Visual%20Vibe%20Studio%20Website&body=Hi%20Yoshiko,%0A%0AI'm%20interested%20in%20your%20design%20services.%20Please%20get%20back%20to%20me%20when%20you%20have%20a%20chance.%0A%0AThanks!"
-                onclick="handleEnhancedEmailClick(event, 'support@visualvibestudio.store')"
                 id="mainSendEmailBtn"
                 class="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2 active:scale-95"
               >
@@ -1840,7 +2297,7 @@
     </section>
 
     <!-- Sign In Modal -->
-    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" style="z-index: 9999; display: none;">
       <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-2xl font-bold text-gray-800">Sign In</h3>
@@ -1875,7 +2332,7 @@
     </div>
 
     <!-- Sign Up Modal -->
-    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" style="z-index: 9999; display: none;">
       <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-2xl font-bold text-gray-800">Create Account</h3>
@@ -2153,85 +2610,7 @@
         return { issues, repairs };
       }
 
-      // Enhanced submit button functionality
-      function updateButtonState() {
-        try {
-          const submitBtn = document.getElementById('submitOrderBtn');
-          const form = document.getElementById('orderForm');
-
-          if (!submitBtn || !form) return;
-
-          // Check if required fields are filled
-          const businessName = form.querySelector('input[name="businessName"]');
-          const industry = form.querySelector('input[name="industry"]');
-          const email = form.querySelector('input[name="email"]');
-          const services = form.querySelector('select[name="services"]');
-          const dueDate = form.querySelector('input[name="dueDate"]');
-
-          const hasBusinessName = businessName && businessName.value.trim();
-          const hasIndustry = industry && industry.value.trim();
-          const hasEmail = email && email.value.trim();
-          const hasServices = services && services.selectedOptions.length > 0;
-          const hasDueDate = dueDate && dueDate.value;
-
-          const isFormReady = hasBusinessName && hasIndustry && hasEmail && hasServices && hasDueDate;
-
-          if (isFormReady) {
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            submitBtn.classList.add('hover:scale-105');
-          } else {
-            submitBtn.disabled = false; // Keep enabled for HTML5 validation
-            submitBtn.classList.remove('hover:scale-105');
-          }
-        } catch (error) {
-          console.error('Error updating button state:', error);
-        }
-      }
-
-      function validateAndSubmit(event) {
-        try {
-          const form = document.getElementById('orderForm');
-          const submitBtn = document.getElementById('submitOrderBtn');
-          const submitBtnText = document.getElementById('submitBtnText');
-
-          if (!form || !submitBtn || !submitBtnText) {
-            console.error('Form elements not found');
-            return true; // Allow default form submission
-          }
-
-          // Check services selection specifically
-          const services = form.querySelector('select[name="services"]');
-          if (!services || services.selectedOptions.length === 0) {
-            event.preventDefault();
-            showAlert('Please select at least one service to continue.', 'error');
-
-            // Scroll to services section
-            services.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            services.focus();
-            return false;
-          }
-
-          // Provide visual feedback
-          submitBtnText.textContent = 'Processing...';
-          submitBtn.disabled = true;
-          submitBtn.classList.add('opacity-75');
-
-          // Reset button after 10 seconds if something goes wrong
-          setTimeout(() => {
-            if (submitBtn.disabled) {
-              submitBtnText.textContent = 'Start My Project Now';
-              submitBtn.disabled = false;
-              submitBtn.classList.remove('opacity-75');
-            }
-          }, 10000);
-
-          return true; // Allow form to submit
-        } catch (error) {
-          console.error('Error in validateAndSubmit:', error);
-          return true; // Allow default form submission
-        }
-      }
+      // Order form functions (defined at script start to fix ReferenceError)
 
       function setupOrderFormEnhancements() {
         try {
@@ -2264,32 +2643,89 @@
           chatOpen = false;
           hasUnreadMessages = false;
 
-          // Ensure chat window is hidden initially
-          const chatWindow = document.getElementById('chatWindow');
-          if (chatWindow) {
-            chatWindow.classList.remove('open');
+          // Verify all required elements exist
+          const requiredElements = {
+            chatWindow: document.getElementById('chatWindow'),
+            chatBubble: document.getElementById('chatBubble'),
+            chatIcon: document.getElementById('chatIcon'),
+            closeIcon: document.getElementById('closeIcon'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatInput: document.getElementById('chatInput'),
+            chatSendBtn: document.getElementById('chatSendBtn')
+          };
+
+          const missingElements = [];
+          Object.keys(requiredElements).forEach(key => {
+            if (!requiredElements[key]) {
+              missingElements.push(key);
+            }
+          });
+
+          if (missingElements.length > 0) {
+            console.error('Missing chat elements:', missingElements);
+            showAlert('Chat system elements missing. Please refresh the page.', 'error');
+            return false;
           }
 
           // Reset button states
-          const chatBubble = document.getElementById('chatBubble');
-          const chatIcon = document.getElementById('chatIcon');
-          const closeIcon = document.getElementById('closeIcon');
+          const { chatBubble, chatIcon, closeIcon, chatWindow } = requiredElements;
 
-          if (chatBubble) chatBubble.classList.remove('active');
-          if (chatIcon) chatIcon.classList.remove('hidden');
-          if (closeIcon) closeIcon.classList.add('hidden');
+          chatBubble.classList.remove('active');
+          chatIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+          chatWindow.classList.remove('open');
+          chatWindow.style.display = 'none';
+
+          // Set up event listeners if not already set
+          const chatInput = requiredElements.chatInput;
+          const chatSendBtn = requiredElements.chatSendBtn;
+
+          if (chatInput && !chatInput.hasAttribute('data-initialized')) {
+            chatInput.addEventListener('input', updateSendButton);
+            chatInput.setAttribute('data-initialized', 'true');
+          }
+
+          if (chatSendBtn && !chatSendBtn.hasAttribute('data-initialized')) {
+            chatSendBtn.addEventListener('click', sendMessage);
+            chatSendBtn.setAttribute('data-initialized', 'true');
+          }
 
           // Initialize send button
           updateSendButton();
 
           chatInitialized = true;
           console.log('✅ Chat force-initialized successfully');
-          showAlert('Chat system reinitialized successfully!', 'success');
+          return true;
         } catch (error) {
           console.error('❌ Error force-initializing chat:', error);
-          showAlert('Chat initialization still failed. Please refresh the page.', 'error');
+          showAlert('Chat initialization failed. Please refresh the page.', 'error');
+          return false;
         }
       }
+
+      // Make chat functions globally accessible for debugging
+      window.safeToggleChat = safeToggleChat;
+      window.forceInitializeChat = forceInitializeChat;
+      window.sendMessage = sendMessage;
+      window.chatInitialized = () => chatInitialized;
+
+      // Test function for chat system
+      window.testChat = function() {
+        console.log('Testing chat system...');
+        console.log('Chat initialized:', chatInitialized);
+        console.log('Chat elements:', {
+          chatWindow: !!document.getElementById('chatWindow'),
+          chatBubble: !!document.getElementById('chatBubble'),
+          chatInput: !!document.getElementById('chatInput'),
+          chatSendBtn: !!document.getElementById('chatSendBtn')
+        });
+        if (!chatInitialized) {
+          console.log('Attempting to initialize chat...');
+          forceInitializeChat();
+        }
+        console.log('Opening chat...');
+        safeToggleChat();
+      };
 
       function initializeWebsite() {
         try {
@@ -2310,10 +2746,31 @@
           }
 
           // Initialize user authentication
-          initializeAuth();
+          console.log('Initializing authentication system...');
+          try {
+            initializeAuth();
+            console.log('✅ Authentication system initialized');
+          } catch (error) {
+            console.error('❌ Authentication initialization failed:', error);
+            showAlert('Authentication system failed to initialize. Sign in/up may not work properly.', 'warning');
+          }
 
           // Initialize review system
-          initializeReviewSystem();
+          console.log('Initializing review system...');
+          try {
+            initializeReviewSystem();
+            console.log('✅ Review system initialized');
+          } catch (error) {
+            console.error('❌ Review system initialization failed:', error);
+          }
+
+          // Initialize chat system
+          console.log('Initializing chat system...');
+          if (forceInitializeChat()) {
+            console.log('✅ Chat system initialized successfully');
+          } else {
+            console.warn('⚠️ Chat system initialization failed');
+          }
 
         console.log("Website initialized successfully");
         } catch (error) {
@@ -2484,36 +2941,75 @@
         showAlert('You have been signed out successfully.', 'success');
       }
 
-      // Modal Functions
-      function openSignInModal() {
-        document.getElementById('signInModal').classList.remove('hidden');
-        document.getElementById('signInEmail').focus();
-      }
+      // Modal Functions (defined at script start, keeping these assignments for consistency)
 
-      function closeSignInModal() {
-        document.getElementById('signInModal').classList.add('hidden');
-        document.getElementById('signInForm').reset();
-      }
+      // Test function to verify modals work
+      window.testModals = function() {
+        console.log('Testing modals...');
+        try {
+          openSignInModal();
+          console.log('✅ Sign in modal test passed');
+          setTimeout(() => {
+            closeSignInModal();
+            openSignUpModal();
+            console.log('✅ Sign up modal test passed');
+            setTimeout(() => {
+              closeSignUpModal();
+              console.log('✅ All modal tests completed');
+            }, 2000);
+          }, 2000);
+        } catch (error) {
+          console.error('❌ Modal test failed:', error);
+        }
+      };
 
-      function openSignUpModal() {
-        document.getElementById('signUpModal').classList.remove('hidden');
-        document.getElementById('signUpName').focus();
-      }
+      // Quick verification on page load
+      window.addEventListener('load', function() {
+        setTimeout(() => {
+          console.log('🔍 Verifying modal functions are available...');
+          console.log('openSignInModal:', typeof window.openSignInModal === 'function');
+          console.log('openSignUpModal:', typeof window.openSignUpModal === 'function');
 
-      function closeSignUpModal() {
-        document.getElementById('signUpModal').classList.add('hidden');
-        document.getElementById('signUpForm').reset();
-      }
+          console.log('🔍 Verifying chat functions are available...');
+          console.log('safeToggleChat:', typeof window.safeToggleChat === 'function');
+          console.log('sendMessage:', typeof window.sendMessage === 'function');
+          console.log('handleChatKeyPress:', typeof window.handleChatKeyPress === 'function');
 
-      function switchToSignUp() {
-        closeSignInModal();
-        openSignUpModal();
-      }
+          console.log('🔍 Verifying rating functions are available...');
+          console.log('setRating:', typeof window.setRating === 'function');
+          console.log('highlightStars:', typeof window.highlightStars === 'function');
+          console.log('submitReview:', typeof window.submitReview === 'function');
+          console.log('toggleAllReviews:', typeof window.toggleAllReviews === 'function');
 
-      function switchToSignIn() {
-        closeSignUpModal();
-        openSignInModal();
-      }
+          console.log('🔍 Verifying order form functions are available...');
+          console.log('updateButtonState:', typeof window.updateButtonState === 'function');
+          console.log('validateAndSubmit:', typeof window.validateAndSubmit === 'function');
+
+          if (typeof window.openSignInModal === 'function' && typeof window.openSignUpModal === 'function') {
+            console.log('✅ Modal functions are properly defined');
+          } else {
+            console.error('❌ Modal functions not properly defined');
+          }
+
+          if (typeof window.safeToggleChat === 'function' && typeof window.sendMessage === 'function') {
+            console.log('✅ Chat functions are properly defined');
+          } else {
+            console.error('❌ Chat functions not properly defined');
+          }
+
+          if (typeof window.setRating === 'function' && typeof window.submitReview === 'function' && typeof window.toggleAllReviews === 'function') {
+            console.log('✅ Rating and review functions are properly defined');
+          } else {
+            console.error('�� Rating and review functions not properly defined');
+          }
+
+          if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
+            console.log('✅ Order form functions are properly defined');
+          } else {
+            console.error('❌ Order form functions not properly defined');
+          }
+        }, 500);
+      });
 
       // Order History Functions
       function showOrderHistory() {
@@ -3205,7 +3701,7 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      ━━━━━━━━━━━━━━━
+      ━━━��━━━━━━━━━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
@@ -3214,7 +3710,7 @@ ${'='.repeat(40)}
       NEXT STEPS:
       ━━━━━━━━━━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
-      • Project discussion and planning will begin
+      �� Project discussion and planning will begin
       • Final 50% payment due upon project completion
       • Estimated completion: ${formData.get("dueDate")}
 
@@ -3286,54 +3782,7 @@ ${'='.repeat(40)}
       let chatOpen = false;
       let hasUnreadMessages = false;
 
-      // Safe chat toggle with fallback
-      function safeToggleChat() {
-        try {
-          // Check if chat is initialized
-          if (!chatInitialized) {
-            console.log('Chat not initialized, attempting force initialization...');
-            forceInitializeChat();
-          }
-
-          // Ensure DOM elements exist before proceeding
-          const chatWindow = document.getElementById('chatWindow');
-          const chatBubble = document.getElementById('chatBubble');
-
-          if (!chatWindow || !chatBubble) {
-            console.error('Chat DOM elements not found');
-            showAlert('Chat system not ready. Trying to reinitialize...', 'info');
-            forceInitializeChat();
-            return;
-          }
-
-          toggleChat();
-        } catch (error) {
-          console.error('Main toggleChat failed, using fallback:', error);
-
-          // Enhanced fallback
-          const chatWindow = document.getElementById('chatWindow');
-          if (chatWindow) {
-            const isOpen = chatWindow.classList.contains('open');
-            if (isOpen) {
-              chatWindow.classList.remove('open');
-              chatOpen = false;
-            } else {
-              chatWindow.classList.add('open');
-              chatOpen = true;
-
-              // Try to focus input if available
-              setTimeout(() => {
-                const chatInput = document.getElementById('chatInput');
-                if (chatInput) {
-                  chatInput.focus();
-                }
-              }, 300);
-            }
-          } else {
-            showAlert('Chat widget not found. Please refresh the page.', 'error');
-          }
-        }
-      }
+      // Chat toggle function (defined at script start to fix ReferenceError)
       const agentResponses = [
         "Thanks for reaching out! I'm here to help with your design needs. What type of project are you interested in?",
         "Great question! Our business websites start at $100 and the final price depends on features like e-commerce, multiple pages, and custom functionality. Would you like me to explain more about what's included?",
@@ -3437,48 +3886,7 @@ ${'='.repeat(40)}
         return messages.length > 0;
       }
 
-      function sendMessage() {
-        try {
-          const input = document.getElementById('chatInput');
-          if (!input) {
-            console.error('Chat input not found');
-            showAlert('Chat input error. Please refresh the page.', 'error');
-            return;
-          }
-
-          const message = input.value.trim();
-          if (!message) {
-            console.log('Empty message, not sending');
-            return;
-          }
-
-          console.log('Sending message:', message);
-
-          // Add user message
-          addUserMessage(message);
-          input.value = '';
-          adjustTextareaHeight(input);
-          updateSendButton();
-
-          // Show sending indicator
-          showSendingIndicator();
-
-          // Send message to business owner's phone
-          sendMessageToBusinessOwner(message)
-            .then(() => {
-              hideTypingIndicator();
-              addAgentMessage("Thanks for your message! I've received it and will respond to you shortly. You can also call me directly at (402) 979-7184 for immediate assistance.");
-            })
-            .catch((error) => {
-              console.error('Error sending message:', error);
-              hideTypingIndicator();
-              addAgentMessage("I've received your message! For the fastest response, please call me directly at (402) 979-7184 or email support@visualvibestudio.store. I'll get back to you as soon as possible!");
-            });
-        } catch (error) {
-          console.error('Error in sendMessage function:', error);
-          showAlert('Error sending message. Please try again or contact us directly.', 'error');
-        }
-      }
+      // sendMessage function (defined at script start to fix ReferenceError)
 
       function addUserMessage(message) {
         try {
@@ -3911,7 +4319,7 @@ ${'='.repeat(40)}
           console.log('✅ Chat system initialized with Zapier webhook to (402) 979-7184');
         } catch (error) {
           console.error('❌ Error initializing chat system:', error);
-          console.log('💡 Chat will still work with basic functionality');
+          console.log('�� Chat will still work with basic functionality');
         }
       }
 
@@ -4115,12 +4523,7 @@ Thanks,
         }
       }
 
-      function handleChatKeyPress(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          sendMessage();
-        }
-      }
+      // handleChatKeyPress function (defined at script start to fix ReferenceError)
 
       function adjustTextareaHeight(textarea) {
         textarea.style.height = 'auto';
@@ -4347,8 +4750,7 @@ Thanks,
         }
       }
 
-      // Review System Functionality
-      let selectedRating = 0;
+      // Review System Functionality (selectedRating defined at script start)
 
       function initializeReviewSystem() {
         try {
@@ -4366,14 +4768,17 @@ Thanks,
 
           starButtons.forEach(star => {
             star.addEventListener('click', function() {
-              selectedRating = parseInt(this.dataset.rating);
-              document.getElementById('selectedRating').value = selectedRating;
-              updateStarDisplay();
+              const rating = parseInt(this.dataset.rating);
+              setRating(rating);
             });
 
             star.addEventListener('mouseenter', function() {
               const hoverRating = parseInt(this.dataset.rating);
               highlightStars(hoverRating);
+            });
+
+            star.addEventListener('mouseleave', function() {
+              updateStarDisplay();
             });
           });
 
@@ -4411,123 +4816,22 @@ Thanks,
         }
       }
 
-      function highlightStars(rating) {
-        const starButtons = document.querySelectorAll('.star-rating');
-        starButtons.forEach((star, index) => {
-          if (index < rating) {
-            star.style.color = '#fbbf24';
-          } else {
-            star.style.color = '#d1d5db';
-          }
-        });
-      }
+      // highlightStars function (defined at script start to fix ReferenceError)
 
-      // Rating functions
-      function setRating(rating) {
-        selectedRating = rating;
-        const hiddenInput = document.getElementById('selectedRating');
-        if (hiddenInput) {
-          hiddenInput.value = selectedRating;
-        }
-        updateStarDisplay();
-      }
+      // Rating functions (defined at script start to fix ReferenceError)
 
-      function updateStarDisplay() {
-        highlightStars(selectedRating);
-      }
+      // submitReview function (defined at script start to fix ReferenceError)
 
-      // Submit review function
-      function submitReview() {
-        const reviewerName = document.getElementById('reviewerName').value.trim();
-        const businessType = document.getElementById('businessType').value.trim();
-        const serviceUsed = document.getElementById('serviceUsed').value;
-        const reviewText = document.getElementById('reviewText').value.trim();
+      // Make functions globally accessible
+      window.submitReview = submitReview;
+      window.setRating = setRating;
+      window.toggleAllReviews = toggleAllReviews;
+      window.loadReviews = loadReviews;
 
-        if (!reviewerName) {
-          showAlert('Please enter your name.', 'error');
-          return;
-        }
-
-        if (!selectedRating) {
-          showAlert('Please select a star rating.', 'error');
-          return;
-        }
-
-        if (!serviceUsed) {
-          showAlert('Please select a service.', 'error');
-          return;
-        }
-
-        if (!reviewText) {
-          showAlert('Please write a review.', 'error');
-          return;
-        }
-
-        // Create review object
-        const review = {
-          id: Date.now().toString(),
-          name: reviewerName,
-          businessType: businessType || 'Customer',
-          service: serviceUsed,
-          rating: selectedRating,
-          text: reviewText,
-          date: new Date().toISOString(),
-          approved: false
-        };
-
-        // Save review
-        saveReview(review);
-
-        // Reset form
-        document.getElementById('reviewerName').value = '';
-        document.getElementById('businessType').value = '';
-        document.getElementById('serviceUsed').value = '';
-        document.getElementById('reviewText').value = '';
-        selectedRating = 0;
-        updateStarDisplay();
-        document.getElementById('charCount').textContent = '0';
-
-        showAlert('Thank you for your review! It will be displayed after approval.', 'success');
-      }
+      // toggleAllReviews function (defined at script start to fix ReferenceError)
 
       function handleReviewSubmission(e) {
-        e.preventDefault();
-
-        const reviewerName = document.getElementById('reviewerName').value.trim();
-        const businessType = document.getElementById('businessType').value.trim();
-        const serviceUsed = document.getElementById('serviceUsed').value;
-        const reviewText = document.getElementById('reviewText').value.trim();
-
-        if (!selectedRating) {
-          showAlert('Please select a star rating.', 'error');
-          return;
-        }
-
-        // Create review object
-        const review = {
-          id: Date.now().toString(),
-          name: reviewerName,
-          businessType: businessType || 'Customer',
-          service: serviceUsed,
-          rating: selectedRating,
-          text: reviewText,
-          date: new Date().toISOString(),
-          approved: false // Reviews start as unapproved
-        };
-
-        // Save review to localStorage
-        saveReview(review);
-
-        // Reset form
-        document.getElementById('reviewForm').reset();
-        selectedRating = 0;
-        updateStarDisplay();
-        document.getElementById('charCount').textContent = '0';
-
-        // Reload reviews display
-        loadReviews();
-
-        showAlert('Thank you for your review! It will be displayed after approval.', 'success');
+        return submitReview(e);
       }
 
       function saveReview(review) {
