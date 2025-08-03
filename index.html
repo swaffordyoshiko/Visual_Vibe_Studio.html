@@ -1538,10 +1538,13 @@
           <div class="text-center pt-6">
             <button
               type="submit"
-              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3"
+              id="submitOrderBtn"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              onmouseover="updateButtonState()"
+              onclick="validateAndSubmit(event)"
             >
               <span>🚀</span>
-              <span>Start My Project Now</span>
+              <span id="submitBtnText">Start My Project Now</span>
               <span>→</span>
             </button>
             <p class="text-gray-500 text-sm mt-3">✨ Free rush delivery included • 100% satisfaction guaranteed</p>
@@ -1694,9 +1697,14 @@
                       <p class="text-sm text-gray-500">Visit us online</p>
                     </div>
                   </div>
-                  <span class="text-lg font-medium text-blue-600">
+                  <a
+                    href="https://www.visualvibestudio.store"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-lg font-medium text-blue-600 hover:text-blue-800 transition-colors underline"
+                  >
                     www.visualvibestudio.store
-                  </span>
+                  </a>
                 </div>
 
                 <!-- Location -->
@@ -1797,14 +1805,15 @@
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <div class="flex gap-2">
               <a
-                href="mailto:support@visualvibestudio.store"
-                onclick="handleEmailClick(event, 'support@visualvibestudio.store')"
-                class="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2"
+                href="mailto:support@visualvibestudio.store?subject=Inquiry%20from%20Visual%20Vibe%20Studio%20Website&body=Hi%20Yoshiko,%0A%0AI'm%20interested%20in%20your%20design%20services.%20Please%20get%20back%20to%20me%20when%20you%20have%20a%20chance.%0A%0AThanks!"
+                onclick="handleEnhancedEmailClick(event, 'support@visualvibestudio.store')"
+                id="mainSendEmailBtn"
+                class="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2 active:scale-95"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                Send Email
+                <span id="sendEmailBtnText">Send Email</span>
               </a>
               <button
                 onclick="copyToClipboard('support@visualvibestudio.store', 'Email address copied to clipboard!')"
@@ -2142,6 +2151,108 @@
         }
 
         return { issues, repairs };
+      }
+
+      // Enhanced submit button functionality
+      function updateButtonState() {
+        try {
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const form = document.getElementById('orderForm');
+
+          if (!submitBtn || !form) return;
+
+          // Check if required fields are filled
+          const businessName = form.querySelector('input[name="businessName"]');
+          const industry = form.querySelector('input[name="industry"]');
+          const email = form.querySelector('input[name="email"]');
+          const services = form.querySelector('select[name="services"]');
+          const dueDate = form.querySelector('input[name="dueDate"]');
+
+          const hasBusinessName = businessName && businessName.value.trim();
+          const hasIndustry = industry && industry.value.trim();
+          const hasEmail = email && email.value.trim();
+          const hasServices = services && services.selectedOptions.length > 0;
+          const hasDueDate = dueDate && dueDate.value;
+
+          const isFormReady = hasBusinessName && hasIndustry && hasEmail && hasServices && hasDueDate;
+
+          if (isFormReady) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            submitBtn.classList.add('hover:scale-105');
+          } else {
+            submitBtn.disabled = false; // Keep enabled for HTML5 validation
+            submitBtn.classList.remove('hover:scale-105');
+          }
+        } catch (error) {
+          console.error('Error updating button state:', error);
+        }
+      }
+
+      function validateAndSubmit(event) {
+        try {
+          const form = document.getElementById('orderForm');
+          const submitBtn = document.getElementById('submitOrderBtn');
+          const submitBtnText = document.getElementById('submitBtnText');
+
+          if (!form || !submitBtn || !submitBtnText) {
+            console.error('Form elements not found');
+            return true; // Allow default form submission
+          }
+
+          // Check services selection specifically
+          const services = form.querySelector('select[name="services"]');
+          if (!services || services.selectedOptions.length === 0) {
+            event.preventDefault();
+            showAlert('Please select at least one service to continue.', 'error');
+
+            // Scroll to services section
+            services.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            services.focus();
+            return false;
+          }
+
+          // Provide visual feedback
+          submitBtnText.textContent = 'Processing...';
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-75');
+
+          // Reset button after 10 seconds if something goes wrong
+          setTimeout(() => {
+            if (submitBtn.disabled) {
+              submitBtnText.textContent = 'Start My Project Now';
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('opacity-75');
+            }
+          }, 10000);
+
+          return true; // Allow form to submit
+        } catch (error) {
+          console.error('Error in validateAndSubmit:', error);
+          return true; // Allow default form submission
+        }
+      }
+
+      function setupOrderFormEnhancements() {
+        try {
+          const form = document.getElementById('orderForm');
+          if (!form) return;
+
+          // Add event listeners to form fields for real-time validation
+          const fields = form.querySelectorAll('input[required], select[required], textarea[required]');
+          fields.forEach(field => {
+            field.addEventListener('input', updateButtonState);
+            field.addEventListener('change', updateButtonState);
+            field.addEventListener('blur', updateButtonState);
+          });
+
+          // Initial button state update
+          updateButtonState();
+
+          console.log('Order form enhancements set up successfully');
+        } catch (error) {
+          console.error('Error setting up order form enhancements:', error);
+        }
       }
 
       // Manual chat initialization fallback
@@ -3085,7 +3196,7 @@ ${'='.repeat(40)}
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━━━━━━━━━━━━━━━
+      ━━━━━���━━━━━━━━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -3855,9 +3966,10 @@ ${'='.repeat(40)}
       }
 
       function emailDirectly() {
-        trackChatEvent('email_attempted');
-        const subject = encodeURIComponent('Visual Vibe Studio - Inquiry from Website Chat');
-        const body = encodeURIComponent(`Hi Yoshiko,
+        try {
+          trackChatEvent('email_attempted');
+          const subject = encodeURIComponent('Visual Vibe Studio - Inquiry from Website Chat');
+          const body = encodeURIComponent(`Hi Yoshiko,
 
 I was using the chat on your website and wanted to reach out directly.
 
@@ -3868,8 +3980,25 @@ Please get back to me when you have a chance!
 
 Thanks,
 `);
-        window.open(`mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`, '_blank');
-        addAgentMessage("📧 Email opened! I'll respond to your email as soon as possible.");
+
+          const emailUrl = `mailto:support@visualvibestudio.store?subject=${subject}&body=${body}`;
+
+          // Check if we're on mobile
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+          if (isMobile) {
+            // On mobile, try to open email app directly
+            window.open(emailUrl, '_blank');
+            addAgentMessage("📧 Opening your email app! I'll respond to your email as soon as possible.");
+          } else {
+            // On desktop, provide options
+            showEmailOptionsModal('support@visualvibestudio.store');
+            addAgentMessage("📧 I've opened contact options for you. Choose your preferred way to email me!");
+          }
+        } catch (error) {
+          console.error('Error in emailDirectly:', error);
+          addAgentMessage("📧 To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
+        }
       }
 
       // Enhanced message sending with delivery confirmation
@@ -4021,6 +4150,56 @@ Thanks,
         return div.innerHTML;
       }
 
+      // Enhanced email click handler with better functionality
+      function handleEnhancedEmailClick(event, emailAddress) {
+        try {
+          const button = event.target.closest('a');
+          const buttonText = document.getElementById('sendEmailBtnText');
+
+          // Provide visual feedback
+          if (buttonText) {
+            buttonText.textContent = 'Opening...';
+            button.classList.add('opacity-75');
+          }
+
+          // Reset button after a short delay
+          setTimeout(() => {
+            if (buttonText) {
+              buttonText.textContent = 'Send Email';
+              button.classList.remove('opacity-75');
+            }
+          }, 2000);
+
+          // Check if we're on a mobile device
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+          if (isMobile) {
+            // On mobile, let the default mailto behavior work
+            showAlert('Opening your email app...', 'info');
+            return true;
+          }
+
+          // On desktop, check if mailto is supported
+          const mailtoSupported = 'mailto:' === document.createElement('a').protocol ||
+                                 window.navigator.userAgent.includes('mailto');
+
+          if (mailtoSupported) {
+            // Try mailto first
+            showAlert('Opening your default email client...', 'info');
+            return true;
+          } else {
+            // Fallback to modal with multiple options
+            event.preventDefault();
+            showEmailOptionsModal(emailAddress);
+            return false;
+          }
+        } catch (error) {
+          console.error('Error in enhanced email click:', error);
+          // Fallback to default behavior
+          return true;
+        }
+      }
+
       // Desktop-friendly email functions
       function handleEmailClick(event, emailAddress) {
         // Check if we're on a mobile device or if mailto is supported
@@ -4116,6 +4295,16 @@ Thanks,
         `;
 
         document.body.appendChild(modal);
+      }
+
+      function openEmailWithFeedback(url) {
+        try {
+          window.open(url, '_blank');
+          showAlert('Opening email application...', 'info');
+        } catch (error) {
+          console.error('Error opening email:', error);
+          showAlert('Unable to open email. Please copy the email address and contact us manually.', 'error');
+        }
       }
 
       function closeEmailModal() {
@@ -4592,6 +4781,9 @@ Thanks,
 
             // Mark as initialized
             chatInitialized = true;
+
+            // Set up order form enhancements
+            setupOrderFormEnhancements();
 
             console.log('✅ Chat system initialized successfully');
 
