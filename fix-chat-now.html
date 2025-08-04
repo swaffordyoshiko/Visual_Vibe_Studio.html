@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Fix Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .test-box { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        #console { background: #000; color: #0f0; padding: 15px; font-family: monospace; max-height: 300px; overflow-y: auto; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Emergency Chat Fix</h1>
+    
+    <div class="test-box">
+        <h3>📱 Direct VoIP SMS Test</h3>
+        <input type="text" id="testMsg" placeholder="Test message..." value="Emergency chat test" style="width: 300px; padding: 5px;">
+        <button onclick="testVoIPSMSNow()">Send Test SMS to VoIP Phone NOW</button>
+        <div id="sms-status"></div>
+    </div>
+    
+    <div class="test-box">
+        <h3>🔍 Check Main Site Chat</h3>
+        <button onclick="debugMainSiteChat()">Debug Main Site Chat</button>
+        <div id="chat-debug-status"></div>
+    </div>
+    
+    <div class="test-box">
+        <h3>🛠️ Force Fix Chat Functions</h3>
+        <button onclick="forceFixChatFunctions()">Force Fix & Test</button>
+        <div id="fix-status"></div>
+    </div>
+    
+    <div class="test-box">
+        <h3>🖥️ Console Output</h3>
+        <button onclick="clearConsole()">Clear</button>
+        <div id="console">Console output will appear here...\n</div>
+    </div>
+
+    <script>
+        // Console capture
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function appendConsole(msg, type = 'log') {
+            const console_div = document.getElementById('console');
+            const time = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : '📝';
+            console_div.textContent += `[${time}] ${prefix} ${msg}\n`;
+            console_div.scrollTop = console_div.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            appendConsole(args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            appendConsole(args.join(' '), 'error');
+        };
+
+        function clearConsole() {
+            document.getElementById('console').textContent = '';
+        }
+
+        // Test VoIP SMS directly
+        async function testVoIPSMSNow() {
+            const statusDiv = document.getElementById('sms-status');
+            const message = document.getElementById('testMsg').value.trim();
+            
+            if (!message) {
+                statusDiv.innerHTML = '<div class="status error">❌ Please enter a test message</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="status warning">⏳ Testing VoIP SMS...</div>';
+            console.log('🧪 Testing direct VoIP SMS');
+            
+            try {
+                const success = await sendVoIPSMSDirectly(message);
+                if (success) {
+                    statusDiv.innerHTML = '<div class="status success">✅ VoIP SMS sent! Check your phone in 1-2 minutes.</div>';
+                    console.log('✅ VoIP SMS test successful');
+                } else {
+                    statusDiv.innerHTML = '<div class="status warning">⚠️ VoIP SMS sent but uncertain delivery.</div>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ VoIP SMS failed: ' + error.message + '</div>';
+                console.error('❌ VoIP SMS test failed:', error);
+            }
+        }
+
+        // Direct VoIP SMS function
+        function sendVoIPSMSDirectly(message) {
+            return new Promise((resolve) => {
+                try {
+                    console.log('📡 Sending VoIP SMS directly via form...');
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
+                    form.style.display = 'none';
+                    form.target = 'emergency-sms-' + Date.now();
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.name = form.target;
+                    iframe.style.display = 'none';
+                    
+                    const fields = {
+                        'phone': '4029797184',
+                        'message': `EMERGENCY TEST: ${message}`,
+                        'type': 'emergency_test',
+                        'provider': 'bandwidth',
+                        'timestamp': new Date().toISOString(),
+                        'source': 'emergency_fix_page'
+                    };
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(iframe);
+                    document.body.appendChild(form);
+                    
+                    form.submit();
+                    console.log('✅ Emergency VoIP SMS form submitted');
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                    }, 5000);
+                    
+                    resolve(true);
+                    
+                } catch (error) {
+                    console.error('❌ Emergency VoIP SMS failed:', error);
+                    resolve(false);
+                }
+            });
+        }
+
+        // Debug main site chat
+        function debugMainSiteChat() {
+            const statusDiv = document.getElementById('chat-debug-status');
+            statusDiv.innerHTML = '<div class="status warning">⏳ Debugging main site chat...</div>';
+            
+            console.log('🔍 Opening main site to debug chat...');
+            
+            // Open main site in iframe to check
+            const iframe = document.createElement('iframe');
+            iframe.src = '/';
+            iframe.style.width = '100%';
+            iframe.style.height = '300px';
+            iframe.style.border = '1px solid #ccc';
+            
+            const container = document.createElement('div');
+            container.appendChild(iframe);
+            statusDiv.appendChild(container);
+            
+            iframe.onload = function() {
+                console.log('📄 Main site loaded in iframe');
+                
+                setTimeout(() => {
+                    try {
+                        const iframeWindow = iframe.contentWindow;
+                        const iframeDoc = iframe.contentDocument || iframeWindow.document;
+                        
+                        // Check chat elements
+                        const chatElements = {
+                            chatBubble: !!iframeDoc.getElementById('chatBubble'),
+                            chatInput: !!iframeDoc.getElementById('chatInput'),
+                            chatMessages: !!iframeDoc.getElementById('chatMessages'),
+                            chatSendBtn: !!iframeDoc.getElementById('chatSendBtn')
+                        };
+                        
+                        console.log('🔍 Chat elements found:', chatElements);
+                        
+                        // Check functions
+                        const functions = {
+                            simpleSend: typeof iframeWindow.simpleSend,
+                            immediateSMS: typeof iframeWindow.immediateSMS,
+                            enableSendButton: typeof iframeWindow.enableSendButton
+                        };
+                        
+                        console.log('🔍 Chat functions available:', functions);
+                        
+                        let report = '<h4>Debug Report:</h4>';
+                        report += '<p><strong>Elements:</strong> ' + JSON.stringify(chatElements) + '</p>';
+                        report += '<p><strong>Functions:</strong> ' + JSON.stringify(functions) + '</p>';
+                        
+                        if (chatElements.chatBubble && functions.simpleSend === 'function') {
+                            report += '<div class="status success">✅ Chat system appears functional</div>';
+                            console.log('✅ Chat system appears functional');
+                        } else {
+                            report += '<div class="status error">❌ Chat system has issues</div>';
+                            console.error('❌ Chat system has issues');
+                        }
+                        
+                        statusDiv.innerHTML = report;
+                        
+                    } catch (error) {
+                        console.error('❌ Cannot access iframe content:', error);
+                        statusDiv.innerHTML = '<div class="status error">❌ Cannot debug due to security restrictions</div>';
+                    }
+                }, 2000);
+            };
+        }
+
+        // Force fix chat functions
+        function forceFixChatFunctions() {
+            const statusDiv = document.getElementById('fix-status');
+            statusDiv.innerHTML = '<div class="status warning">⏳ Attempting to force fix chat...</div>';
+            
+            console.log('🛠️ Force fixing chat functions...');
+            
+            try {
+                // Create a script to inject into main site
+                const fixScript = `
+                // EMERGENCY CHAT FIX SCRIPT
+                console.log('🚨 EMERGENCY CHAT FIX LOADING...');
+                
+                // Override simpleSend function
+                window.simpleSend = function() {
+                    console.log('🚀 EMERGENCY simpleSend called');
+                    
+                    const input = document.getElementById('chatInput');
+                    if (!input) {
+                        console.error('❌ Chat input not found');
+                        alert('Chat input not found');
+                        return;
+                    }
+                    
+                    const message = input.value.trim();
+                    if (!message) {
+                        console.log('⚠️ Empty message');
+                        return;
+                    }
+                    
+                    console.log('📝 Emergency sending message:', message);
+                    
+                    // Add to chat display
+                    const container = document.getElementById('chatMessages');
+                    if (container) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'chat-message user';
+                        msgDiv.innerHTML = '<div>' + message + '</div>';
+                        container.appendChild(msgDiv);
+                        container.scrollTop = container.scrollHeight;
+                        console.log('✅ Message added to chat');
+                    }
+                    
+                    // Clear input
+                    input.value = '';
+                    
+                    // Send VoIP SMS
+                    emergencySendVoIPSMS(message);
+                };
+                
+                // Emergency VoIP SMS function
+                window.emergencySendVoIPSMS = function(message) {
+                    console.log('📱 Emergency VoIP SMS sending...');
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
+                    form.style.display = 'none';
+                    form.target = 'emergency-chat-' + Date.now();
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.name = form.target;
+                    iframe.style.display = 'none';
+                    
+                    const fields = {
+                        'phone': '4029797184',
+                        'message': 'EMERGENCY CHAT: ' + message,
+                        'type': 'emergency_chat',
+                        'provider': 'bandwidth',
+                        'timestamp': new Date().toISOString()
+                    };
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(iframe);
+                    document.body.appendChild(form);
+                    form.submit();
+                    
+                    console.log('✅ Emergency VoIP SMS sent');
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                    }, 5000);
+                };
+                
+                console.log('✅ EMERGENCY CHAT FIX LOADED');
+                `;
+                
+                // Save the fix script
+                localStorage.setItem('emergencyChatFix', fixScript);
+                
+                statusDiv.innerHTML = '<div class="status success">✅ Emergency fix prepared! Go to main site and run: <code>eval(localStorage.getItem("emergencyChatFix"))</code> in console.</div>';
+                console.log('✅ Emergency fix script prepared');
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ Fix preparation failed: ' + error.message + '</div>';
+                console.error('❌ Fix preparation failed:', error);
+            }
+        }
+
+        console.log('🔧 Emergency Chat Fix Page Loaded');
+    </script>
+</body>
+</html>
