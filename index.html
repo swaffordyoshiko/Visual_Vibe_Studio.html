@@ -61,12 +61,12 @@
       // Define simpleOrderSubmit IMMEDIATELY to prevent undefined errors
       let isSubmitting = false; // Prevent duplicate submissions
 
-      window.simpleOrderSubmit = function(event) {
+      window.simpleOrderSubmit = async function(event) {
         console.log('🚀 simpleOrderSubmit called (immediate definition)');
 
         // Prevent duplicate submissions
         if (isSubmitting) {
-          console.log('⚠�� Already submitting order, ignoring duplicate call');
+          console.log('⚠��� Already submitting order, ignoring duplicate call');
           return false;
         }
 
@@ -180,9 +180,26 @@
             venmoContainer.classList.remove('hidden');
           }
 
-          // Email sending temporarily disabled to prevent body stream conflicts
-          // Order data is still collected and can be sent via contact form
-          console.log('📋 Order submitted - email disabled to prevent conflicts');
+          // Send order confirmation email
+          try {
+            await sendOrderConfirmationEmail({
+              businessName,
+              industry,
+              email,
+              phone,
+              services: selectedServices,
+              totalAmount,
+              depositAmount,
+              dueDate,
+              details
+            });
+            console.log('📧 Order confirmation email sent successfully');
+          } catch (emailError) {
+            console.error('❌ Email sending failed:', emailError);
+            // Continue with order process even if email fails
+          }
+
+          console.log('📋 Order submitted with email notification');
           console.log('Order details:', {
             businessName,
             industry,
@@ -231,6 +248,218 @@ Please complete payment via Venmo @Yoshiko-Swafford and we'll contact you within
 
       console.log('✅ simpleOrderSubmit function defined immediately:', typeof window.simpleOrderSubmit);
 
+      // Test function to verify Formspree works
+      async function testFormspreeConnection() {
+        try {
+          console.log('🧪 Testing Formspree connection...');
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://formspree.io/f/xwpejpvk';
+          form.style.display = 'none';
+          form.target = 'test-frame';
+
+          const iframe = document.createElement('iframe');
+          iframe.name = 'test-frame';
+          iframe.style.display = 'none';
+
+          const testInput = document.createElement('input');
+          testInput.type = 'hidden';
+          testInput.name = 'email';
+          testInput.value = 'support@visualvibestudio.store';
+
+          const subjectInput = document.createElement('input');
+          subjectInput.type = 'hidden';
+          subjectInput.name = 'subject';
+          subjectInput.value = 'Formspree Test';
+
+          const messageInput = document.createElement('input');
+          messageInput.type = 'hidden';
+          messageInput.name = 'message';
+          messageInput.value = 'This is a test email to verify Formspree is working.';
+
+          form.appendChild(testInput);
+          form.appendChild(subjectInput);
+          form.appendChild(messageInput);
+
+          document.body.appendChild(iframe);
+          document.body.appendChild(form);
+          form.submit();
+
+          setTimeout(() => {
+            if (form.parentNode) form.remove();
+            if (iframe.parentNode) iframe.remove();
+          }, 3000);
+
+          console.log('🧪 Formspree test submitted');
+        } catch (error) {
+          console.error('❌ Formspree test failed:', error);
+        }
+      }
+
+      // Test function for ORDER webhook (separate from contact form)
+      async function testOrderWebhook() {
+        try {
+          console.log('🧪 Testing ORDER webhook...');
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
+          form.style.display = 'none';
+          form.target = 'order-test-frame';
+
+          const iframe = document.createElement('iframe');
+          iframe.name = 'order-test-frame';
+          iframe.style.display = 'none';
+
+          const testData = {
+            'type': 'webhook_test',
+            'message': 'Testing Zapier webhook from order system',
+            'timestamp': new Date().toISOString(),
+            'to_email': 'support@visualvibestudio.store'
+          };
+
+          Object.entries(testData).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+          });
+
+          document.body.appendChild(iframe);
+          document.body.appendChild(form);
+          form.submit();
+
+          setTimeout(() => {
+            if (form.parentNode) form.remove();
+            if (iframe.parentNode) iframe.remove();
+          }, 3000);
+
+          console.log('🧪 ORDER webhook test submitted');
+        } catch (error) {
+          console.error('❌ ORDER webhook test failed:', error);
+        }
+      }
+
+      // Make test functions available globally for manual testing
+      window.testFormspree = testFormspreeConnection;
+      window.testOrderWebhook = testOrderWebhook;
+
+      // Order confirmation email function
+      async function sendOrderConfirmationEmail(orderData) {
+        // Prepare email content
+        const emailSubject = `New Order from ${orderData.businessName}`;
+        const emailBody = `
+NEW ORDER RECEIVED
+
+Business Details:
+- Name: ${orderData.businessName}
+- Industry: ${orderData.industry}
+- Email: ${orderData.email}
+- Phone: ${orderData.phone}
+
+Order Details:
+- Services: ${orderData.services.join(', ')}
+- Total Amount: $${orderData.totalAmount}
+- Deposit Required: $${orderData.depositAmount}
+- Due Date: ${orderData.dueDate}
+
+Additional Details:
+${orderData.details}
+
+Payment Instructions:
+Customer should send 50% deposit ($${orderData.depositAmount}) via Venmo to @Yoshiko-Swafford
+
+This order was submitted on ${new Date().toLocaleString()}
+        `;
+
+        // Use working Zapier webhook method
+        try {
+          console.log('📧 Sending order confirmation via Zapier webhook...');
+          console.log('📋 Order data:', orderData);
+          console.log('✉️ Email subject:', emailSubject);
+
+          // Create hidden form for dedicated ORDER webhook (separate from contact form)
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
+          form.style.display = 'none';
+          form.target = 'order-webhook-frame';
+
+          // Create hidden iframe
+          const iframe = document.createElement('iframe');
+          iframe.name = 'order-webhook-frame';
+          iframe.style.display = 'none';
+
+          // Add comprehensive order data
+          const webhookData = {
+            'type': 'order_confirmation',
+            'business_name': orderData.businessName,
+            'industry': orderData.industry,
+            'customer_email': orderData.email,
+            'customer_phone': orderData.phone,
+            'services': orderData.services.join(', '),
+            'total_amount': orderData.totalAmount,
+            'deposit_amount': orderData.depositAmount,
+            'due_date': orderData.dueDate,
+            'details': orderData.details,
+            'subject': emailSubject,
+            'message': emailBody,
+            'timestamp': new Date().toISOString(),
+            'to_email': 'support@visualvibestudio.store'
+          };
+
+          // Add fields to form
+          Object.entries(webhookData).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+          });
+
+          // Add to page and submit
+          document.body.appendChild(iframe);
+          document.body.appendChild(form);
+          form.submit();
+
+          // Clean up after submission
+          setTimeout(() => {
+            if (form.parentNode) form.remove();
+            if (iframe.parentNode) iframe.remove();
+          }, 3000);
+
+          console.log('📧 Order confirmation sent via Zapier webhook');
+          return true;
+        } catch (webhookError) {
+          console.error('❌ Order webhook failed:', webhookError);
+
+          // Direct mailto fallback - most reliable method
+          const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+          // Show order confirmation with mailto option
+          const orderSummary = `✅ ORDER SUBMITTED SUCCESSFULLY!
+
+📋 Order Details:
+• Business: ${orderData.businessName}
+• Services: ${orderData.services.join(', ')}
+• Total: $${orderData.totalAmount}
+• Deposit: $${orderData.depositAmount}
+
+💳 Next Steps:
+1. Send $${orderData.depositAmount} via Venmo to @Yoshiko-Swafford
+2. Click "Send Email" below to send order details
+3. We'll contact you within 24 hours
+
+📞 Questions? Call (402) 979-7184`;
+
+          if (confirm(orderSummary + '\n\nClick OK to send order details via email, or Cancel to just save the order.')) {
+            window.open(mailtoLink);
+          }
+
+          return true;
+        }
+      }
+
       // Initialize EmailJS immediately to prevent email errors
       if (typeof emailjs !== 'undefined') {
         try {
@@ -262,14 +491,9 @@ Please complete payment via Venmo @Yoshiko-Swafford and we'll contact you within
         lastSendTime: 0,
 
         async sendEmail(serviceId, templateId, data) {
-          console.log('⚠️ EmailJS temporarily disabled to prevent body stream conflicts');
-          console.log('Email data would be:', { serviceId, templateId, data });
+          console.log('📧 EmailJS sending email...');
+          console.log('Email data:', { serviceId, templateId, data });
 
-          // For now, just log the email instead of sending
-          // This prevents the body stream error while maintaining functionality
-          return Promise.resolve({ status: 'disabled', text: 'Email sending disabled' });
-
-          /* TEMPORARILY DISABLED TO PREVENT CONFLICTS
           // Enforce minimum delay between sends
           const now = Date.now();
           const timeSinceLastSend = now - this.lastSendTime;
@@ -318,7 +542,6 @@ Please complete payment via Venmo @Yoshiko-Swafford and we'll contact you within
               }, 2000); // Longer delay between emails
             }
           }
-          */
         }
       };
 
@@ -1881,8 +2104,8 @@ ${'='.repeat(40)}
         console.log('🔍 AUTO-DEBUG: Checking reviews...');
         try {
           const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-          console.log('📦 Total reviews in storage:', allReviews.length);
-          console.log('📝 All reviews:', allReviews);
+          console.log('��� Total reviews in storage:', allReviews.length);
+          console.log('�� All reviews:', allReviews);
 
           // Look for Callie specifically
           const callieReview = allReviews.find(r => r.name.toLowerCase().includes('callie'));
@@ -2122,7 +2345,7 @@ ${'='.repeat(40)}
           console.log('📱 Customer Name:', customerName);
           console.log('📱 Customer Email:', customerEmail);
           console.log('📱 Message:', message);
-          console.log('���� Timestamp:', timestamp);
+          console.log('������ Timestamp:', timestamp);
 
           const form = document.createElement('form');
           form.method = 'POST';
@@ -3017,7 +3240,7 @@ ${messageData.fullMessage}`;
             if (success) {
               console.log('✅ SMS notification sent successfully');
             } else {
-              console.log('⚠️ SMS notification had issues but message logged for manual processing');
+              console.log('⚠�� SMS notification had issues but message logged for manual processing');
             }
           }).catch((error) => {
             console.error('�� SMS notification failed:', error);
@@ -3361,7 +3584,7 @@ ${messageData.fullMessage}`;
 
           if (!chatWindow) {
             console.error('❌ Chat window not found in DOM');
-            console.log('🔍 Available elements:', {
+            console.log('���� Available elements:', {
               chatWindow: !!chatWindow,
               chatBubble: !!chatBubble,
               chatIcon: !!chatIcon,
@@ -5491,7 +5714,7 @@ This is an automated emergency notification.
 
         // Check stored users
         const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-        console.log('👥 Stored users:', users.length);
+        console.log('�� Stored users:', users.length);
 
         // Test opening modal
         if (typeof window.openSignInModal === 'function') {
@@ -8815,7 +9038,7 @@ This is sent because SMS delivery may have failed.
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a href="#services" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            ��������� See Our Services
+            ���������� See Our Services
           </a>
           <a href="#portfolio" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
             View Portfolio
@@ -10362,7 +10585,7 @@ This is sent because SMS delivery may have failed.
         }
 
         // Report results
-        console.log('������ Issues found:', issues);
+        console.log('������� Issues found:', issues);
         console.log('✅ Repairs completed:', repairs);
 
         if (issues.length === 0 && repairs.length > 0) {
@@ -11214,7 +11437,7 @@ This is sent because SMS delivery may have failed.
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━�����━━━━━━━━���━��━━
+      ━�����━━━━━━━━�����━��━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -11727,7 +11950,7 @@ This is sent because SMS delivery may have failed.
             throw new Error(`TextBelt failed: ${result.error || 'Unknown error'}`);
           }
         } catch (error) {
-          console.log('❌ TextBelt SMS failed:', error.message);
+          console.log('��� TextBelt SMS failed:', error.message);
           throw error;
         }
       }
@@ -13595,7 +13818,7 @@ Thanks,
             var message = input ? input.value.trim() : '';
             if (message) {
               input.value = '';
-              console.log('📝 Message sent:', message);
+              console.log('���� Message sent:', message);
               alert('Message received! We\'ll respond soon. Call (402) 979-7184 for immediate help.');
             }
           } catch (e) {
@@ -13846,7 +14069,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('��� Alternative SMS sent via service', index + 1);
+            console.log('���� Alternative SMS sent via service', index + 1);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
