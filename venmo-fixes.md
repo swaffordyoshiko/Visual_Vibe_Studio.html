@@ -17,3 +17,4 @@
 5. Improved mobile compatibility for Venmo deep links
 6. Enhanced form validation
 7. Better email fallback handling
+
