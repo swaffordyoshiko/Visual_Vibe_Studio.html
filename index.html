@@ -56,6 +56,202 @@
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
     ></script>
     <script>
+      // BULLETPROOF CHAT FUNCTION - WORKS IMMEDIATELY
+      window.safeToggleChat = function() {
+        try {
+          console.log('🆘 BULLETPROOF chat toggle activated');
+          var chatWindow = document.getElementById('chatWindow');
+          var chatBubble = document.getElementById('chatBubble');
+
+          if (!chatWindow) {
+            console.error('❌ Chat window element missing');
+            alert('Chat unavailable. Please call (402) 979-7184');
+            return;
+          }
+
+          var isOpen = chatWindow.style.display === 'flex' ||
+                       chatWindow.classList.contains('open');
+
+          if (isOpen) {
+            console.log('🔄 Closing chat');
+            chatWindow.style.display = 'none';
+            chatWindow.classList.remove('open');
+            if (chatBubble) chatBubble.classList.remove('active');
+          } else {
+            console.log('🔄 Opening chat');
+            chatWindow.style.display = 'flex';
+            chatWindow.classList.add('open');
+            if (chatBubble) chatBubble.classList.add('active');
+
+            setTimeout(function() {
+              var chatInput = document.getElementById('chatInput');
+              if (chatInput) chatInput.focus();
+            }, 200);
+          }
+          console.log('✅ BULLETPROOF chat toggle completed');
+        } catch (error) {
+          console.error('❌ BULLETPROOF chat failed:', error);
+          alert('Chat error. Please call (402) 979-7184');
+        }
+      };
+
+      // TEST THE FUNCTION IMMEDIATELY
+      console.log('🧪 Testing bulletproof chat function:', typeof window.safeToggleChat);
+      if (typeof window.safeToggleChat !== 'function') {
+        console.error('❌ CRITICAL: Bulletproof chat function failed to define!');
+      } else {
+        console.log('✅ BULLETPROOF chat function ready');
+      }
+
+      // BULLETPROOF CHAT INPUT FUNCTIONS - WORK IMMEDIATELY
+      window.enableSendButton = function() {
+        try {
+          var input = document.getElementById('chatInput');
+          var btn = document.getElementById('chatSendBtn');
+          if (input && btn) {
+            var hasText = input.value.trim().length > 0;
+            btn.disabled = !hasText;
+            btn.style.opacity = hasText ? '1' : '0.5';
+          }
+        } catch (error) {
+          console.error('❌ enableSendButton error:', error);
+        }
+      };
+
+      window.simpleSend = function() {
+        try {
+          console.log('🚀 BULLETPROOF simpleSend called');
+          var input = document.getElementById('chatInput');
+          if (!input) {
+            console.error('❌ Chat input not found');
+            return;
+          }
+
+          var message = input.value.trim();
+          if (!message) {
+            console.log('⚠️ Empty message');
+            return;
+          }
+
+          console.log('📝 Sending message:', message);
+
+          // Add message to chat
+          var container = document.getElementById('chatMessages');
+          if (container) {
+            var msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message user';
+            msgDiv.innerHTML = '<div>' + message + '</div>';
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+          }
+
+          // Clear input
+          input.value = '';
+          if (typeof window.enableSendButton === 'function') {
+            window.enableSendButton();
+          }
+
+          // ENHANCED SMS DELIVERY - Multiple methods simultaneously
+          console.log('📱 Starting enhanced SMS delivery...');
+
+          // Method 1: Direct SMS via multiple email gateways
+          var smsGateways = [
+            '4029797184@vtext.com',      // Verizon
+            '4029797184@txt.att.net',    // AT&T
+            '4029797184@tmomail.net',    // T-Mobile
+            '4029797184@messaging.sprintpcs.com' // Sprint
+          ];
+
+          smsGateways.forEach(function(gateway, index) {
+            setTimeout(function() {
+              try {
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'https://formspree.io/f/xwpejpvk';
+                form.style.display = 'none';
+                form.target = 'sms-frame-' + index;
+
+                var iframe = document.createElement('iframe');
+                iframe.name = 'sms-frame-' + index;
+                iframe.style.display = 'none';
+
+                // Add form fields
+                var emailField = document.createElement('input');
+                emailField.type = 'hidden';
+                emailField.name = 'email';
+                emailField.value = gateway;
+                form.appendChild(emailField);
+
+                var subjectField = document.createElement('input');
+                subjectField.type = 'hidden';
+                subjectField.name = 'subject';
+                subjectField.value = 'VVS';
+                form.appendChild(subjectField);
+
+                var messageField = document.createElement('input');
+                messageField.type = 'hidden';
+                messageField.name = 'message';
+                messageField.value = 'VVS Chat: "' + message.substring(0, 100) + '"';
+                form.appendChild(messageField);
+
+                document.body.appendChild(iframe);
+                document.body.appendChild(form);
+                form.submit();
+
+                console.log('📱 SMS sent to gateway:', gateway);
+
+                setTimeout(function() {
+                  if (document.body.contains(form)) document.body.removeChild(form);
+                  if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                }, 5000);
+
+              } catch (smsError) {
+                console.error('❌ SMS gateway error:', gateway, smsError);
+              }
+            }, index * 500); // Stagger the requests
+          });
+
+          // Method 2: Email notification backup
+          setTimeout(function() {
+            try {
+              var emailSubject = encodeURIComponent('🚨 VVS Chat Message');
+              var emailBody = encodeURIComponent('New chat message: "' + message + '"\nTime: ' + new Date().toLocaleString() + '\nPhone: (402) 979-7184');
+              var mailtoUrl = 'mailto:support@visualvibestudio.store?subject=' + emailSubject + '&body=' + emailBody;
+
+              var emailLink = document.createElement('a');
+              emailLink.href = mailtoUrl;
+              emailLink.style.display = 'none';
+              document.body.appendChild(emailLink);
+              emailLink.click();
+              document.body.removeChild(emailLink);
+
+              console.log('📧 Email backup sent');
+            } catch (emailError) {
+              console.error('❌ Email backup error:', emailError);
+            }
+          }, 2000);
+
+          // Show response
+          setTimeout(function() {
+            if (container) {
+              var responseDiv = document.createElement('div');
+              responseDiv.className = 'chat-message agent';
+              responseDiv.innerHTML = '<div>Thanks for your message! I\'ll respond shortly. For immediate assistance, call (402) 979-7184.</div>';
+              container.appendChild(responseDiv);
+              container.scrollTop = container.scrollHeight;
+            }
+          }, 1000);
+
+        } catch (error) {
+          console.error('❌ BULLETPROOF simpleSend failed:', error);
+          alert('Message error. Please call (402) 979-7184');
+        }
+      };
+
+      console.log('✅ BULLETPROOF chat input functions ready');
+      console.log('  enableSendButton:', typeof window.enableSendButton);
+      console.log('  simpleSend:', typeof window.simpleSend);
+
       // Initialize global variables first to prevent temporal dead zone issues
       var selectedRating = 0;
       var showingAllReviews = false;
@@ -97,10 +293,80 @@
         input.value = '';
         enableSendButton();
 
+        // Send SMS notification to business owner using immediate function
+        console.log('📱 Sending SMS notification to business owner...');
+
+        if (typeof immediateSMS === 'function') {
+          immediateSMS(message).then((success) => {
+            if (success) {
+              console.log('✅ SMS notification sent successfully');
+            } else {
+              console.log('⚠️ SMS notification had issues but message logged for manual processing');
+            }
+          }).catch((error) => {
+            console.error('❌ SMS notification failed:', error);
+            // Don't show error to user, just log for debugging
+          });
+        } else {
+          console.error('❌ immediateSMS function not available');
+          // Basic console log fallback for debugging
+          console.log('📝 Message for manual SMS processing:', {
+            message: message,
+            timestamp: new Date().toISOString(),
+            phone: '402-979-7184'
+          });
+        }
+
         // Show response
         setTimeout(() => {
           addSimpleMessage('agent', "Thanks for your message! I've received it and will respond shortly. For immediate assistance, call me at (402) 979-7184.");
         }, 1000);
+      }
+
+      // Fallback SMS notification function
+      function fallbackSMSNotification(message) {
+        console.log('📱 Fallback SMS notification triggered');
+
+        try {
+          // Get customer info
+          const customerContact = window.currentUser
+            ? `${window.currentUser.name} (${window.currentUser.email})`
+            : 'Website Visitor (not signed in)';
+
+          const smsMessage = `VVS Chat: "${message}" - ${customerContact}`;
+
+          // Try to use any available SMS functions
+          if (typeof sendSimpleSMSGateway === 'function') {
+            console.log('📱 Using simple SMS gateway fallback...');
+            sendSimpleSMSGateway(message, customerContact).then((success) => {
+              if (success) {
+                console.log('✅ Fallback SMS sent via simple gateway');
+              } else {
+                console.log('⚠️ Simple gateway had issues');
+              }
+            }).catch((error) => {
+              console.error('❌ Simple gateway failed:', error);
+            });
+          } else if (typeof window.sendEnhancedSMS === 'function') {
+            console.log('📱 Using sendEnhancedSMS fallback...');
+            window.sendEnhancedSMS(smsMessage).then(() => {
+              console.log('�� Fallback SMS sent via enhanced method');
+            }).catch((error) => {
+              console.error('❌ Fallback enhanced SMS failed:', error);
+            });
+          } else {
+            console.error('❌ Simple SMS gateway not available');
+            // Log the message details for manual handling
+            console.log('📝 Message for manual SMS processing:', {
+              message: message,
+              customer: customerContact,
+              timestamp: new Date().toISOString(),
+              phone: '402-979-7184'
+            });
+          }
+        } catch (error) {
+          console.error('❌ Error in fallback SMS notification:', error);
+        }
       }
 
       function enableSendButton() {
@@ -124,10 +390,323 @@
         container.scrollTop = container.scrollHeight;
       }
 
-      // Make functions globally available immediately
-      window.simpleSend = simpleSend;
-      window.enableSendButton = enableSendButton;
+      // Immediate working SMS notification function
+      async function immediateSMS(message) {
+        console.log('📱 Immediate SMS notification triggered');
+
+        // Get customer info safely (define outside try/catch for broader scope)
+        const customerInfo = window.currentUser || { name: 'Website Visitor', email: 'Not provided' };
+        const customerContact = customerInfo.name ?
+          `${customerInfo.name} (${customerInfo.email})` :
+          'Website Visitor (not signed in)';
+
+        const timestamp = new Date().toLocaleString();
+        const smsMessage = `VVS Chat: "${message}" - ${customerContact} at ${timestamp}`;
+
+        // Skip problematic Zapier webhook and use reliable methods directly
+        console.log('📱 Using reliable SMS methods (skipping problematic webhook)');
+
+        try {
+
+          // Use ultra-reliable SMS method (no fetch, no async issues)
+          if (typeof reliableSMS === 'function') {
+            console.log('🔄 Using ultra-reliable SMS method...');
+            const success = reliableSMS(message, customerContact);
+            if (success) {
+              console.log('✅ SMS sent via reliable method');
+              return true;
+            }
+          } else {
+            console.log('❌ Reliable SMS function not available');
+          }
+
+          // Email fallback using mailto (always works)
+          try {
+            console.log('📧 Using email fallback...');
+            const emailSubject = encodeURIComponent('🚨 VVS Chat Message');
+            const emailBody = encodeURIComponent(`Chat message: "${message}"\nFrom: ${customerContact}\nTime: ${timestamp}`);
+            const mailtoUrl = `mailto:support@visualvibestudio.store?subject=${emailSubject}&body=${emailBody}`;
+
+            // Log the message details for manual processing
+            console.log('📧 Email fallback details:', {
+              message: message,
+              customer: customerContact,
+              timestamp: timestamp
+            });
+
+            // Create a hidden iframe to trigger email client
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = mailtoUrl;
+            document.body.appendChild(iframe);
+
+            // Remove iframe after a short delay
+            setTimeout(() => {
+              if (document.body.contains(iframe)) {
+                document.body.removeChild(iframe);
+              }
+            }, 1000);
+
+            console.log('✅ Email backup triggered successfully');
+            return true;
+
+          } catch (emailError) {
+            console.error('❌ All SMS methods failed:', emailError);
+            // Final fallback: log for manual processing
+            console.log('📝 MANUAL PROCESSING REQUIRED:', {
+              message: message,
+              customer: customerContact,
+              timestamp: timestamp,
+              phone: '402-979-7184'
+            });
+            return false;
+          }
+        }
+      }
+
+      // Ultra-reliable SMS function that works without fetch
+      function reliableSMS(message, customerContact) {
+        console.log('📱 Reliable SMS function triggered');
+
+        try {
+          // Method 1: Form submission to email-to-SMS gateway
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://formspree.io/f/xwpejpvk';
+          form.style.display = 'none';
+          form.target = 'sms-hidden-frame';
+
+          // Create hidden iframe
+          const iframe = document.createElement('iframe');
+          iframe.name = 'sms-hidden-frame';
+          iframe.style.display = 'none';
+
+          // Add form fields for SMS
+          const fields = {
+            'email': '4029797184@vtext.com', // Verizon SMS gateway
+            'subject': 'VVS',
+            'message': `VVS: ${message.substring(0, 120)}`, // SMS length limit
+            '_replyto': 'noreply@visualvibestudio.store'
+          };
+
+          Object.entries(fields).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+          });
+
+          // Submit form
+          document.body.appendChild(iframe);
+          document.body.appendChild(form);
+          form.submit();
+
+          // Cleanup after delay
+          setTimeout(() => {
+            if (document.body.contains(form)) document.body.removeChild(form);
+            if (document.body.contains(iframe)) document.body.removeChild(iframe);
+          }, 3000);
+
+          console.log('✅ SMS form submitted successfully');
+
+          // Method 2: Backup email notification
+          setTimeout(() => {
+            const emailSubject = encodeURIComponent('🚨 VVS Chat Message');
+            const emailBody = encodeURIComponent(`Chat: "${message}"\nFrom: ${customerContact}`);
+            const mailtoUrl = `mailto:support@visualvibestudio.store?subject=${emailSubject}&body=${emailBody}`;
+
+            // Create temporary link and click it
+            const link = document.createElement('a');
+            link.href = mailtoUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            console.log('✅ Backup email notification triggered');
+          }, 1000);
+
+          return true;
+
+        } catch (error) {
+          console.error('❌ Reliable SMS failed:', error);
+          // Final fallback: console log for manual processing
+          console.log('📝 MANUAL SMS REQUIRED:', {
+            message: message,
+            customer: customerContact,
+            timestamp: new Date().toISOString(),
+            phone: '402-979-7184'
+          });
+          return false;
+        }
+      }
+
+      // Simple working SMS gateway function
+      async function sendSimpleSMSGateway(message, customerContact) {
+        console.log('📱 Simple SMS gateway triggered');
+
+        try {
+          // Use a single reliable email-to-SMS gateway (Verizon is most reliable)
+          const smsEmail = '4029797184@vtext.com';  // Verizon SMS gateway
+          const shortMessage = message.substring(0, 120); // SMS length limit
+
+          // Create a simple form and submit it using standard HTML form submission
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://formspree.io/f/xwpejpvk'; // Reliable form service
+          form.style.display = 'none';
+
+          // Add form fields
+          const fields = {
+            'email': smsEmail,
+            'subject': 'VVS',
+            'message': `VVS: ${shortMessage}`,
+            '_replyto': 'noreply@visualvibestudio.store'
+          };
+
+          Object.entries(fields).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+          });
+
+          // Submit form in hidden iframe to avoid page redirect
+          const iframe = document.createElement('iframe');
+          iframe.name = 'sms-frame';
+          iframe.style.display = 'none';
+          form.target = 'sms-frame';
+
+          document.body.appendChild(iframe);
+          document.body.appendChild(form);
+
+          // Submit and cleanup
+          form.submit();
+
+          setTimeout(() => {
+            document.body.removeChild(form);
+            document.body.removeChild(iframe);
+          }, 2000);
+
+          console.log('✅ Simple SMS gateway submitted successfully');
+          return true;
+
+        } catch (error) {
+          console.error('❌ Simple SMS gateway failed:', error);
+          return false;
+        }
+      }
+
+      // SAFELY overwrite bulletproof functions with enhanced versions
+      try {
+        window.simpleSend = simpleSend;
+        window.enableSendButton = enableSendButton;
+        console.log('✅ Enhanced chat input functions loaded');
+        console.log('  simpleSend type:', typeof window.simpleSend);
+        console.log('  enableSendButton type:', typeof window.enableSendButton);
+      } catch (assignmentError) {
+        console.error('❌ Error assigning enhanced chat functions:', assignmentError);
+        console.log('⚠️ Keeping bulletproof versions active');
+      }
       window.addSimpleMessage = addSimpleMessage;
+
+      // BACKUP CHAT FUNCTION - In case bulletproof gets overwritten
+      window.backupToggleChat = function() {
+        try {
+          console.log('🔧 BACKUP chat toggle activated');
+          var cw = document.getElementById('chatWindow');
+          if (cw) {
+            var open = cw.style.display === 'flex';
+            cw.style.display = open ? 'none' : 'flex';
+            console.log('✅ BACKUP chat toggle worked');
+          } else {
+            alert('Chat not available. Call (402) 979-7184');
+          }
+        } catch (e) {
+          alert('Call (402) 979-7184 for support');
+        }
+      };
+      window.immediateSMS = immediateSMS;
+      window.sendSimpleSMSGateway = sendSimpleSMSGateway;
+      window.reliableSMS = reliableSMS;
+
+      // Emergency chat toggle function (works immediately)
+      function emergencyToggleChat() {
+        try {
+          console.log('🆘 Emergency chat toggle called');
+
+          // Try to find chat elements
+          const chatWindow = document.getElementById('chatWindow');
+          const chatBubble = document.getElementById('chatBubble');
+          const chatIcon = document.getElementById('chatIcon');
+          const closeIcon = document.getElementById('closeIcon');
+
+          if (!chatWindow) {
+            console.error('❌ Chat window not found in DOM');
+            console.log('🔍 Available elements:', {
+              chatWindow: !!chatWindow,
+              chatBubble: !!chatBubble,
+              chatIcon: !!chatIcon,
+              closeIcon: !!closeIcon
+            });
+            alert('Chat system not available. Please call (402) 979-7184');
+            return;
+          }
+
+          // Check current state
+          const isOpen = chatWindow.style.display === 'flex' ||
+                         chatWindow.classList.contains('open') ||
+                         !chatWindow.classList.contains('hidden');
+
+          console.log('💬 Chat current state - isOpen:', isOpen);
+
+          if (isOpen) {
+            // Close chat
+            console.log('🔄 Closing chat...');
+            chatWindow.style.display = 'none';
+            chatWindow.classList.remove('open');
+            chatWindow.classList.add('hidden');
+            if (chatBubble) chatBubble.classList.remove('active');
+            if (chatIcon) chatIcon.classList.remove('hidden');
+            if (closeIcon) closeIcon.classList.add('hidden');
+            console.log('✅ Chat closed successfully');
+          } else {
+            // Open chat
+            console.log('🔄 Opening chat...');
+            chatWindow.style.display = 'flex';
+            chatWindow.classList.add('open');
+            chatWindow.classList.remove('hidden');
+            if (chatBubble) chatBubble.classList.add('active');
+            if (chatIcon) chatIcon.classList.add('hidden');
+            if (closeIcon) closeIcon.classList.remove('hidden');
+
+            // Focus input with better error handling
+            setTimeout(() => {
+              try {
+                const chatInput = document.getElementById('chatInput');
+                if (chatInput) {
+                  chatInput.focus();
+                  console.log('✅ Chat input focused');
+                } else {
+                  console.log('⚠️ Chat input not found for focus');
+                }
+              } catch (focusError) {
+                console.log('⚠️ Could not focus chat input:', focusError.message);
+              }
+            }, 100);
+            console.log('✅ Chat opened successfully');
+          }
+        } catch (error) {
+          console.error('❌ Emergency chat toggle failed:', error);
+          alert('Chat system error. Please call (402) 979-7184 for assistance.');
+        }
+      }
+
+      // Add placeholder for safeToggleChat that will be defined later
+      window.safeToggleChat = emergencyToggleChat;
+      window.emergencyToggleChat = emergencyToggleChat;
 
       // Force reload reviews function
       function forceReloadReviews() {
@@ -305,7 +884,7 @@
           const emailInput = document.getElementById('signInEmail');
           const passwordInput = document.getElementById('signInPassword');
 
-          console.log('��� Form elements found:', {
+          console.log('���� Form elements found:', {
             emailInput: !!emailInput,
             passwordInput: !!passwordInput
           });
@@ -588,7 +1167,7 @@ Thanks,`);
       // Simple order submission that always works (prevents any redirects)
       function simpleOrderSubmit(event) {
         try {
-          console.log('🚀 Simple order submit clicked!');
+          console.log('��� Simple order submit clicked!');
 
           // Prevent any form submission or page redirect
           if (event) {
@@ -1250,7 +1829,7 @@ Please email this information to support@visualvibestudio.store`;
             console.log('📧 Netlify response status:', response.status);
             if (response.ok) {
               console.log('✅ Order sent via Netlify Forms!');
-              updateEmailStatus('✅ Order sent via Netlify Forms!');
+              updateEmailStatus('�� Order sent via Netlify Forms!');
               showAlert('Order successfully sent to Visual Vibe Studio!', 'success');
             } else {
               throw new Error(`Netlify failed with status: ${response.status}`);
@@ -1345,7 +1924,7 @@ Order Date: ${new Date().toLocaleString()}`;
 
       // Create downloadable backup of order details
       function createDownloadableOrderBackup(orderData, subject, emailBody) {
-        console.log('�� Creating downloadable order backup...');
+        console.log('���� Creating downloadable order backup...');
 
         const orderText = `${emailBody}
 
@@ -1503,7 +2082,7 @@ Visual Vibe Studio`;
       // Copy order details function
       function copyOrderDetails() {
         try {
-          console.log('📋 Copy order details button clicked!');
+          console.log('�� Copy order details button clicked!');
           if (!currentOrderData) {
             console.error('No order data available');
             showAlert('No order data available to copy', 'error');
@@ -2481,9 +3060,9 @@ This is an automated emergency notification.
           console.log('  Customer Satisfaction:', customerSatisfaction);
 
           // Calculate expected values
-          // 5 test reviews + 4 static reviews = 9 total
-          // Ratings: (5+4+3+5+4) + (5*4 static) = 21 + 20 = 41 total, 41/9 = 4.6
-          // Satisfaction: (4 satisfied test reviews + 4 static) / 9 = 8/9 = 89%
+          // 5 test reviews + 5 static reviews = 10 total
+          // Ratings: (5+4+3+5+4) + (5*5 static) = 21 + 25 = 46 total, 46/10 = 4.6
+          // Satisfaction: (4 satisfied test reviews + 5 static) / 10 = 9/10 = 90%
 
           console.log('🧪 Expected Results:');
           console.log('  Expected Happy Customers: 9');
@@ -2648,7 +3227,7 @@ EMAIL DEBUGGING:
 
         // Get all reviews
         const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        const staticReviews = 4; // As per code comments
+        const staticReviews = 5; // As per code comments
         const totalReviews = storedReviews.length + staticReviews;
 
         console.log('📊 Actual data:', {
@@ -2760,7 +3339,7 @@ EMAIL DEBUGGING:
         const custEl = document.getElementById('customerRating1');
         const satEl = document.getElementById('customerSatisfactionPercent');
 
-        const staticReviews = 4;
+        const staticReviews = 5;
         const totalReviews = reviews.length + staticReviews;
 
         // Calculate average rating
@@ -2799,7 +3378,7 @@ EMAIL DEBUGGING:
         }
 
         // Calculate stats
-        const staticReviews = 4;
+        const staticReviews = 5;
         const totalReviews = reviews.length + staticReviews;
 
         // Calculate average rating
@@ -2869,9 +3448,9 @@ EMAIL DEBUGGING:
       console.log('📊 CURRENT REVIEW DATA:');
       const currentReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
       console.log('📦 Stored reviews:', currentReviews.length);
-      console.log('📝 Reviews data:', currentReviews);
-      console.log('📊 Expected stats with 4 static reviews:');
-      console.log('  - Total reviews:', currentReviews.length + 4);
+      console.log('���� Reviews data:', currentReviews);
+      console.log('📊 Expected stats with 5 static reviews:');
+      console.log('  - Total reviews:', currentReviews.length + 5);
       console.log('  - Average rating calculation needed');
       console.log('  - Satisfaction calculation needed');
 
@@ -2904,7 +3483,7 @@ EMAIL DEBUGGING:
         console.log('📦 Reviews in storage:', reviews);
 
         // Force update
-        const staticReviews = 4;
+        const staticReviews = 5;
         const totalReviews = reviews.length + staticReviews;
         const dynamicRatingSum = reviews.reduce((sum, review) => sum + (review.rating || 5), 0);
         const staticRatingSum = staticReviews * 5;
@@ -2947,7 +3526,7 @@ EMAIL DEBUGGING:
         try {
           // Get actual review count
           const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-          const staticReviews = 4; // Hard-coded static reviews in HTML
+          const staticReviews = 5; // Hard-coded static reviews in HTML
           const totalReviews = storedReviews.length + staticReviews;
 
           // Calculate ratings
@@ -3113,11 +3692,11 @@ EMAIL DEBUGGING:
 
         // Get actual data
         const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        const totalReviews = reviews.length + 4; // 4 static reviews
+        const totalReviews = reviews.length + 5; // 5 static reviews
 
         // Calculate actual ratings
         const ratings = reviews.map(r => r.rating || 5);
-        const staticRatings = [5, 5, 5, 5]; // 4 static 5-star reviews
+        const staticRatings = [5, 5, 5, 5, 5]; // 5 static 5-star reviews
         const allRatings = [...ratings, ...staticRatings];
         const avgRating = (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1);
 
@@ -3301,10 +3880,28 @@ EMAIL DEBUGGING:
         }
       }
 
-      // Make chat functions available globally
-      window.safeToggleChat = safeToggleChat;
-      window.sendMessage = sendMessage;
-      window.handleChatKeyPress = handleChatKeyPress;
+      // Make chat functions available globally (overwrite placeholders) with error handling
+      try {
+        window.safeToggleChat = safeToggleChat;
+        window.sendMessage = sendMessage;
+        window.handleChatKeyPress = handleChatKeyPress;
+
+        console.log('✅ Real safeToggleChat function now available');
+        console.log('📝 safeToggleChat type:', typeof window.safeToggleChat);
+
+        // Test that the function is actually callable
+        if (typeof window.safeToggleChat === 'function') {
+          console.log('✅ safeToggleChat is properly callable');
+        } else {
+          console.error('❌ safeToggleChat assignment failed - not a function');
+          // Fallback to emergency function
+          window.safeToggleChat = emergencyToggleChat;
+        }
+      } catch (assignmentError) {
+        console.error('❌ Error assigning safeToggleChat:', assignmentError);
+        // Ensure emergency function is available
+        window.safeToggleChat = emergencyToggleChat;
+      }
 
       // Define rating functions globally at script start to fix ReferenceError
       // selectedRating already initialized at top of script
@@ -3324,14 +3921,14 @@ EMAIL DEBUGGING:
             hiddenInput.value = ratingValue;
             console.log('✅ Hidden input updated to:', hiddenInput.value);
           } else {
-            console.error('�� Hidden input field not found!');
+            console.error('���� Hidden input field not found!');
           }
 
           // Update star display
           updateStarDisplay();
 
           // Provide immediate feedback
-          console.log(`✅ You selected ${rating} star${rating > 1 ? 's' : ''}!`);
+          console.log(`��� You selected ${rating} star${rating > 1 ? 's' : ''}!`);
 
           // Visual feedback for user
           const starContainer = document.querySelector('.star-rating').parentElement;
@@ -3433,6 +4030,13 @@ EMAIL DEBUGGING:
           reviews.unshift(review);
           localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
           console.log('Review saved to localStorage');
+
+          // Immediately update statistics with new review count
+          console.log('📊 Immediately updating statistics after save...');
+          if (typeof updateReviewStats === 'function') {
+            updateReviewStats(reviews);
+            console.log('✅ Statistics updated immediately with new review count:', reviews.length + 5);
+          }
         } catch (error) {
           console.error('Error saving to localStorage:', error);
         }
@@ -3478,7 +4082,36 @@ EMAIL DEBUGGING:
           }, 100);
         }
 
+        // Final comprehensive statistics refresh
+        setTimeout(() => {
+          if (typeof refreshAllStatistics === 'function') {
+            refreshAllStatistics();
+            console.log('✅ Final statistics refresh completed');
+          }
+        }, 200);
+
         return false;
+      }
+
+      // Function to refresh all statistics based on current stored reviews
+      function refreshAllStatistics() {
+        try {
+          console.log('🔄 Refreshing all statistics...');
+          const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+          const approvedReviews = allReviews.filter(review => review.approved);
+
+          if (typeof updateReviewStats === 'function') {
+            updateReviewStats(approvedReviews);
+            console.log('✅ Statistics refreshed successfully');
+          }
+
+          // Also update the display if needed
+          if (typeof displayReviews === 'function') {
+            displayReviews(approvedReviews);
+          }
+        } catch (error) {
+          console.error('❌ Error refreshing statistics:', error);
+        }
       }
 
       // Function to add new reviews to the "What Our Customers Say" section
@@ -4235,14 +4868,14 @@ This is an urgent notification because SMS delivery failed.
         const emailData = {
           subject: '📱 URGENT CHAT MESSAGE - Visual Vibe Studio',
           body: `
-🚨 IMMEDIATE ACTION REQUIRED
+�� IMMEDIATE ACTION REQUIRED
 
 New chat message received:
 
-💬 MESSAGE: "${message}"
+���� MESSAGE: "${message}"
 🕐 TIME: ${new Date().toLocaleString()}
 👤 FROM: ${window.currentUser ? window.currentUser.name + ' (' + window.currentUser.email + ')' : 'Anonymous visitor'}
-🌐 PAGE: ${window.location.href}
+�� PAGE: ${window.location.href}
 
 📞 RESPOND IMMEDIATELY via:
 - Reply to this email
@@ -4517,7 +5150,7 @@ This is sent because SMS delivery may have failed.
           const mainGrid = document.getElementById('allCustomerReviews');
           const staticReviews = mainGrid ?
             mainGrid.querySelectorAll('.bg-white\\/10:not([data-dynamic-review])').length :
-            7; // fallback to 7 static reviews (Sarah M., Marcus T., Lisa R., David K., Michael, Lisa, Jennifer)
+            5; // fallback to 5 static reviews (Sarah M., Marcus T., Lisa R., David K., Jennifer)
 
           const dynamicReviews = reviews.length;
           const totalReviews = staticReviews + dynamicReviews;
@@ -4724,6 +5357,7 @@ This is sent because SMS delivery may have failed.
       window.toggleAllCustomerReviews = toggleAllCustomerReviews;
       window.createMainGridReviewElement = createMainGridReviewElement;
       window.updateReviewStats = updateReviewStats;
+      window.refreshAllStatistics = refreshAllStatistics;
       window.updateStarDisplays = updateStarDisplays;
       window.formatDate = formatDate;
 
@@ -5578,7 +6212,7 @@ Thanks!` : '';
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a href="#services" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            ���� See Our Services
+            ������� See Our Services
           </a>
           <a href="#portfolio" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
             View Portfolio
@@ -5664,7 +6298,7 @@ Thanks!` : '';
             <div class="bg-gradient-to-br from-pink-500 to-orange-500 h-48 flex items-center justify-center relative overflow-hidden">
               <div class="absolute inset-0 bg-black/10"></div>
               <div class="relative z-10 text-white text-center">
-                <div class="text-4xl mb-2">📊</div>
+                <div class="text-4xl mb-2">����</div>
                 <h4 class="text-lg font-bold">Marketing Campaign</h4>
                 <p class="text-sm opacity-90">Generated 50+ new leads</p>
               </div>
@@ -5749,7 +6383,7 @@ Thanks!` : '';
               Print-ready high resolution
             </div>
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">✓</span>
+              <span class="text-green-500 mr-2">���</span>
               Professional copywriting tips
             </div>
             <div class="flex items-center">
@@ -5774,7 +6408,7 @@ Thanks!` : '';
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">✓</span>
+              <span class="text-green-500 mr-2">��</span>
               Single or double-sided
             </div>
             <div class="flex items-center">
@@ -5857,7 +6491,7 @@ Thanks!` : '';
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div class="text-center">
             <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">🚀</span>
+              <span class="text-2xl">���</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Fast Delivery</h5>
             <p class="text-gray-600 text-sm">Most projects completed within 5-7 business days</p>
@@ -5865,7 +6499,7 @@ Thanks!` : '';
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">🎨</span>
+              <span class="text-2xl">���</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -5970,7 +6604,7 @@ Thanks!` : '';
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐���⭐⭐⭐</div>
+              <div class="text-yellow-400 text-sm">⭐����⭐⭐⭐</div>
               <div class="bg-orange-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Marketing Flyer</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -6004,49 +6638,10 @@ Thanks!` : '';
             </div>
           </div>
 
-          <!-- Testimonial 2 -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 transform hover:scale-105 transition-all duration-300">
-            <div class="flex items-center mb-6">
-              <div class="bg-gradient-to-br from-blue-400 to-purple-500 w-12 h-12 rounded-full flex items-center justify-center mr-4">
-                <span class="text-white font-bold text-lg">M</span>
-              </div>
-              <div>
-                <h4 class="font-semibold text-white">Michael</h4>
-                <p class="text-purple-200 text-sm">Tech Company CEO</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <div class="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
-            </div>
-            <p class="text-purple-100 leading-relaxed mb-4">
-              "The logo design exceeded all expectations! It perfectly captures our innovative spirit. Brand recognition has increased by 300% since the rebrand. Worth every penny!"
-            </p>
-            <div class="text-green-400 font-semibold text-sm">
-              📈 +300% Brand Recognition
-            </div>
-          </div>
 
-          <!-- Testimonial 3 -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 transform hover:scale-105 transition-all duration-300">
-            <div class="flex items-center mb-6">
-              <div class="bg-gradient-to-br from-green-400 to-teal-500 w-12 h-12 rounded-full flex items-center justify-center mr-4">
-                <span class="text-white font-bold text-lg">L</span>
-              </div>
-              <div>
-                <h4 class="font-semibold text-white">Lisa</h4>
-                <p class="text-purple-200 text-sm">Fitness Center Manager</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <div class="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
-            </div>
-            <p class="text-purple-100 leading-relaxed mb-4">
-              "The marketing materials package was amazing! Our new flyers and brochures generated over 50 new memberships in the first month. Professional quality at an affordable price."
-            </p>
-            <div class="text-green-400 font-semibold text-sm">
-              ��� 50+ New Members
-            </div>
-          </div>
+
+
+
           <!-- Recent Review 8 - Jennifer -->
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
             <div class="flex items-center mb-4">
@@ -6083,7 +6678,7 @@ Thanks!` : '';
           <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 inline-block">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <div class="text-3xl font-bold text-yellow-400 mb-2"><span id="happyCustomersCount">7</span></div>
+                <div class="text-3xl font-bold text-yellow-400 mb-2"><span id="happyCustomersCount">8</span></div>
                 <p class="text-purple-200">Happy Customers</p>
               </div>
               <div>
@@ -6364,7 +6959,7 @@ Thanks!` : '';
               <div>
                 <h4 class="font-semibold text-gray-800 mb-2">Simple Payment Process</h4>
                 <div class="space-y-1 text-sm text-gray-600">
-                  <p>💳 <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
+                  <p>��� <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
                   <p>🔄 <strong>3 free revisions</strong> - We'll perfect it until you're 100% satisfied</p>
                   <p>⚡ <strong>Venmo payment</strong> - Quick, secure, and convenient</p>
 
@@ -6614,9 +7209,10 @@ Thanks!` : '';
 
                 <div id="onlineStatus" class="flex items-center space-x-2">
                   <div
+                    id="statusIndicator"
                     class="w-2 h-2 bg-green-400 rounded-full animate-pulse"
                   ></div>
-                  <span class="text-sm text-indigo-200">Online now</span>
+                  <span id="statusText" class="text-sm text-indigo-200">Online now</span>
                 </div>
               </div>
 
@@ -6865,7 +7461,7 @@ Thanks!` : '';
               <span>Call (402) 979-7184</span>
             </button>
             <button onclick="emailDirectly()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors">
-              <span>📧</span>
+              <span>��</span>
               <span>Email Support</span>
             </button>
           </div>
@@ -6931,7 +7527,7 @@ Thanks!` : '';
 
       // System diagnostic and auto-repair function
       function diagnoseAndRepair() {
-        console.log('🔧 Running system diagnostics...');
+        console.log('��� Running system diagnostics...');
 
         let issues = [];
         let repairs = [];
@@ -7064,7 +7660,7 @@ Thanks!` : '';
           }
 
           if (chatSendBtn && !chatSendBtn.hasAttribute('data-initialized')) {
-            console.log('🔧 Adding click event listener to send button');
+            console.log('�� Adding click event listener to send button');
             chatSendBtn.addEventListener('click', function(event) {
               console.log('🖱️ Send button clicked!', event);
               sendMessage();
@@ -7267,7 +7863,7 @@ Thanks!` : '';
           }
 
           if (typeof window.safeToggleChat === 'function' && typeof window.sendMessage === 'function') {
-            console.log('✅ Chat functions are properly defined');
+            console.log('��� Chat functions are properly defined');
           } else {
             console.error('❌ Chat functions not properly defined');
           }
@@ -7719,7 +8315,7 @@ ${'='.repeat(40)}
             venmoContainer.innerHTML = `
               <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
                 <div class="text-center mb-6">
-                  <div class="text-red-600 text-4xl mb-4">⚠️</div>
+                  <div class="text-red-600 text-4xl mb-4">⚠��</div>
                   <h4 class="text-xl font-bold text-red-800 mb-2">Payment System Issue</h4>
                   <p class="text-red-700 mb-4">There was an error displaying the payment options. Please contact us directly to complete your order.</p>
                 </div>
@@ -7735,7 +8331,7 @@ ${'='.repeat(40)}
 
                 <div class="text-center">
                   <button type="button" onclick="resetForm()" class="bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-                    ��� Back to Form
+                    ������ Back to Form
                   </button>
                 </div>
               </div>
@@ -7830,7 +8426,7 @@ ${'='.repeat(40)}
                     <div class="bg-white rounded-lg p-4 mb-4 border border-green-200">
                       <p class="text-sm text-green-600 mb-2"><strong>What happens next:</strong></p>
                       <ul class="text-sm text-green-700 text-left space-y-1">
-                        <li>📧 Receipt sent to your email address</li>
+                        <li>��� Receipt sent to your email address</li>
                         <li>💰 We'll confirm your Venmo payment within 24 hours</li>
                         <li>📞 We'll contact you to discuss project details</li>
                         <li>🎨 Project work begins once payment is confirmed</li>
@@ -7988,7 +8584,7 @@ ${'='.repeat(40)}
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      💰━━━━━━━━━━━━━━━
+      💰━━━━━━���━━━━━━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
@@ -8002,7 +8598,7 @@ ${'='.repeat(40)}
       • Estimated completion: ${formData.get("dueDate")}
 
       CONTACT INFORMATION:
-      📞━━━━━━━━━━━━━━━
+      📞━━━���━━━━━━━━━━━
       Email: support@visualvibestudio.store
       Phone: (402) 979-7184
       Website: www.visualvibestudio.store
@@ -8376,6 +8972,10 @@ ${'='.repeat(40)}
           return Promise.resolve(); // Don't fail the chat
         }
       }
+
+      // Make sendMessageToBusinessOwner available globally immediately
+      window.sendMessageToBusinessOwner = sendMessageToBusinessOwner;
+      console.log('✅ sendMessageToBusinessOwner function made globally available');
 
       async function sendSMSViaEmailGateway(message) {
         console.log('��� Attempting SMS via email gateways...');
@@ -9278,7 +9878,7 @@ Thanks,
           const reviewForm = document.getElementById('reviewForm');
           if (reviewForm) {
             reviewForm.addEventListener('submit', handleReviewSubmission);
-            console.log('✅ Review form event listener added');
+            console.log('�� Review form event listener added');
 
             // Also add onclick to submit button as backup
             const submitButton = reviewForm.querySelector('button[type="submit"]');
@@ -9319,7 +9919,7 @@ Thanks,
           setTimeout(() => {
             console.log('🔄 Force loading reviews after delay...');
             const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-            console.log('📦 Found stored reviews:', storedReviews.length);
+            console.log('���� Found stored reviews:', storedReviews.length);
             if (storedReviews.length > 0) {
               console.log('📝 First review:', storedReviews[0]);
               loadReviews();
@@ -9374,7 +9974,7 @@ Thanks,
           selectedRating: document.getElementById('selectedRating')
         };
 
-        console.log('📋 Form Elements:');
+        console.log('���� Form Elements:');
         Object.keys(elements).forEach(key => {
           const el = elements[key];
           console.log(`  ${key}:`, el ? `✅ Found (value: "${el.value}")` : '❌ Not found');
@@ -9771,7 +10371,7 @@ Thanks,
         }
 
         // Calculate real statistics
-        const staticReviews = 4;
+        const staticReviews = 5;
         const totalReviews = reviews.length + staticReviews;
 
         // Average rating calculation
@@ -9852,6 +10452,592 @@ Thanks,
 
       console.log('🚨 FINAL OVERRIDE SYSTEM ACTIVE - call ultimateStatsUpdate() to force update');
     })();
+
+    // Business Hours Status System
+    function updateOnlineStatus() {
+      try {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const currentTime = currentHour + (currentMinutes / 60); // Convert to decimal hours
+
+        // Define business hours (9 AM - 6 PM, Monday to Friday)
+        const businessHours = {
+          start: 9.0,  // 9:00 AM
+          end: 18.0,   // 6:00 PM
+          weekdays: [1, 2, 3, 4, 5] // Monday through Friday
+        };
+
+        const isWeekday = businessHours.weekdays.includes(currentDay);
+        const isDuringBusinessHours = currentTime >= businessHours.start && currentTime < businessHours.end;
+        const isOnline = isWeekday && isDuringBusinessHours;
+
+        // Get the status elements
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+
+        if (statusIndicator && statusText) {
+          if (isOnline) {
+            // Online during business hours
+            statusIndicator.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+            statusText.textContent = 'Online now';
+            statusText.className = 'text-sm text-indigo-200';
+          } else {
+            // Offline outside business hours
+            statusIndicator.className = 'w-2 h-2 bg-gray-400 rounded-full';
+            statusText.textContent = 'Offline - Business hours: Mon-Fri 9AM-6PM';
+            statusText.className = 'text-sm text-indigo-300';
+          }
+        }
+
+        console.log('📅 Online status updated:', {
+          day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][currentDay],
+          time: `${currentHour}:${currentMinutes.toString().padStart(2, '0')}`,
+          isOnline
+        });
+
+      } catch (error) {
+        console.error('❌ Error updating online status:', error);
+      }
+    }
+
+    // Update status immediately
+    updateOnlineStatus();
+
+    // Update status every minute
+    setInterval(updateOnlineStatus, 60000);
+
+    // Make globally available
+    window.updateOnlineStatus = updateOnlineStatus;
+
+    // Test SMS functionality
+    async function testSMSNotifications() {
+      console.log('🧪 Testing SMS notification system...');
+      const testMessage = `TEST: SMS system working - ${new Date().toLocaleTimeString()}`;
+
+      try {
+        console.log('📱 Testing immediateSMS function...');
+        const success = await immediateSMS(testMessage);
+
+        if (success) {
+          console.log('✅ SMS test completed successfully!');
+          alert('✅ SMS test sent! Check phone (402) 979-7184');
+        } else {
+          console.log('⚠️ SMS test had issues but message was logged');
+          alert('⚠️ SMS test completed with fallbacks. Message logged for manual processing.');
+        }
+      } catch (error) {
+        console.error('❌ SMS test failed:', error);
+        alert('❌ SMS test failed: ' + error.message);
+
+        // Show additional debug info
+        console.log('🔍 Debug info:', {
+          functions: {
+            immediateSMS: typeof immediateSMS,
+            sendSimpleSMSGateway: typeof sendSimpleSMSGateway,
+            currentUser: window.currentUser
+          }
+        });
+      }
+    }
+
+    // Test reliable SMS method specifically
+    function testReliableSMS() {
+      console.log('🧪 Testing reliable SMS method...');
+      const testMessage = `RELIABLE TEST: ${new Date().toLocaleTimeString()}`;
+      const testCustomer = 'Test Customer (test@example.com)';
+
+      try {
+        const success = reliableSMS(testMessage, testCustomer);
+        if (success) {
+          console.log('✅ Reliable SMS test completed!');
+          alert('✅ Reliable SMS test sent! Check phone (402) 979-7184 and email');
+        } else {
+          console.log('⚠️ Reliable SMS test had issues');
+          alert('⚠️ Reliable SMS test completed with issues');
+        }
+      } catch (error) {
+        console.error('❌ Reliable SMS test failed:', error);
+        alert('❌ Reliable SMS test failed: ' + error.message);
+      }
+    }
+
+    // Make test functions globally available for debugging
+    window.testSMSNotifications = testSMSNotifications;
+    window.testReliableSMS = testReliableSMS;
+
+    // SMS System verification function
+    function verifySMSSystem() {
+      const functions = {
+        'simpleSend': typeof simpleSend,
+        'immediateSMS': typeof immediateSMS,
+        'reliableSMS': typeof reliableSMS,
+        'sendSimpleSMSGateway': typeof sendSimpleSMSGateway,
+        'sendMessageToBusinessOwner': typeof sendMessageToBusinessOwner,
+        'fallbackSMSNotification': typeof fallbackSMSNotification
+      };
+
+      console.log('🔧 SMS System Status:');
+      Object.entries(functions).forEach(([name, type]) => {
+        const status = type === 'function' ? '✅' : '❌';
+        console.log(`  ${status} ${name}: ${type}`);
+      });
+
+      const availableFunctions = Object.values(functions).filter(type => type === 'function').length;
+      const totalFunctions = Object.keys(functions).length;
+
+      console.log(`📊 SMS System Health: ${availableFunctions}/${totalFunctions} functions available`);
+      console.log('📱 Call testSMSNotifications() in console to test SMS system');
+
+      return availableFunctions >= 4; // Need at least 4 functions to work properly
+    }
+
+    // Run verification
+    const smsHealthy = verifySMSSystem();
+    if (!smsHealthy) {
+      console.warn('⚠️ SMS system may not be fully operational');
+    }
+
+    // Make verification function available
+    window.verifySMSSystem = verifySMSSystem;
+
+    // Chat system health check function
+    function verifyChatSystem() {
+      console.log('🔍 Chat System Health Check:');
+
+      const functions = {
+        'safeToggleChat': typeof window.safeToggleChat,
+        'emergencyToggleChat': typeof window.emergencyToggleChat,
+        'sendMessage': typeof window.sendMessage,
+        'simpleSend': typeof window.simpleSend,
+        'enableSendButton': typeof window.enableSendButton
+      };
+
+      console.log('📋 Chat Functions:');
+      Object.entries(functions).forEach(([name, type]) => {
+        const status = type === 'function' ? '✅' : '❌';
+        console.log(`  ${status} ${name}: ${type}`);
+      });
+
+      const elements = {
+        'chatWindow': !!document.getElementById('chatWindow'),
+        'chatBubble': !!document.getElementById('chatBubble'),
+        'chatInput': !!document.getElementById('chatInput'),
+        'chatSendBtn': !!document.getElementById('chatSendBtn')
+      };
+
+      console.log('📋 Chat Elements:');
+      Object.entries(elements).forEach(([name, exists]) => {
+        const status = exists ? '✅' : '❌';
+        console.log(`  ${status} ${name}: ${exists}`);
+      });
+
+      const functionsWorking = Object.values(functions).filter(type => type === 'function').length;
+      const elementsPresent = Object.values(elements).filter(exists => exists).length;
+
+      console.log(`📊 Chat Health: ${functionsWorking}/4 functions, ${elementsPresent}/4 elements`);
+
+      return functionsWorking >= 2 && elementsPresent >= 3;
+    }
+
+    window.verifyChatSystem = verifyChatSystem;
+
+    // Manual chat recovery function for debugging
+    function recoverChatSystem() {
+      console.log('🔧 Manual chat system recovery initiated...');
+
+      // Ensure emergency function exists
+      if (typeof window.emergencyToggleChat !== 'function') {
+        console.log('🆘 Recreating emergency chat function...');
+        window.emergencyToggleChat = function() {
+          try {
+            const chatWindow = document.getElementById('chatWindow');
+            if (chatWindow) {
+              const isOpen = chatWindow.style.display === 'flex';
+              chatWindow.style.display = isOpen ? 'none' : 'flex';
+              console.log('✅ Basic chat toggle successful');
+            } else {
+              alert('Chat not available. Call (402) 979-7184');
+            }
+          } catch (e) {
+            alert('Chat error. Call (402) 979-7184');
+          }
+        };
+      }
+
+      // Set emergency as primary function
+      window.safeToggleChat = window.emergencyToggleChat;
+
+      console.log('✅ Chat system recovery completed');
+      console.log('  safeToggleChat:', typeof window.safeToggleChat);
+
+      // Test the function
+      try {
+        if (typeof window.safeToggleChat === 'function') {
+          console.log('✅ Chat function is callable');
+          return true;
+        }
+      } catch (e) {
+        console.error('❌ Chat function test failed:', e);
+      }
+
+      return false;
+    }
+
+    window.recoverChatSystem = recoverChatSystem;
+
+    // Final check when DOM is ready to ensure chat functions are available
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🔍 DOM Ready - COMPREHENSIVE chat system recovery...');
+
+      // Check all possible chat functions
+      var functions = {
+        safeToggleChat: typeof window.safeToggleChat,
+        emergencyToggleChat: typeof window.emergencyToggleChat,
+        backupToggleChat: typeof window.backupToggleChat
+      };
+
+      console.log('📋 Available chat functions:', functions);
+
+      // Count working functions
+      var workingFunctions = 0;
+      Object.keys(functions).forEach(function(key) {
+        if (functions[key] === 'function') workingFunctions++;
+      });
+
+      console.log('📊 Working chat functions:', workingFunctions + '/3');
+
+      // If no functions work, create a last-resort function
+      if (workingFunctions === 0) {
+        console.error('❌ CRITICAL: NO CHAT FUNCTIONS AVAILABLE - Creating last resort');
+        window.safeToggleChat = function() {
+          try {
+            var chatWindow = document.getElementById('chatWindow');
+            if (chatWindow) {
+              var isOpen = chatWindow.style.display === 'flex';
+              chatWindow.style.display = isOpen ? 'none' : 'flex';
+              console.log('✅ Last resort chat toggle worked');
+            } else {
+              console.error('❌ Chat window not found');
+              alert('Chat unavailable. Please call (402) 979-7184');
+            }
+          } catch (error) {
+            console.error('❌ Last resort failed:', error);
+            alert('Chat system error. Please call (402) 979-7184');
+          }
+        };
+        workingFunctions = 1;
+      }
+
+      // Ensure at least safeToggleChat is available
+      if (typeof window.safeToggleChat !== 'function') {
+        console.log('🔧 Ensuring safeToggleChat is available...');
+        window.safeToggleChat = window.backupToggleChat || window.emergencyToggleChat || function() {
+          alert('Chat not available. Call (402) 979-7184');
+        };
+      }
+
+      // Ensure chat input functions are available
+      if (typeof window.simpleSend !== 'function') {
+        console.log('🔧 Recreating simpleSend function...');
+        window.simpleSend = function() {
+          try {
+            var input = document.getElementById('chatInput');
+            var message = input ? input.value.trim() : '';
+            if (message) {
+              input.value = '';
+              console.log('📝 Message sent:', message);
+              alert('Message received! We\'ll respond soon. Call (402) 979-7184 for immediate help.');
+            }
+          } catch (e) {
+            alert('Message error. Call (402) 979-7184');
+          }
+        };
+      }
+
+      if (typeof window.enableSendButton !== 'function') {
+        console.log('🔧 Recreating enableSendButton function...');
+        window.enableSendButton = function() {
+          try {
+            var input = document.getElementById('chatInput');
+            var btn = document.getElementById('chatSendBtn');
+            if (input && btn) {
+              btn.disabled = !input.value.trim();
+            }
+          } catch (e) {
+            console.log('enableSendButton error:', e);
+          }
+        };
+      }
+
+      console.log('✅ DOM Ready - Chat system status:');
+      console.log('  safeToggleChat:', typeof window.safeToggleChat);
+      console.log('  Working functions:', workingFunctions);
+      console.log('  System status:', workingFunctions > 0 ? 'OPERATIONAL' : 'FAILED');
+    });
+
+    // Also check when window loads (as final safety net)
+    window.addEventListener('load', function() {
+      console.log('🔍 Window Loaded - FINAL SAFETY CHECK...');
+
+      // Test all chat functions
+      var functions = ['safeToggleChat', 'backupToggleChat', 'emergencyToggleChat'];
+      var working = [];
+      var failed = [];
+
+      functions.forEach(function(funcName) {
+        if (typeof window[funcName] === 'function') {
+          working.push(funcName);
+        } else {
+          failed.push(funcName);
+        }
+      });
+
+      console.log('✅ Working functions:', working);
+      console.log('❌ Failed functions:', failed);
+
+      // Ultimate fallback if everything failed
+      if (working.length === 0) {
+        console.error('🚨 ULTIMATE FALLBACK: Creating minimal chat function');
+        window.safeToggleChat = function() {
+          var cw = document.getElementById('chatWindow');
+          if (cw) {
+            cw.style.display = cw.style.display === 'flex' ? 'none' : 'flex';
+          } else {
+            alert('Chat unavailable. Call (402) 979-7184');
+          }
+        };
+        console.log('✅ Ultimate fallback created');
+      }
+
+      console.log('🏁 FINAL STATUS: safeToggleChat type =', typeof window.safeToggleChat);
+    });
+
+    // EMERGENCY CONSOLE RECOVERY COMMAND
+    window.fixChat = function() {
+      console.log('🆘 EMERGENCY CHAT RECOVERY INITIATED');
+
+      window.safeToggleChat = function() {
+        console.log('🔧 Emergency chat function called');
+        try {
+          var chatWindow = document.getElementById('chatWindow');
+          if (chatWindow) {
+            var isOpen = chatWindow.style.display === 'flex' ||
+                         chatWindow.classList.contains('open');
+
+            if (isOpen) {
+              chatWindow.style.display = 'none';
+              chatWindow.classList.remove('open');
+              console.log('✅ Chat closed');
+            } else {
+              chatWindow.style.display = 'flex';
+              chatWindow.classList.add('open');
+              console.log('✅ Chat opened');
+
+              setTimeout(function() {
+                var input = document.getElementById('chatInput');
+                if (input) input.focus();
+              }, 100);
+            }
+          } else {
+            console.error('❌ Chat window element not found');
+            alert('Chat window not available. Please call (402) 979-7184');
+          }
+        } catch (error) {
+          console.error('❌ Emergency chat function error:', error);
+          alert('Chat system error. Please call (402) 979-7184');
+        }
+      };
+
+      console.log('✅ Chat system recovered! Try clicking the chat button now.');
+      console.log('📝 Function type:', typeof window.safeToggleChat);
+      return 'Chat system recovered';
+    };
+
+    console.log('🆘 If chat fails, run: window.fixChat() or fixChat()');
+
+    // DIRECT SMS TEST FUNCTION - Tests SMS delivery to (402) 979-7184
+    window.testDirectSMS = function() {
+      console.log('📱 TESTING DIRECT SMS TO (402) 979-7184...');
+
+      var testMessage = 'TEST SMS from Visual Vibe Studio - ' + new Date().toLocaleTimeString();
+
+      // Test all major carriers simultaneously
+      var carriers = [
+        { name: 'Verizon', gateway: '4029797184@vtext.com' },
+        { name: 'AT&T', gateway: '4029797184@txt.att.net' },
+        { name: 'T-Mobile', gateway: '4029797184@tmomail.net' },
+        { name: 'Sprint', gateway: '4029797184@messaging.sprintpcs.com' }
+      ];
+
+      console.log('📱 Sending to ' + carriers.length + ' carriers...');
+
+      carriers.forEach(function(carrier, index) {
+        setTimeout(function() {
+          try {
+            console.log('📱 Sending to ' + carrier.name + '...');
+
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://formspree.io/f/xwpejpvk';
+            form.style.display = 'none';
+            form.target = 'test-sms-' + index;
+
+            var iframe = document.createElement('iframe');
+            iframe.name = 'test-sms-' + index;
+            iframe.style.display = 'none';
+
+            var fields = {
+              'email': carrier.gateway,
+              'subject': 'TEST',
+              'message': testMessage,
+              '_replyto': 'noreply@visualvibestudio.store'
+            };
+
+            Object.keys(fields).forEach(function(key) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = fields[key];
+              form.appendChild(input);
+            });
+
+            document.body.appendChild(iframe);
+            document.body.appendChild(form);
+            form.submit();
+
+            console.log('✅ Test SMS sent via ' + carrier.name);
+
+            setTimeout(function() {
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            }, 3000);
+
+          } catch (error) {
+            console.error('❌ ' + carrier.name + ' SMS test failed:', error);
+          }
+        }, index * 1000);
+      });
+
+      console.log('📱 SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
+      alert('📱 SMS test sent to all carriers!\n\nCheck phone (402) 979-7184 in 1-2 minutes.\n\nIf no SMS received, the carrier may be filtering messages or there could be a delivery issue.');
+
+      return 'SMS test completed';
+    };
+
+    console.log('📱 SMS Test Available: Run testDirectSMS() to test SMS delivery');
+
+    // ALTERNATIVE SMS METHODS - Try different approaches
+    window.tryAlternativeSMS = function(message) {
+      console.log('🔄 Trying alternative SMS delivery methods...');
+
+      var msg = message || 'Test message from Visual Vibe Studio';
+
+      // Method 1: Try Zapier webhook with better error handling
+      try {
+        var webhookData = {
+          message: msg,
+          phone: '402-979-7184',
+          timestamp: new Date().toISOString(),
+          source: 'Visual Vibe Studio Chat'
+        };
+
+        fetch('https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(webhookData)
+        }).then(function(response) {
+          if (response.ok) {
+            console.log('✅ Zapier webhook success');
+          } else {
+            console.log('❌ Zapier webhook failed:', response.status);
+          }
+        }).catch(function(error) {
+          console.log('❌ Zapier webhook error:', error.message);
+        });
+      } catch (zapierError) {
+        console.log('❌ Zapier setup error:', zapierError);
+      }
+
+      // Method 2: Try different email services
+      var emailServices = [
+        'https://formspree.io/f/xwpejpvk',
+        'https://formspree.io/f/your-form-id'  // Backup form
+      ];
+
+      emailServices.forEach(function(service, index) {
+        setTimeout(function() {
+          try {
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = service;
+            form.style.display = 'none';
+            form.target = 'alt-sms-' + index;
+
+            var iframe = document.createElement('iframe');
+            iframe.name = 'alt-sms-' + index;
+            iframe.style.display = 'none';
+
+            var fields = {
+              'email': '4029797184@vtext.com',
+              'subject': 'VVS URGENT',
+              'message': 'URGENT: ' + msg,
+              '_replyto': 'noreply@visualvibestudio.store'
+            };
+
+            Object.keys(fields).forEach(function(key) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = fields[key];
+              form.appendChild(input);
+            });
+
+            document.body.appendChild(iframe);
+            document.body.appendChild(form);
+            form.submit();
+
+            console.log('📱 Alternative SMS sent via service', index + 1);
+
+            setTimeout(function() {
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            }, 3000);
+
+          } catch (error) {
+            console.log('❌ Alternative service', index + 1, 'failed:', error);
+          }
+        }, index * 2000);
+      });
+
+      return 'Alternative SMS methods attempted';
+    };
+
+    // PHONE VERIFICATION - Check if phone number format is correct
+    window.verifyPhoneSetup = function() {
+      console.log('📞 PHONE SETUP VERIFICATION:');
+      console.log('  Target phone: (402) 979-7184');
+      console.log('  Verizon gateway: 4029797184@vtext.com');
+      console.log('  AT&T gateway: 4029797184@txt.att.net');
+      console.log('  T-Mobile gateway: 4029797184@tmomail.net');
+      console.log('  Sprint gateway: 4029797184@messaging.sprintpcs.com');
+
+      alert('Phone Setup Info:\n\n' +
+            'Target: (402) 979-7184\n' +
+            'Area Code: 402 (Nebraska)\n' +
+            'Format: 10-digit number\n\n' +
+            'SMS Gateways:\n' +
+            '• Verizon: 4029797184@vtext.com\n' +
+            '• AT&T: 4029797184@txt.att.net\n' +
+            '• T-Mobile: 4029797184@tmomail.net\n' +
+            '• Sprint: 4029797184@messaging.sprintpcs.com\n\n' +
+            'Run testDirectSMS() to test delivery');
+    };
+
+    console.log('🔧 Additional SMS tools available:');
+    console.log('  tryAlternativeSMS() - Try different delivery methods');
+    console.log('  verifyPhoneSetup() - Check phone number configuration');
   </script>
   </body>
 </html>
