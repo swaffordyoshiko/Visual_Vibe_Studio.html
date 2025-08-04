@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🧪 Test Fixed Messages</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; max-width: 600px; margin: 0 auto; }
+        .test-box { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #007bff; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .preview { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 10px 0; border-radius: 4px; white-space: pre-wrap; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Fixed Message System</h1>
+    
+    <div class="test-box">
+        <h3>📝 Test Message Fields</h3>
+        <p>Test if customer information and message content now appear correctly:</p>
+        
+        <label>Customer Name:</label>
+        <input type="text" id="testName" value="John Smith" placeholder="Enter customer name">
+        
+        <label>Customer Phone:</label>
+        <input type="text" id="testPhone" value="402-555-1234" placeholder="Enter phone number">
+        
+        <label>Customer Email:</label>
+        <input type="text" id="testEmail" value="john@example.com" placeholder="Enter email address">
+        
+        <label>Message Content:</label>
+        <textarea id="testMessage" rows="3" placeholder="Enter test message">I need help with my website design. Can you call me back today?</textarea>
+        
+        <button onclick="previewMessage()">👁️ Preview Message</button>
+        <button onclick="sendTestMessage()">📤 Send Test Message</button>
+        
+        <div id="preview-output"></div>
+        <div id="test-status"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>🔍 Quick Chat Test</h3>
+        <p>Test the actual chat system with proper customer info:</p>
+        <button onclick="setupTestUser()">👤 Setup Test Customer</button>
+        <button onclick="testDirectChatMessage()">💬 Test Chat Message</button>
+        <div id="chat-test-status"></div>
+    </div>
+
+    <script>
+        function previewMessage() {
+            const name = document.getElementById('testName').value.trim() || 'Website Visitor';
+            const phone = document.getElementById('testPhone').value.trim() || 'Not provided';
+            const email = document.getElementById('testEmail').value.trim() || 'Not provided';
+            const message = document.getElementById('testMessage').value.trim() || 'Empty message';
+            const timestamp = new Date().toLocaleString();
+            
+            const fullMessage = `New message from Visual Vibe Studio website:
+From: ${name} (${phone})
+Email: ${email}
+Message: ${message}
+Time: ${timestamp}`;
+            
+            document.getElementById('preview-output').innerHTML = `
+                <h4>📱 SMS Message Preview:</h4>
+                <div class="preview">${fullMessage}</div>
+                <p><strong>Message Length:</strong> ${fullMessage.length} characters</p>
+                <p><strong>All Fields Filled:</strong> ${name !== 'Website Visitor' && phone !== 'Not provided' && email !== 'Not provided' && message !== 'Empty message' ? '✅ Yes' : '❌ No'}</p>
+            `;
+        }
+        
+        function sendTestMessage() {
+            const statusDiv = document.getElementById('test-status');
+            const name = document.getElementById('testName').value.trim();
+            const phone = document.getElementById('testPhone').value.trim();
+            const email = document.getElementById('testEmail').value.trim();
+            const message = document.getElementById('testMessage').value.trim();
+            
+            if (!name || !phone || !message) {
+                statusDiv.innerHTML = '<div class="status error">❌ Please fill in name, phone, and message fields</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="status warning">⏳ Sending test message with customer info...</div>';
+            
+            try {
+                // Set up customer info (simulating the fixed system)
+                window.currentUser = {
+                    name: name,
+                    email: email,
+                    phone: phone
+                };
+                
+                console.log('🧪 TEST: Customer info set:', window.currentUser);
+                
+                // Send test message using the same method as main site
+                sendTestVoIPSMS(message);
+                
+                statusDiv.innerHTML = '<div class="status success">✅ Test message sent! Check your phone in 1-2 minutes. Customer info should be included.</div>';
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ Test failed: ' + error.message + '</div>';
+                console.error('Test error:', error);
+            }
+        }
+        
+        function sendTestVoIPSMS(message) {
+            console.log('🧪 TEST SMS: Sending with customer info');
+            
+            const customerInfo = window.currentUser || { name: 'Website Visitor', email: 'Not provided', phone: 'Not provided' };
+            const customerName = customerInfo.name || 'Website Visitor';
+            const customerEmail = customerInfo.email || 'Not provided';
+            const customerPhone = customerInfo.phone || 'Not provided';
+            const timestamp = new Date().toLocaleString();
+            
+            // Use the same safe values as the fixed system
+            const safeName = customerName && customerName !== 'undefined' ? customerName : 'Website Visitor';
+            const safePhone = customerPhone && customerPhone !== 'undefined' ? customerPhone : 'Not provided';
+            const safeEmail = customerEmail && customerEmail !== 'undefined' ? customerEmail : 'Not provided';
+            const safeMessage = message && message.trim() ? message.trim() : 'Empty message';
+            
+            const fullSMSMessage = 'FIXED SYSTEM TEST - New message from Visual Vibe Studio website:\n' +
+                                  'From: ' + safeName + ' (' + safePhone + ')\n' +
+                                  'Email: ' + safeEmail + '\n' +
+                                  'Message: ' + safeMessage + '\n' +
+                                  'Time: ' + timestamp;
+            
+            console.log('🧪 TEST SMS: Full message:', fullSMSMessage);
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
+            form.style.display = 'none';
+            form.target = 'test-sms-' + Date.now();
+            
+            const iframe = document.createElement('iframe');
+            iframe.name = form.target;
+            iframe.style.display = 'none';
+            
+            const fields = {
+                'phone': '4029797184',
+                'message': fullSMSMessage,
+                'type': 'test_fixed_system',
+                'provider': 'bandwidth',
+                'timestamp': new Date().toISOString(),
+                'customer_name': safeName,
+                'customer_email': safeEmail,
+                'customer_phone': safePhone,
+                'original_message': safeMessage,
+                'source': 'test_page_fixed'
+            };
+            
+            console.log('🧪 TEST SMS: Fields being sent:', fields);
+            
+            Object.keys(fields).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(iframe);
+            document.body.appendChild(form);
+            form.submit();
+            
+            setTimeout(() => {
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            }, 5000);
+        }
+        
+        function setupTestUser() {
+            const statusDiv = document.getElementById('chat-test-status');
+            
+            // Set up a test user (like what happens after contact form)
+            window.currentUser = {
+                name: 'Test Customer',
+                email: 'test@example.com',
+                phone: '402-555-TEST'
+            };
+            
+            statusDiv.innerHTML = '<div class="status success">✅ Test customer info set: ' + window.currentUser.name + ' (' + window.currentUser.phone + ')</div>';
+            console.log('👤 Test user setup:', window.currentUser);
+        }
+        
+        function testDirectChatMessage() {
+            const statusDiv = document.getElementById('chat-test-status');
+            
+            if (!window.currentUser) {
+                statusDiv.innerHTML = '<div class="status warning">⚠️ Please setup test customer first</div>';
+                return;
+            }
+            
+            const testMessage = 'This is a test chat message to verify the fix works!';
+            
+            statusDiv.innerHTML = '<div class="status warning">⏳ Sending chat message with customer info...</div>';
+            
+            try {
+                // Simulate what happens in the actual chat
+                sendTestVoIPSMS(testMessage);
+                
+                statusDiv.innerHTML = '<div class="status success">✅ Chat test sent! Customer: ' + window.currentUser.name + ', Message: "' + testMessage + '"</div>';
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ Chat test failed: ' + error.message + '</div>';
+            }
+        }
+        
+        // Auto-preview on page load
+        window.onload = function() {
+            previewMessage();
+        };
+        
+        console.log('🧪 Test page loaded - ready to test fixed message system');
+    </script>
+</body>
+</html>
