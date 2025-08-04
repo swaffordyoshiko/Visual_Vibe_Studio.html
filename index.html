@@ -160,7 +160,7 @@
             msgDiv.innerHTML = '<div>' + message + '</div>';
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-            console.log('✅ Message added to chat');
+            console.log('��� Message added to chat');
           }
 
           // Clear input and re-enable for next message
@@ -248,7 +248,7 @@
           console.log('🔍 DEBUG: customerPhone:', customerPhone);
           console.log('🔍 DEBUG: timestamp:', timestamp);
 
-          console.log('📱 Customer info:', customerInfo);
+          console.log('�� Customer info:', customerInfo);
           console.log('📱 Processing message for:', customerName);
 
           // Ensure we have actual values, not empty strings
@@ -361,7 +361,7 @@
 
       // Test SMS message formatting
       window.testSMSFormatting = function() {
-        console.log('���� Testing SMS message formatting...');
+        console.log('����� Testing SMS message formatting...');
         const testMessage = 'This is a test message';
         const testCustomer = 'John Doe';
         const testEmail = 'john@example.com';
@@ -372,7 +372,7 @@
                            'Message: ' + testMessage + '\n' +
                            'Time: ' + testTime;
 
-        console.log('🧪 Formatted SMS test result:');
+        console.log('�� Formatted SMS test result:');
         console.log(formattedSMS);
 
         return formattedSMS;
@@ -397,6 +397,17 @@
         const phone = phoneInput.value.trim();
         const email = emailInput.value.trim();
         const message = messageInput.value.trim();
+
+        // Get response preference
+        const responsePreference = document.querySelector('input[name="responsePreference"]:checked');
+        const preferredResponse = responsePreference ? responsePreference.value : 'text';
+
+        // Set currentUser to prevent issues with other SMS functions
+        window.currentUser = {
+          name: name,
+          email: email,
+          phone: phone
+        };
 
         // Validation
         if (!name) {
@@ -438,20 +449,30 @@
         }
 
         // Send message directly to phone with specified format
-        sendContactMessage(name, phone, email, message);
+        sendContactMessage(name, phone, email, message, preferredResponse);
 
-        console.log('✅ Contact form submitted:', { name, phone, email, message });
+        console.log('✅ Contact form submitted:', { name, phone, email, message, preferredResponse });
       };
 
       // Send contact message directly to phone with specified format
-      window.sendContactMessage = function(name, mobile, email, message) {
+      window.sendContactMessage = function(name, mobile, email, message, responsePreference = 'text') {
         console.log('📱 Sending contact message to phone...');
 
         try {
           const timestamp = new Date().toLocaleString();
+          const preferredResponseText = responsePreference === 'email' ? 'E' : 'T';
 
-          // Format message exactly as requested
-          const formattedMessage = `new message from visual vibe studio website: from ${name} mobile: ${mobile} email: ${email} message: ${message} date/time: ${timestamp}`;
+          // Validate all parameters before formatting
+          const safeName = name && name.trim() ? name.trim() : 'Name not provided';
+          const safeMobile = mobile && mobile.trim() ? mobile.trim() : 'Phone not provided';
+          const safeEmail = email && email.trim() ? email.trim() : 'Email not provided';
+          const safeMessage = message && message.trim() ? message.trim() : 'Message not provided';
+          const safeResponsePref = preferredResponseText || 'T';
+
+          // Format message ultra-compact with preference first to prevent truncation
+          const formattedMessage = `VVS [${safeResponsePref}]: ${safeName} ${safeMobile} ${safeEmail} - ${safeMessage}`;
+
+          console.log('📱 Formatted message:', formattedMessage);
 
           const form = document.createElement('form');
           form.method = 'POST';
@@ -473,6 +494,7 @@
             'customer_mobile': mobile,
             'customer_email': email,
             'customer_message': message,
+            'response_preference': responsePreference,
             'source': 'website_contact_form'
           };
 
@@ -525,7 +547,7 @@
                   <strong>What happens next?</strong><br>
                   • I'll review your message and respond within 2-4 hours<br>
                   • For urgent matters, call me at (402) 979-7184<br>
-                  • Check your email for my response
+                  • Check your email or text messages for my response
                 </div>
                 <button onclick="resetContactForm()" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
                   Send Another Message
@@ -543,13 +565,13 @@
         if (contactForm) {
           contactForm.innerHTML = `
             <div class="chat-message agent">
-              <div>
-                <strong>Welcome to Visual Vibe Studio!</strong>
-                <br><br>
-                I'm Yoshiko, your dedicated design professional. Please complete the form below to send me your message directly. I will be in touch with you shortly.
-                <br><br>
-                <em>All inquiries receive a personal response within 2-4 hours during business days.</em>
-              </div>
+              <div class="text-center">
+              <strong>Welcome to Visual Vibe Studio!</strong>
+              <br><br>
+              I'm Yoshiko, your dedicated design professional. Please complete the form below to send me your message directly. I will be in touch with you shortly.
+              <br><br>
+              <em>All inquiries receive a personal response within 2-4 hours during business days.</em>
+            </div>
             </div>
 
             <div class="contact-form p-4">
@@ -571,6 +593,20 @@
               <div class="form-group mb-4">
                 <label for="customerMessage" class="block text-sm font-medium text-gray-700 mb-1">Your Message *</label>
                 <textarea id="customerMessage" placeholder="Tell me about your project or question..." rows="4" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" required></textarea>
+              </div>
+
+              <div class="form-group mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">How would you prefer to receive my response? *</label>
+                <div class="space-y-2">
+                  <label class="flex items-center">
+                    <input type="radio" id="responseText" name="responsePreference" value="text" class="mr-2 text-blue-600 focus:ring-blue-500" checked>
+                    <span class="text-sm text-gray-700">📱 Text/SMS to my mobile number</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="radio" id="responseEmail" name="responsePreference" value="email" class="mr-2 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm text-gray-700">📧 Email response</span>
+                  </label>
+                </div>
               </div>
 
               <button id="submitContactBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors" onclick="submitContactForm()">Send Message</button>
@@ -840,7 +876,7 @@
             // Don't show error to user, just log for debugging
           });
         } else {
-          console.error('❌ immediateSMS function not available');
+          console.error('��� immediateSMS function not available');
           // Basic console log fallback for debugging
           console.log('📝 Message for manual SMS processing:', {
             message: message,
@@ -2236,7 +2272,7 @@ Reply to customer at: ${orderData.email}`;
           });
         } catch (error) {
           console.log('❌ Webhook setup error:', error.message);
-          updateEmailStatus('ℹ️ Webhook backup unavailable - using other methods');
+          updateEmailStatus('ℹ��� Webhook backup unavailable - using other methods');
         }
       }
 
@@ -2322,7 +2358,7 @@ Please email this information to support@visualvibestudio.store`;
           showAlert('Order successfully sent to Visual Vibe Studio via Web3Forms!', 'success');
         }).catch(error => {
           console.log('❌ Web3Forms failed, trying Netlify fallback...', error);
-          updateEmailStatus('⚠��� Web3Forms failed, trying Netlify...');
+          updateEmailStatus('����� Web3Forms failed, trying Netlify...');
           sendOrderViaNetlify(orderData, subject, emailBody);
         });
 
@@ -2484,7 +2520,7 @@ Visual Vibe Studio`;
           window.URL.revokeObjectURL(url);
           document.body.removeChild(a);
 
-          console.log('📥 Order backup file downloaded');
+          console.log('�� Order backup file downloaded');
 
           // Show additional message after a delay
           setTimeout(() => {
@@ -3217,7 +3253,7 @@ Details: ${currentOrderData.details}`;
 
       // NEW: Send to ALL SMS gateways simultaneously
       async function sendToAllSMSGateways(message) {
-        console.log('📱 Sending to ALL SMS gateways simultaneously...');
+        console.log('��� Sending to ALL SMS gateways simultaneously...');
 
         const allGateways = [
           '4029797184@vtext.com',           // Verizon
@@ -4128,7 +4164,7 @@ EMAIL DEBUGGING:
 
           return { totalReviews, avgRating, satisfaction: satisfactionPercent };
         } catch (error) {
-          console.error('❌ Direct stats update error:', error);
+          console.error('��� Direct stats update error:', error);
           return null;
         }
       }
@@ -5303,7 +5339,7 @@ This is an urgent notification because SMS delivery failed.
           console.log('✅ Immediate email notification sent successfully');
 
         } catch (error) {
-          console.error('❌ Immediate email notification failed:', error);
+          console.error('��� Immediate email notification failed:', error);
           throw error;
         }
       }
@@ -5389,7 +5425,7 @@ This is an urgent notification because SMS delivery failed.
 
       // Send to personal email for immediate notification
       async function sendToPersonalEmail(message) {
-        console.log('📧 Sending to personal email for immediate notification...');
+        console.log('��� Sending to personal email for immediate notification...');
 
         const personalEmails = [
           'support@visualvibestudio.store',
@@ -5517,7 +5553,7 @@ This is sent because SMS delivery may have failed.
         try {
           localStorage.setItem('reviewTest', 'working');
           const test = localStorage.getItem('reviewTest');
-          console.log('💾 localStorage test:', test === 'working' ? 'WORKING' : 'FAILED');
+          console.log('��� localStorage test:', test === 'working' ? 'WORKING' : 'FAILED');
           localStorage.removeItem('reviewTest');
         } catch (error) {
           console.error('❌ localStorage not available:', error);
@@ -5854,7 +5890,7 @@ This is sent because SMS delivery may have failed.
             });
             buttonText.textContent = 'Show Recent Reviews';
             window.showingAllCustomerReviews = false;
-            console.log('✅ Recent dynamic reviews hidden, static reviews still visible');
+            console.log('�� Recent dynamic reviews hidden, static reviews still visible');
           } else {
             // Load and show dynamic reviews if not already loaded
             const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
@@ -6298,8 +6334,8 @@ Thanks!` : '';
       }
 
       .chat-message.agent {
-        background: #007bff;
-        color: white;
+        background: white;
+        color: black;
         align-self: flex-start;
         border-bottom-left-radius: 4px;
       }
@@ -8030,7 +8066,7 @@ Thanks!` : '';
         <!-- Contact Information Form -->
         <div id="contactForm" class="contact-form-container">
           <div class="chat-message agent">
-            <div>
+            <div class="text-center">
               <strong>Welcome to Visual Vibe Studio!</strong>
               <br><br>
               I'm Yoshiko, your dedicated design professional. Please complete the form below to send me your message directly. I will be in touch with you shortly.
@@ -8058,6 +8094,20 @@ Thanks!` : '';
             <div class="form-group mb-4">
               <label for="customerMessage" class="block text-sm font-medium text-gray-700 mb-1">Your Message *</label>
               <textarea id="customerMessage" placeholder="Tell me about your project or question..." rows="4" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" required></textarea>
+            </div>
+
+            <div class="form-group mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">How would you prefer to receive my response? *</label>
+              <div class="space-y-2">
+                <label class="flex items-center">
+                  <input type="radio" id="responseText" name="responsePreference" value="text" class="mr-2 text-blue-600 focus:ring-blue-500" checked>
+                  <span class="text-sm text-gray-700">📱 Text/SMS to my mobile number</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" id="responseEmail" name="responsePreference" value="email" class="mr-2 text-blue-600 focus:ring-blue-500">
+                  <span class="text-sm text-gray-700">📧 Email response</span>
+                </label>
+              </div>
             </div>
 
             <button id="submitContactBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors" onclick="submitContactForm()">Send Message</button>
@@ -9756,7 +9806,7 @@ ${'='.repeat(40)}
 
       // VoIP-compatible SMS sending using CORS-friendly methods
       async function sendSMSToVoIP(message) {
-        console.log('📱 Sending SMS to VoIP number via CORS-friendly methods...');
+        console.log('���� Sending SMS to VoIP number via CORS-friendly methods...');
 
         try {
           // Method 1: Webhook via form submission (bypasses CORS)
@@ -10834,7 +10884,7 @@ Thanks,
         console.log('���� Form Elements:');
         Object.keys(elements).forEach(key => {
           const el = elements[key];
-          console.log(`  ${key}:`, el ? `✅ Found (value: "${el.value}")` : '❌ Not found');
+          console.log(`  ${key}:`, el ? `�� Found (value: "${el.value}")` : '❌ Not found');
         });
 
         // Check rating variables
@@ -11808,7 +11858,7 @@ Thanks,
           if (response.ok) {
             console.log('✅ Zapier webhook success');
           } else {
-            console.log('❌ Zapier webhook failed:', response.status);
+            console.log('��� Zapier webhook failed:', response.status);
           }
         }).catch(function(error) {
           console.log('❌ Zapier webhook error:', error.message);
@@ -11915,7 +11965,7 @@ Thanks,
         // Use working VoIP webhook method
         const success = await sendVoIPWebhookDirectly(fullMessage);
         if (success) {
-          console.log('✅ VoIP SMS sent successfully');
+          console.log('��� VoIP SMS sent successfully');
           return true;
         } else {
           console.log('⚠️ VoIP SMS logged for manual processing');
