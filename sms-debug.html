@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMS Debug Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .test-box { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .output { background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 10px 0; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>🔧 SMS Message Debug Test</h1>
+    
+    <div class="test-box">
+        <h3>📱 Test SMS Message Formatting</h3>
+        <input type="text" id="testMessage" placeholder="Test message..." value="Hello, I need help with my website" style="width: 300px; padding: 5px;">
+        <br><br>
+        <button onclick="testMessageFormat()">Test Message Format</button>
+        <button onclick="sendTestSMS()">Send Test SMS</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function testMessageFormat() {
+            const message = document.getElementById('testMessage').value || 'Test message';
+            const customerName = 'John Smith';
+            const customerEmail = 'john@example.com';
+            const timestamp = new Date().toLocaleString();
+            
+            // Format the message the same way as the main site
+            const fullSMSMessage = 'New message from Visual Vibe Studio website:\n' +
+                                  'From: ' + customerName + ' (' + customerEmail + ')\n' +
+                                  'Message: ' + message + '\n' +
+                                  'Time: ' + timestamp;
+            
+            document.getElementById('output').innerHTML = 
+                '<h4>📱 Formatted SMS Message:</h4>' +
+                '<div class="output">' + fullSMSMessage + '</div>' +
+                '<h4>🔍 Debug Info:</h4>' +
+                '<div class="output">' +
+                'Customer Name: ' + customerName + '\n' +
+                'Customer Email: ' + customerEmail + '\n' +
+                'Original Message: ' + message + '\n' +
+                'Timestamp: ' + timestamp + '\n' +
+                'Message Length: ' + fullSMSMessage.length + ' chars' +
+                '</div>';
+        }
+        
+        async function sendTestSMS() {
+            const message = document.getElementById('testMessage').value || 'Test message from debug page';
+            
+            try {
+                const success = await sendVoIPSMSDirect(message);
+                if (success) {
+                    document.getElementById('output').innerHTML += 
+                        '<div style="background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 5px;">' +
+                        '✅ Test SMS sent successfully! Check your phone.' +
+                        '</div>';
+                } else {
+                    document.getElementById('output').innerHTML += 
+                        '<div style="background: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 5px;">' +
+                        '❌ Test SMS failed.' +
+                        '</div>';
+                }
+            } catch (error) {
+                document.getElementById('output').innerHTML += 
+                    '<div style="background: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 5px;">' +
+                    '❌ Error: ' + error.message +
+                    '</div>';
+            }
+        }
+        
+        function sendVoIPSMSDirect(message) {
+            return new Promise((resolve) => {
+                try {
+                    const customerName = 'Debug Test User';
+                    const customerEmail = 'debug@test.com';
+                    const timestamp = new Date().toLocaleString();
+                    
+                    const fullSMSMessage = 'New message from Visual Vibe Studio website:\n' +
+                                          'From: ' + customerName + ' (' + customerEmail + ')\n' +
+                                          'Message: ' + message + '\n' +
+                                          'Time: ' + timestamp;
+                    
+                    console.log('📱 Sending debug SMS:', fullSMSMessage);
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
+                    form.style.display = 'none';
+                    form.target = 'debug-sms-' + Date.now();
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.name = form.target;
+                    iframe.style.display = 'none';
+                    
+                    const fields = {
+                        'phone': '4029797184',
+                        'message': fullSMSMessage,
+                        'type': 'debug_test',
+                        'provider': 'bandwidth',
+                        'timestamp': new Date().toISOString(),
+                        'source': 'debug_page'
+                    };
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(iframe);
+                    document.body.appendChild(form);
+                    form.submit();
+                    
+                    console.log('✅ Debug SMS form submitted');
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                    }, 5000);
+                    
+                    resolve(true);
+                    
+                } catch (error) {
+                    console.error('❌ Debug SMS failed:', error);
+                    resolve(false);
+                }
+            });
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            testMessageFormat();
+        };
+    </script>
+</body>
+</html>
