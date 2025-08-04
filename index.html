@@ -1327,7 +1327,7 @@ ${'='.repeat(40)}
             reviewElement.style.animation = '';
           }, 10000);
 
-          console.log('✅ Review added to testimonials display, total reviews now:', testimonialsGrid.children.length);
+          console.log('�� Review added to testimonials display, total reviews now:', testimonialsGrid.children.length);
 
           // Scroll to the testimonials section to show the new review
           setTimeout(() => {
@@ -1741,7 +1741,7 @@ ${'='.repeat(40)}
           }, 100);
 
         } catch (error) {
-          console.error('❌ simpleSend error:', error);
+          console.error('���� simpleSend error:', error);
           alert('Message error. Please call (402) 979-7184');
 
           // Ensure chat remains functional even after error
@@ -1913,6 +1913,139 @@ ${'='.repeat(40)}
 
       console.log('✅ IMMEDIATE chat functions loaded: safeToggleChat, enableSendButton, simpleSend, ensureChatFunctionality, testSMSFormatting');
 
+      // Test function for 160-character compact format
+      window.test160CharFormat = function() {
+        const testData = {
+          name: 'John Smith',
+          mobile: '(555) 123-4567',
+          email: 'john@email.com',
+          message: 'I need a logo design for my coffee shop',
+          responsePreference: 'text',
+          projectType: 'Logo Design',
+          urgency: 'ASAP'
+        };
+
+        // Simulate the compact format creation
+        const respPref = testData.responsePreference === 'email' ? 'E' : 'T';
+        const projType = testData.projectType ?
+          testData.projectType.replace('Logo Design', 'Logo')
+                            .replace('Website Design', 'Web')
+                            .replace('Business Cards', 'Cards')
+                            .replace('Flyers/Marketing', 'Flyer')
+                            .replace('Branding Package', 'Brand')
+                            .replace('Other', 'Other') : '';
+        const urg = testData.urgency ?
+          testData.urgency.replace('ASAP', 'URGENT')
+                         .replace('1-2 weeks', '1-2w')
+                         .replace('2-4 weeks', '2-4w')
+                         .replace('Flexible', 'Flex') : '';
+
+        const baseInfo = `${testData.name}|${testData.mobile}|${testData.email}|${respPref}`;
+        let additionalInfo = '';
+        if (projType) additionalInfo += `|${projType}`;
+        if (urg) additionalInfo += `|${urg}`;
+
+        const essentialPart = baseInfo + additionalInfo + '|';
+        const maxMessageLength = 158 - essentialPart.length;
+
+        const finalMessage = essentialPart + testData.message.substring(0, maxMessageLength);
+
+        console.log('🧪 TEST 160-CHAR FORMAT:');
+        console.log('📝 Format:', finalMessage);
+        console.log('📏 Length:', finalMessage.length);
+        console.log('✅ Fits in SMS:', finalMessage.length <= 160);
+
+        return finalMessage;
+      };
+
+      // Debug function to test contact form message formatting
+      window.testContactFormFormatting = function() {
+        console.log('🧪 Testing contact form message formatting...');
+
+        const testData = {
+          name: 'John Smith',
+          mobile: '(555) 123-4567',
+          email: 'john.smith@example.com',
+          message: 'Hi Yoshiko, I need help with designing a logo for my new business. It\'s a coffee shop called "Brew & Bean" and I want something modern and clean. My budget is around $200-300. When would be a good time to discuss this project? I\'m available most weekdays after 3 PM.',
+          responsePreference: 'text',
+          projectType: 'Logo Design',
+          urgency: 'ASAP'
+        };
+
+        // Simulate the new formatting logic
+        const responseText = testData.responsePreference === 'email' ? 'EMAIL' : 'TEXT';
+        const timestamp = new Date().toLocaleString();
+
+        // Build project info line if available
+        let projectInfo = '';
+        if (testData.projectType || testData.urgency) {
+          const parts = [];
+          if (testData.projectType) parts.push(`Type: ${testData.projectType}`);
+          if (testData.urgency) parts.push(`Urgency: ${testData.urgency}`);
+          projectInfo = `\n🎯 ${parts.join(' | ')}`;
+        }
+
+        const fullFormattedMessage = `VVS [${responseText}] ${timestamp}
+📞 ${testData.name} | ${testData.mobile}
+📧 ${testData.email}${projectInfo}
+📝 ${testData.message}`;
+
+        console.log('📱 Formatted message preview:');
+        console.log('Length:', fullFormattedMessage.length);
+        console.log('Content:');
+        console.log(fullFormattedMessage);
+        console.log('---');
+
+        // Test with long message
+        const longMessage = testData.message + ' Additionally, I would like to discuss branding packages, business card designs, and potentially a simple website. I have some reference designs I can share, and I\'m looking for someone who can work within my timeline of 2-3 weeks. Please let me know your availability and we can set up a consultation call.';
+
+        const longFormattedMessage = `VVS [${responseText}] ${timestamp}
+📞 ${testData.name} | ${testData.mobile}
+📧 ${testData.email}${projectInfo}
+📝 ${longMessage}`;
+
+        console.log('📱 Long message test:');
+        console.log('Length:', longFormattedMessage.length);
+        console.log('Will require split:', longFormattedMessage.length > 1400);
+
+        if (longFormattedMessage.length > 1400) {
+          const maxMessageInFirstPart = 1200 - headerLine.length - contactLines[0].length - contactLines[1].length - contactLines[2].length - contactLines[3].length - 50;
+          const truncatedMessage = longMessage.length > maxMessageInFirstPart
+            ? longMessage.substring(0, maxMessageInFirstPart) + '...[CONTINUED]'
+            : longMessage;
+
+          const part1 = [
+            headerLine,
+            contactLines[0],
+            contactLines[1],
+            contactLines[2],
+            contactLines[3],
+            `💬 PART 1: ${truncatedMessage}`
+          ].join('\n');
+
+          const part2 = [
+            `${headerLine} - CONTINUED`,
+            `👤 ${testData.name}`,
+            `💬 COMPLETE MESSAGE:`,
+            longMessage
+          ].join('\n');
+
+          console.log('📱 Part 1 length:', part1.length);
+          console.log('📱 Part 2 length:', part2.length);
+          console.log('Part 1 content:');
+          console.log(part1);
+          console.log('---');
+          console.log('Part 2 content:');
+          console.log(part2);
+        }
+
+        return {
+          shortMessage: fullFormattedMessage,
+          longMessage: longFormattedMessage,
+          willSplit: longFormattedMessage.length > 1400
+        };
+      };
+
       // Contact form handling - sends message directly to phone
       window.submitContactForm = function() {
         // Try to get form elements from first form, then fallback to second form
@@ -1949,6 +2082,12 @@ ${'='.repeat(40)}
         const phone = phoneInput.value.trim();
         const email = emailInput.value.trim();
         const message = messageInput.value.trim();
+
+        // Get additional form fields if they exist
+        const projectTypeEl = document.getElementById('projectType');
+        const urgencyEl = document.getElementById('urgency');
+        const projectType = projectTypeEl ? projectTypeEl.value : '';
+        const urgency = urgencyEl ? urgencyEl.value : '';
 
         // Get response preference - try first form, then second form
         let responsePreference = document.querySelector('input[name="responsePreference"]:checked');
@@ -2004,13 +2143,13 @@ ${'='.repeat(40)}
         }
 
         // Send message directly to phone with specified format
-        sendContactMessage(name, phone, email, message, preferredResponse);
+        sendContactMessage(name, phone, email, message, preferredResponse, projectType, urgency);
 
         console.log('✅ Contact form submitted:', { name, phone, email, message, preferredResponse });
       };
 
       // Send contact message directly to phone with specified format
-      window.sendContactMessage = function(name, mobile, email, message, responsePreference = 'text') {
+      window.sendContactMessage = function(name, mobile, email, message, responsePreference = 'text', projectType = '', urgency = '') {
         console.log('📱 Sending contact message to phone...');
 
         try {
@@ -2023,39 +2162,48 @@ ${'='.repeat(40)}
           const safeEmail = email && email.trim() ? email.trim() : 'Email not provided';
           const safeMessage = message && message.trim() ? message.trim() : 'Message not provided';
           const safeResponsePref = preferredResponseText || 'T';
+          const safeProjectType = projectType && projectType.trim() ? projectType.trim() : '';
+          const safeUrgency = urgency && urgency.trim() ? urgency.trim() : '';
 
-          // Handle message length intelligently to prevent truncation
-          const shortName = safeName.length > 20 ? safeName.substring(0, 17) + '...' : safeName;
-          const baseInfo = `VVS [${safeResponsePref}]: ${shortName} (${safeMobile}) ${safeEmail}`;
+          // GUARANTEED 160-character format - no Zapier template interference
+          const shortName = safeName.length > 15 ? safeName.substring(0, 15) : safeName;
+          const shortPhone = safeMobile.replace(/[^\d]/g, '').substring(0, 10); // Just digits
+          const respCode = responsePreference === 'email' ? 'E' : 'T';
+          const typeCode = safeProjectType ? safeProjectType.substring(0, 4) : '';
+          const urgCode = safeUrgency ? safeUrgency.substring(0, 4) : '';
 
-          // Calculate available space for message content (SMS limit is ~1600 chars for reliability)
-          const maxMessageLength = 1400 - baseInfo.length - 20; // Leave buffer for " - MSG: "
+          // Format: VVS:Name|Phone|Email|R:X|T:X|U:X|MSG:
+          let compactFormat = `VVS:${shortName}|${shortPhone}|${safeEmail}|R:${respCode}`;
+          if (typeCode) compactFormat += `|T:${typeCode}`;
+          if (urgCode) compactFormat += `|U:${urgCode}`;
+          compactFormat += '|MSG:';
 
-          console.log('📱 Message analysis:', {
-            customerMessageLength: safeMessage.length,
-            maxAllowed: maxMessageLength,
-            willTruncate: safeMessage.length > maxMessageLength
+          const headerLength = compactFormat.length;
+          const maxMsgLength = 155 - headerLength; // Leave 5 chars buffer
+
+          console.log('📱 Guaranteed 160-char format:', {
+            headerLength: headerLength,
+            maxMsgLength: maxMsgLength,
+            customerMsgLength: safeMessage.length
           });
 
           let formattedMessage;
-          if (safeMessage.length <= maxMessageLength) {
-            // Short message - send in one SMS
-            formattedMessage = `${baseInfo} - MSG: ${safeMessage}`;
+          if (safeMessage.length <= maxMsgLength) {
+            formattedMessage = compactFormat + safeMessage;
           } else {
-            // Long message - send in multiple parts
-            console.log('📱 Long message detected, sending in multiple parts');
+            formattedMessage = compactFormat + safeMessage.substring(0, maxMsgLength - 3) + '...';
 
-            // Send first message with contact info and start of message
-            const messagePreview = safeMessage.substring(0, maxMessageLength - 50) + '...';
-            formattedMessage = `${baseInfo} - MSG (1/2): ${messagePreview}`;
-
-            // We'll send the full message as a second SMS
+            // Mark for second message
             window.sendLongMessagePart2 = true;
             window.longMessageData = {
               fullMessage: safeMessage,
-              customerInfo: baseInfo
+              customerName: safeName,
+              headerLine: `CONTINUED: ${safeName}`
             };
           }
+
+          console.log('🔍 Final compact message:', formattedMessage);
+          console.log('📏 Final length:', formattedMessage.length);
 
           console.log('📱 Formatted message (Part 1):', formattedMessage);
 
@@ -2069,19 +2217,41 @@ ${'='.repeat(40)}
           iframe.name = form.target;
           iframe.style.display = 'none';
 
+          // Create the full Zapier template message for webhook data
+          const zapierFormattedMessage = `New message from Visual Vibe Studio Website:
+From: ${safeName} (${safeMobile})
+Email: ${safeEmail}
+Message: ${safeMessage}
+Preferred Response: ${responsePreference}
+Time: ${timestamp}` + (safeProjectType ? `\nProject Type: ${safeProjectType}` : '') + (safeUrgency ? `\nUrgency: ${safeUrgency}` : '');
+
+          // Create format explanation for the compact SMS
+          const formatExplanation = `COMPACT SMS FORMAT (160-char limit):
+Format: Name|Phone|Email|ResponsePref|ProjectType|Urgency|Message
+Your SMS: ${formattedMessage}
+
+DECODED:
+- Name: ${safeName}
+- Phone: ${safeMobile}
+- Email: ${safeEmail}
+- Response Preference: ${responsePreference}
+- Project Type: ${safeProjectType || 'Not specified'}
+- Urgency: ${safeUrgency || 'Not specified'}
+- Message: ${safeMessage}`;
+
           const fields = {
             'phone': '4029797184',
-            'message': formattedMessage,
-            'type': window.sendLongMessagePart2 ? 'contact_form_long_part1' : 'contact_form',
+            'message': formattedMessage, // Ultra-compact 160-char SMS version (pipe-delimited)
+            'type': 'contact_form_compact',
             'provider': 'bandwidth',
-            'timestamp': new Date().toISOString(),
-            'customer_name': name,
-            'customer_mobile': mobile,
-            'customer_email': email,
-            'customer_message': message, // Always preserve full original message
-            'customer_message_length': message.length,
-            'message_split': window.sendLongMessagePart2 ? 'yes' : 'no',
+            'timestamp': timestamp,
+            'customer_name': safeName,
+            'customer_mobile': safeMobile,
+            'customer_email': safeEmail,
+            'customer_message': safeMessage,
             'response_preference': responsePreference,
+            'project_type': safeProjectType || '',
+            'urgency': safeUrgency || '',
             'source': 'website_contact_form'
           };
 
@@ -2098,6 +2268,8 @@ ${'='.repeat(40)}
           form.submit();
 
           console.log('✅ Contact message sent to phone');
+          console.log('🔍 FINAL DEBUG - Message being sent:', formattedMessage);
+          console.log('🔍 FINAL DEBUG - Message length:', formattedMessage.length);
 
           // Send second part of long message if needed
           if (window.sendLongMessagePart2 && window.longMessageData) {
@@ -2143,8 +2315,11 @@ ${'='.repeat(40)}
           iframe.name = form.target;
           iframe.style.display = 'none';
 
-          // Send the full customer message as part 2
-          const part2Message = `${messageData.customerInfo} - MSG (2/2): ${messageData.fullMessage}`;
+          // Send the full customer message as part 2 using standard format
+          const part2Message = `${messageData.headerLine}:
+
+COMPLETE MESSAGE:
+${messageData.fullMessage}`;
 
           const fields = {
             'phone': '4029797184',
@@ -2186,17 +2361,22 @@ ${'='.repeat(40)}
         if (contactForm) {
           contactForm.innerHTML = `
             <div class="chat-message agent">
-              <div class="text-center p-6">
+              <div class="text-center p-4 md:p-6">
                 <div class="text-4xl mb-4">✅</div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">Message Sent Successfully!</h3>
-                <p class="text-gray-600 mb-4">Hi ${name}! Thank you for your message. I've received it directly on my phone and will get back to you shortly.</p>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-                  <strong>What happens next?</strong><br>
-                  • I'll review your message and respond within 2-4 hours<br>
-                  • For urgent matters, call me at (402) 979-7184<br>
-                  • Check your email or text messages for my response
+                <h3 class="text-lg md:text-xl font-semibold text-gray-800 mb-2">Message Sent Successfully!</h3>
+                <p class="text-gray-600 mb-4 text-sm md:text-base">Hi ${name}! Thank you for your message. I've received it directly on my phone with all your contact details and preferred response method.</p>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 text-xs md:text-sm text-blue-800 text-left">
+                  <strong>✨ What happens next?</strong><br><br>
+                  📱 <strong>Your message includes:</strong><br>
+                  �� Your name and contact information<br>
+                  • Your preferred response method (text/email)<br>
+                  • Your complete message<br><br>
+                  ⏰ <strong>Response time:</strong><br>
+                  • I'll respond within 2-4 hours during business days<br>
+                  • For urgent matters: call (402) 979-7184<br><br>
+                  📧 <strong>Watch for my response via your preferred method!</strong>
                 </div>
-                <button onclick="resetContactForm()" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+                <button onclick="resetContactForm()" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm md:text-base">
                   Send Another Message
                 </button>
               </div>
@@ -2889,7 +3069,7 @@ ${'='.repeat(40)}
             console.log('✅ Chat closed successfully');
           } else {
             // Open chat
-            console.log('🔄 Opening chat...');
+            console.log('��� Opening chat...');
             chatWindow.style.display = 'flex';
             chatWindow.classList.add('open');
             chatWindow.classList.remove('hidden');
@@ -3135,7 +3315,7 @@ ${'='.repeat(40)}
             closeSignInModal();
             showAlert('Welcome back, ' + user.name + '!', 'success');
           } else {
-            console.warn('❌ Authentication failed for email:', email);
+            console.warn('��� Authentication failed for email:', email);
 
             // Show available users for debugging (remove in production)
             console.log('Available users:', users.map(u => ({ email: u.email, name: u.name })));
@@ -3184,7 +3364,7 @@ ${'='.repeat(40)}
           });
 
           if (!name || !email || !password || !confirmPassword) {
-            console.warn('⚠��� Missing required fields');
+            console.warn('������ Missing required fields');
             showAlert('Please fill in all fields.', 'error');
             return;
           }
@@ -3520,7 +3700,7 @@ Thanks,`);
       }
 
       function showSimpleVenmoPayment(depositAmount, businessName, services) {
-        console.log('💳 Showing simple Venmo payment...');
+        console.log('�� Showing simple Venmo payment...');
 
         const container = document.getElementById('paypal-button-container');
         if (!container) {
@@ -3610,7 +3790,7 @@ Thanks,`);
           if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text).then(() => {
               showAlert('Payment details copied to clipboard!', 'success');
-              console.log('✅ Venmo details copied successfully');
+              console.log('��� Venmo details copied successfully');
             }).catch(() => {
               showAlert(`Payment Details:\n\n${text}`, 'info');
             });
@@ -3864,7 +4044,7 @@ Reply to customer at: ${orderData.email}`;
               status: 'email_failed'
             });
             localStorage.setItem('pendingOrders', JSON.stringify(orders));
-            console.log('���� Order saved to localStorage as backup');
+            console.log('������ Order saved to localStorage as backup');
           } catch (storageError) {
             console.error('❌ Failed to save order locally:', storageError);
           }
@@ -3890,7 +4070,7 @@ Reply to customer at: ${orderData.email}`;
 
           if (webhookUrls.length === 0) {
             console.log('📧 No webhook URLs configured - skipping webhook sending');
-            updateEmailStatus('ℹ️ Webhook sending skipped - using primary methods');
+            updateEmailStatus('���️ Webhook sending skipped - using primary methods');
             return;
           }
 
@@ -4093,7 +4273,7 @@ Order Date: ${new Date().toLocaleString()}`;
           const emailWindow = window.open(mailtoUrl, '_blank', 'noopener,noreferrer');
           console.log('📧 Email client window opened:', !!emailWindow);
         } catch (error) {
-          console.log('��� Email client failed to open:', error.message);
+          console.log('����� Email client failed to open:', error.message);
           // Fallback: copy email content to clipboard instead
           try {
             navigator.clipboard.writeText(`To: support@visualvibestudio.store\nSubject: ${subject}\n\n${shortEmailBody}`);
@@ -5029,7 +5209,7 @@ This is an automated emergency notification.
         const testMessage = 'DEBUG: SMS system test - ' + new Date().toLocaleTimeString();
 
         // Test 1: Check if functions exist
-        console.log('1���⃣ Function availability check:');
+        console.log('1�����⃣ Function availability check:');
         console.log('  sendViaSMSService:', typeof sendViaSMSService);
         console.log('  sendSMSViaFormspree:', typeof sendSMSViaFormspree);
         console.log('  sendToAllSMSGateways:', typeof sendToAllSMSGateways);
@@ -5143,7 +5323,7 @@ This is an automated emergency notification.
         users.push(testUser);
         localStorage.setItem('visualVibeUsers', JSON.stringify(users));
 
-        console.log('✅ Test user created:');
+        console.log('�� Test user created:');
         console.log('  Email: test@example.com');
         console.log('  Password: password123');
         alert('Test user created!\nEmail: test@example.com\nPassword: password123');
@@ -5243,7 +5423,7 @@ This is an automated emergency notification.
 
       // Test function for statistics calculation
       function testStatisticsCalculation() {
-        console.log('🧪 Testing statistics calculation...');
+        console.log('��� Testing statistics calculation...');
 
         // Create test reviews with different ratings
         const testReviews = [
@@ -6365,7 +6545,7 @@ EMAIL DEBUGGING:
           const randomBadgeColor = serviceBadgeColors[Math.floor(Math.random() * serviceBadgeColors.length)];
 
           // Generate stars based on rating
-          const starsText = '⭐'.repeat(review.rating);
+          const starsText = '���'.repeat(review.rating);
 
           // Get first letter of name for avatar
           const avatarLetter = review.name.charAt(0).toUpperCase();
@@ -7113,7 +7293,7 @@ This is sent because SMS delivery may have failed.
         }
 
         const approvedReviews = reviews.filter(review => review.approved);
-        console.log('�� Approved reviews to display:', approvedReviews.length);
+        console.log('���� Approved reviews to display:', approvedReviews.length);
 
         // Load and display dynamic reviews in main grid alongside static reviews
         displayReviews(approvedReviews);
@@ -7177,7 +7357,7 @@ This is sent because SMS delivery may have failed.
           starDisplays.forEach(({ selector, content }) => {
             const elements = document.querySelectorAll(selector);
             elements.forEach(el => {
-              if (el.textContent.includes('⭐') || el.textContent.includes('��')) {
+              if (el.textContent.includes('⭐') || el.textContent.includes('���')) {
                 el.textContent = content;
                 console.log(`✅ Updated star display: ${content}`);
               }
@@ -7672,7 +7852,7 @@ This is sent because SMS delivery may have failed.
         bottom: 80px;
         right: 0;
         width: 350px;
-        height: 550px;
+        height: 600px;
         background: white;
         border-radius: 16px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -7680,7 +7860,7 @@ This is sent because SMS delivery may have failed.
         flex-direction: column;
         overflow: hidden;
         border: 1px solid #e5e7eb;
-        max-height: calc(100vh - 100px);
+        max-height: calc(100vh - 80px);
       }
 
       .chat-window.open {
@@ -7715,12 +7895,65 @@ This is sent because SMS delivery may have failed.
         flex: 1;
         overflow-y: auto;
         max-height: 100%;
+        min-height: 0;
+        padding-bottom: 20px;
       }
 
       .contact-form {
         display: flex;
         flex-direction: column;
         gap: 12px;
+      }
+
+      /* Mobile-optimized contact form styling */
+      .contact-form textarea {
+        min-height: 120px !important;
+        resize: vertical;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .contact-form .form-group label {
+        font-weight: 600;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        line-height: 1.4;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .contact-form input:focus,
+      .contact-form textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Response preference styling */
+      .contact-form input[type="radio"] {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        flex-shrink: 0;
+      }
+
+      .contact-form label.flex {
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px 0;
+        cursor: pointer;
+      }
+
+      .contact-form label.flex span {
+        line-height: 1.4;
+        font-size: 14px;
       }
 
       /* Custom scrollbar styling for contact form */
@@ -7919,10 +8152,73 @@ This is sent because SMS delivery may have failed.
         .chat-window {
           width: calc(100vw - 20px);
           right: -10px;
-          height: 80vh;
-          max-height: calc(100vh - 80px);
-          bottom: 70px;
+          height: 85vh;
+          max-height: calc(100vh - 60px);
+          bottom: 60px;
         }
+
+        /* Contact form mobile optimizations */
+        .contact-form {
+          padding: 12px !important;
+          gap: 14px;
+        }
+
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form select {
+          font-size: 16px; /* Prevents iOS zoom */
+          padding: 12px 10px;
+          border-radius: 8px;
+        }
+
+        .contact-form textarea {
+          min-height: 80px !important;
+          max-height: 150px;
+        }
+
+        .contact-form .form-group {
+          margin-bottom: 14px !important;
+        }
+
+        .contact-form label {
+          font-size: 14px !important;
+          font-weight: 600;
+          margin-bottom: 4px !important;
+        }
+
+        /* Response preference radio buttons */
+        .contact-form input[type="radio"] {
+          width: 16px;
+          height: 16px;
+          margin-right: 8px;
+        }
+
+        .contact-form label.flex span {
+          font-size: 14px !important;
+          line-height: 1.4;
+        }
+
+        /* Submit button mobile styling */
+        .contact-form button {
+          font-size: 16px !important;
+          padding: 12px 16px !important;
+          margin-top: 8px;
+        }
+
+        /* Chat message styling for mobile */
+        .chat-message {
+          font-size: 14px !important;
+          line-height: 1.4 !important;
+          padding: 10px !important;
+        }
+
+        /* Ensure contact form container scrolls properly on mobile */
+        .contact-form-container {
+          max-height: calc(100vh - 160px) !important;
+          overflow-y: auto !important;
+          padding-bottom: 30px !important;
+        }
+      }
 
         .contact-form-container {
           flex: 1;
@@ -7937,8 +8233,15 @@ This is sent because SMS delivery may have failed.
 
       /* Professional Background Styles */
       .brand-gradient-bg {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%);
-        background-size: 400% 400%;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%) !important;
+        background-size: 400% 400% !important;
+        animation: gradientShift 8s ease infinite;
+      }
+
+      /* Ensure hero section has the gradient */
+      section.brand-gradient-bg {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%) !important;
+        background-size: 400% 400% !important;
         animation: gradientShift 8s ease infinite;
       }
 
@@ -8258,7 +8561,7 @@ This is sent because SMS delivery may have failed.
     </header>
 
     <!-- Enhanced Hero Section -->
-    <section class="relative overflow-hidden brand-gradient-bg text-white">
+    <section class="relative overflow-hidden text-white" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%); background-size: 400% 400%; animation: gradientShift 8s ease infinite;">
       <!-- Professional Background Pattern -->
       <div class="absolute inset-0 geometric-pattern opacity-30"></div>
 
@@ -8308,7 +8611,7 @@ This is sent because SMS delivery may have failed.
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a href="#services" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            ������� See Our Services
+            ��������� See Our Services
           </a>
           <a href="#portfolio" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
             View Portfolio
@@ -8394,7 +8697,7 @@ This is sent because SMS delivery may have failed.
             <div class="bg-gradient-to-br from-pink-500 to-orange-500 h-48 flex items-center justify-center relative overflow-hidden">
               <div class="absolute inset-0 bg-black/10"></div>
               <div class="relative z-10 text-white text-center">
-                <div class="text-4xl mb-2">�����</div>
+                <div class="text-4xl mb-2">������</div>
                 <h4 class="text-lg font-bold">Marketing Campaign</h4>
                 <p class="text-sm opacity-90">Generated 50+ new leads</p>
               </div>
@@ -8466,7 +8769,7 @@ This is sent because SMS delivery may have failed.
           <div class="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $80
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📄</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">��</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Business Brochure
           </h4>
@@ -8495,7 +8798,7 @@ This is sent because SMS delivery may have failed.
           <div class="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $65
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📄</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">����</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Marketing Flyer
           </h4>
@@ -8621,7 +8924,7 @@ This is sent because SMS delivery may have failed.
     </section>
 
     <!-- Customer Testimonials Section -->
-    <section class="py-20 brand-gradient-bg text-white relative overflow-hidden">
+    <section class="py-20 text-white relative overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%); background-size: 400% 400%; animation: gradientShift 8s ease infinite;">
       <!-- Professional Background Elements -->
       <div class="absolute inset-0 geometric-pattern opacity-20"></div>
       <div class="floating-elements">
@@ -8677,7 +8980,7 @@ This is sent because SMS delivery may have failed.
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐��</div>
               <div class="bg-purple-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Logo Design</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -9070,7 +9373,7 @@ This is sent because SMS delivery may have failed.
               type="button"
               id="submitOrderBtn"
               class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3"
-              onclick="console.log('🎯 Button clicked!'); simpleOrderSubmit(event); return false;"
+              onclick="console.log('�� Button clicked!'); simpleOrderSubmit(event); return false;"
             >
               <span>🚀</span>
               <span id="submitBtnText">Start My Project Now</span>
@@ -9649,6 +9952,30 @@ This is sent because SMS delivery may have failed.
               <input type="email" id="customerEmail" placeholder="your@email.com" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
             </div>
 
+            <div class="form-group mb-3">
+              <label for="projectType" class="block text-sm font-medium text-gray-700 mb-1">Project Type</label>
+              <select id="projectType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select project type (optional)</option>
+                <option value="Logo Design">Logo Design</option>
+                <option value="Website Design">Website Design</option>
+                <option value="Business Cards">Business Cards</option>
+                <option value="Flyers/Marketing">Flyers/Marketing Materials</option>
+                <option value="Branding Package">Complete Branding Package</option>
+                <option value="Other">Other/Multiple Services</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="urgency" class="block text-sm font-medium text-gray-700 mb-1">Project Urgency</label>
+              <select id="urgency" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select urgency (optional)</option>
+                <option value="ASAP">ASAP - Need this URGENT</option>
+                <option value="1-2 weeks">1-2 weeks</option>
+                <option value="2-4 weeks">2-4 weeks</option>
+                <option value="Flexible">Flexible timing</option>
+              </select>
+            </div>
+
             <div class="form-group mb-4">
               <label for="customerMessage" class="block text-sm font-medium text-gray-700 mb-1">Your Message *</label>
               <textarea id="customerMessage" placeholder="Tell me about your project or question..." rows="6" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical" required style="min-height: 120px; max-height: 300px;" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,300)+'px'"></textarea>
@@ -9713,7 +10040,7 @@ This is sent because SMS delivery may have failed.
           <!-- Quick Actions -->
           <div class="mt-3 flex justify-center space-x-4 text-xs">
             <button onclick="callDirectly()" class="text-green-600 hover:text-green-800 flex items-center space-x-1 transition-colors">
-              <span>📞</span>
+              <span>��</span>
               <span>Call (402) 979-7184</span>
             </button>
             <button onclick="emailDirectly()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors">
@@ -10037,7 +10364,7 @@ This is sent because SMS delivery may have failed.
             // Remove existing listeners to prevent duplicates
             signInForm.removeEventListener('submit', handleSignIn);
             signInForm.addEventListener('submit', handleSignIn);
-            console.log('✅ Sign in form listener attached');
+            console.log('��� Sign in form listener attached');
           } else {
             console.warn('⚠️ Sign in form not found during initialization');
           }
@@ -10079,7 +10406,7 @@ This is sent because SMS delivery may have failed.
           setTimeout(() => {
             closeSignInModal();
             openSignUpModal();
-            console.log('�� Sign up modal test passed');
+            console.log('��� Sign up modal test passed');
             setTimeout(() => {
               closeSignUpModal();
               console.log('��� All modal tests completed');
@@ -10685,7 +11012,7 @@ ${'='.repeat(40)}
                         <li>��� Receipt sent to your email address</li>
                         <li>💰 We'll confirm your Venmo payment within 24 hours</li>
                         <li>📞 We'll contact you to discuss project details</li>
-                        <li>🎨 Project work begins once payment is confirmed</li>
+                        <li>��� Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
                     <div class="text-sm text-green-600 mb-4">
@@ -10831,7 +11158,7 @@ ${'='.repeat(40)}
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━���━━━━━━━━���━��━━
+      ━�����━━━━━━━━���━��━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -11278,7 +11605,7 @@ ${'='.repeat(40)}
       console.log('✅ sendMessageToBusinessOwner function made globally available');
 
       async function sendSMSViaEmailGateway(message) {
-        console.log('���� Attempting SMS via email gateways...');
+        console.log('����� Attempting SMS via email gateways...');
 
         // Using multiple email-to-SMS gateways for reliability
         const smsGateways = [
@@ -11364,7 +11691,7 @@ ${'='.repeat(40)}
 
       // VoIP-compatible SMS sending using CORS-friendly methods
       async function sendSMSToVoIP(message) {
-        console.log('���� Sending SMS to VoIP number via CORS-friendly methods...');
+        console.log('����� Sending SMS to VoIP number via CORS-friendly methods...');
 
         try {
           // Method 1: Webhook via form submission (bypasses CORS)
@@ -11381,7 +11708,7 @@ ${'='.repeat(40)}
           // Method 2: Email notification via form (alerts you to manual send)
           const emailSuccess = await sendVoIPEmailAlert(message);
           if (emailSuccess) {
-            console.log('✅ VoIP SMS alert sent via email');
+            console.log('��� VoIP SMS alert sent via email');
             return true;
           }
         } catch (error) {
@@ -12427,7 +12754,7 @@ Thanks,
 
       // Debug function for troubleshooting review system
       function debugReviewSystem() {
-        console.log('🔧 DEBUG: Review System Status');
+        console.log('���� DEBUG: Review System Status');
         console.log('══════════════════════════════════��');
 
         // Check form elements
@@ -12503,7 +12830,7 @@ Thanks,
 
       // Quick test function
       function quickTestReview() {
-        console.log('⚡ Quick test review starting...');
+        console.log('�� Quick test review starting...');
 
         // Fill form with test data
         document.getElementById('reviewerName').value = 'Test Customer';
@@ -13024,7 +13351,7 @@ Thanks,
         }
       } catch (error) {
         console.error('❌ Reliable SMS test failed:', error);
-        alert('❌ Reliable SMS test failed: ' + error.message);
+        alert('�� Reliable SMS test failed: ' + error.message);
       }
     }
 
@@ -13197,7 +13524,7 @@ Thanks,
 
       // Ensure at least safeToggleChat is available
       if (typeof window.safeToggleChat !== 'function') {
-        console.log('🔧 Ensuring safeToggleChat is available...');
+        console.log('��� Ensuring safeToggleChat is available...');
         window.safeToggleChat = window.backupToggleChat || window.emergencyToggleChat || function() {
           alert('Chat not available. Call (402) 979-7184');
         };
@@ -13385,7 +13712,7 @@ Thanks,
         }, index * 1000);
       });
 
-      console.log('📱 SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
+      console.log('�� SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
       alert('📱 SMS test sent to all carriers!\n\nCheck phone (402) 979-7184 in 1-2 minutes.\n\nIf no SMS received, the carrier may be filtering messages or there could be a delivery issue.');
 
       return 'SMS test completed';
@@ -13509,7 +13836,7 @@ Thanks,
 
     // Override immediateSMS with VoIP-compatible version
     window.immediateSMS = async function(message) {
-      console.log('📱 VoIP-compatible immediateSMS called');
+      console.log('�� VoIP-compatible immediateSMS called');
 
       const customerInfo = window.currentUser || { name: 'Website Visitor', email: 'Not provided' };
       const customerContact = customerInfo.name ?
@@ -13696,7 +14023,7 @@ Thanks,
             msgDiv.innerHTML = '<div>' + message + '</div>';
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-            console.log('✅ Message added to chat display');
+            console.log('�� Message added to chat display');
           } else {
             console.error('❌ Chat messages container not found');
           }
@@ -13811,7 +14138,7 @@ Thanks,
       const chatSendBtn = document.getElementById('chatSendBtn');
       if (chatSendBtn) {
         chatSendBtn.addEventListener('click', window.simpleSend);
-        console.log('��� Chat send button event listener set up');
+        console.log('���� Chat send button event listener set up');
       }
 
       console.log('🚨 EMERGENCY CHAT FIX COMPLETE');
@@ -13826,7 +14153,7 @@ Thanks,
 
         // Last resort function
         window.safeToggleChat = function() {
-          console.log('🆘 Last resort safeToggleChat called');
+          console.log('��� Last resort safeToggleChat called');
           try {
             const chatWindow = document.getElementById('chatWindow');
             if (chatWindow) {
@@ -13886,10 +14213,53 @@ Thanks,
             emailRadio.name = 'responsePreference2';
           }
 
-          console.log('✅ Fixed duplicate contact form IDs');
+          // Add project type and urgency fields to capture more complete information
+          const emailFieldDiv = secondForm.querySelector('div:has(#customerEmail2)') ||
+                               secondForm.querySelector('div').parentElement.querySelector('div:last-of-type');
+
+          if (emailFieldDiv) {
+            // Create project type field
+            const projectTypeDiv = document.createElement('div');
+            projectTypeDiv.className = 'form-group mb-3';
+            projectTypeDiv.innerHTML = `
+              <label for="projectType" class="block text-sm font-medium text-gray-700 mb-1">Project Type</label>
+              <select id="projectType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select project type (optional)</option>
+                <option value="Logo Design">Logo Design</option>
+                <option value="Website Design">Website Design</option>
+                <option value="Business Cards">Business Cards</option>
+                <option value="Flyers/Marketing">Flyers/Marketing Materials</option>
+                <option value="Branding Package">Complete Branding Package</option>
+                <option value="Other">Other/Multiple Services</option>
+              </select>
+            `;
+
+            // Create urgency field
+            const urgencyDiv = document.createElement('div');
+            urgencyDiv.className = 'form-group mb-3';
+            urgencyDiv.innerHTML = `
+              <label for="urgency" class="block text-sm font-medium text-gray-700 mb-1">Project Urgency</label>
+              <select id="urgency" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select urgency (optional)</option>
+                <option value="ASAP">ASAP - Need this URGENT</option>
+                <option value="1-2 weeks">1-2 weeks</option>
+                <option value="2-4 weeks">2-4 weeks</option>
+                <option value="Flexible">Flexible timing</option>
+              </select>
+            `;
+
+            // Find the message field and insert before it
+            const messageFieldDiv = secondForm.querySelector('div:has(#customerMessage2)');
+            if (messageFieldDiv) {
+              messageFieldDiv.parentNode.insertBefore(projectTypeDiv, messageFieldDiv);
+              messageFieldDiv.parentNode.insertBefore(urgencyDiv, messageFieldDiv);
+            }
+          }
+
+          console.log('✅ Fixed duplicate contact form IDs and added project fields');
         }
       } catch (error) {
-        console.error('❌ Error fixing contact form IDs:', error);
+        console.error('��� Error fixing contact form IDs:', error);
       }
     });
   </script>
