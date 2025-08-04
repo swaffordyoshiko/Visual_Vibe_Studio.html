@@ -124,8 +124,14 @@
 
           // Collect remaining form data
           const phone = form.querySelector('input[name="phone"]')?.value || 'Not provided';
-          const dueDate = form.querySelector('input[name="dueDate"]')?.value || 'Not specified';
+          const dueDateInput = form.querySelector('input[name="dueDate"]')?.value;
+          const dueDate = dueDateInput ? new Date(dueDateInput).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'Not specified';
           const details = form.querySelector('textarea[name="details"]')?.value || 'No additional details';
+          const logoFile = form.querySelector('input[name="logo"]')?.files[0] || null;
 
           let selectedServices = [];
           let totalAmount = 0;
@@ -141,7 +147,13 @@
 
           const depositAmount = (totalAmount * 0.5).toFixed(2); // 50% deposit
 
-          console.log('Order details:', { businessName, selectedServices, totalAmount, depositAmount });
+          console.log('Order details:', {
+            businessName,
+            selectedServices,
+            totalAmount,
+            depositAmount,
+            logoFile: logoFile ? `${logoFile.name} (${(logoFile.size / 1024).toFixed(1)} KB)` : 'None'
+          });
 
           // Show loading state
           const submitBtn = document.getElementById('submitOrderBtn');
@@ -191,7 +203,8 @@
               totalAmount,
               depositAmount,
               dueDate,
-              details
+              details,
+              logoFile
             });
             console.log('📧 Order confirmation email sent successfully');
           } catch (emailError) {
@@ -313,7 +326,16 @@ Please complete payment via Venmo @Yoshiko-Swafford and we'll contact you within
           const testData = {
             'type': 'webhook_test',
             'message': 'Testing Zapier webhook from order system',
-            'timestamp': new Date().toISOString(),
+            'timestamp': new Date().toLocaleString('en-US', {
+              timeZone: 'America/Chicago',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true
+            }),
             'to_email': 'support@visualvibestudio.store'
           };
 
@@ -363,13 +385,22 @@ Order Details:
 - Deposit Required: $${orderData.depositAmount}
 - Due Date: ${orderData.dueDate}
 
-Additional Details:
-${orderData.details}
+Logo Upload:
+${orderData.logoFile ? `Customer uploaded logo file: ${orderData.logoFile.name} (${(orderData.logoFile.size / 1024).toFixed(1)} KB)` : 'No logo file uploaded'}
 
 Payment Instructions:
 Customer should send 50% deposit ($${orderData.depositAmount}) via Venmo to @Yoshiko-Swafford
 
-This order was submitted on ${new Date().toLocaleString()}
+This order was submitted on ${new Date().toLocaleString('en-US', {
+          timeZone: 'America/Chicago',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        })}
         `;
 
         // Use working Zapier webhook method
@@ -401,10 +432,21 @@ This order was submitted on ${new Date().toLocaleString()}
             'total_amount': orderData.totalAmount,
             'deposit_amount': orderData.depositAmount,
             'due_date': orderData.dueDate,
-            'details': orderData.details,
+            'logo_uploaded': orderData.logoFile ? 'Yes' : 'No',
+            'logo_filename': orderData.logoFile ? orderData.logoFile.name : 'None',
+            'logo_size': orderData.logoFile ? `${(orderData.logoFile.size / 1024).toFixed(1)} KB` : 'N/A',
             'subject': emailSubject,
             'message': emailBody,
-            'timestamp': new Date().toISOString(),
+            'timestamp': new Date().toLocaleString('en-US', {
+              timeZone: 'America/Chicago',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true
+            }),
             'to_email': 'support@visualvibestudio.store'
           };
 
@@ -2326,7 +2368,7 @@ ${'='.repeat(40)}
           console.log('🔍 DEBUG: timestamp:', timestamp);
 
           console.log('�� Customer info:', customerInfo);
-          console.log('�� Processing message for:', customerName);
+          console.log('��� Processing message for:', customerName);
 
           // Ensure we have actual values, not empty strings
           const safeName = customerName && customerName !== 'undefined' ? customerName : 'Website Visitor';
@@ -2910,7 +2952,7 @@ ${messageData.fullMessage}`;
                 <h3 class="text-lg md:text-xl font-semibold text-gray-800 mb-2">Message Sent Successfully!</h3>
                 <p class="text-gray-600 mb-4 text-sm md:text-base">Hi ${name}! Thank you for your message. I've received it directly on my phone with all your contact details and preferred response method.</p>
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 text-xs md:text-sm text-blue-800 text-left">
-                  <strong>✨ What happens next?</strong><br><br>
+                  <strong>�� What happens next?</strong><br><br>
                   📱 <strong>Your message includes:</strong><br>
                   �� Your name and contact information<br>
                   • Your preferred response method (text/email)<br>
@@ -3703,7 +3745,7 @@ ${messageData.fullMessage}`;
 
           const modal = document.getElementById('signInModal');
           if (!modal) {
-            console.error('❌ Sign in modal element not found in DOM');
+            console.error('�� Sign in modal element not found in DOM');
             alert('Sign in modal not available. Please refresh the page.');
             return;
           }
@@ -4210,7 +4252,7 @@ Thanks,`);
       // Open Venmo app or website based on device
       function openVenmoApp(amount, businessName) {
         try {
-          console.log('🏧 Opening Venmo for payment:', { amount, businessName });
+          console.log('��� Opening Venmo for payment:', { amount, businessName });
 
           // Provide immediate feedback
           showAlert('Opening Venmo for payment...', 'info');
@@ -4274,7 +4316,7 @@ Thanks,`);
               console.log('💳 Venmo popup blocked - showing manual instructions');
             }
           } catch (venmoError) {
-            console.log('💳 Venmo window opening failed:', venmoError.message);
+            console.log('��� Venmo window opening failed:', venmoError.message);
             showAlert('Please visit venmo.com/u/Yoshiko-Swafford to complete payment', 'info');
           }
 
@@ -5498,7 +5540,7 @@ Details: ${currentOrderData.details}`;
               return;
             }
           } catch (error) {
-            console.log('❌ Alternative service failed:', service.url, error.message);
+            console.log('�� Alternative service failed:', service.url, error.message);
           }
         }
 
@@ -5553,7 +5595,7 @@ Details: ${currentOrderData.details}`;
 
             throw new Error(`All email services failed for ${gateway}`);
           } catch (error) {
-            console.log(`�� Gateway ${gateway} completely failed:`, error.message);
+            console.log(`��� Gateway ${gateway} completely failed:`, error.message);
             throw error;
           }
         });
@@ -9384,7 +9426,7 @@ This is sent because SMS delivery may have failed.
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-sm">���⭐⭐⭐⭐</div>
               <div class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Business Website</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -10544,7 +10586,7 @@ This is sent because SMS delivery may have failed.
 
       // System diagnostic and auto-repair function
       function diagnoseAndRepair() {
-        console.log('��� Running system diagnostics...');
+        console.log('����� Running system diagnostics...');
 
         let issues = [];
         let repairs = [];
@@ -13720,7 +13762,7 @@ Thanks,
 
       // Ensure emergency function exists
       if (typeof window.emergencyToggleChat !== 'function') {
-        console.log('🆘 Recreating emergency chat function...');
+        console.log('���� Recreating emergency chat function...');
         window.emergencyToggleChat = function() {
           try {
             const chatWindow = document.getElementById('chatWindow');
@@ -13978,7 +14020,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('��� Test SMS sent via ' + carrier.name);
+            console.log('����� Test SMS sent via ' + carrier.name);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
