@@ -117,8 +117,3 @@ window.toastManager = {
 window.showSimpleToast = showSimpleToast;
 
 console.log('✅ Ultra-simple visible toast system loaded!');
-
-// Test it immediately
-setTimeout(() => {
-  showSimpleToast('Simple toast system is working! You should see this notification.', 'success');
-}, 1000);
