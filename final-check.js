@@ -175,40 +175,16 @@ viewportToastScript.onload = function() {
 };
 document.head.appendChild(viewportToastScript);
 
-// Also create a backup direct test right here
-setTimeout(() => {
-  console.log('🧪 Creating backup test notification...');
-  const backupTest = document.createElement('div');
-  backupTest.style.cssText = `
-    position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    background: #00ff00 !important;
-    color: black !important;
-    padding: 20px !important;
-    border-radius: 10px !important;
-    font-size: 16px !important;
-    font-weight: bold !important;
-    z-index: 999999999 !important;
-    box-shadow: 0 4px 20px rgba(0,255,0,0.3) !important;
-    border: 2px solid black !important;
-    max-width: 300px !important;
-    font-family: Arial, sans-serif !important;
-  `;
-  backupTest.innerHTML = 'BACKUP TEST: Notification system is loading...';
-  document.body.appendChild(backupTest);
-
-  setTimeout(() => {
-    if (backupTest.parentNode) {
-      backupTest.remove();
-    }
-  }, 5000);
-}, 1000);
 
 // Load the full emergency script asynchronously
 const emergencyScript = document.createElement('script');
 emergencyScript.src = 'toast-fix.js';
 document.head.appendChild(emergencyScript);
+
+// Load green notification cleanup script
+const cleanupScript = document.createElement('script');
+cleanupScript.src = 'cleanup-green-notifications.js';
+document.head.appendChild(cleanupScript);
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
@@ -228,10 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ All systems ready for order submission');
   }
 
-  // Load notification test script for debugging
-  const testScript = document.createElement('script');
-  testScript.src = 'test-notifications.js';
-  document.head.appendChild(testScript);
 
   // AGGRESSIVE NOTIFICATION OVERRIDE - Force all notifications to use modern toast
   setTimeout(() => {
