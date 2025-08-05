@@ -256,6 +256,11 @@ const pageRefreshTestScript = document.createElement('script');
 pageRefreshTestScript.src = 'test-page-refresh.js';
 document.head.appendChild(pageRefreshTestScript);
 
+// Load missing updates fix
+const missingUpdatesFixScript = document.createElement('script');
+missingUpdatesFixScript.src = 'fix-missing-updates.js';
+document.head.appendChild(missingUpdatesFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
