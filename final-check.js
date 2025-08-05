@@ -291,6 +291,11 @@ const currentRatingsScript = document.createElement('script');
 currentRatingsScript.src = 'restore-current-ratings.js';
 document.head.appendChild(currentRatingsScript);
 
+// Load immediate current ratings trigger (manual backup)
+const triggerCurrentRatingsScript = document.createElement('script');
+triggerCurrentRatingsScript.src = 'trigger-current-ratings.js';
+document.head.appendChild(triggerCurrentRatingsScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
