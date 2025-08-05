@@ -271,6 +271,16 @@ const submitReviewTestScript = document.createElement('script');
 submitReviewTestScript.src = 'test-submitreview-availability.js';
 document.head.appendChild(submitReviewTestScript);
 
+// Load rating accuracy debugger
+const ratingAccuracyDebugScript = document.createElement('script');
+ratingAccuracyDebugScript.src = 'debug-rating-accuracy.js';
+document.head.appendChild(ratingAccuracyDebugScript);
+
+// Load accurate rating calculation fix
+const accurateRatingFixScript = document.createElement('script');
+accurateRatingFixScript.src = 'fix-accurate-ratings.js';
+document.head.appendChild(accurateRatingFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
