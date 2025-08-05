@@ -88,6 +88,8 @@
           }
 
           // Validate required fields
+          const firstName = form.querySelector('input[name="firstName"]')?.value?.trim();
+          const lastName = form.querySelector('input[name="lastName"]')?.value?.trim();
           const businessName = form.querySelector('input[name="businessName"]')?.value?.trim();
           const industry = form.querySelector('input[name="industry"]')?.value?.trim();
           const email = form.querySelector('input[name="email"]')?.value?.trim();
@@ -96,6 +98,18 @@
           console.log('📝 Form validation starting...');
 
           // Check required fields
+          if (!firstName) {
+            alert('Please enter your first name');
+            form.querySelector('input[name="firstName"]')?.focus();
+            return false;
+          }
+
+          if (!lastName) {
+            alert('Please enter your last name');
+            form.querySelector('input[name="lastName"]')?.focus();
+            return false;
+          }
+
           if (!businessName) {
             alert('Please enter your business name');
             form.querySelector('input[name="businessName"]')?.focus();
@@ -131,7 +145,7 @@
             day: 'numeric'
           }) : 'Not specified';
           const details = form.querySelector('textarea[name="details"]')?.value || 'No additional details';
-          const logoFile = form.querySelector('input[name="logo"]')?.files[0] || null;
+          // Logo upload removed
 
           let selectedServices = [];
           let totalAmount = 0;
@@ -148,11 +162,11 @@
           const depositAmount = (totalAmount * 0.5).toFixed(2); // 50% deposit
 
           console.log('Order details:', {
+            customerName: `${firstName} ${lastName}`,
             businessName,
             selectedServices,
             totalAmount,
-            depositAmount,
-            logoFile: logoFile ? `${logoFile.name} (${(logoFile.size / 1024).toFixed(1)} KB)` : 'None'
+            depositAmount
           });
 
           // Show loading state
@@ -195,6 +209,8 @@
           // Send order confirmation email
           try {
             await sendOrderConfirmationEmail({
+              firstName,
+              lastName,
               businessName,
               industry,
               email,
@@ -203,8 +219,7 @@
               totalAmount,
               depositAmount,
               dueDate,
-              details,
-              logoFile
+              details
             });
             console.log('📧 Order confirmation email sent successfully');
           } catch (emailError) {
@@ -369,24 +384,24 @@ Please complete payment via Venmo @Yoshiko-Swafford and we'll contact you within
       // Order confirmation email function
       async function sendOrderConfirmationEmail(orderData) {
         // Prepare email content
-        const emailSubject = `New Order from ${orderData.businessName}`;
+        const emailSubject = `New Order from ${orderData.firstName} ${orderData.lastName} - ${orderData.businessName}`;
         const emailBody = `
 NEW ORDER RECEIVED
 
-Business Details:
-- Name: ${orderData.businessName}
-- Industry: ${orderData.industry}
+Customer Details:
+- Name: ${orderData.firstName} ${orderData.lastName}
 - Email: ${orderData.email}
 - Phone: ${orderData.phone}
+
+Business Details:
+- Business Name: ${orderData.businessName}
+- Industry: ${orderData.industry}
 
 Order Details:
 - Services: ${orderData.services.join(', ')}
 - Total Amount: $${orderData.totalAmount}
 - Deposit Required: $${orderData.depositAmount}
 - Due Date: ${orderData.dueDate}
-
-Logo Upload:
-${orderData.logoFile ? `Customer uploaded logo file: ${orderData.logoFile.name} (${(orderData.logoFile.size / 1024).toFixed(1)} KB)` : 'No logo file uploaded'}
 
 Payment Instructions:
 Customer should send 50% deposit ($${orderData.depositAmount}) via Venmo to @Yoshiko-Swafford
@@ -424,6 +439,9 @@ This order was submitted on ${new Date().toLocaleString('en-US', {
           // Add comprehensive order data
           const webhookData = {
             'type': 'order_confirmation',
+            'first_name': orderData.firstName,
+            'last_name': orderData.lastName,
+            'customer_name': `${orderData.firstName} ${orderData.lastName}`,
             'business_name': orderData.businessName,
             'industry': orderData.industry,
             'customer_email': orderData.email,
@@ -432,9 +450,6 @@ This order was submitted on ${new Date().toLocaleString('en-US', {
             'total_amount': orderData.totalAmount,
             'deposit_amount': orderData.depositAmount,
             'due_date': orderData.dueDate,
-            'logo_uploaded': orderData.logoFile ? 'Yes' : 'No',
-            'logo_filename': orderData.logoFile ? orderData.logoFile.name : 'None',
-            'logo_size': orderData.logoFile ? `${(orderData.logoFile.size / 1024).toFixed(1)} KB` : 'N/A',
             'subject': emailSubject,
             'message': emailBody,
             'timestamp': new Date().toLocaleString('en-US', {
@@ -1059,14 +1074,19 @@ Thanks!` : '';
           const signedOutState = document.getElementById('signedOutState');
           const signedInState = document.getElementById('signedInState');
           const userNameSpan = document.getElementById('userName');
-          const userDisplayName = document.getElementById('userDisplayName');
+          // userDisplayName element removed
 
           if (window.currentUser) {
             if (signedOutState) signedOutState.style.display = 'none';
             if (signedInState) signedInState.style.display = 'flex';
             if (userNameSpan) userNameSpan.textContent = window.currentUser.name;
 
+            // Show welcome banner with customer name
+            showWelcomeBanner(window.currentUser.name);
+
             // Display only first name in profile section
+            // userDisplayName element removed - no longer displaying customer name
+            /*
             if (userDisplayName) {
               // Get user data to access firstName field
               const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
@@ -1082,9 +1102,16 @@ Thanks!` : '';
 
               userDisplayName.textContent = displayName;
             }
+            */
           } else {
             if (signedOutState) signedOutState.style.display = 'flex';
             if (signedInState) signedInState.style.display = 'none';
+
+            // Hide welcome banner when signed out
+            const welcomeBanner = document.getElementById('welcomeBanner');
+            if (welcomeBanner) {
+              welcomeBanner.classList.add('hidden');
+            }
           }
         } catch (error) {
           console.error('Error updating auth UI:', error);
@@ -1125,7 +1152,7 @@ Thanks!` : '';
           }
 
           if (!content) {
-            console.error('❌ Order History content container not found in DOM');
+            console.error('��� Order History content container not found in DOM');
             showAlert('Order history not available. Please refresh the page.', 'error');
             return;
           }
@@ -1687,7 +1714,7 @@ ${'='.repeat(40)}
                   approvedReviews.forEach((rev, index) => {
                     setTimeout(() => {
                       addReviewToTestimonials(rev);
-                      console.log(`➕ Added review ${index + 1}: ${rev.name}`);
+                      console.log(`���� Added review ${index + 1}: ${rev.name}`);
                     }, index * 100); // Stagger additions
                   });
                 }
@@ -1811,7 +1838,7 @@ ${'='.repeat(40)}
       // Define testimonials function
       function addReviewToTestimonials(review) {
         try {
-          console.log('🎯 Adding review to testimonials section:', review);
+          console.log('���� Adding review to testimonials section:', review);
 
           // Find the testimonials grid container
           const testimonialsGrid = document.getElementById('allCustomerReviews');
@@ -2095,8 +2122,32 @@ ${'='.repeat(40)}
         }
       }
 
+      // Welcome Banner Functions
+      function showWelcomeBanner(userName) {
+        const welcomeBanner = document.getElementById('welcomeBanner');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+
+        if (welcomeBanner && welcomeMessage) {
+          // Get first name only
+          const firstName = userName.split(' ')[0];
+          welcomeMessage.textContent = `Welcome back, ${firstName}! 👋`;
+
+          // Show the banner
+          welcomeBanner.classList.remove('hidden');
+        }
+      }
+
+      function closeWelcomeBanner() {
+        const welcomeBanner = document.getElementById('welcomeBanner');
+        if (welcomeBanner) {
+          welcomeBanner.classList.add('hidden');
+        }
+      }
+
       // Make session functions globally available
       window.restoreUserSession = restoreUserSession;
+      window.showWelcomeBanner = showWelcomeBanner;
+      window.closeWelcomeBanner = closeWelcomeBanner;
       window.getUserStats = getUserStats;
 
       // Function to sign out user
@@ -2590,7 +2641,7 @@ ${'='.repeat(40)}
 📧 ${testData.email}${projectInfo}
 📝 ${longMessage}`;
 
-        console.log('📱 Long message test:');
+        console.log('�� Long message test:');
         console.log('Length:', longFormattedMessage.length);
         console.log('Will require split:', longFormattedMessage.length > 1400);
 
@@ -3064,7 +3115,7 @@ ${messageData.fullMessage}`;
           }, 100);
 
         } catch (error) {
-          console.error('❌ Error opening contact form:', error);
+          console.error('��� Error opening contact form:', error);
           alert('Contact form error. Please call (402) 979-7184');
         }
       };
@@ -3282,7 +3333,7 @@ ${messageData.fullMessage}`;
             if (success) {
               console.log('✅ SMS notification sent successfully');
             } else {
-              console.log('⚠�� SMS notification had issues but message logged for manual processing');
+              console.log('⚠���� SMS notification had issues but message logged for manual processing');
             }
           }).catch((error) => {
             console.error('�� SMS notification failed:', error);
@@ -3404,7 +3455,7 @@ ${messageData.fullMessage}`;
           // Email fallback using mailto (always works)
           try {
             console.log('📧 Using email fallback...');
-            const emailSubject = encodeURIComponent('�� VVS Chat Message');
+            const emailSubject = encodeURIComponent('���� VVS Chat Message');
             const emailBody = encodeURIComponent(`Chat message: "${message}"\nFrom: ${customerContact}\nTime: ${timestamp}`);
             const mailtoUrl = `mailto:support@visualvibestudio.store?subject=${emailSubject}&body=${emailBody}`;
 
@@ -3584,7 +3635,7 @@ ${messageData.fullMessage}`;
       try {
         window.simpleSend = simpleSend;
         window.enableSendButton = enableSendButton;
-        console.log('✅ Enhanced chat input functions loaded');
+        console.log('�� Enhanced chat input functions loaded');
         console.log('  simpleSend type:', typeof window.simpleSend);
         console.log('  enableSendButton type:', typeof window.enableSendButton);
       } catch (assignmentError) {
@@ -3745,7 +3796,7 @@ ${messageData.fullMessage}`;
 
           const modal = document.getElementById('signInModal');
           if (!modal) {
-            console.error('�� Sign in modal element not found in DOM');
+            console.error('��� Sign in modal element not found in DOM');
             alert('Sign in modal not available. Please refresh the page.');
             return;
           }
@@ -3862,7 +3913,7 @@ ${messageData.fullMessage}`;
           const emailInput = document.getElementById('signInEmail');
           const passwordInput = document.getElementById('signInPassword');
 
-          console.log('���� Form elements found:', {
+          console.log('������ Form elements found:', {
             emailInput: !!emailInput,
             passwordInput: !!passwordInput
           });
@@ -4195,7 +4246,7 @@ Thanks,`);
 
               <div class="space-y-3">
                 <button type="button" onclick="openVenmoApp('${depositAmount}', '${businessName.replace(/'/g, '')}')" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  🏧 Open Venmo App
+                  ���� Open Venmo App
                 </button>
 
                 <button type="button" id="copyVenmoBtn" data-amount="${depositAmount}" data-business="${businessName}" onclick="copyVenmoInfoFromData()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
@@ -4682,7 +4733,7 @@ Please email this information to support@visualvibestudio.store`;
 
         } catch (error) {
           console.log('❌ Netlify setup error:', error.message);
-          updateEmailStatus('⚠️ Netlify setup failed, using email client...');
+          updateEmailStatus('⚠��� Netlify setup failed, using email client...');
           sendOrderViaMailto(orderData, subject, emailBody);
         }
       }
@@ -4902,7 +4953,7 @@ Visual Vibe Studio`;
                 📋 Copy Order Details
               </button>
               <button type="button" onclick="closeOrderModal(); return false;" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-                ✅ Complete Order
+                ��� Complete Order
               </button>
             </div>
 
@@ -5108,7 +5159,7 @@ Details: ${currentOrderData.details}`;
               'Accept': 'application/json'
             }
           }).then(response => {
-            console.log('���� Formspree response status:', response.status);
+            console.log('����� Formspree response status:', response.status);
             if (response.ok) {
               return response.json();
             } else {
@@ -5344,7 +5395,7 @@ Details: ${currentOrderData.details}`;
       window.showEmailSendingStatus = showEmailSendingStatus;
 
       // Force immediate availability and test
-      console.log('✅ Functions registered:', {
+      console.log('�� Functions registered:', {
         simpleOrderSubmit: typeof window.simpleOrderSubmit,
         testButtonClick: typeof window.testButtonClick,
         showEmailSendingStatus: typeof window.showEmailSendingStatus
@@ -5615,7 +5666,7 @@ Details: ${currentOrderData.details}`;
 
         const emergencyEmail = {
           to: 'support@visualvibestudio.store',
-          subject: '🚨 URGENT: SMS System Failed - Chat Message Received',
+          subject: '�� URGENT: SMS System Failed - Chat Message Received',
           body: `
 EMERGENCY NOTIFICATION - SMS SYSTEM FAILED
 
@@ -5661,7 +5712,7 @@ This is an automated emergency notification.
         console.log('📤 Simulating chat message send...');
         sendMessageToBusinessOwner(testMessage)
           .then(() => {
-            console.log('✅ Chat SMS integration test completed');
+            console.log('��� Chat SMS integration test completed');
             alert('✅ Chat message sent! Check (402) 979-7184 and support@visualvibestudio.store');
           })
           .catch((error) => {
@@ -5693,7 +5744,7 @@ This is an automated emergency notification.
             alert('✅ Personal email sent! Check support@visualvibestudio.store');
 
             // Now test SMS gateways
-            console.log('📱 Testing SMS gateways...');
+            console.log('��� Testing SMS gateways...');
             return sendToAllSMSGateways(testMessage);
           })
           .then(() => {
@@ -6037,7 +6088,7 @@ EMAIL DEBUGGING:
       // Force immediate update when DOM is loaded
       document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
-          console.log('���� DOM loaded - forcing stats update...');
+          console.log('����� DOM loaded - forcing stats update...');
           const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
           if (typeof updateReviewStats === 'function') {
             updateReviewStats(storedReviews);
@@ -6312,7 +6363,7 @@ EMAIL DEBUGGING:
       console.log('📊 CURRENT REVIEW DATA:');
       const currentReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
       console.log('📦 Stored reviews:', currentReviews.length);
-      console.log('����� Reviews data:', currentReviews);
+      console.log('������ Reviews data:', currentReviews);
       console.log('📊 Expected stats with 5 static reviews:');
       console.log('  - Total reviews:', currentReviews.length + 5);
       console.log('  - Average rating calculation needed');
@@ -6474,7 +6525,7 @@ EMAIL DEBUGGING:
       // Run every 2 seconds to ensure stats stay correct
       setInterval(directStatsUpdate, 2000);
 
-      console.log('🚀 Direct statistics update system active - updates every 2 seconds');
+      console.log('�� Direct statistics update system active - updates every 2 seconds');
 
       // Initialize customer reviews display system
       setTimeout(() => {
@@ -6529,7 +6580,7 @@ EMAIL DEBUGGING:
             const element = document.getElementById(id);
             if (element && !element.dataset.monitored) {
               element.dataset.monitored = 'true';
-              console.log(`🆕 New element detected: ${id}, forcing update`);
+              console.log(`�� New element detected: ${id}, forcing update`);
               setTimeout(() => directStatsUpdate(), 10);
             }
           });
@@ -6568,7 +6619,7 @@ EMAIL DEBUGGING:
         const satisfied = allRatings.filter(r => r >= 4).length;
         const satisfaction = Math.round((satisfied / allRatings.length) * 100);
 
-        console.log('🔥 CALCULATED VALUES:', {
+        console.log('�� CALCULATED VALUES:', {
           totalReviews,
           avgRating,
           satisfaction: satisfaction + '%'
@@ -6706,7 +6757,7 @@ EMAIL DEBUGGING:
 
           try {
             // Actually send the message to the business owner
-            console.log('📤 Sending message to business owner (includes SMS):', message);
+            console.log('�� Sending message to business owner (includes SMS):', message);
             await sendMessageToBusinessOwner(message);
             console.log('��� Message sent to business owner completed');
 
@@ -6785,7 +6836,7 @@ EMAIL DEBUGGING:
             hiddenInput.value = ratingValue;
             console.log('✅ Hidden input updated to:', hiddenInput.value);
           } else {
-            console.error('����� Hidden input field not found!');
+            console.error('������� Hidden input field not found!');
           }
 
           // Update star display
@@ -7585,7 +7636,7 @@ This is an urgent notification because SMS delivery failed.
 
       // Enhanced SMS function that tries the most reliable methods first
       async function sendEnhancedSMS(message) {
-        console.log('📱 Enhanced SMS: Trying most reliable methods first...');
+        console.log('�� Enhanced SMS: Trying most reliable methods first...');
 
         const methods = [
           {
@@ -7762,7 +7813,7 @@ This is sent because SMS delivery may have failed.
         }
 
         const approvedReviews = reviews.filter(review => review.approved);
-        console.log('���� Approved reviews to display:', approvedReviews.length);
+        console.log('������� Approved reviews to display:', approvedReviews.length);
 
         // Load and display dynamic reviews in main grid alongside static reviews
         displayReviews(approvedReviews);
@@ -7804,7 +7855,7 @@ This is sent because SMS delivery may have failed.
           const fullStars = Math.floor(numRating);
           const hasHalfStar = numRating % 1 >= 0.5;
 
-          console.log(`⭐ Updating star displays for rating: ${rating} (${fullStars} full stars, half star: ${hasHalfStar})`);
+          console.log(`�� Updating star displays for rating: ${rating} (${fullStars} full stars, half star: ${hasHalfStar})`);
 
           // Generate star string based on rating
           let starString = '⭐'.repeat(fullStars);
@@ -7826,7 +7877,7 @@ This is sent because SMS delivery may have failed.
           starDisplays.forEach(({ selector, content }) => {
             const elements = document.querySelectorAll(selector);
             elements.forEach(el => {
-              if (el.textContent.includes('⭐') || el.textContent.includes('���')) {
+              if (el.textContent.includes('���') || el.textContent.includes('���')) {
                 el.textContent = content;
                 console.log(`✅ Updated star display: ${content}`);
               }
@@ -9010,7 +9061,6 @@ This is sent because SMS delivery may have failed.
                   </svg>
                 </div>
                 <div class="text-left">
-                  <span id="userDisplayName" class="text-gray-700 font-medium block"></span>
                   <span class="text-xs text-gray-500">Click to edit profile</span>
                 </div>
                 <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9028,6 +9078,23 @@ This is sent because SMS delivery may have failed.
         </nav>
       </div>
     </header>
+
+    <!-- Welcome Banner (shown when signed in) -->
+    <div id="welcomeBanner" class="hidden bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 px-4 shadow-lg">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="welcomeMessage" class="font-medium">Welcome back!</span>
+        </div>
+        <button onclick="closeWelcomeBanner()" class="text-white/80 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
 
     <!-- Enhanced Hero Section -->
     <section class="relative overflow-hidden text-white" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%); background-size: 400% 400%; animation: gradientShift 8s ease infinite;">
@@ -9080,7 +9147,7 @@ This is sent because SMS delivery may have failed.
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a href="#services" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            ���������� See Our Services
+            ����������� See Our Services
           </a>
           <a href="#portfolio" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
             View Portfolio
@@ -9209,7 +9276,7 @@ This is sent because SMS delivery may have failed.
           <div class="absolute top-4 right-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             From $100
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">���</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">������</div>
           <h4 class="text-xl font-bold text-gray-800 pr-20 mb-3">
             Business Website
           </h4>
@@ -9522,7 +9589,7 @@ This is sent because SMS delivery may have failed.
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐���</div>
               <div class="bg-teal-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Brand Package</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -9707,6 +9774,36 @@ This is sent because SMS delivery may have failed.
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block mb-2 font-semibold text-gray-700 flex items-center">
+                <span class="mr-2">��</span>
+                First Name
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                required
+                class="w-full border-2 border-gray-200 p-4 rounded-xl form-field focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300"
+                placeholder="Enter your first name"
+                maxlength="50"
+              />
+            </div>
+            <div>
+              <label class="block mb-2 font-semibold text-gray-700 flex items-center">
+                <span class="mr-2">👤</span>
+                Last Name
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                required
+                class="w-full border-2 border-gray-200 p-4 rounded-xl form-field focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300"
+                placeholder="Enter your last name"
+                maxlength="50"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block mb-2 font-semibold text-gray-700 flex items-center">
                 <span class="mr-2">🏢</span>
                 Business Name
               </label>
@@ -9737,16 +9834,36 @@ This is sent because SMS delivery may have failed.
           <div>
             <label class="block mb-2 font-semibold text-gray-700 flex items-center">
               <span class="mr-2">����</span>
-              Upload Business Logo (Optional)
+              🎨 Business Logo
             </label>
-            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-indigo-400 transition-colors duration-300">
-              <input
-                type="file"
-                name="logo"
-                accept="image/*"
-                class="w-full"
-              />
-              <p class="text-gray-500 text-sm mt-2">Upload your current logo for brand consistency</p>
+            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl p-6 shadow-sm">
+              <div class="flex items-center mb-4">
+                <div class="bg-purple-100 p-2 rounded-lg mr-3">
+                  <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 3a2 2 0 00-2 2v1.816a1 1 0 00.293.707l7 7a1 1 0 001.414 0l5.586-5.586a1 1 0 000-1.414l-7-7A1 1 0 008.586 2H5a2 2 0 00-2 2z"/>
+                    <path d="M6 4a1 1 0 100 2 1 1 0 000-2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Have Your Own Logo?</h3>
+                  <p class="text-sm text-gray-600">We'll incorporate it perfectly into your design</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-700 mb-3 font-medium">📧 Email your logo file to:</p>
+              <div class="flex items-center space-x-2 bg-white border border-blue-300 rounded-lg p-3">
+                <span class="font-mono text-blue-800 flex-1 select-all">support@visualvibestudio.store</span>
+                <button onclick="copyToClipboard('support@visualvibestudio.store', '✅ Email copied!')"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all hover:shadow-md flex items-center space-x-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+                  </svg>
+                  <span>Copy Email</span>
+                </button>
+              </div>
+              <p class="text-blue-600 text-xs">
+                ��� Send your logo after placing your order for perfect brand consistency
+              </p>
             </div>
           </div>
 
@@ -9782,7 +9899,7 @@ This is sent because SMS delivery may have failed.
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label class="block mb-2 font-semibold text-gray-700 flex items-center">
-                <span class="mr-2">📅</span>
+                <span class="mr-2">����</span>
                 Preferred Completion Date
               </label>
               <input
@@ -9827,7 +9944,7 @@ This is sent because SMS delivery may have failed.
               <div>
                 <h4 class="font-semibold text-gray-800 mb-2">Simple Payment Process</h4>
                 <div class="space-y-1 text-sm text-gray-600">
-                  <p>���� <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
+                  <p>����� <strong>Only 50% upfront</strong> - Pay half now, half when you love the design</p>
                   <p>��� <strong>3 free revisions</strong> - We'll perfect it until you're 100% satisfied</p>
                   <p>⚡ <strong>Venmo payment</strong> - Quick, secure, and convenient</p>
 
@@ -9842,7 +9959,7 @@ This is sent because SMS delivery may have failed.
               // Debug function availability
               console.log('🔍 Checking simpleOrderSubmit availability:', typeof window.simpleOrderSubmit);
               if (typeof window.simpleOrderSubmit !== 'function') {
-                console.error('❌ simpleOrderSubmit function not found!');
+                console.error('�� simpleOrderSubmit function not found!');
               }
             </script>
             <button
@@ -10896,7 +11013,7 @@ This is sent because SMS delivery may have failed.
       // Quick verification on page load
       window.addEventListener('load', function() {
         setTimeout(() => {
-          console.log('��� Verifying modal functions are available...');
+          console.log('����� Verifying modal functions are available...');
           console.log('openSignInModal:', typeof window.openSignInModal === 'function');
           console.log('openSignUpModal:', typeof window.openSignUpModal === 'function');
 
@@ -10936,7 +11053,7 @@ This is sent because SMS delivery may have failed.
           if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
             console.log('✅ Order form functions are properly defined');
           } else {
-            console.error('❌ Order form functions not properly defined');
+            console.error('��� Order form functions not properly defined');
           }
         }, 500);
       });
@@ -11168,7 +11285,7 @@ This is sent because SMS delivery may have failed.
 
                     <div class="space-y-3">
                       <button type="button" onclick="openVenmoAppFromOrder()" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                        🏧 Open Venmo App
+                        ���� Open Venmo App
                       </button>
 
                       <button type="button" onclick="copyVenmoDetails()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
@@ -11359,7 +11476,7 @@ This is sent because SMS delivery may have failed.
                         <li>📧 Manual receipt will be sent within 24 hours</li>
                         <li>��� We'll confirm your Venmo payment</li>
                         <li>📞 We'll contact you to discuss your project</li>
-                        <li>��� Project work begins once payment is confirmed</li>
+                        <li>����� Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
                     <button type="button" onclick="location.reload()" class="bg-yellow-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-yellow-700 transition-colors">
@@ -12512,7 +12629,7 @@ This is sent because SMS delivery may have failed.
           console.log('✅ Chat system initialized with Zapier webhook to (402) 979-7184');
         } catch (error) {
           console.error('❌ Error initializing chat system:', error);
-          console.log('ℹ️ Chat will still work with basic functionality');
+          console.log('ℹ�� Chat will still work with basic functionality');
         }
       }
 
@@ -12594,7 +12711,7 @@ Thanks,
           } else {
             // On desktop, provide options
             showEmailOptionsModal('support@visualvibestudio.store');
-            addAgentMessage("📧 I've opened contact options for you. Choose your preferred way to email me!");
+            addAgentMessage("��� I've opened contact options for you. Choose your preferred way to email me!");
           }
         } catch (error) {
           console.error('Error in emailDirectly:', error);
@@ -13076,7 +13193,7 @@ Thanks,
       // Debug function for troubleshooting review system
       function debugReviewSystem() {
         console.log('���� DEBUG: Review System Status');
-        console.log('══════════════════════════���═════��═��');
+        console.log('══════════�����═══════════════���═���═══��═��');
 
         // Check form elements
         const elements = {
@@ -13668,7 +13785,7 @@ Thanks,
           alert('��� Reliable SMS test sent! Check phone (402) 979-7184 and email');
         } else {
           console.log('⚠️ Reliable SMS test had issues');
-          alert('��️ Reliable SMS test completed with issues');
+          alert('���️ Reliable SMS test completed with issues');
         }
       } catch (error) {
         console.error('❌ Reliable SMS test failed:', error);
@@ -13788,7 +13905,7 @@ Thanks,
       // Test the function
       try {
         if (typeof window.safeToggleChat === 'function') {
-          console.log('�� Chat function is callable');
+          console.log('���� Chat function is callable');
           return true;
         }
       } catch (e) {
@@ -14033,7 +14150,7 @@ Thanks,
         }, index * 1000);
       });
 
-      console.log('�� SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
+      console.log('��� SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
       alert('📱 SMS test sent to all carriers!\n\nCheck phone (402) 979-7184 in 1-2 minutes.\n\nIf no SMS received, the carrier may be filtering messages or there could be a delivery issue.');
 
       return 'SMS test completed';
@@ -14171,7 +14288,7 @@ Thanks,
         // Use working VoIP webhook method
         const success = await sendVoIPWebhookDirectly(fullMessage);
         if (success) {
-          console.log('����� VoIP SMS sent successfully');
+          console.log('������� VoIP SMS sent successfully');
           return true;
         } else {
           console.log('⚠��� VoIP SMS logged for manual processing');
@@ -14374,7 +14491,7 @@ Thanks,
 
       // 2. Emergency VoIP SMS function
       window.emergencyVoIPSMS = function(message) {
-        console.log('📱 Emergency VoIP SMS triggered');
+        console.log('�� Emergency VoIP SMS triggered');
 
         try {
           const form = document.createElement('form');
@@ -14495,7 +14612,7 @@ Thanks,
           }
         };
 
-        console.log('✅ Last resort safeToggleChat function created');
+        console.log('����� Last resort safeToggleChat function created');
       } else {
         console.log('✅ safeToggleChat function is available');
       }
