@@ -196,6 +196,11 @@ const ratingFixScript = document.createElement('script');
 ratingFixScript.src = 'fix-rating-functions.js';
 document.head.appendChild(ratingFixScript);
 
+// Load submitReview function fix script
+const submitReviewFixScript = document.createElement('script');
+submitReviewFixScript.src = 'fix-submit-review.js';
+document.head.appendChild(submitReviewFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
