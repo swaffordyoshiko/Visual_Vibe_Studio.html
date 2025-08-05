@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Test</title>
+</head>
+<body>
+    <h1>Authentication Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        // Test the authentication functions
+        function testAuth() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Testing Authentication Functions...</h2>';
+            
+            // Test if functions exist
+            const functions = [
+                'openSignInModal',
+                'openSignUpModal', 
+                'closeSignInModal',
+                'closeSignUpModal',
+                'handleSignIn',
+                'handleSignUp',
+                'updateAuthUI',
+                'signOut'
+            ];
+            
+            functions.forEach(func => {
+                const exists = typeof window[func] === 'function';
+                results.innerHTML += `<p>${func}: ${exists ? '✅ EXISTS' : '❌ MISSING'}</p>`;
+            });
+            
+            // Test DOM elements
+            const elements = [
+                'signInModal',
+                'signUpModal',
+                'signInForm', 
+                'signUpForm',
+                'signInEmail',
+                'signInPassword',
+                'signUpName',
+                'signUpEmail',
+                'signUpPassword',
+                'signUpConfirmPassword'
+            ];
+            
+            results.innerHTML += '<h3>DOM Elements:</h3>';
+            elements.forEach(id => {
+                const exists = document.getElementById(id) !== null;
+                results.innerHTML += `<p>${id}: ${exists ? '✅ EXISTS' : '❌ MISSING'}</p>`;
+            });
+            
+            // Test localStorage
+            const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+            results.innerHTML += `<h3>Storage:</h3><p>Users: ${users.length}</p>`;
+            
+            const session = localStorage.getItem('visualVibeUser');
+            results.innerHTML += `<p>Session: ${session ? 'EXISTS' : 'NONE'}</p>`;
+        }
+        
+        // Run test when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', testAuth);
+        } else {
+            testAuth();
+        }
+    </script>
+</body>
+</html>
