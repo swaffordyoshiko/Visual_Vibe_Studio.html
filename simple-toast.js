@@ -142,9 +142,3 @@ window.toastManager = window.simpleToastManager;
 
 console.log('✅ Simple toast system loaded and ready!');
 console.log('Available: window.simpleToastManager, window.toastManager, alert(), showAlert()');
-
-// Test the system
-setTimeout(() => {
-  console.log('🧪 Testing simple toast system...');
-  showToast('Simple toast system is working!', 'success', 3000);
-}, 1000);
