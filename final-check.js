@@ -236,6 +236,16 @@ const protectRatingUpdatesScript = document.createElement('script');
 protectRatingUpdatesScript.src = 'protect-rating-updates.js';
 document.head.appendChild(protectRatingUpdatesScript);
 
+// Load UNIFIED RATING FIX (resolves conflicts between protection and force updates)
+const ratingConflictFixScript = document.createElement('script');
+ratingConflictFixScript.src = 'fix-rating-conflict.js';
+document.head.appendChild(ratingConflictFixScript);
+
+// Load rating fix test script
+const ratingFixTestScript = document.createElement('script');
+ratingFixTestScript.src = 'test-rating-fix.js';
+document.head.appendChild(ratingFixTestScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
