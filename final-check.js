@@ -231,6 +231,11 @@ const permanentRatingFixScript = document.createElement('script');
 permanentRatingFixScript.src = 'permanent-rating-fix.js';
 document.head.appendChild(permanentRatingFixScript);
 
+// Load PROTECTION system (ultimate defense against rating reversion)
+const protectRatingUpdatesScript = document.createElement('script');
+protectRatingUpdatesScript.src = 'protect-rating-updates.js';
+document.head.appendChild(protectRatingUpdatesScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
