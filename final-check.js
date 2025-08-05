@@ -206,6 +206,11 @@ const testimonialsFixScript = document.createElement('script');
 testimonialsFixScript.src = 'fix-add-review-to-testimonials.js';
 document.head.appendChild(testimonialsFixScript);
 
+// Load rating updates fix script
+const ratingUpdatesFixScript = document.createElement('script');
+ratingUpdatesFixScript.src = 'fix-rating-updates.js';
+document.head.appendChild(ratingUpdatesFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
