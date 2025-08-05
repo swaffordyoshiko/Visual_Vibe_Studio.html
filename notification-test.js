@@ -109,13 +109,5 @@ window.showAlert = function(message, type) {
   window.alert(message);
 };
 
-// Test 5: Create immediate test
-createTestNotification();
-
-// Test 6: Test with alert after 2 seconds
-setTimeout(() => {
-  console.log('Testing alert override...');
-  window.alert('This is a test alert - you should see a blue notification!');
-}, 2000);
 
 console.log('✅ Notification test system loaded');
