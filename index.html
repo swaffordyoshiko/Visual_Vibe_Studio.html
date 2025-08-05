@@ -1881,7 +1881,7 @@ ${'='.repeat(40)}
                 if (testimonialsGrid) {
                   const existingDynamic = testimonialsGrid.querySelectorAll('[data-dynamic-review="true"]');
                   existingDynamic.forEach(el => el.remove());
-                  console.log(`🧹 Removed ${existingDynamic.length} existing dynamic reviews`);
+                  console.log(`�� Removed ${existingDynamic.length} existing dynamic reviews`);
 
                   // Add all approved reviews
                   approvedReviews.forEach((rev, index) => {
@@ -2463,7 +2463,7 @@ ${'='.repeat(40)}
           if (window.currentUser) {
             const savedUser = localStorage.getItem('visualVibeUser');
             if (!savedUser) {
-              console.log('⚠️ Session lost, attempting restore...');
+              console.log('⚠����� Session lost, attempting restore...');
               restoreUserSession();
             }
           }
@@ -2607,10 +2607,48 @@ ${'='.repeat(40)}
 
       window.signOut = signOut;
 
+      // Enhanced authentication system initialization
+      function initializeAuthSystem() {
+        console.log('🔐 Initializing authentication system...');
+
+        // Check if required DOM elements exist
+        const signInModal = document.getElementById('signInModal');
+        const signUpModal = document.getElementById('signUpModal');
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+
+        if (!signInModal || !signUpModal || !signInForm || !signUpForm) {
+          console.error('❌ Missing authentication modal elements');
+          return false;
+        }
+
+        // Ensure form event listeners are properly attached
+        signInForm.removeEventListener('submit', handleSignIn);
+        signInForm.addEventListener('submit', handleSignIn);
+        signUpForm.removeEventListener('submit', handleSignUp);
+        signUpForm.addEventListener('submit', handleSignUp);
+
+        console.log('✅ Authentication form listeners attached');
+
+        // Restore user session
+        restoreUserSession();
+
+        console.log('✅ Authentication system initialized successfully');
+        return true;
+      }
+
       // Initialize user session when page loads
       document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Page loaded, checking for existing user session...');
-        restoreUserSession();
+        console.log('🚀 Page loaded, initializing authentication system...');
+
+        // Delay initialization slightly to ensure all scripts are loaded
+        setTimeout(() => {
+          const success = initializeAuthSystem();
+          if (!success) {
+            console.warn('⚠️ Authentication system failed to initialize, retrying...');
+            setTimeout(initializeAuthSystem, 1000);
+          }
+        }, 200);
       });
 
       // Also check immediately in case DOMContentLoaded already fired
@@ -2660,6 +2698,118 @@ ${'='.repeat(40)}
       }
 
       window.autoDebugReviews = autoDebugReviews;
+
+      // Authentication testing function
+      function testAuthentication() {
+        console.log('🧪 Testing authentication system...');
+
+        // Check if all required functions exist
+        const authFunctions = [
+          'openSignInModal', 'openSignUpModal', 'closeSignInModal', 'closeSignUpModal',
+          'handleSignIn', 'handleSignUp', 'updateAuthUI', 'restoreUserSession'
+        ];
+
+        console.log('🔍 Checking authentication functions:');
+        authFunctions.forEach(funcName => {
+          const exists = typeof window[funcName] === 'function';
+          console.log(`  ${funcName}: ${exists ? '✅' : '❌'}`);
+        });
+
+        // Check DOM elements
+        const authElements = [
+          'signInModal', 'signUpModal', 'signInForm', 'signUpForm',
+          'signInEmail', 'signInPassword', 'signUpName', 'signUpEmail',
+          'signUpPassword', 'signUpConfirmPassword'
+        ];
+
+        console.log('🔍 Checking authentication DOM elements:');
+        authElements.forEach(elementId => {
+          const exists = document.getElementById(elementId) !== null;
+          console.log(`  ${elementId}: ${exists ? '✅' : '❌'}`);
+        });
+
+        // Check localStorage for existing users
+        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+        console.log(`👥 Found ${users.length} registered users in localStorage`);
+
+        if (users.length > 0) {
+          console.log('📧 User emails:', users.map(u => u.email));
+        }
+
+        // Check current session
+        const currentSession = localStorage.getItem('visualVibeUser');
+        if (currentSession) {
+          const sessionData = JSON.parse(currentSession);
+          console.log('��� Current session:', sessionData);
+        } else {
+          console.log('🔐 No active session found');
+        }
+
+        return {
+          functionsReady: authFunctions.every(fn => typeof window[fn] === 'function'),
+          elementsReady: authElements.every(id => document.getElementById(id) !== null),
+          totalUsers: users.length,
+          hasSession: !!currentSession
+        };
+      }
+
+      window.testAuthentication = testAuthentication;
+
+      // Debug sign-in function to help troubleshoot issues
+      function debugSignIn(email, password) {
+        console.log('🔍 DEBUG SIGN-IN TEST');
+        console.log('📧 Email:', email);
+        console.log('🔑 Password length:', password ? password.length : 0);
+
+        // Get users
+        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+        console.log('👥 Total users in system:', users.length);
+
+        if (users.length === 0) {
+          console.log('❌ No users registered yet');
+          return { success: false, reason: 'No users registered' };
+        }
+
+        // Check email format
+        if (!email || !email.includes('@')) {
+          console.log('❌ Invalid email format');
+          return { success: false, reason: 'Invalid email format' };
+        }
+
+        // Check password
+        if (!password) {
+          console.log('❌ No password provided');
+          return { success: false, reason: 'No password provided' };
+        }
+
+        // Look for user with case-insensitive email
+        const matchingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+        if (!matchingUser) {
+          console.log('❌ No user found with email:', email);
+          console.log('📧 Available emails:', users.map(u => u.email));
+          return { success: false, reason: 'Email not found', availableEmails: users.map(u => u.email) };
+        }
+
+        console.log('✅ Found user:', matchingUser.name);
+
+        // Check password
+        if (matchingUser.password !== password) {
+          console.log('❌ Password does not match');
+          return { success: false, reason: 'Incorrect password', user: matchingUser.name };
+        }
+
+        console.log('✅ Password matches!');
+        console.log('✅ Authentication should succeed for user:', matchingUser.name);
+
+        return {
+          success: true,
+          user: matchingUser,
+          message: `Authentication ready for ${matchingUser.name}`
+        };
+      }
+
+      window.debugSignIn = debugSignIn;
 
       // Fix FullStory namespace conflict
       window["_fs_namespace"] = "FS";
@@ -2765,7 +2915,7 @@ ${'='.repeat(40)}
             msgDiv.innerHTML = '<div>' + message + '</div>';
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-            console.log('��� Message added to chat');
+            console.log('������ Message added to chat');
           }
 
           // Clear input and re-enable for next message
@@ -2785,7 +2935,7 @@ ${'='.repeat(40)}
           console.log('🔍 DEBUG: About to send SMS with message:', message);
           console.log('��� DEBUG: Message length:', message ? message.length : 'undefined');
           console.log('🔍 DEBUG: Message type:', typeof message);
-          console.log('🔍 DEBUG: currentUser:', window.currentUser);
+          console.log('�� DEBUG: currentUser:', window.currentUser);
 
           // Get customer info before sending (ensure it's available)
           if (!window.currentUser) {
@@ -3686,7 +3836,7 @@ ${messageData.fullMessage}`;
       if (typeof window.safeToggleChat !== 'function') {
         console.error('❌ CRITICAL: Bulletproof chat function failed to define!');
       } else {
-        console.log('✅ BULLETPROOF chat function ready');
+        console.log('��� BULLETPROOF chat function ready');
       }
 
       // PROTECT THE FUNCTION FROM BEING OVERWRITTEN
@@ -3767,17 +3917,17 @@ ${messageData.fullMessage}`;
         enableSendButton();
 
         // Send SMS notification to business owner using immediate function
-        console.log('����� Sending SMS notification to business owner...');
+        console.log('������� Sending SMS notification to business owner...');
 
         if (typeof immediateSMS === 'function') {
           immediateSMS(message).then((success) => {
             if (success) {
               console.log('✅ SMS notification sent successfully');
             } else {
-              console.log('⚠���� SMS notification had issues but message logged for manual processing');
+              console.log('⚠����� SMS notification had issues but message logged for manual processing');
             }
           }).catch((error) => {
-            console.error('��� SMS notification failed:', error);
+            console.error('���� SMS notification failed:', error);
             // Don't show error to user, just log for debugging
           });
         } else {
@@ -4248,7 +4398,7 @@ ${messageData.fullMessage}`;
             // Remove and re-add listener to ensure it's working
             signInForm.removeEventListener('submit', handleSignIn);
             signInForm.addEventListener('submit', handleSignIn);
-            console.log('������ Sign in form listener refreshed');
+            console.log('������� Sign in form listener refreshed');
           }
 
           modal.classList.remove('hidden');
@@ -4368,10 +4518,10 @@ ${messageData.fullMessage}`;
           const email = emailInput.value.trim();
           const password = passwordInput.value;
 
-          console.log('��� Form data:', { email, passwordLength: password.length });
+          console.log('���� Form data:', { email, passwordLength: password.length });
 
           if (!email || !password) {
-            console.warn('�����️ Missing email or password');
+            console.warn('�������️ Missing email or password');
             showAlert('Please enter both email and password.', 'error');
             return;
           }
@@ -4380,7 +4530,7 @@ ${messageData.fullMessage}`;
           const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
           console.log('👥 Found users in storage:', users.length);
 
-          const user = users.find(u => u.email === email && u.password === password);
+          const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
 
           if (user) {
             console.log('✅ User authenticated successfully:', user.name);
@@ -4454,8 +4604,8 @@ ${messageData.fullMessage}`;
           const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
           console.log('���� Existing users:', users.length);
 
-          // Check if email already exists
-          if (users.find(u => u.email === email)) {
+          // Check if email already exists (case-insensitive)
+          if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
             console.warn('��️ Email already exists:', email);
             showAlert('An account with this email already exists. Please sign in.', 'error');
             return;
@@ -4668,7 +4818,7 @@ Thanks,`);
         const venmoLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${depositAmount}&note=${encodeURIComponent(venmoNote)}`;
 
         console.log('��� Generated Venmo link:', venmoLink);
-        console.log('💰 Venmo note:', venmoNote);
+        console.log('��� Venmo note:', venmoNote);
 
         container.innerHTML = `
           <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mt-6">
@@ -4847,7 +4997,7 @@ Thanks,`);
 
 Options:
 • Use the Venmo app on your phone
-��� Visit venmo.com on any device
+����� Visit venmo.com on any device
 �� Call (402) 979-7184 for phone payment
 
 Your order is confirmed - just complete the payment when convenient!`;
@@ -5146,7 +5296,7 @@ Please email this information to support@visualvibestudio.store`;
         });
 
         } catch (error) {
-          console.log('��� Web3Forms setup error:', error.message);
+          console.log('���� Web3Forms setup error:', error.message);
           updateEmailStatus('⚠��� Web3Forms setup failed, trying Netlify...');
           sendOrderViaNetlify(orderData, subject, emailBody);
         }
@@ -5472,7 +5622,7 @@ Details: ${currentOrderData.details}`;
             return;
           }
 
-          console.log('📧 Sending email manually...');
+          console.log('���� Sending email manually...');
 
           const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(currentOrderSubject)}&body=${encodeURIComponent(currentOrderEmailBody)}`;
 
@@ -5663,7 +5813,7 @@ Details: ${currentOrderData.details}`;
               details: orderData.details
             };
 
-            console.log('📧 Sending EmailJS with params:', templateParams);
+            console.log('��� Sending EmailJS with params:', templateParams);
 
             // Try EmailJS with retry logic
             sendEmailJSWithRetry("service_u8nfujf", "template_xpqmt6i", templateParams, 3)
@@ -5787,7 +5937,7 @@ Details: ${currentOrderData.details}`;
 
       // Simple test function for debugging
       function testButtonClick() {
-        console.log('������ Test button click function called!');
+        console.log('�������� Test button click function called!');
         alert('Button click is working! Function is properly connected.');
         return false;
       }
@@ -5890,7 +6040,7 @@ Details: ${currentOrderData.details}`;
                 throw new Error('EmailJS singleton not available');
               }
             } catch (error) {
-              console.log(`❌ EmailJS attempt ${attempts} failed:`, error);
+              console.log(`��� EmailJS attempt ${attempts} failed:`, error);
 
               if (attempts < maxRetries) {
                 console.log(`🔄 Retrying EmailJS in 2 seconds...`);
@@ -6403,7 +6553,7 @@ This is an automated emergency notification.
 
       // Test function for statistics calculation
       function testStatisticsCalculation() {
-        console.log('��� Testing statistics calculation...');
+        console.log('���� Testing statistics calculation...');
 
         // Create test reviews with different ratings
         const testReviews = [
@@ -6523,7 +6673,7 @@ EMAIL DEBUGGING:
           satisfaction: document.getElementById('customerSatisfactionPercent')
         };
 
-        console.log('🔍 DOM Elements found:', {
+        console.log('�� DOM Elements found:', {
           happyCustomers: !!elements.happyCustomers,
           averageRating: !!elements.averageRating,
           customerRating: !!elements.customerRating,
@@ -7296,7 +7446,7 @@ EMAIL DEBUGGING:
             hiddenInput.value = ratingValue;
             console.log('✅ Hidden input updated to:', hiddenInput.value);
           } else {
-            console.error('��������� Hidden input field not found!');
+            console.error('����������� Hidden input field not found!');
           }
 
           // Update star display
@@ -8160,7 +8310,7 @@ This is an urgent notification because SMS delivery failed.
             });
 
             if (response.ok) {
-              console.log('✅ Webhook SMS trigger sent:', url);
+              console.log('�� Webhook SMS trigger sent:', url);
               return;
             }
           } catch (error) {
@@ -8234,7 +8384,7 @@ This is sent because SMS delivery may have failed.
 
         // Add sample reviews if none exist
         if (reviews.length === 0) {
-          console.log('📝 No reviews found, adding sample reviews');
+          console.log('��� No reviews found, adding sample reviews');
           const sampleReviews = [
             {
               id: 'sample-1',
@@ -8320,7 +8470,7 @@ This is sent because SMS delivery may have failed.
           // Generate star string based on rating
           let starString = '⭐'.repeat(fullStars);
           if (hasHalfStar && fullStars < 5) {
-            starString += '��'; // Add another star for half star (simplified)
+            starString += '����'; // Add another star for half star (simplified)
           }
 
           // Pad to 5 stars if needed (use empty stars for visual consistency)
@@ -8337,7 +8487,7 @@ This is sent because SMS delivery may have failed.
           starDisplays.forEach(({ selector, content }) => {
             const elements = document.querySelectorAll(selector);
             elements.forEach(el => {
-              if (el.textContent.includes('���') || el.textContent.includes('���')) {
+              if (el.textContent.includes('�����') || el.textContent.includes('���')) {
                 el.textContent = content;
                 console.log(`���� Updated star display: ${content}`);
               }
@@ -9575,84 +9725,378 @@ This is sent because SMS delivery may have failed.
 
     <!-- Essential Modal Functions - Defined Early to Fix ReferenceError -->
     <script>
-      // Global modal functions defined immediately to prevent ReferenceError
+      // Simple, working modal functions
       window.openSignInModal = function() {
-        console.log('Early openSignInModal called');
-        // Try different approaches to open the modal
-        if (typeof window.actualOpenSignInModal === 'function') {
-          console.log('Using actual openSignInModal function');
-          window.actualOpenSignInModal();
-        } else {
-          console.log('Actual function not ready, using fallback');
-          window.openSignInModalFallback();
+        console.log('🔑 Opening sign in modal...');
+        try {
+          const modal = document.getElementById('signInModal');
+          if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            modal.style.opacity = '1';
+
+            // Focus email input
+            const emailInput = document.getElementById('signInEmail');
+            if (emailInput) {
+              setTimeout(() => emailInput.focus(), 100);
+            }
+
+            console.log('✅ Sign in modal opened');
+          } else {
+            console.error('❌ Sign in modal not found');
+            alert('Sign in not available. Please refresh the page.');
+          }
+        } catch (error) {
+          console.error('❌ Error opening sign in modal:', error);
+          alert('Error opening sign in. Please refresh the page.');
         }
       };
 
       window.openSignUpModal = function() {
-        console.log('Early openSignUpModal called');
-        // Try different approaches to open the modal
-        if (typeof window.actualOpenSignUpModal === 'function') {
-          console.log('Using actual openSignUpModal function');
-          window.actualOpenSignUpModal();
-        } else {
-          console.log('Actual function not ready, using fallback');
-          window.openSignUpModalFallback();
+        console.log('📝 Opening sign up modal...');
+        try {
+          const modal = document.getElementById('signUpModal');
+          if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            modal.style.opacity = '1';
+
+            // Focus name input
+            const nameInput = document.getElementById('signUpName');
+            if (nameInput) {
+              setTimeout(() => nameInput.focus(), 100);
+            }
+
+            console.log('✅ Sign up modal opened');
+          } else {
+            console.error('❌ Sign up modal not found');
+            alert('Sign up not available. Please refresh the page.');
+          }
+        } catch (error) {
+          console.error('❌ Error opening sign up modal:', error);
+          alert('Error opening sign up. Please refresh the page.');
         }
       };
 
-      // Fallback functions for when modals aren't ready
-      window.openSignInModalFallback = function() {
-        console.log('Using sign-in fallback');
-        // Try to find and open modal directly
-        const modal = document.getElementById('signInModal');
-        if (modal) {
-          console.log('Found modal, opening directly');
-          modal.classList.remove('hidden');
-          modal.style.display = 'flex';
-          modal.style.opacity = '1';
+      // Switch between modals
+      window.switchToSignUp = function() {
+        console.log('🔄 Switching to sign up...');
+        closeSignInModal();
+        setTimeout(openSignUpModal, 100);
+      };
+
+      window.switchToSignIn = function() {
+        console.log('🔄 Switching to sign in...');
+        closeSignUpModal();
+        setTimeout(openSignInModal, 100);
+      };
+
+      // Working authentication handlers
+      window.handleSignIn = function(e) {
+        console.log('🔑 Processing sign in...');
+        e.preventDefault();
+
+        try {
           const emailInput = document.getElementById('signInEmail');
-          if (emailInput) {
-            setTimeout(function() { emailInput.focus(); }, 100);
+          const passwordInput = document.getElementById('signInPassword');
+
+          if (!emailInput || !passwordInput) {
+            alert('Form elements not found. Please refresh the page.');
+            return;
           }
-        } else {
-          console.log('Modal not found, will retry');
-          // Wait a bit and try again
-          setTimeout(function() {
-            const retryModal = document.getElementById('signInModal');
-            if (retryModal) {
-              retryModal.classList.remove('hidden');
-              retryModal.style.display = 'flex';
-              retryModal.style.opacity = '1';
-            }
-          }, 500);
+
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+
+          if (!email || !password) {
+            alert('Please enter both email and password.');
+            return;
+          }
+
+          // Get stored users
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          console.log('👥 Checking', users.length, 'registered users');
+
+          // Find user with case-insensitive email matching
+          const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+          if (user && user.password === password) {
+            console.log('✅ Authentication successful for:', user.name);
+
+            // Set current user
+            window.currentUser = {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              lastActivity: new Date().toISOString()
+            };
+
+            // Save session
+            localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+
+            // Update UI
+            updateAuthUI();
+            closeSignInModal();
+
+            // Show welcome banner
+            showWelcomeBanner(user.name);
+
+            alert('Welcome back, ' + user.name + '!');
+          } else if (user) {
+            alert('Incorrect password. Please try again.');
+          } else {
+            alert('No account found with this email. Please sign up first.');
+          }
+        } catch (error) {
+          console.error('❌ Sign in error:', error);
+          alert('Sign in error. Please try again.');
         }
       };
 
-      window.openSignUpModalFallback = function() {
-        console.log('Using sign-up fallback');
-        // Try to find and open modal directly
-        const modal = document.getElementById('signUpModal');
-        if (modal) {
-          console.log('Found modal, opening directly');
-          modal.classList.remove('hidden');
-          modal.style.display = 'flex';
-          modal.style.opacity = '1';
+      window.handleSignUp = function(e) {
+        console.log('📝 Processing sign up...');
+        e.preventDefault();
+
+        try {
           const nameInput = document.getElementById('signUpName');
-          if (nameInput) {
-            setTimeout(function() { nameInput.focus(); }, 100);
+          const emailInput = document.getElementById('signUpEmail');
+          const passwordInput = document.getElementById('signUpPassword');
+          const confirmPasswordInput = document.getElementById('signUpConfirmPassword');
+
+          if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+            alert('Form elements not found. Please refresh the page.');
+            return;
           }
-        } else {
-          console.log('Modal not found, will retry');
-          // Wait a bit and try again
-          setTimeout(function() {
-            const retryModal = document.getElementById('signUpModal');
-            if (retryModal) {
-              retryModal.classList.remove('hidden');
-              retryModal.style.display = 'flex';
-              retryModal.style.opacity = '1';
-            }
-          }, 500);
+
+          const name = nameInput.value.trim();
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+
+          if (!name || !email || !password || !confirmPassword) {
+            alert('Please fill in all fields.');
+            return;
+          }
+
+          if (password !== confirmPassword) {
+            alert('Passwords do not match.');
+            return;
+          }
+
+          // Get existing users
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+
+          // Check if email already exists (case-insensitive)
+          const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+          if (existingUser) {
+            alert('An account already exists with this email. Please sign in instead.');
+            setTimeout(() => switchToSignIn(), 1000);
+            return;
+          }
+
+          // Create new user
+          const newUser = {
+            id: Date.now().toString(),
+            name: name,
+            email: email,
+            password: password,
+            orders: [],
+            createdAt: new Date().toISOString()
+          };
+
+          users.push(newUser);
+          localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+          console.log('✅ New user created:', newUser.name);
+
+          // Sign in the new user
+          window.currentUser = {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            lastActivity: new Date().toISOString()
+          };
+
+          localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+
+          // Update UI
+          updateAuthUI();
+          closeSignUpModal();
+
+          // Show welcome banner
+          showWelcomeBanner(name);
+
+          alert('Account created successfully! Welcome, ' + name + '!');
+        } catch (error) {
+          console.error('❌ Sign up error:', error);
+          alert('Sign up error. Please try again.');
         }
+      };
+
+      // Welcome banner functions
+      window.showWelcomeBanner = function(userName) {
+        console.log('👋 Showing welcome banner for:', userName);
+        try {
+          const welcomeBanner = document.getElementById('welcomeBanner');
+          const welcomeMessage = document.getElementById('welcomeMessage');
+
+          if (welcomeBanner && welcomeMessage) {
+            const firstName = userName.split(' ')[0];
+            welcomeMessage.textContent = `Welcome back, ${firstName}! 👋`;
+            welcomeBanner.classList.remove('hidden');
+
+            // Make the banner persistent (remove close functionality)
+            const closeButton = welcomeBanner.querySelector('button');
+            if (closeButton) {
+              closeButton.style.display = 'none';
+            }
+
+            console.log('✅ Welcome banner shown');
+          } else {
+            console.error('❌ Welcome banner elements not found');
+          }
+        } catch (error) {
+          console.error('❌ Error showing welcome banner:', error);
+        }
+      };
+
+      window.hideWelcomeBanner = function() {
+        console.log('👋 Hiding welcome banner');
+        try {
+          const welcomeBanner = document.getElementById('welcomeBanner');
+          if (welcomeBanner) {
+            welcomeBanner.classList.add('hidden');
+            console.log('✅ Welcome banner hidden');
+          }
+        } catch (error) {
+          console.error('❌ Error hiding welcome banner:', error);
+        }
+      };
+
+      // Update UI based on authentication state
+      window.updateAuthUI = function() {
+        try {
+          const signedOutState = document.getElementById('signedOutState');
+          const signedInState = document.getElementById('signedInState');
+          const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+          const mobileSignedInState = document.getElementById('mobileSignedInState');
+          const userNameSpan = document.getElementById('userName');
+
+          if (window.currentUser) {
+            // User is signed in
+            if (signedOutState) signedOutState.style.display = 'none';
+            if (signedInState) signedInState.style.display = 'flex';
+            if (mobileSignedOutState) mobileSignedOutState.style.display = 'none';
+            if (mobileSignedInState) mobileSignedInState.style.display = 'block';
+            if (userNameSpan) userNameSpan.textContent = window.currentUser.name;
+
+            // Show welcome banner for signed-in users
+            showWelcomeBanner(window.currentUser.name);
+
+            console.log('✅ UI updated - user signed in');
+          } else {
+            // User is signed out
+            if (signedOutState) signedOutState.style.display = 'flex';
+            if (signedInState) signedInState.style.display = 'none';
+            if (mobileSignedOutState) mobileSignedOutState.style.display = 'block';
+            if (mobileSignedInState) mobileSignedInState.style.display = 'none';
+
+            // Hide welcome banner for signed-out users
+            hideWelcomeBanner();
+
+            console.log('✅ UI updated - user signed out');
+          }
+        } catch (error) {
+          console.error('❌ Error updating auth UI:', error);
+        }
+      };
+
+      // Attach form event listeners when DOM is ready
+      function attachAuthListeners() {
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+
+        if (signInForm) {
+          signInForm.removeEventListener('submit', window.handleSignIn);
+          signInForm.addEventListener('submit', window.handleSignIn);
+          console.log('✅ Sign in form listener attached');
+        }
+
+        if (signUpForm) {
+          signUpForm.removeEventListener('submit', window.handleSignUp);
+          signUpForm.addEventListener('submit', window.handleSignUp);
+          console.log('✅ Sign up form listener attached');
+        }
+
+        // Restore any existing session
+        const savedUser = localStorage.getItem('visualVibeUser');
+        if (savedUser) {
+          try {
+            window.currentUser = JSON.parse(savedUser);
+            updateAuthUI();
+            console.log('✅ Restored user session:', window.currentUser.name);
+          } catch (error) {
+            console.error('❌ Error restoring session:', error);
+            localStorage.removeItem('visualVibeUser');
+          }
+        }
+      }
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachAuthListeners);
+      } else {
+        setTimeout(attachAuthListeners, 100);
+      }
+
+      // Sign out function
+      window.signOut = function() {
+        console.log('🚪 Signing out user...');
+        try {
+          const userName = window.currentUser ? window.currentUser.name : 'User';
+
+          // Clear session
+          window.currentUser = null;
+          localStorage.removeItem('visualVibeUser');
+
+          // Update UI
+          updateAuthUI();
+
+          alert('Goodbye, ' + userName + '! You have been signed out.');
+          console.log('✅ User signed out successfully');
+        } catch (error) {
+          console.error('❌ Error signing out:', error);
+          // Force clear anyway
+          window.currentUser = null;
+          localStorage.removeItem('visualVibeUser');
+          updateAuthUI();
+        }
+      };
+
+      // Quick authentication test function
+      window.testAuthQuick = function() {
+        console.log('🧪 AUTHENTICATION QUICK TEST');
+
+        // Test functions
+        const funcs = ['openSignInModal', 'openSignUpModal', 'handleSignIn', 'handleSignUp'];
+        console.log('Functions:', funcs.map(f => `${f}: ${typeof window[f] === 'function' ? '✅' : '❌'}`));
+
+        // Test DOM
+        const elements = ['signInModal', 'signUpModal', 'signInForm', 'signUpForm'];
+        console.log('Elements:', elements.map(id => `${id}: ${document.getElementById(id) ? '✅' : '❌'}`));
+
+        // Test storage
+        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+        console.log(`Storage: ${users.length} users, current session: ${window.currentUser ? window.currentUser.name : 'none'}`);
+
+        // Try to open sign in modal
+        try {
+          openSignInModal();
+          console.log('✅ Sign in modal test - SUCCESS');
+        } catch (error) {
+          console.error('❌ Sign in modal test - FAILED:', error);
+        }
+
+        return 'Test complete - check console for results';
       };
 
       // Close modal functions
@@ -10185,7 +10629,7 @@ This is sent because SMS delivery may have failed.
           <div class="absolute top-4 right-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $50
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">💼</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">����</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Business Cards
           </h4>
@@ -10264,7 +10708,7 @@ This is sent because SMS delivery may have failed.
 
           <div class="text-center">
             <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">📱</span>
+              <span class="text-2xl">����</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Mobile Optimized</h5>
             <p class="text-gray-600 text-sm">All designs work perfectly on any device</p>
@@ -10384,7 +10828,7 @@ This is sent because SMS delivery may have failed.
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+              <div class="text-yellow-400 text-sm">����⭐⭐⭐⭐</div>
               <div class="bg-red-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Business Cards</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -10522,7 +10966,7 @@ This is sent because SMS delivery may have failed.
                 </div>
 
                 <button type="submit" onclick="return window.submitReview(event)" style="width: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; border: none; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); text-transform: uppercase; transition: all 0.3s ease; hover:from-indigo-700 hover:to-purple-700;">
-                  ⭐ Submit Review Now
+                  �� Submit Review Now
                 </button>
 
 
@@ -10545,7 +10989,7 @@ This is sent because SMS delivery may have failed.
               <span id="viewAllReviewsText">View All Reviews</span>
             </button>
             <button onclick="forceReloadReviews()" class="ml-4 bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">
-              🔄 Reload Reviews
+              �� Reload Reviews
             </button>
           </div>
         </div>
@@ -11525,7 +11969,7 @@ This is sent because SMS delivery may have failed.
 
       // System diagnostic and auto-repair function
       function diagnoseAndRepair() {
-        console.log('����� Running system diagnostics...');
+        console.log('������ Running system diagnostics...');
 
         let issues = [];
         let repairs = [];
@@ -11658,7 +12102,7 @@ This is sent because SMS delivery may have failed.
           }
 
           if (chatSendBtn && !chatSendBtn.hasAttribute('data-initialized')) {
-            console.log('�� Adding click event listener to send button');
+            console.log('��� Adding click event listener to send button');
             chatSendBtn.addEventListener('click', function(event) {
               console.log('���️ Send button clicked!', event);
               sendMessage();
@@ -11869,7 +12313,7 @@ This is sent because SMS delivery may have failed.
           if (typeof window.setRating === 'function' && typeof window.submitReview === 'function' && typeof window.toggleAllReviews === 'function') {
             console.log('�� Rating and review functions are properly defined');
           } else {
-            console.error('❌ Rating and review functions not properly defined');
+            console.error('�� Rating and review functions not properly defined');
           }
 
           if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
@@ -12400,7 +12844,7 @@ This is sent because SMS delivery may have failed.
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      �����������━━���━━━━━������━��━━
+      �������������━━���━━━━━������━��━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -12423,7 +12867,7 @@ This is sent because SMS delivery may have failed.
       • Estimated completion: ${formData.get("dueDate")}
 
       CONTACT INFORMATION:
-      📞━━━���━━������━━━━━━━
+      📞��━━���━━������━━━━━━━
       Email: support@visualvibestudio.store
       Phone: (402) 979-7184
       Website: www.visualvibestudio.store
@@ -12736,7 +13180,7 @@ This is sent because SMS delivery may have failed.
             resolve(true);
 
           } catch (error) {
-            console.log('��� Webhook form failed:', error);
+            console.log('���� Webhook form failed:', error);
             resolve(false);
           }
         });
@@ -13951,7 +14395,7 @@ Thanks,
 
           // Force reload after a short delay to ensure DOM is ready
           setTimeout(() => {
-            console.log('🔄 Force loading reviews after delay...');
+            console.log('�� Force loading reviews after delay...');
             const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
             console.log('���� Found stored reviews:', storedReviews.length);
             if (storedReviews.length > 0) {
@@ -13997,7 +14441,7 @@ Thanks,
       // Debug function for troubleshooting review system
       function debugReviewSystem() {
         console.log('���� DEBUG: Review System Status');
-        console.log('══════════���������═════����═══��═════���═�����═══��═��');
+        console.log('══��═══════���������═════����═══��═════����═�����═══��═��');
 
         // Check form elements
         const elements = {
@@ -14889,7 +15333,7 @@ Thanks,
       return 'Chat system recovered';
     };
 
-    console.log('🆘 If chat fails, run: window.fixChat() or fixChat()');
+    console.log('���� If chat fails, run: window.fixChat() or fixChat()');
 
     // DIRECT SMS TEST FUNCTION - Tests SMS delivery to (402) 979-7184
     window.testDirectSMS = function() {
@@ -14941,7 +15385,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('������� Test SMS sent via ' + carrier.name);
+            console.log('�������� Test SMS sent via ' + carrier.name);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
@@ -15092,7 +15536,7 @@ Thanks,
         // Use working VoIP webhook method
         const success = await sendVoIPWebhookDirectly(fullMessage);
         if (success) {
-          console.log('������� VoIP SMS sent successfully');
+          console.log('��������� VoIP SMS sent successfully');
           return true;
         } else {
           console.log('⚠����� VoIP SMS logged for manual processing');
@@ -15504,6 +15948,405 @@ Thanks,
         console.error('������� Error fixing contact form IDs:', error);
       }
     });
+  </script>
+  <script>
+    // FINAL AUTHENTICATION FUNCTIONS - Override all previous definitions
+    console.log('🔐 Loading final authentication functions...');
+
+    window.openSignInModal = function() {
+      console.log('🔑 FINAL: Opening sign in modal...');
+      try {
+        const modal = document.getElementById('signInModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+          const emailInput = document.getElementById('signInEmail');
+          if (emailInput) setTimeout(() => emailInput.focus(), 100);
+          console.log('✅ Sign in modal opened');
+        } else {
+          alert('Sign in not available. Please refresh the page.');
+        }
+      } catch (error) {
+        console.error('❌ Error opening sign in modal:', error);
+        alert('Error opening sign in. Please refresh the page.');
+      }
+    };
+
+    window.openSignUpModal = function() {
+      console.log('📝 FINAL: Opening sign up modal...');
+      try {
+        const modal = document.getElementById('signUpModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+          const nameInput = document.getElementById('signUpName');
+          if (nameInput) setTimeout(() => nameInput.focus(), 100);
+          console.log('✅ Sign up modal opened');
+        } else {
+          alert('Sign up not available. Please refresh the page.');
+        }
+      } catch (error) {
+        console.error('❌ Error opening sign up modal:', error);
+        alert('Error opening sign up. Please refresh the page.');
+      }
+    };
+
+    // Ensure forms have event listeners
+    setTimeout(() => {
+      const signInForm = document.getElementById('signInForm');
+      const signUpForm = document.getElementById('signUpForm');
+
+      if (signInForm && typeof window.handleSignIn === 'function') {
+        signInForm.removeEventListener('submit', window.handleSignIn);
+        signInForm.addEventListener('submit', window.handleSignIn);
+        console.log('✅ FINAL: Sign in form listener attached');
+      }
+
+      if (signUpForm && typeof window.handleSignUp === 'function') {
+        signUpForm.removeEventListener('submit', window.handleSignUp);
+        signUpForm.addEventListener('submit', window.handleSignUp);
+        console.log('✅ FINAL: Sign up form listener attached');
+      }
+
+      console.log('🔐 Final authentication setup complete');
+
+      // Ensure showOrderHistory is available globally
+      window.showOrderHistory = function() {
+        console.log('🔍 Opening My Orders modal...');
+        try {
+          const modal = document.getElementById('orderHistoryModal');
+          const content = document.getElementById('orderHistoryContent');
+
+          if (!modal) {
+            alert('Order history not available. Please refresh the page.');
+            return;
+          }
+
+          if (!content) {
+            alert('Order history content not available. Please refresh the page.');
+            return;
+          }
+
+          modal.classList.remove('hidden');
+
+          // Check if user is signed in
+          if (!window.currentUser) {
+            content.innerHTML = `
+              <div class="text-center py-8">
+                <p class="text-gray-500">Please sign in to view your orders.</p>
+                <button onclick="closeOrderHistory(); openSignInModal();" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                  Sign In
+                </button>
+              </div>
+            `;
+            return;
+          }
+
+          // Get user's orders
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          const user = users.find(u => u.id === window.currentUser.id);
+          const orders = user ? (user.orders || []) : [];
+
+          if (orders.length === 0) {
+            content.innerHTML = `
+              <div class="text-center py-8">
+                <div class="text-gray-400 text-6xl mb-4">📋</div>
+                <h4 class="text-xl font-semibold text-gray-600 mb-2">No Orders Yet</h4>
+                <p class="text-gray-500 mb-4">You haven't placed any orders yet. Start by browsing our services!</p>
+                <button onclick="closeOrderHistory(); document.getElementById('order').scrollIntoView();" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">
+                  Place Your First Order
+                </button>
+              </div>
+            `;
+          } else {
+            const orderHTML = orders.map(order => `
+              <div class="border rounded-lg p-6 bg-gray-50">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 class="text-lg font-semibold text-gray-800">Order #${order.orderNumber}</h4>
+                    <p class="text-sm text-gray-500">${new Date(order.date).toLocaleDateString()}</p>
+                  </div>
+                  <span class="px-3 py-1 rounded-full text-sm font-medium ${
+                    order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    order.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }">
+                    ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p class="text-sm font-medium text-gray-600">Business:</p>
+                    <p class="text-gray-800">${order.businessName}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-600">Services:</p>
+                    <p class="text-gray-800">${order.services.join(', ')}</p>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center pt-4 border-t">
+                  <div>
+                    <p class="text-sm text-gray-600">Total: <span class="font-semibold text-lg text-gray-800">$${order.total}</span></p>
+                  </div>
+                </div>
+              </div>
+            `).join('');
+
+            content.innerHTML = `
+              <div class="mb-6">
+                <p class="text-gray-600">You have ${orders.length} order${orders.length !== 1 ? 's' : ''} on record.</p>
+              </div>
+              ${orderHTML}
+            `;
+          }
+        } catch (error) {
+          console.error('❌ Error in showOrderHistory:', error);
+          alert('Error loading order history. Please try again.');
+        }
+      };
+
+      window.closeOrderHistory = function() {
+        const modal = document.getElementById('orderHistoryModal');
+        if (modal) {
+          modal.classList.add('hidden');
+        }
+      };
+
+      // Profile modal functions
+      window.openProfileModal = function() {
+        console.log('👤 Opening profile modal...');
+        try {
+          const modal = document.getElementById('profileModal');
+          if (!modal) {
+            alert('Profile editor not available. Please refresh the page.');
+            return;
+          }
+
+          // Check if user is signed in
+          if (!window.currentUser) {
+            alert('Please sign in to edit your profile.');
+            return;
+          }
+
+          // Get full user data from storage
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+          const userData = users[userIndex];
+
+          if (!userData) {
+            alert('User data not found. Please sign in again.');
+            return;
+          }
+
+          // Populate form fields
+          const firstNameInput = document.getElementById('profileFirstName');
+          const lastNameInput = document.getElementById('profileLastName');
+          const companyNameInput = document.getElementById('profileCompanyName');
+          const phoneInput = document.getElementById('profilePhone');
+          const emailInput = document.getElementById('profileEmail');
+
+          if (firstNameInput) firstNameInput.value = userData.firstName || '';
+          if (lastNameInput) lastNameInput.value = userData.lastName || '';
+          if (companyNameInput) companyNameInput.value = userData.companyName || '';
+          if (phoneInput) phoneInput.value = userData.phone || '';
+          if (emailInput) emailInput.value = userData.email || '';
+
+          // Show modal
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+
+          // Focus first field
+          if (firstNameInput) {
+            setTimeout(() => firstNameInput.focus(), 100);
+          }
+
+          console.log('✅ Profile modal opened');
+        } catch (error) {
+          console.error('❌ Error opening profile modal:', error);
+          alert('Error opening profile editor. Please try again.');
+        }
+      };
+
+      window.closeProfileModal = function() {
+        console.log('👤 Closing profile modal...');
+        try {
+          const modal = document.getElementById('profileModal');
+          if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+          }
+
+          // Reset form
+          const form = document.getElementById('profileForm');
+          if (form) {
+            form.reset();
+          }
+        } catch (error) {
+          console.error('❌ Error closing profile modal:', error);
+        }
+      };
+
+      // Profile form submission handler
+      window.handleProfileUpdate = function(e) {
+        if (e) e.preventDefault();
+        console.log('👤 Processing profile update...');
+
+        try {
+          if (!window.currentUser) {
+            alert('Please sign in to update your profile.');
+            return;
+          }
+
+          // Get form data
+          const firstName = document.getElementById('profileFirstName').value.trim();
+          const lastName = document.getElementById('profileLastName').value.trim();
+          const companyName = document.getElementById('profileCompanyName').value.trim();
+          const phone = document.getElementById('profilePhone').value.trim();
+          const email = document.getElementById('profileEmail').value.trim();
+
+          // Validate required fields
+          if (!firstName || !lastName || !email) {
+            alert('Please fill in all required fields (First Name, Last Name, Email).');
+            return;
+          }
+
+          // Validate email format
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            return;
+          }
+
+          // Get users array
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+
+          if (userIndex === -1) {
+            alert('User not found. Please sign in again.');
+            return;
+          }
+
+          // Check if email is changed and if new email already exists
+          const currentUser = users[userIndex];
+          if (email.toLowerCase() !== currentUser.email.toLowerCase()) {
+            const emailExists = users.some((u, index) =>
+              index !== userIndex && u.email.toLowerCase() === email.toLowerCase()
+            );
+
+            if (emailExists) {
+              alert('This email address is already in use by another account.');
+              return;
+            }
+          }
+
+          // Update user data
+          users[userIndex] = {
+            ...currentUser,
+            firstName: firstName,
+            lastName: lastName,
+            companyName: companyName,
+            phone: phone,
+            email: email,
+            name: `${firstName} ${lastName}`, // Update display name
+            updatedAt: new Date().toISOString()
+          };
+
+          // Save to localStorage
+          localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+
+          // Update current user session
+          window.currentUser = {
+            ...window.currentUser,
+            name: users[userIndex].name,
+            email: users[userIndex].email
+          };
+          localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+
+          // Update UI
+          if (typeof window.updateAuthUI === 'function') {
+            window.updateAuthUI();
+          }
+
+          window.closeProfileModal();
+          alert('Profile updated successfully!');
+          console.log('✅ Profile updated for user:', window.currentUser.name);
+        } catch (error) {
+          console.error('❌ Error updating profile:', error);
+          alert('Error updating profile. Please try again.');
+        }
+      };
+
+      // Attach profile form listener
+      setTimeout(() => {
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+          profileForm.removeEventListener('submit', window.handleProfileUpdate);
+          profileForm.addEventListener('submit', window.handleProfileUpdate);
+          console.log('✅ Profile form listener attached');
+        }
+      }, 100);
+
+      // Override any existing closeWelcomeBanner function to make it persistent
+      window.closeWelcomeBanner = function() {
+        // Do nothing - banner should stay visible until sign out
+        console.log('👋 Welcome banner close attempt blocked - banner stays visible until sign out');
+      };
+
+      // Mobile menu functions
+      window.toggleMobileMenu = function() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        if (mobileMenu && mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.remove('hidden');
+          // Change hamburger to X icon
+          if (mobileMenuBtn) {
+            mobileMenuBtn.innerHTML = `
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            `;
+          }
+        } else {
+          window.closeMobileMenu();
+        }
+      };
+
+      window.closeMobileMenu = function() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        if (mobileMenu) {
+          mobileMenu.classList.add('hidden');
+        }
+
+        // Change X back to hamburger icon
+        if (mobileMenuBtn) {
+          mobileMenuBtn.innerHTML = `
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          `;
+        }
+      };
+
+      // Test that everything is working
+      console.log('Authentication test:', {
+        openSignInModal: typeof window.openSignInModal,
+        openSignUpModal: typeof window.openSignUpModal,
+        handleSignIn: typeof window.handleSignIn,
+        handleSignUp: typeof window.handleSignUp,
+        showOrderHistory: typeof window.showOrderHistory,
+        showWelcomeBanner: typeof window.showWelcomeBanner,
+        hideWelcomeBanner: typeof window.hideWelcomeBanner,
+        signInModal: !!document.getElementById('signInModal'),
+        signUpModal: !!document.getElementById('signUpModal'),
+        signInForm: !!document.getElementById('signInForm'),
+        signUpForm: !!document.getElementById('signUpForm'),
+        welcomeBanner: !!document.getElementById('welcomeBanner'),
+        welcomeMessage: !!document.getElementById('welcomeMessage')
+      });
+    }, 1000);
   </script>
   </body>
 </html>
