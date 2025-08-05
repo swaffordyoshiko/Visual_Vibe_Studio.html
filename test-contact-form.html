@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form SMS Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #005a8b; }
+        .status { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Contact Form SMS Test</h1>
+    <p>This page will test if the contact form properly sends SMS messages to (402) 979-7184</p>
+
+    <form id="testContactForm">
+        <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" value="Test Customer" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" value="(555) 123-4567" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" value="test@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" rows="4" required>This is a test message from the contact form test page. Please confirm if you receive this SMS at (402) 979-7184.</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="responsePreference">Response Preference *</label>
+            <select id="responsePreference">
+                <option value="text">Text/SMS</option>
+                <option value="email">Email</option>
+            </select>
+        </div>
+
+        <button type="submit">🚀 Test SMS Sending</button>
+    </form>
+
+    <div id="statusDiv"></div>
+    <div id="debugDiv" class="debug"></div>
+
+    <script>
+        // Test SMS sending function
+        async function testSMSSending(name, phone, email, message, responsePreference) {
+            const statusDiv = document.getElementById('statusDiv');
+            const debugDiv = document.getElementById('debugDiv');
+            
+            statusDiv.innerHTML = '<div class="status">📱 Testing SMS sending...</div>';
+            debugDiv.innerHTML = 'Starting SMS test...\n';
+
+            try {
+                const timestamp = new Date().toLocaleString();
+                
+                // Format message exactly like the main website
+                const compactFormat = `VVS:${name}|${phone.replace(/[^\d]/g, '')}|${email}|R:${responsePreference === 'email' ? 'E' : 'T'}|MSG:${message}`;
+                
+                debugDiv.innerHTML += `Formatted SMS: ${compactFormat}\n`;
+                debugDiv.innerHTML += `SMS Length: ${compactFormat.length} characters\n`;
+                debugDiv.innerHTML += `Target Phone: (402) 979-7184\n`;
+                debugDiv.innerHTML += `Timestamp: ${timestamp}\n\n`;
+
+                // Create form to submit to Zapier webhook
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
+                form.style.display = 'none';
+                form.target = 'sms-test-' + Date.now();
+
+                const iframe = document.createElement('iframe');
+                iframe.name = form.target;
+                iframe.style.display = 'none';
+
+                const fields = {
+                    'phone': '4029797184',
+                    'message': compactFormat,
+                    'type': 'contact_form_test',
+                    'provider': 'bandwidth',
+                    'timestamp': timestamp,
+                    'customer_name': name,
+                    'customer_mobile': phone,
+                    'customer_email': email,
+                    'customer_message': message,
+                    'response_preference': responsePreference,
+                    'source': 'contact_form_test_page'
+                };
+
+                debugDiv.innerHTML += 'Webhook Data:\n';
+                Object.entries(fields).forEach(([key, value]) => {
+                    debugDiv.innerHTML += `  ${key}: ${value}\n`;
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value;
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(iframe);
+                document.body.appendChild(form);
+                
+                debugDiv.innerHTML += '\nSubmitting to Zapier webhook...\n';
+                form.submit();
+
+                setTimeout(() => {
+                    statusDiv.innerHTML = '<div class="status success">✅ SMS test submitted successfully!</div>';
+                    debugDiv.innerHTML += 'Form submitted to Zapier webhook.\n';
+                    debugDiv.innerHTML += 'Check your phone at (402) 979-7184 for the SMS message.\n';
+                    debugDiv.innerHTML += 'If you don\'t receive it within 2-3 minutes, there may be an issue with the Zapier integration.\n';
+                    
+                    // Clean up
+                    if (document.body.contains(form)) document.body.removeChild(form);
+                    if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                }, 2000);
+
+            } catch (error) {
+                console.error('SMS test error:', error);
+                statusDiv.innerHTML = '<div class="status error">❌ SMS test failed: ' + error.message + '</div>';
+                debugDiv.innerHTML += 'ERROR: ' + error.message + '\n';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('testContactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const responsePreference = document.getElementById('responsePreference').value;
+
+            if (!name || !phone || !email || !message) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            testSMSSending(name, phone, email, message, responsePreference);
+        });
+
+        // Test webhook endpoint directly
+        function testWebhookDirect() {
+            const debugDiv = document.getElementById('debugDiv');
+            debugDiv.innerHTML += '\n--- Testing webhook endpoint directly ---\n';
+
+            fetch('https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: '4029797184',
+                    message: 'Direct webhook test from test page',
+                    type: 'direct_test',
+                    timestamp: new Date().toISOString()
+                })
+            }).then(response => {
+                debugDiv.innerHTML += `Webhook response status: ${response.status}\n`;
+                debugDiv.innerHTML += `Webhook response ok: ${response.ok}\n`;
+                return response.text();
+            }).then(text => {
+                debugDiv.innerHTML += `Webhook response body: ${text}\n`;
+            }).catch(error => {
+                debugDiv.innerHTML += `Webhook error: ${error.message}\n`;
+            });
+        }
+
+        // Add test button for direct webhook test
+        const testButton = document.createElement('button');
+        testButton.textContent = '🔧 Test Webhook Directly';
+        testButton.style.marginLeft = '10px';
+        testButton.onclick = testWebhookDirect;
+        document.querySelector('button').parentNode.appendChild(testButton);
+    </script>
+</body>
+</html>
