@@ -211,6 +211,16 @@ const ratingUpdatesFixScript = document.createElement('script');
 ratingUpdatesFixScript.src = 'fix-rating-updates.js';
 document.head.appendChild(ratingUpdatesFixScript);
 
+// Load AGGRESSIVE rating updates fix script (loads last to override everything)
+const forceRatingUpdatesScript = document.createElement('script');
+forceRatingUpdatesScript.src = 'force-rating-updates.js';
+document.head.appendChild(forceRatingUpdatesScript);
+
+// Load test rating updates script for debugging
+const testRatingUpdatesScript = document.createElement('script');
+testRatingUpdatesScript.src = 'test-rating-updates.js';
+document.head.appendChild(testRatingUpdatesScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
