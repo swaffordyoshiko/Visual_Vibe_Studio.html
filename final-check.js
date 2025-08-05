@@ -201,6 +201,11 @@ const submitReviewFixScript = document.createElement('script');
 submitReviewFixScript.src = 'fix-submit-review.js';
 document.head.appendChild(submitReviewFixScript);
 
+// Load addReviewToTestimonials fix script
+const testimonialsFixScript = document.createElement('script');
+testimonialsFixScript.src = 'fix-add-review-to-testimonials.js';
+document.head.appendChild(testimonialsFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
