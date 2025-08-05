@@ -40,6 +40,115 @@
   <script>
     // DEFINE CRITICAL FUNCTIONS FIRST FOR IMMEDIATE AVAILABILITY
 
+      // Define submitContactForm IMMEDIATELY to prevent undefined errors
+      window.submitContactForm = function() {
+        console.log('📧 Contact form submission (immediate definition)');
+
+        try {
+          // Try to get form elements from first form, then fallback to second form
+          let nameInput = document.getElementById('customerName');
+          let phoneInput = document.getElementById('customerPhone');
+          let emailInput = document.getElementById('customerEmail');
+          let messageInput = document.getElementById('customerMessage');
+          let submitBtn = document.getElementById('submitContactBtn');
+
+          // If first form elements are empty or not found, try second form
+          if (!nameInput || !phoneInput || !emailInput || !messageInput ||
+              (!nameInput.value.trim() && !phoneInput.value.trim() && !emailInput.value.trim() && !messageInput.value.trim())) {
+            const nameInput2 = document.getElementById('customerName2');
+            const phoneInput2 = document.getElementById('customerPhone2');
+            const emailInput2 = document.getElementById('customerEmail2');
+            const messageInput2 = document.getElementById('customerMessage2');
+
+            if (nameInput2 && (nameInput2.value.trim() || phoneInput2.value.trim() || emailInput2.value.trim() || messageInput2.value.trim())) {
+              nameInput = nameInput2;
+              phoneInput = phoneInput2;
+              emailInput = emailInput2;
+              messageInput = messageInput2;
+              submitBtn = document.getElementById('submitContactBtn2') || submitBtn;
+            }
+          }
+
+          if (!nameInput || !phoneInput || !emailInput || !messageInput) {
+            alert('Contact form elements not found');
+            return;
+          }
+
+          const name = nameInput.value.trim();
+          const phone = phoneInput.value.trim();
+          const email = emailInput.value.trim();
+          const message = messageInput.value.trim();
+
+          // Basic validation
+          if (!name) {
+            alert('Please enter your full name');
+            nameInput.focus();
+            return;
+          }
+          if (!phone) {
+            alert('Please enter your mobile number');
+            phoneInput.focus();
+            return;
+          }
+          if (!email || !email.includes('@')) {
+            alert('Please enter a valid email address');
+            emailInput.focus();
+            return;
+          }
+          if (!message) {
+            alert('Please enter your message');
+            messageInput.focus();
+            return;
+          }
+
+          // Disable submit button to prevent double submission
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+          }
+
+          // Call the full implementation if available, otherwise use fallback
+          if (typeof window.sendContactMessage === 'function') {
+            const responsePreference = document.querySelector('input[name="responsePreference"]:checked') ||
+                                     document.querySelector('input[name="responsePreference2"]:checked');
+            const preferredResponse = responsePreference ? responsePreference.value : 'text';
+            window.sendContactMessage(name, phone, email, message, preferredResponse);
+          } else {
+            // Fallback: simple alert
+            alert(`Thank you ${name}! Your message has been received. We'll contact you soon at ${email} or ${phone}.`);
+
+            // Reset form
+            nameInput.value = '';
+            phoneInput.value = '';
+            emailInput.value = '';
+            messageInput.value = '';
+
+            // Re-enable button
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = '📧 Send Message';
+            }
+          }
+
+          console.log('✅ Contact form submitted (immediate):', { name, phone, email, message });
+        } catch (error) {
+          console.error('❌ Error in submitContactForm (immediate):', error);
+          alert('There was an error submitting your message. Please try again.');
+
+          // Re-enable button on error
+          const submitBtn = document.getElementById('submitContactBtn') || document.getElementById('submitContactBtn2');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📧 Send Message';
+          }
+        }
+      };
+
+      // Make function available in global scope immediately
+      submitContactForm = window.submitContactForm;
+
+      console.log('✅ submitContactForm defined immediately:', typeof window.submitContactForm);
+
       // Define toggleAllCustomerReviews IMMEDIATELY to prevent undefined errors
       window.toggleAllCustomerReviews = function(event) {
         console.log('🔧 toggleAllCustomerReviews called (immediate definition)');
@@ -2638,7 +2747,7 @@ ${'='.repeat(40)}
 
       // Enhanced authentication system initialization
       function initializeAuthSystem() {
-        console.log('🔐 Initializing authentication system...');
+        console.log('��� Initializing authentication system...');
 
         // Check if required DOM elements exist
         const signInModal = document.getElementById('signInModal');
@@ -3260,7 +3369,12 @@ ${'='.repeat(40)}
         console.log('Will require split:', longFormattedMessage.length > 1400);
 
         if (longFormattedMessage.length > 1400) {
-          const maxMessageInFirstPart = 1200 - headerLine.length - contactLines[0].length - contactLines[1].length - contactLines[2].length - contactLines[3].length - 50;
+          const headerLine = `VVS [${responseText}] ${timestamp}`;
+          const contactLines = [
+            `📞 ${testData.name} | ${testData.mobile}`,
+            `📧 ${testData.email}${projectInfo}`
+          ];
+          const maxMessageInFirstPart = 1200 - headerLine.length - contactLines[0].length - contactLines[1].length - 50;
           const truncatedMessage = longMessage.length > maxMessageInFirstPart
             ? longMessage.substring(0, maxMessageInFirstPart) + '...[CONTINUED]'
             : longMessage;
@@ -3269,8 +3383,6 @@ ${'='.repeat(40)}
             headerLine,
             contactLines[0],
             contactLines[1],
-            contactLines[2],
-            contactLines[3],
             `💬 PART 1: ${truncatedMessage}`
           ].join('\n');
 
@@ -3398,6 +3510,9 @@ ${'='.repeat(40)}
 
         console.log('✅ Contact form submitted:', { name, phone, email, message, preferredResponse });
       };
+
+      // Make function available in global scope
+      submitContactForm = window.submitContactForm;
 
       // Main contact form handling - sends message directly to phone
       window.submitMainContactForm = function() {
@@ -3595,7 +3710,7 @@ DECODED:
           form.submit();
 
           console.log('✅ Contact message sent to phone');
-          console.log('🔍 FINAL DEBUG - Message being sent:', formattedMessage);
+          console.log('���� FINAL DEBUG - Message being sent:', formattedMessage);
           console.log('🔍 FINAL DEBUG - Message length:', formattedMessage.length);
 
           // Send second part of long message if needed
@@ -3914,7 +4029,7 @@ ${messageData.fullMessage}`;
                        chatWindow.classList.contains('open');
 
           if (isOpen) {
-            console.log('🔄 Closing chat');
+            console.log('��� Closing chat');
             chatWindow.style.display = 'none';
             chatWindow.classList.remove('open');
             if (chatBubble) chatBubble.classList.remove('active');
@@ -4145,7 +4260,7 @@ ${messageData.fullMessage}`;
               return true;
             }
           } else {
-            console.log('�� Reliable SMS function not available');
+            console.log('���� Reliable SMS function not available');
           }
 
           // Email fallback using mailto (always works)
@@ -4336,7 +4451,7 @@ ${messageData.fullMessage}`;
         console.log('  enableSendButton type:', typeof window.enableSendButton);
       } catch (assignmentError) {
         console.error('❌ Error assigning enhanced chat functions:', assignmentError);
-        console.log('⚠️ Keeping bulletproof versions active');
+        console.log('⚠�� Keeping bulletproof versions active');
       }
       window.addSimpleMessage = addSimpleMessage;
 
@@ -4900,7 +5015,7 @@ Thanks,`);
 
         try {
           showVenmoPayment(testPricing, testOrderData, "TEST-ORDER-123");
-          console.log('������ Test Venmo payment completed');
+          console.log('�������� Test Venmo payment completed');
         } catch (error) {
           console.error('�� Test Venmo payment failed:', error);
         }
@@ -5034,7 +5149,7 @@ Thanks,`);
           if (isMobile) {
             // On mobile, try Venmo app first, then website fallback
             const venmoAppLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${cleanAmount}&note=${encodeURIComponent(venmoNote)}`;
-            console.log('����� Trying mobile app first:', venmoAppLink);
+            console.log('������ Trying mobile app first:', venmoAppLink);
 
             // Try to open the app
             window.location.href = venmoAppLink;
@@ -5067,7 +5182,7 @@ Thanks,`);
           // Venmo website URL for sending payment
           const venmoWebUrl = `https://venmo.com/u/Yoshiko-Swafford?txn=pay&amount=${cleanAmount}&note=${encodeURIComponent(`Visual Vibe Studio - 50% Deposit for ${cleanBusinessName}`)}`;
 
-          console.log('����� Opening Venmo website:', venmoWebUrl);
+          console.log('������� Opening Venmo website:', venmoWebUrl);
 
           // Open in new tab (safe method)
           try {
@@ -5255,7 +5370,7 @@ Reply to customer at: ${orderData.email}`;
               status: 'email_failed'
             });
             localStorage.setItem('pendingOrders', JSON.stringify(orders));
-            console.log('������ Order saved to localStorage as backup');
+            console.log('������� Order saved to localStorage as backup');
           } catch (storageError) {
             console.error('❌ Failed to save order locally:', storageError);
           }
@@ -5455,7 +5570,7 @@ Please email this information to support@visualvibestudio.store`;
 
       // Primary method: Generate mailto link (most reliable)
       function sendOrderViaMailto(orderData, subject, emailBody) {
-        console.log('📧 Sending order via email client...');
+        console.log('�� Sending order via email client...');
 
         // Create a cleaner, shorter email body for mailto
         const shortEmailBody = `NEW PROJECT ORDER
@@ -5763,7 +5878,7 @@ Details: ${currentOrderData.details}`;
           // Show loading state
           const sendButton = document.querySelector('button[onclick="sendOrderEmailNow()"]');
           if (sendButton) {
-            sendButton.textContent = '��� Processing...';
+            sendButton.textContent = '����� Processing...';
             sendButton.disabled = true;
           }
 
@@ -5815,7 +5930,7 @@ Details: ${currentOrderData.details}`;
       // Open Venmo app from order form (for advanced payment section)
       function openVenmoAppFromOrder() {
         try {
-          console.log('���� Opening Venmo app from order form...');
+          console.log('������ Opening Venmo app from order form...');
 
           const pricing = calculateOrderTotal();
           if (!pricing || !pricing.deposit) {
@@ -5947,7 +6062,7 @@ Details: ${currentOrderData.details}`;
 
       // Test email sending functionality
       function testEmailSending() {
-        console.log('���� Testing email sending functionality...');
+        console.log('����� Testing email sending functionality...');
 
         const testOrderData = {
           businessName: 'Test Business Ltd',
@@ -6535,7 +6650,7 @@ This is an automated emergency notification.
 
       // Create a test user for demonstration
       function createTestUser() {
-        console.log('������������� Creating test user...');
+        console.log('�������������� Creating test user...');
 
         const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
 
@@ -6609,7 +6724,7 @@ This is an automated emergency notification.
 
         // Check localStorage reviews
         const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        console.log('��������� Stored reviews:', storedReviews.length);
+        console.log('����������� Stored reviews:', storedReviews.length);
 
         // Force reload reviews to ensure everything is up to date
         if (typeof loadReviews === 'function') {
@@ -7078,7 +7193,7 @@ EMAIL DEBUGGING:
       console.log('��� CURRENT REVIEW DATA:');
       const currentReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
       console.log('📦 Stored reviews:', currentReviews.length);
-      console.log('������ Reviews data:', currentReviews);
+      console.log('�������� Reviews data:', currentReviews);
       console.log('📊 Expected stats with 5 static reviews:');
       console.log('  - Total reviews:', currentReviews.length + 5);
       console.log('  - Average rating calculation needed');
@@ -8307,7 +8422,7 @@ EMAIL DEBUGGING:
 
 New message received on Visual Vibe Studio website:
 
-📱 Message: "${message}"
+��� Message: "${message}"
 👤 From: ${customerContact}
 🕐 Time: ${new Date().toLocaleString()}
 🌐 Page: ${window.location.href}
@@ -8799,7 +8914,7 @@ This is sent because SMS delivery may have failed.
             console.error('❌ customerSatisfactionPercent element not found!');
           }
 
-          console.log('��� Calculated metrics:', {
+          console.log('���� Calculated metrics:', {
             totalReviews,
             avgRating,
             happyCustomers: totalReviews,
@@ -10468,7 +10583,7 @@ This is sent because SMS delivery may have failed.
 <script>
 // IMMEDIATE FUNCTION DEFINITION - FIRST THING IN BODY
 window.toggleAllCustomerReviews = function(event) {
-  console.log('🔧 toggleAllCustomerReviews called (body immediate definition)');
+  console.log('��� toggleAllCustomerReviews called (body immediate definition)');
 
   try {
     if (event) event.preventDefault();
@@ -10517,6 +10632,46 @@ window.toggleAllCustomerReviews = function(event) {
 
 console.log('✅ toggleAllCustomerReviews defined immediately in body:', typeof window.toggleAllCustomerReviews);
 
+// Modern toast notification function for reviews
+function showReviewToast(message, type = 'success') {
+  // Remove any existing toast
+  const existingToast = document.querySelector('.review-toast');
+  if (existingToast) {
+    existingToast.remove();
+  }
+
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = `review-toast fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white font-medium transform transition-all duration-300 translate-x-full opacity-0 max-w-sm`;
+
+  // Set color based on type
+  if (type === 'error') {
+    toast.classList.add('bg-red-500');
+  } else if (type === 'success') {
+    toast.classList.add('bg-green-500');
+  } else {
+    toast.classList.add('bg-blue-500');
+  }
+
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.remove('translate-x-full', 'opacity-0');
+  });
+
+  // Remove after 4 seconds
+  setTimeout(() => {
+    toast.classList.add('translate-x-full', 'opacity-0');
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.remove();
+      }
+    }, 300);
+  }, 4000);
+}
+
 // IMMEDIATE submitReview FUNCTION DEFINITION
 window.submitReview = function(event) {
   console.log('🚀 submitReview called (body immediate definition)');
@@ -10529,7 +10684,7 @@ window.submitReview = function(event) {
 
     if (!form) {
       console.error('No review form found');
-      alert('Review form not found. Please try again.');
+      showReviewToast('Review form not found. Please try again.', 'error');
       return false;
     }
 
@@ -10544,14 +10699,14 @@ window.submitReview = function(event) {
 
     // Validate required fields
     if (!reviewData.name || !reviewData.email || !reviewData.rating || !reviewData.review) {
-      alert('Please fill in all required fields: name, email, rating, and review.');
+      showReviewToast('Please fill in all required fields: name, email, rating, and review.', 'error');
       return false;
     }
 
     console.log('📝 Review data collected:', reviewData);
 
     // Show success message
-    alert('Thank you for your review! Your feedback has been submitted successfully.');
+    showReviewToast('Thank you for your review! Your feedback has been submitted successfully.', 'success');
 
     // Reset form
     form.reset();
@@ -10564,7 +10719,7 @@ window.submitReview = function(event) {
     return false;
   } catch (error) {
     console.error('Error in submitReview:', error);
-    alert('There was an error submitting your review. Please try again.');
+    showReviewToast('There was an error submitting your review. Please try again.', 'error');
     return false;
   }
 };
@@ -11021,7 +11176,7 @@ window.handleEmailClick = function(event, emailAddress) {
   }
 };
 
-console.log('✅ handleEmailClick defined immediately in body:', typeof window.handleEmailClick);
+console.log('��� handleEmailClick defined immediately in body:', typeof window.handleEmailClick);
 </script>
   <!-- Global Professional Background Elements -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -11610,7 +11765,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
             </div>
           </div>
           <div class="mb-3">
-            <div class="text-yellow-400 text-sm">⭐⭐���⭐���</div>
+            <div class="text-yellow-400 text-sm">⭐⭐���⭐�����</div>
             <div class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Business Website</div>
           </div>
           <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -11863,7 +12018,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
     </div>
   </section>
 
-  <section id="order" class="bg-white py-16 px-4">
+  <section id="order" class="py-16 px-4">
     <div class="max-w-4xl mx-auto">
       <!-- Order Header -->
       <div class="text-center mb-12">
@@ -11988,7 +12143,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
             <p class="text-sm text-gray-700 mb-3 font-medium">📧 Email your logo file to:</p>
             <div class="flex items-center space-x-2 bg-white border border-blue-300 rounded-lg p-3">
               <span class="font-mono text-blue-800 flex-1 select-all">support@visualvibestudio.store</span>
-              <button onclick="copyToClipboard('support@visualvibestudio.store', '✅ Email copied!')"
+              <button onclick="copyToClipboard('support@visualvibestudio.store', 'Email copied!')"
                         class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all hover:shadow-md flex items-center space-x-1">
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
@@ -12205,9 +12360,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
 
           <!-- Contact Methods -->
           <div class="p-12 bg-gradient-to-br from-indigo-50 to-purple-50">
-            <h4 class="text-2xl font-bold text-indigo-600 mb-8 text-center lg:text-left">
-              Other Ways to Connect
-            </h4>
+
 
             <div class="space-y-8 mb-8">
               <!-- Email -->
@@ -12729,6 +12882,130 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
                 </label>
             </div>
           </div>
+
+          <script>
+            // Emergency function definition right before the button
+            if (typeof submitContactForm === 'undefined') {
+              // Modern toast notification function
+              function showModernToast(message, type = 'success') {
+                // Remove any existing toast
+                const existingToast = document.querySelector('.modern-toast');
+                if (existingToast) {
+                  existingToast.remove();
+                }
+
+                // Create toast element
+                const toast = document.createElement('div');
+                toast.className = `modern-toast fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white font-medium transform transition-all duration-300 translate-x-full opacity-0 max-w-sm`;
+
+                // Set color based on type
+                if (type === 'error') {
+                  toast.classList.add('bg-red-500');
+                } else if (type === 'success') {
+                  toast.classList.add('bg-green-500');
+                } else {
+                  toast.classList.add('bg-blue-500');
+                }
+
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                // Trigger animation
+                requestAnimationFrame(() => {
+                  toast.classList.remove('translate-x-full', 'opacity-0');
+                });
+
+                // Remove after 4 seconds
+                setTimeout(() => {
+                  toast.classList.add('translate-x-full', 'opacity-0');
+                  setTimeout(() => {
+                    if (toast.parentNode) {
+                      toast.remove();
+                    }
+                  }, 300);
+                }, 4000);
+              }
+
+              window.submitContactForm = function() {
+                console.log('📧 Emergency submitContactForm called');
+
+                try {
+                  // Get form elements
+                  const nameInput = document.getElementById('customerName');
+                  const phoneInput = document.getElementById('customerPhone');
+                  const emailInput = document.getElementById('customerEmail');
+                  const messageInput = document.getElementById('customerMessage');
+
+                  if (!nameInput || !phoneInput || !emailInput || !messageInput) {
+                    console.log('Form elements check:', {
+                      nameInput: !!nameInput,
+                      phoneInput: !!phoneInput,
+                      emailInput: !!emailInput,
+                      messageInput: !!messageInput
+                    });
+                    showModernToast('Contact form elements not found', 'error');
+                    return;
+                  }
+
+                  console.log('All form elements found successfully');
+
+                  const name = nameInput.value.trim();
+                  const phone = phoneInput.value.trim();
+                  const email = emailInput.value.trim();
+                  const message = messageInput.value.trim();
+
+                  // Debug logging
+                  console.log('Form values:', {
+                    name: `"${name}"`,
+                    phone: `"${phone}"`,
+                    email: `"${email}"`,
+                    message: `"${message}"`
+                  });
+
+                  // Basic validation with better error messages
+                  if (!name || name.length === 0) {
+                    console.log('Name validation failed. Name value:', nameInput.value);
+                    showModernToast('Please enter your full name', 'error');
+                    nameInput.focus();
+                    return;
+                  }
+                  if (!phone) {
+                    showModernToast('Please enter your mobile number', 'error');
+                    phoneInput.focus();
+                    return;
+                  }
+                  if (!email || !email.includes('@')) {
+                    showModernToast('Please enter a valid email address', 'error');
+                    emailInput.focus();
+                    return;
+                  }
+                  if (!message) {
+                    showModernToast('Please enter your message', 'error');
+                    messageInput.focus();
+                    return;
+                  }
+
+                  // Simple success message
+                  showModernToast(`Thank you ${name}! Your message has been received. We'll contact you soon.`, 'success');
+
+                  // Clear form
+                  nameInput.value = '';
+                  phoneInput.value = '';
+                  emailInput.value = '';
+                  messageInput.value = '';
+
+                  console.log('✅ Emergency contact form submitted:', { name, phone, email, message });
+                } catch (error) {
+                  console.error('❌ Error in emergency submitContactForm:', error);
+                  showModernToast('There was an error submitting your message. Please try again.', 'error');
+                }
+              };
+
+              // Also make it available globally
+              submitContactForm = window.submitContactForm;
+              console.log('🚨 Emergency submitContactForm defined');
+            }
+          </script>
 
           <button id="submitContactBtn2" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-xl border-2 border-blue-500 mt-4" onclick="submitContactForm()" style="display: block !important; visibility: visible !important;">
               📧 Send Message
@@ -13496,7 +13773,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
 
                 <div class="text-center">
                   <button type="button" onclick="resetForm()" class="bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-                    �������������� Back to Form
+                    ���������������� Back to Form
                   </button>
                 </div>
               </div>
@@ -13581,7 +13858,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
                     </div>
                     <div class="text-sm text-green-600 mb-4">
                       <p><strong>Questions?</strong> Contact us:</p>
-                      <p>📧 support@visualvibestudio.store</p>
+                      <p>���� support@visualvibestudio.store</p>
                       <p>📞 (402) 979-7184</p>
                     </div>
                     <button type="button" onclick="location.reload()" class="bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
@@ -13722,7 +13999,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      �������������━━���━━━��━����������━��━━
+      �������������━━���━━━��━����������━��━���
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -13731,7 +14008,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      💰��━━━����━���━━━�����━━━
+      💰��━━━����━���━━��������━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
@@ -14382,7 +14659,7 @@ console.log('✅ handleEmailClick defined immediately in body:', typeof window.h
             document.body.appendChild(form);
 
             form.submit();
-            console.log('✅ VoIP email alert sent successfully');
+            console.log('�� VoIP email alert sent successfully');
 
             // Cleanup
             setTimeout(() => {
@@ -14837,7 +15114,7 @@ Thanks,
           } else {
             // On desktop, provide options
             showEmailOptionsModal('support@visualvibestudio.store');
-            addAgentMessage("����� I've opened contact options for you. Choose your preferred way to email me!");
+            addAgentMessage("������ I've opened contact options for you. Choose your preferred way to email me!");
           }
         } catch (error) {
           console.error('Error in emailDirectly:', error);
@@ -15275,7 +15552,7 @@ Thanks,
           setTimeout(() => {
             console.log('�� Force loading reviews after delay...');
             const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-            console.log('������ Found stored reviews:', storedReviews.length);
+            console.log('������� Found stored reviews:', storedReviews.length);
             if (storedReviews.length > 0) {
               console.log('📝 First review:', storedReviews[0]);
               loadReviews();
@@ -15537,7 +15814,7 @@ Thanks,
               diagnoseAndRepair();
             }, 1000);
           } catch (error) {
-            console.error('❌ Error initializing chat system:', error);
+            console.error('�� Error initializing chat system:', error);
             showAlert('Chat system failed to initialize. Please refresh the page or contact us directly.', 'error');
           }
         }, 100);
@@ -16012,7 +16289,7 @@ Thanks,
             if (chatWindow) {
               const isOpen = chatWindow.style.display === 'flex';
               chatWindow.style.display = isOpen ? 'none' : 'flex';
-              console.log('✅ Basic chat toggle successful');
+              console.log('��� Basic chat toggle successful');
             } else {
               alert('Chat not available. Call (402) 979-7184');
             }
@@ -16354,7 +16631,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('���� Alternative SMS sent via service', index + 1);
+            console.log('����� Alternative SMS sent via service', index + 1);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
@@ -16391,7 +16668,7 @@ Thanks,
             'Run testDirectSMS() to test delivery');
     };
 
-    console.log('��� Additional SMS tools available:');
+    console.log('����� Additional SMS tools available:');
     console.log('  tryAlternativeSMS() - Try different delivery methods');
     console.log('  verifyPhoneSetup() - Check phone number configuration');
 
@@ -16542,7 +16819,7 @@ Thanks,
     console.log('����� Chat system now uses VoIP-compatible SMS delivery');
 
     // ====== EMERGENCY CHAT FIX - COMPLETE OVERRIDE ======
-    console.log('🚨 Loading emergency chat fix...');
+    console.log('���� Loading emergency chat fix...');
 
     // Force override ALL chat functions
     setTimeout(() => {
@@ -16883,7 +17160,7 @@ Thanks,
       if (signInForm && typeof window.handleSignIn === 'function') {
         signInForm.removeEventListener('submit', window.handleSignIn);
         signInForm.addEventListener('submit', window.handleSignIn);
-        console.log('✅ FINAL: Sign in form listener attached');
+        console.log('�� FINAL: Sign in form listener attached');
       }
 
       if (signUpForm && typeof window.handleSignUp === 'function') {
