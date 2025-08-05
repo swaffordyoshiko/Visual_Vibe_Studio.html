@@ -147,8 +147,3 @@ window.toastManager = {
 window.createViewportToast = createViewportToast;
 
 console.log('✅ Viewport-aware toast system loaded!');
-
-// Test the system
-setTimeout(() => {
-  createViewportToast('Viewport toast system loaded! This should appear in your current view.', 'success', 4000);
-}, 1000);
