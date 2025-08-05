@@ -176,6 +176,11 @@ viewportToastScript.onload = function() {
 document.head.appendChild(viewportToastScript);
 
 
+// Load DEFINITIVE submitReview fix FIRST to ensure it's always available
+const definitiveSubmitReviewScript = document.createElement('script');
+definitiveSubmitReviewScript.src = 'fix-submitreview-definitive.js';
+document.head.appendChild(definitiveSubmitReviewScript);
+
 // Load the full emergency script asynchronously
 const emergencyScript = document.createElement('script');
 emergencyScript.src = 'toast-fix.js';
@@ -198,7 +203,7 @@ document.head.appendChild(ratingFixScript);
 
 // Load submitReview function fix script
 const submitReviewFixScript = document.createElement('script');
-submitReviewFixScript.src = 'fix-submit-review.js';
+submitReviewFixScript.src = 'fix-submit-reviews.js';
 document.head.appendChild(submitReviewFixScript);
 
 // Load addReviewToTestimonials fix script
@@ -260,6 +265,11 @@ document.head.appendChild(pageRefreshTestScript);
 const missingUpdatesFixScript = document.createElement('script');
 missingUpdatesFixScript.src = 'fix-missing-updates.js';
 document.head.appendChild(missingUpdatesFixScript);
+
+// Load submitReview availability test
+const submitReviewTestScript = document.createElement('script');
+submitReviewTestScript.src = 'test-submitreview-availability.js';
+document.head.appendChild(submitReviewTestScript);
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
