@@ -226,6 +226,11 @@ const directRatingFixScript = document.createElement('script');
 directRatingFixScript.src = 'direct-rating-fix.js';
 document.head.appendChild(directRatingFixScript);
 
+// Load PERMANENT rating fix script (final script - ensures automatic updates for real customers)
+const permanentRatingFixScript = document.createElement('script');
+permanentRatingFixScript.src = 'permanent-rating-fix.js';
+document.head.appendChild(permanentRatingFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
