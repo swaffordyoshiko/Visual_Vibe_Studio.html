@@ -140,10 +140,6 @@ function initEmergencyToast() {
   
   console.log('✅ Emergency toast system initialized!');
   
-  // Test it works
-  setTimeout(() => {
-    createToast('Emergency toast system is working!', 'success', 3000);
-  }, 500);
 }
 
 // Initialize immediately if DOM is ready, otherwise wait
