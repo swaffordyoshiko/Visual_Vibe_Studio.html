@@ -186,6 +186,16 @@ const cleanupScript = document.createElement('script');
 cleanupScript.src = 'cleanup-green-notifications.js';
 document.head.appendChild(cleanupScript);
 
+// Load toggleAllCustomerReviews fix script
+const toggleFixScript = document.createElement('script');
+toggleFixScript.src = 'fix-toggle-reviews.js';
+document.head.appendChild(toggleFixScript);
+
+// Load rating functions fix script
+const ratingFixScript = document.createElement('script');
+ratingFixScript.src = 'fix-rating-functions.js';
+document.head.appendChild(ratingFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
