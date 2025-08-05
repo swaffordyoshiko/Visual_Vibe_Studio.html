@@ -138,13 +138,33 @@ function createSubmitReview() {
         console.log('✅ Review submitted successfully');
       }, 1000);
 
-      // Try to add review to testimonials if function exists
+      // Add review to testimonials section
       try {
         if (typeof window.addReviewToTestimonials === 'function') {
-          window.addReviewToTestimonials(reviewData);
+          console.log('📝 Adding review to testimonials section...');
+          const addSuccess = window.addReviewToTestimonials(reviewData);
+          if (addSuccess) {
+            console.log('✅ Review successfully added to testimonials');
+          } else {
+            console.warn('⚠️ Review submission succeeded but testimonials display failed');
+          }
+        } else {
+          console.warn('⚠️ addReviewToTestimonials function not available');
+          // Wait a bit and try again (function might be loading)
+          setTimeout(() => {
+            if (typeof window.addReviewToTestimonials === 'function') {
+              console.log('📝 Retrying to add review to testimonials...');
+              window.addReviewToTestimonials(reviewData);
+            } else {
+              console.error('❌ addReviewToTestimonials still not available after delay');
+            }
+          }, 1000);
         }
       } catch (addError) {
-        console.warn('Could not add review to testimonials:', addError);
+        console.error('❌ Error adding review to testimonials:', addError);
+        if (window.toastManager) {
+          window.toastManager.warning('Review submitted but may not appear immediately. Please refresh to see your review.');
+        }
       }
 
       return false; // Prevent form submission
