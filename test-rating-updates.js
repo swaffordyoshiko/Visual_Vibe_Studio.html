@@ -78,5 +78,44 @@ console.log('  - addTestReview() - Add a test review');
 console.log('  - showCurrentRatings() - Show current rating values');
 console.log('  - executeRatingUpdate() - Force complete rating recalculation');
 
+// Create a manual trigger button for testing
+function createTestButton() {
+  const existingButton = document.getElementById('testRatingButton');
+  if (existingButton) return;
+
+  const button = document.createElement('button');
+  button.id = 'testRatingButton';
+  button.innerHTML = '🧪 Test Rating Update';
+  button.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 999999;
+    background: #3B82F6;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `;
+
+  button.onclick = function() {
+    console.log('🧪 Manual test button clicked');
+    if (window.testDirectRatingUpdate) {
+      window.testDirectRatingUpdate();
+    } else if (window.executeRatingUpdate) {
+      window.executeRatingUpdate();
+    } else {
+      console.error('❌ No rating update functions available');
+    }
+  };
+
+  document.body.appendChild(button);
+  console.log('✅ Test button created at bottom left');
+}
+
 // Auto-show current ratings on load
 setTimeout(showCurrentRatings, 3000);
+setTimeout(createTestButton, 5000);
