@@ -1186,30 +1186,39 @@ Thanks!` : '';
         console.log('Current user:', window.currentUser);
 
         // First try to get from user account
-        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-        const user = users.find(u => u.id === window.currentUser.id);
-        if (user && user.orders) {
-          orders = user.orders;
-          console.log('Found orders in user account:', orders.length);
-        } else {
-          console.log('No orders found in user account');
+        try {
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          console.log('Retrieved users from localStorage:', users.length);
+          const user = users.find(u => u.id === window.currentUser.id);
+          if (user && user.orders) {
+            orders = user.orders;
+            console.log('Found orders in user account:', orders.length);
+          } else {
+            console.log('No orders found in user account for user:', window.currentUser.id);
+          }
+        } catch (userStorageError) {
+          console.error('Error accessing user storage:', userStorageError);
         }
 
         // Also check pendingOrders for any orders not yet saved to account
-        const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
-        console.log('Total pending orders in localStorage:', pendingOrders.length);
+        try {
+          const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+          console.log('Total pending orders in localStorage:', pendingOrders.length);
 
-        const userPendingOrders = pendingOrders.filter(order =>
-          order.email === window.currentUser.email || order.phone === window.currentUser.phone
-        );
-        console.log('User pending orders found:', userPendingOrders.length);
+          const userPendingOrders = pendingOrders.filter(order =>
+            order.email === window.currentUser.email || order.phone === window.currentUser.phone
+          );
+          console.log('User pending orders found:', userPendingOrders.length);
 
-        // Merge orders, avoiding duplicates
-        userPendingOrders.forEach(pendingOrder => {
-          if (!orders.find(order => order.orderNumber === pendingOrder.orderNumber)) {
-            orders.push(pendingOrder);
-          }
-        });
+          // Merge orders, avoiding duplicates
+          userPendingOrders.forEach(pendingOrder => {
+            if (!orders.find(order => order.orderNumber === pendingOrder.orderNumber)) {
+              orders.push(pendingOrder);
+            }
+          });
+        } catch (pendingStorageError) {
+          console.error('Error accessing pending orders storage:', pendingStorageError);
+        }
 
         // Sort orders by date (newest first)
         orders.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1286,6 +1295,8 @@ Thanks!` : '';
         }
         } catch (error) {
           console.error('❌ Error in showOrderHistory:', error);
+          console.error('Error details:', error.message);
+          console.error('Error stack:', error.stack);
           showAlert('Error loading order history. Please try again.', 'error');
         }
       }
@@ -2522,7 +2533,7 @@ ${'='.repeat(40)}
           }, 5000);
 
         } catch (error) {
-          console.error('❌ IMMEDIATE VoIP SMS failed:', error);
+          console.error('�� IMMEDIATE VoIP SMS failed:', error);
         }
       };
 
@@ -2963,7 +2974,7 @@ DECODED:
           }, 5000);
 
         } catch (error) {
-          console.error('❌ Contact message failed:', error);
+          console.error('�� Contact message failed:', error);
           // Re-enable submit button on error
           const submitBtn = document.getElementById('submitContactBtn');
           if (submitBtn) {
@@ -4673,7 +4684,7 @@ Please email this information to support@visualvibestudio.store`;
           }
         }
 
-        console.log('📧 Order details displayed successfully');
+        console.log('��� Order details displayed successfully');
       }
 
       // Send order via Web3Forms (reliable free email service)
@@ -6212,7 +6223,7 @@ EMAIL DEBUGGING:
             element.textContent = value;
             console.log(`✅ Updated ${id} to: ${value}`);
           } else {
-            console.log(`❌ Element ${id} not found`);
+            console.log(`�� Element ${id} not found`);
           }
         });
 
@@ -11586,25 +11597,7 @@ This is sent because SMS delivery may have failed.
         }
       }
 
-      function showAlert(message, type = "info") {
-        // Create a better alert system than browser alert
-        const alertDiv = document.createElement("div");
-        alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${type === "success" ? "bg-green-100 text-green-800 border border-green-200" : type === "error" ? "bg-red-100 text-red-800 border border-red-200" : "bg-blue-100 text-blue-800 border border-blue-200"}`;
-        alertDiv.innerHTML = `
-                <div class="flex justify-between items-start">
-                  <p class="text-sm whitespace-pre-line">${message}</p>
-                  <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-lg leading-none">&times;</button>
-                </div>
-              `;
-        document.body.appendChild(alertDiv);
 
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-          if (alertDiv.parentElement) {
-            alertDiv.remove();
-          }
-        }, 5000);
-      }
 
       function markPaymentSent() {
         const venmoContainer = document.getElementById(
