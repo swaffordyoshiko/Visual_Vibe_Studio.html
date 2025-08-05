@@ -221,6 +221,11 @@ const testRatingUpdatesScript = document.createElement('script');
 testRatingUpdatesScript.src = 'test-rating-updates.js';
 document.head.appendChild(testRatingUpdatesScript);
 
+// Load DIRECT rating fix script (highest priority - loads last to override everything)
+const directRatingFixScript = document.createElement('script');
+directRatingFixScript.src = 'direct-rating-fix.js';
+document.head.appendChild(directRatingFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
