@@ -246,6 +246,16 @@ const ratingFixTestScript = document.createElement('script');
 ratingFixTestScript.src = 'test-rating-fix.js';
 document.head.appendChild(ratingFixTestScript);
 
+// Load page refresh prevention fix
+const pageRefreshFixScript = document.createElement('script');
+pageRefreshFixScript.src = 'fix-page-refresh.js';
+document.head.appendChild(pageRefreshFixScript);
+
+// Load page refresh test script
+const pageRefreshTestScript = document.createElement('script');
+pageRefreshTestScript.src = 'test-page-refresh.js';
+document.head.appendChild(pageRefreshTestScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
