@@ -3,7 +3,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#6366f1" />
     <meta
       name="description"
       content="Professional design services for your business. Custom websites, flyers, and business cards. Starting from $50. Visual Vibe Studio - Building brands that stand out."
@@ -62,11 +66,11 @@
       let isSubmitting = false; // Prevent duplicate submissions
 
       window.simpleOrderSubmit = async function(event) {
-        console.log('🚀 simpleOrderSubmit called (immediate definition)');
+        console.log('🔄 simpleOrderSubmit called (immediate definition)');
 
         // Prevent duplicate submissions
         if (isSubmitting) {
-          console.log('⚠��� Already submitting order, ignoring duplicate call');
+          console.log('⚠️ Already submitting order, ignoring duplicate call');
           return false;
         }
 
@@ -1073,12 +1077,15 @@ Thanks!` : '';
         try {
           const signedOutState = document.getElementById('signedOutState');
           const signedInState = document.getElementById('signedInState');
+          const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+          const mobileSignedInState = document.getElementById('mobileSignedInState');
           const userNameSpan = document.getElementById('userName');
-          // userDisplayName element removed
 
           if (window.currentUser) {
             if (signedOutState) signedOutState.style.display = 'none';
             if (signedInState) signedInState.style.display = 'flex';
+            if (mobileSignedOutState) mobileSignedOutState.style.display = 'none';
+            if (mobileSignedInState) mobileSignedInState.style.display = 'block';
             if (userNameSpan) userNameSpan.textContent = window.currentUser.name;
 
             // Show welcome banner with customer name
@@ -1106,6 +1113,8 @@ Thanks!` : '';
           } else {
             if (signedOutState) signedOutState.style.display = 'flex';
             if (signedInState) signedInState.style.display = 'none';
+            if (mobileSignedOutState) mobileSignedOutState.style.display = 'block';
+            if (mobileSignedInState) mobileSignedInState.style.display = 'none';
 
             // Hide welcome banner when signed out
             const welcomeBanner = document.getElementById('welcomeBanner');
@@ -1152,7 +1161,7 @@ Thanks!` : '';
           }
 
           if (!content) {
-            console.error('��� Order History content container not found in DOM');
+            console.error('❌ Order History content container not found in DOM');
             showAlert('Order history not available. Please refresh the page.', 'error');
             return;
           }
@@ -1160,16 +1169,16 @@ Thanks!` : '';
           modal.classList.remove('hidden');
 
           if (!window.currentUser) {
-          content.innerHTML = `
-            <div class="text-center py-8">
-              <p class="text-gray-500">Please sign in to view your orders.</p>
-              <button onclick="closeOrderHistory(); openSignInModal();" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                Sign In
-              </button>
-            </div>
-          `;
-          return;
-        }
+            content.innerHTML = `
+              <div class="text-center py-8">
+                <p class="text-gray-500">Please sign in to view your orders.</p>
+                <button onclick="closeOrderHistory(); openSignInModal();" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                  Sign In
+                </button>
+              </div>
+            `;
+            return;
+          }
 
         // Get user's orders from multiple sources
         let orders = [];
@@ -1262,7 +1271,7 @@ Thanks!` : '';
                   <p class="text-xs text-gray-500">Deposit Paid: $${order.deposit}</p>
                 </div>
                 <button onclick="downloadReceipt('${order.orderNumber}')" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-200 text-sm font-medium">
-                  ��� Download Receipt
+                  📄 Download Receipt
                 </button>
               </div>
             </div>
@@ -1287,7 +1296,7 @@ Thanks!` : '';
           if (modal) {
             modal.classList.add('hidden');
           } else {
-            console.error('���� Order History modal not found when trying to close');
+            console.error('❌ Order History modal not found when trying to close');
           }
         } catch (error) {
           console.error('❌ Error closing order history:', error);
@@ -1899,7 +1908,7 @@ ${'='.repeat(40)}
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">"${review.text}"</p>
 
             <div class="text-green-400 font-semibold text-xs">
-              NEW REVIEW • ${new Date(review.date).toLocaleDateString()}
+              NEW REVIEW �� ${new Date(review.date).toLocaleDateString()}
             </div>
           `;
 
@@ -1981,7 +1990,7 @@ ${'='.repeat(40)}
       // Function to manually display all stored reviews
       function forceDisplayAllReviews() {
         try {
-          console.log('🔍 Checking stored reviews...');
+          console.log('�� Checking stored reviews...');
           const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
           console.log('📦 All stored reviews:', allReviews);
 
@@ -2128,36 +2137,8 @@ ${'='.repeat(40)}
         const welcomeMessage = document.getElementById('welcomeMessage');
 
         if (welcomeBanner && welcomeMessage) {
-          // Get first name only
           const firstName = userName.split(' ')[0];
-          // Clear any existing content completely
-          welcomeMessage.innerHTML = '';
-          welcomeMessage.textContent = '';
-          // Set clean message without any timer emojis
           welcomeMessage.textContent = `Welcome back, ${firstName}! 👋`;
-
-          // Add MutationObserver to prevent timer emoji from being added
-          if (!welcomeMessage.hasAttribute('data-observer-added')) {
-            const observer = new MutationObserver((mutations) => {
-              mutations.forEach((mutation) => {
-                if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                  const currentText = welcomeMessage.textContent || '';
-                  if (currentText.includes('⏰') || currentText.includes('⏲️') || currentText.includes('⏱️')) {
-                    const cleanText = currentText.replace(/⏰|⏲️|⏱️/g, '');
-                    welcomeMessage.textContent = cleanText;
-                  }
-                }
-              });
-            });
-            observer.observe(welcomeMessage, {
-              childList: true,
-              subtree: true,
-              characterData: true
-            });
-            welcomeMessage.setAttribute('data-observer-added', 'true');
-          }
-
-          // Show the banner
           welcomeBanner.classList.remove('hidden');
         }
       }
@@ -2169,22 +2150,36 @@ ${'='.repeat(40)}
         }
       }
 
-      // Force clean welcome message on any page load
-      function forceCleanWelcomeMessage() {
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        if (welcomeMessage) {
-          const currentText = welcomeMessage.textContent || '';
-          if (currentText.includes('⏰') || currentText.includes('⏲️') || currentText.includes('⏱️')) {
-            const cleanText = currentText.replace(/⏰|⏲️|⏱️/g, '');
-            welcomeMessage.textContent = cleanText;
-            console.log('🔧 Removed timer emoji from welcome message');
-          }
+      // Mobile menu functions
+      function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        if (mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.remove('hidden');
+          // Change hamburger to X icon
+          mobileMenuBtn.innerHTML = `
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          `;
+        } else {
+          closeMobileMenu();
         }
       }
 
-      // Run immediately and periodically to ensure timer emoji stays removed
-      forceCleanWelcomeMessage();
-      setInterval(forceCleanWelcomeMessage, 1000);
+      function closeMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        mobileMenu.classList.add('hidden');
+        // Change X back to hamburger icon
+        mobileMenuBtn.innerHTML = `
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        `;
+      }
 
       // Make session functions globally available
       window.restoreUserSession = restoreUserSession;
@@ -2236,7 +2231,7 @@ ${'='.repeat(40)}
 
       // Auto-debug function to check reviews on page load
       function autoDebugReviews() {
-        console.log('🔍 AUTO-DEBUG: Checking reviews...');
+        console.log('�� AUTO-DEBUG: Checking reviews...');
         try {
           const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
           console.log('��� Total reviews in storage:', allReviews.length);
@@ -2292,7 +2287,7 @@ ${'='.repeat(40)}
             alert('Chat not ready. Please call (402) 979-7184');
           }
         } catch (error) {
-          console.error('❌ Chat error:', error);
+          console.error('��� Chat error:', error);
           alert('Chat error. Please call (402) 979-7184');
         }
       };
@@ -2325,7 +2320,7 @@ ${'='.repeat(40)}
       window.simpleSend = function() {
         // Prevent multiple calls
         if (window.simpleSendRunning) {
-          console.log('🛑 simpleSend already running, skipping...');
+          console.log('��� simpleSend already running, skipping...');
           return;
         }
         window.simpleSendRunning = true;
@@ -2390,7 +2385,7 @@ ${'='.repeat(40)}
 
           // Send VoIP SMS
           console.log('🔍 DEBUG: About to send SMS with message:', message);
-          console.log('🔍 DEBUG: Message length:', message ? message.length : 'undefined');
+          console.log('��� DEBUG: Message length:', message ? message.length : 'undefined');
           console.log('🔍 DEBUG: Message type:', typeof message);
           console.log('🔍 DEBUG: currentUser:', window.currentUser);
 
@@ -2420,7 +2415,7 @@ ${'='.repeat(40)}
           }, 100);
 
         } catch (error) {
-          console.error('���� simpleSend error:', error);
+          console.error('������ simpleSend error:', error);
           alert('Message error. Please call (402) 979-7184');
 
           // Ensure chat remains functional even after error
@@ -2443,7 +2438,7 @@ ${'='.repeat(40)}
       window.immediateVoIPSMS = function(message) {
         console.log('��� IMMEDIATE VoIP SMS sending...');
         console.log('📱 Raw message received:', message);
-        console.log('��� DEBUG: Message type:', typeof message);
+        console.log('����� DEBUG: Message type:', typeof message);
         console.log('🔍 DEBUG: Message empty?:', !message);
 
         try {
@@ -2476,7 +2471,7 @@ ${'='.repeat(40)}
                                 'Message: ' + safeMessage + '\n' +
                                 'Time: ' + timestamp;
 
-          console.log('�� Sending SMS message:', fullSMSMessage);
+          console.log('����� Sending SMS message:', fullSMSMessage);
           console.log('📱 Customer Name:', customerName);
           console.log('📱 Customer Email:', customerEmail);
           console.log('📱 Message:', message);
@@ -2505,7 +2500,7 @@ ${'='.repeat(40)}
             'source': 'website_chat'
           };
 
-          console.log('🔍 DEBUG: All fields being sent to Zapier:', fields);
+          console.log('�� DEBUG: All fields being sent to Zapier:', fields);
 
           Object.keys(fields).forEach(key => {
             const input = document.createElement('input');
@@ -2573,7 +2568,7 @@ ${'='.repeat(40)}
 
       // Test SMS message formatting
       window.testSMSFormatting = function() {
-        console.log('�������� Testing SMS message formatting...');
+        console.log('���������� Testing SMS message formatting...');
         const testMessage = 'This is a test message';
         const testCustomer = 'John Doe';
         const testEmail = 'john@example.com';
@@ -2631,7 +2626,7 @@ ${'='.repeat(40)}
 
         console.log('🧪 TEST 160-CHAR FORMAT:');
         console.log('📝 Format:', finalMessage);
-        console.log('📏 Length:', finalMessage.length);
+        console.log('�� Length:', finalMessage.length);
         console.log('✅ Fits in SMS:', finalMessage.length <= 160);
 
         return finalMessage;
@@ -2710,7 +2705,7 @@ ${'='.repeat(40)}
           ].join('\n');
 
           console.log('📱 Part 1 length:', part1.length);
-          console.log('📱 Part 2 length:', part2.length);
+          console.log('��� Part 2 length:', part2.length);
           console.log('Part 1 content:');
           console.log(part1);
           console.log('---');
@@ -2884,7 +2879,7 @@ ${'='.repeat(40)}
           console.log('🔍 Final compact message:', formattedMessage);
           console.log('📏 Final length:', formattedMessage.length);
 
-          console.log('📱 Formatted message (Part 1):', formattedMessage);
+          console.log('��� Formatted message (Part 1):', formattedMessage);
 
           const form = document.createElement('form');
           form.method = 'POST';
@@ -3046,7 +3041,7 @@ ${messageData.fullMessage}`;
                 <p class="text-gray-600 mb-4 text-sm md:text-base">Hi ${name}! Thank you for your message. I've received it directly on my phone with all your contact details and preferred response method.</p>
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 text-xs md:text-sm text-blue-800 text-left">
                   <strong>�� What happens next?</strong><br><br>
-                  📱 <strong>Your message includes:</strong><br>
+                  ��� <strong>Your message includes:</strong><br>
                   �� Your name and contact information<br>
                   • Your preferred response method (text/email)<br>
                   • Your complete message<br><br>
@@ -3540,7 +3535,7 @@ ${messageData.fullMessage}`;
 
       // Ultra-reliable SMS function that works without fetch
       function reliableSMS(message, customerContact) {
-        console.log('📱 Reliable SMS function triggered');
+        console.log('��� Reliable SMS function triggered');
 
         try {
           // Method 1: Form submission to email-to-SMS gateway
@@ -3719,7 +3714,7 @@ ${messageData.fullMessage}`;
 
           if (!chatWindow) {
             console.error('❌ Chat window not found in DOM');
-            console.log('���� Available elements:', {
+            console.log('����� Available elements:', {
               chatWindow: !!chatWindow,
               chatBubble: !!chatBubble,
               chatIcon: !!chatIcon,
@@ -3802,7 +3797,7 @@ ${messageData.fullMessage}`;
         try {
           if (typeof loadReviews === 'function') {
             loadReviews();
-            console.log('✅ Reviews reloaded successfully');
+            console.log('�� Reviews reloaded successfully');
 
             // Show success message
             if (typeof showAlert === 'function') {
@@ -3870,7 +3865,7 @@ ${messageData.fullMessage}`;
 
       function openSignUpModal() {
         try {
-          console.log('���� Opening sign up modal...');
+          console.log('������ Opening sign up modal...');
 
           const modal = document.getElementById('signUpModal');
           if (!modal) {
@@ -3955,7 +3950,7 @@ ${messageData.fullMessage}`;
           const emailInput = document.getElementById('signInEmail');
           const passwordInput = document.getElementById('signInPassword');
 
-          console.log('������ Form elements found:', {
+          console.log('������� Form elements found:', {
             emailInput: !!emailInput,
             passwordInput: !!passwordInput
           });
@@ -4053,7 +4048,7 @@ ${messageData.fullMessage}`;
 
           // Get existing users
           const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-          console.log('👥 Existing users:', users.length);
+          console.log('���� Existing users:', users.length);
 
           // Check if email already exists
           if (users.find(u => u.email === email)) {
@@ -4430,7 +4425,7 @@ Thanks,`);
 Options:
 • Use the Venmo app on your phone
 • Visit venmo.com on any device
-• Call (402) 979-7184 for phone payment
+�� Call (402) 979-7184 for phone payment
 
 Your order is confirmed - just complete the payment when convenient!`;
 
@@ -4643,7 +4638,7 @@ Reply to customer at: ${orderData.email}`;
 
       // Show order details for manual email sending
       function showOrderDetailsForEmail(orderData, subject, emailBody) {
-        console.log('📧 Showing order details for manual email...');
+        console.log('��� Showing order details for manual email...');
 
         // Create a simple alert with order details
         const orderSummary = `ORDER DETAILS TO EMAIL:
@@ -4718,7 +4713,7 @@ Please email this information to support@visualvibestudio.store`;
             throw new Error(`Web3Forms failed with status: ${response.status}`);
           }
         }).then(data => {
-          console.log('✅ Order sent via Web3Forms!', data);
+          console.log('��� Order sent via Web3Forms!', data);
           updateEmailStatus('✅ Order successfully sent via Web3Forms!');
           showAlert('Order successfully sent to Visual Vibe Studio via Web3Forms!', 'success');
         }).catch(error => {
@@ -4761,7 +4756,7 @@ Please email this information to support@visualvibestudio.store`;
           }).then(response => {
             console.log('📧 Netlify response status:', response.status);
             if (response.ok) {
-              console.log('✅ Order sent via Netlify Forms!');
+              console.log('��� Order sent via Netlify Forms!');
               updateEmailStatus('�� Order sent via Netlify Forms!');
               showAlert('Order successfully sent to Visual Vibe Studio!', 'success');
             } else {
@@ -5100,7 +5095,7 @@ Details: ${currentOrderData.details}`;
           // Update button
           setTimeout(() => {
             if (sendButton) {
-              sendButton.textContent = '���� Details Shown!';
+              sendButton.textContent = '������� Details Shown!';
               sendButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
               sendButton.classList.add('bg-green-600', 'hover:bg-green-700');
             }
@@ -5192,7 +5187,7 @@ Details: ${currentOrderData.details}`;
           formData.append('due_date', orderData.dueDate);
           formData.append('details', orderData.details);
 
-          console.log('📧 Sending to Formspree...');
+          console.log('���� Sending to Formspree...');
 
           fetch('https://formspree.io/f/xwpejpvk', {
             method: 'POST',
@@ -5213,7 +5208,7 @@ Details: ${currentOrderData.details}`;
             showAlert('Order automatically sent to Visual Vibe Studio!', 'success');
           }).catch(error => {
             console.log('❌ Formspree failed:', error);
-            updateEmailStatus('⚠️ Formspree failed, trying EmailJS...');
+            updateEmailStatus('��️ Formspree failed, trying EmailJS...');
           });
 
         } catch (error) {
@@ -5551,7 +5546,7 @@ Details: ${currentOrderData.details}`;
 
       // NEW: Twilio API integration (most reliable)
       async function sendViaTwilioAPI(message) {
-        console.log('📱 Attempting Twilio API SMS...');
+        console.log('�� Attempting Twilio API SMS...');
 
         // Use Twilio's REST API directly
         const twilioData = {
@@ -5968,7 +5963,7 @@ This is an automated emergency notification.
 
           // Add additional click handler for testing
           submitBtn.addEventListener('click', function(e) {
-            console.log('🎯 Button click event detected via addEventListener!');
+            console.log('�� Button click event detected via addEventListener!');
             e.preventDefault();
             e.stopPropagation();
 
@@ -6690,7 +6685,7 @@ EMAIL DEBUGGING:
 
       // Verify functions are properly defined
       setTimeout(() => {
-        console.log('🔍 Verifying order modal functions...');
+        console.log('��� Verifying order modal functions...');
         console.log('copyOrderDetails:', typeof window.copyOrderDetails);
         console.log('sendEmailManually:', typeof window.sendEmailManually);
         console.log('closeOrderModal:', typeof window.closeOrderModal);
@@ -7678,7 +7673,7 @@ This is an urgent notification because SMS delivery failed.
 
       // Enhanced SMS function that tries the most reliable methods first
       async function sendEnhancedSMS(message) {
-        console.log('�� Enhanced SMS: Trying most reliable methods first...');
+        console.log('���� Enhanced SMS: Trying most reliable methods first...');
 
         const methods = [
           {
@@ -7755,7 +7750,7 @@ This is an urgent notification because SMS delivery failed.
 
       // Send to personal email for immediate notification
       async function sendToPersonalEmail(message) {
-        console.log('��� Sending to personal email for immediate notification...');
+        console.log('����� Sending to personal email for immediate notification...');
 
         const personalEmails = [
           'support@visualvibestudio.store',
@@ -8303,6 +8298,108 @@ This is sent because SMS delivery may have failed.
         .mobile-text-sm {
           font-size: 0.875rem !important;
         }
+
+        /* Improve touch targets */
+        button, .button, a[role="button"] {
+          min-height: 44px;
+          min-width: 44px;
+        }
+
+        /* Better modal spacing on mobile */
+        .modal-content {
+          margin: 16px;
+          max-height: calc(100vh - 32px);
+        }
+
+        /* Improve form inputs on mobile */
+        input, textarea, select {
+          font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+
+        /* Better text readability */
+        body {
+          -webkit-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+        }
+
+        /* Improve tap highlights */
+        * {
+          -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Better mobile navigation */
+        .mobile-menu-open {
+          overflow: hidden;
+        }
+
+        /* Improve mobile tables */
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        /* Better mobile images */
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+
+        /* Improve mobile grid gaps */
+        .grid {
+          gap: 1rem;
+        }
+
+        /* Better mobile padding */
+        .container {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+      }
+
+      /* Tablet specific optimizations */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .tablet-full {
+          width: 100%;
+        }
+
+        .tablet-center {
+          text-align: center;
+        }
+
+        /* Better tablet grid spacing */
+        .grid {
+          gap: 1.5rem;
+        }
+      }
+
+      /* Large screen optimizations */
+      @media (min-width: 1400px) {
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+      }
+
+      /* High DPI screen optimizations */
+      @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        .logo, .icon {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
+        }
+      }
+
+      /* Landscape phone optimizations */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .hero-section {
+          padding-top: 1rem;
+          padding-bottom: 1rem;
+        }
+
+        .modal-content {
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+      }
       }
 
       /* Print styles */
@@ -9065,31 +9162,38 @@ This is sent because SMS delivery may have failed.
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F5015b2985ffe4a9ca5064ae99f72812a%2Fff0a451500144e83b9957a3f0ca320e8?format=webp&width=800"
             alt="Visual Vibe Studio Logo"
-            class="h-10 w-10 object-contain"
+            class="h-8 w-8 sm:h-10 sm:w-10 object-contain"
             loading="eager"
           />
-          <h1 class="text-2xl font-bold text-indigo-600">Visual Vibe Studio</h1>
+          <h1 class="text-lg sm:text-2xl font-bold text-indigo-600">Visual Vibe Studio</h1>
         </div>
-        <nav class="flex items-center space-x-4">
-          <a href="#services" class="text-gray-700 hover:text-indigo-600"
-            >Services</a
-          >
-          <a href="#reviews" class="text-gray-700 hover:text-indigo-600"
-            >Reviews</a
-          >
-          <a href="#order" class="text-gray-700 hover:text-indigo-600">Order</a>
-          <a href="#contact" class="text-gray-700 hover:text-indigo-600"
-            >Contact</a
-          >
+
+        <!-- Mobile menu button -->
+        <button
+          id="mobileMenuBtn"
+          class="md:hidden text-gray-700 hover:text-indigo-600 p-2"
+          onclick="toggleMobileMenu()"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <!-- Desktop navigation -->
+        <nav class="hidden md:flex items-center space-x-4">
+          <a href="#services" class="text-gray-700 hover:text-indigo-600 transition-colors">Services</a>
+          <a href="#reviews" class="text-gray-700 hover:text-indigo-600 transition-colors">Reviews</a>
+          <a href="#order" class="text-gray-700 hover:text-indigo-600 transition-colors">Order</a>
+          <a href="#contact" class="text-gray-700 hover:text-indigo-600 transition-colors">Contact</a>
 
           <!-- User Account Section -->
           <div id="userAccountSection" class="flex items-center space-x-3">
             <!-- Signed Out State -->
             <div id="signedOutState" class="flex items-center space-x-2">
-              <button onclick="openSignInModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+              <button onclick="openSignInModal()" class="bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
                 Sign In
               </button>
-              <button onclick="openSignUpModal()" class="border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium">
+              <button onclick="openSignUpModal()" class="border border-indigo-600 text-indigo-600 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium">
                 Sign Up
               </button>
             </div>
@@ -9102,7 +9206,7 @@ This is sent because SMS delivery may have failed.
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                   </svg>
                 </div>
-                <div class="text-left">
+                <div class="text-left hidden lg:block">
                   <span class="text-xs text-gray-500">Click to edit profile</span>
                 </div>
                 <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9119,19 +9223,57 @@ This is sent because SMS delivery may have failed.
           </div>
         </nav>
       </div>
+
+      <!-- Mobile navigation menu -->
+      <div id="mobileMenu" class="md:hidden hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-t border-white/20">
+        <div class="px-4 py-4 space-y-4">
+          <a href="#services" class="block text-gray-700 hover:text-indigo-600 py-2 transition-colors" onclick="closeMobileMenu()">Services</a>
+          <a href="#reviews" class="block text-gray-700 hover:text-indigo-600 py-2 transition-colors" onclick="closeMobileMenu()">Reviews</a>
+          <a href="#order" class="block text-gray-700 hover:text-indigo-600 py-2 transition-colors" onclick="closeMobileMenu()">Order</a>
+          <a href="#contact" class="block text-gray-700 hover:text-indigo-600 py-2 transition-colors" onclick="closeMobileMenu()">Contact</a>
+
+          <div class="border-t border-gray-200 pt-4">
+            <!-- Mobile Signed Out State -->
+            <div id="mobileSignedOutState" class="space-y-3">
+              <button onclick="openSignInModal(); closeMobileMenu();" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                Sign In
+              </button>
+              <button onclick="openSignUpModal(); closeMobileMenu();" class="w-full border border-indigo-600 text-indigo-600 px-4 py-3 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium">
+                Sign Up
+              </button>
+            </div>
+
+            <!-- Mobile Signed In State -->
+            <div id="mobileSignedInState" class="space-y-3 hidden">
+              <button onclick="openProfileModal(); closeMobileMenu();" class="w-full flex items-center justify-center space-x-2 hover:bg-gray-50 p-3 rounded-lg transition-colors">
+                <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-gray-700">Edit Profile</span>
+              </button>
+              <button onclick="showOrderHistory(); closeMobileMenu();" class="w-full text-indigo-600 hover:text-indigo-800 py-3 text-sm font-medium">
+                My Orders
+              </button>
+              <button onclick="signOut(); closeMobileMenu();" class="w-full text-gray-500 hover:text-gray-700 py-3 text-sm">
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
 
     <!-- Welcome Banner (shown when signed in) -->
-    <div id="welcomeBanner" class="hidden bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 px-4 shadow-lg">
+    <div id="welcomeBanner" class="hidden bg-gradient-to-r from-green-500 to-blue-500 text-white py-2 sm:py-3 px-4 shadow-lg">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span id="welcomeMessage" class="font-medium">Welcome back!</span>
+          <span id="welcomeMessage" class="font-medium text-sm sm:text-base"></span>
         </div>
-        <button onclick="closeWelcomeBanner()" class="text-white/80 hover:text-white transition-colors">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <button onclick="closeWelcomeBanner()" class="text-white/80 hover:text-white transition-colors p-1">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
           </svg>
         </button>
@@ -9154,44 +9296,44 @@ This is sent because SMS delivery may have failed.
       <!-- Mesh Gradient Overlay -->
       <div class="absolute inset-0 professional-mesh opacity-20"></div>
 
-      <div class="relative z-10 max-w-7xl mx-auto px-4 py-20 text-center">
+      <div class="relative z-10 max-w-7xl mx-auto px-4 py-12 sm:py-16 lg:py-20 text-center">
         <div class="mb-8">
-          <h2 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
             Transform Your Business with
             <span class="bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">
               Stunning Designs
             </span>
           </h2>
-          <p class="text-xl md:text-2xl text-indigo-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p class="text-lg sm:text-xl md:text-2xl text-indigo-100 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-2">
             From eye-catching logos to professional websites - we create designs that turn visitors into customers and make your competition jealous.
           </p>
         </div>
 
         <!-- Value Propositions -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
-            <div class="text-3xl mb-3">⚡</div>
-            <h3 class="text-lg font-semibold mb-2">Lightning Fast</h3>
-            <p class="text-indigo-200 text-sm">Most projects completed in 5-7 days</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 px-2">
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="text-2xl sm:text-3xl mb-2 sm:mb-3">⚡</div>
+            <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Lightning Fast</h3>
+            <p class="text-indigo-200 text-xs sm:text-sm">Most projects completed in 5-7 days</p>
           </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
-            <div class="text-3xl mb-3">💎</div>
-            <h3 class="text-lg font-semibold mb-2">Premium Quality</h3>
-            <p class="text-indigo-200 text-sm">Professional designs that wow your customers</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 transform hover:scale-105 transition-all duration-300">
+            <div class="text-2xl sm:text-3xl mb-2 sm:mb-3">💎</div>
+            <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Premium Quality</h3>
+            <p class="text-indigo-200 text-xs sm:text-sm">Professional designs that wow your customers</p>
           </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
-            <div class="text-3xl mb-3">🎯</div>
-            <h3 class="text-lg font-semibold mb-2">100% Satisfaction</h3>
-            <p class="text-indigo-200 text-sm">3 rounds of revisions included</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 transform hover:scale-105 transition-all duration-300 sm:col-span-2 lg:col-span-1">
+            <div class="text-2xl sm:text-3xl mb-2 sm:mb-3">🎯</div>
+            <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">100% Satisfaction</h3>
+            <p class="text-indigo-200 text-xs sm:text-sm">3 rounds of revisions included</p>
           </div>
         </div>
 
         <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <a href="#services" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            ����������� See Our Services
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
+          <a href="#services" class="w-full sm:w-auto bg-white text-indigo-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-2xl text-center">
+            🎨📈✨ See Our Services
           </a>
-          <a href="#portfolio" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
+          <a href="#portfolio" class="w-full sm:w-auto border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105 text-center">
             View Portfolio
           </a>
         </div>
@@ -9200,7 +9342,7 @@ This is sent because SMS delivery may have failed.
         <div class="mt-16 pt-8 border-t border-white/20">
           <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
           <div class="flex justify-center items-center space-x-8 opacity-60">
-            <div class="text-2xl">⭐⭐⭐⭐��</div>
+            <div class="text-2xl">⭐⭐⭐⭐⭐</div>
             <div class="text-sm"><span id="customerRating1">5.0</span>/5 Customer Rating</div>
           </div>
         </div>
@@ -9275,7 +9417,7 @@ This is sent because SMS delivery may have failed.
             <div class="bg-gradient-to-br from-pink-500 to-orange-500 h-48 flex items-center justify-center relative overflow-hidden">
               <div class="absolute inset-0 bg-black/10"></div>
               <div class="relative z-10 text-white text-center">
-                <div class="text-4xl mb-2">������</div>
+                <div class="text-4xl mb-2">📢</div>
                 <h4 class="text-lg font-bold">Marketing Campaign</h4>
                 <p class="text-sm opacity-90">Generated 50+ new leads</p>
               </div>
@@ -9304,22 +9446,22 @@ This is sent because SMS delivery may have failed.
     </section>
 
     <section id="services" class="max-w-7xl mx-auto py-12 px-4">
-      <div class="text-center mb-16">
-        <h3 class="text-4xl font-bold text-gray-800 mb-4">Professional Design Services</h3>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+      <div class="text-center mb-12 sm:mb-16 px-4">
+        <h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">Professional Design Services</h3>
+        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
           From concept to completion, we deliver designs that drive results and make your business unforgettable.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 px-4">
         <!-- Website Service -->
-        <div class="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+        <div class="group bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-10 rounded-bl-full"></div>
-          <div class="absolute top-4 right-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+          <div class="absolute top-3 right-3 sm:top-4 sm:right-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
             From $100
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">������</div>
-          <h4 class="text-xl font-bold text-gray-800 pr-20 mb-3">
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">🌐</div>
+          <h4 class="text-lg sm:text-xl font-bold text-gray-800 pr-16 sm:pr-20 mb-3">
             Business Website
           </h4>
           <p class="text-gray-600 mb-4 leading-relaxed">
@@ -9342,12 +9484,12 @@ This is sent because SMS delivery may have failed.
         </div>
 
         <!-- Brochure Service -->
-        <div class="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+        <div class="group bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 opacity-10 rounded-bl-full"></div>
           <div class="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $80
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">��</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📋</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Business Brochure
           </h4>
@@ -9360,23 +9502,23 @@ This is sent because SMS delivery may have failed.
               Print-ready high resolution
             </div>
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">���</span>
+              <span class="text-green-500 mr-2">✓</span>
               Professional copywriting tips
             </div>
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">��</span>
+              <span class="text-green-500 mr-2">✓</span>
               Multiple format options
             </div>
           </div>
         </div>
 
         <!-- Flyer Service -->
-        <div class="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+        <div class="group bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-500 to-teal-500 opacity-10 rounded-bl-full"></div>
           <div class="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $65
           </div>
-          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">����</div>
+          <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📄</div>
           <h4 class="text-xl font-bold text-gray-800 pr-16 mb-3">
             Marketing Flyer
           </h4>
@@ -9385,7 +9527,7 @@ This is sent because SMS delivery may have failed.
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">��</span>
+              <span class="text-green-500 mr-2">✓</span>
               Single or double-sided
             </div>
             <div class="flex items-center">
@@ -9393,14 +9535,14 @@ This is sent because SMS delivery may have failed.
               Social media versions
             </div>
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">���</span>
+              <span class="text-green-500 mr-2">��</span>
               QR code integration
             </div>
           </div>
         </div>
 
         <!-- Business Card Service -->
-        <div class="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+        <div class="group bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-10 rounded-bl-full"></div>
           <div class="absolute top-4 right-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $50
@@ -9429,7 +9571,7 @@ This is sent because SMS delivery may have failed.
         </div>
 
         <!-- Logo Service -->
-        <div class="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+        <div class="group bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 opacity-10 rounded-bl-full"></div>
           <div class="absolute top-4 right-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             $25
@@ -9443,7 +9585,7 @@ This is sent because SMS delivery may have failed.
           </p>
           <div class="space-y-2 text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-green-500 mr-2">���</span>
+              <span class="text-green-500 mr-2">✓</span>
               Vector & raster formats
             </div>
             <div class="flex items-center">
@@ -9459,16 +9601,16 @@ This is sent because SMS delivery may have failed.
       </div>
 
       <!-- Service Benefits Section -->
-      <div class="mt-20 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8">
-        <div class="text-center mb-12">
-          <h4 class="text-3xl font-bold text-gray-800 mb-4">Why Choose Visual Vibe Studio?</h4>
-          <p class="text-gray-600 max-w-2xl mx-auto">Every project includes these premium features at no extra cost</p>
+      <div class="mt-12 sm:mt-20 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 sm:p-8 mx-4">
+        <div class="text-center mb-8 sm:mb-12">
+          <h4 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Why Choose Visual Vibe Studio?</h4>
+          <p class="text-gray-600 max-w-2xl mx-auto px-4">Every project includes these premium features at no extra cost</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           <div class="text-center">
             <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">���</span>
+              <span class="text-2xl">⚡</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Fast Delivery</h5>
             <p class="text-gray-600 text-sm">Most projects completed within 5-7 business days</p>
@@ -9476,7 +9618,7 @@ This is sent because SMS delivery may have failed.
 
           <div class="text-center">
             <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">���</span>
+              <span class="text-2xl">🔄</span>
             </div>
             <h5 class="font-semibold text-gray-800 mb-2">Free Revisions</h5>
             <p class="text-gray-600 text-sm">Up to 3 rounds of revisions included</p>
@@ -9542,7 +9684,7 @@ This is sent because SMS delivery may have failed.
               "Visual Vibe Studio completely transformed our restaurant's online presence! Our new website increased online orders by 200% in just 3 weeks."
             </p>
             <div class="text-green-400 font-semibold text-xs">
-              🚀 +200% Online Orders
+              ���� +200% Online Orders
             </div>
           </div>
 
@@ -9631,7 +9773,7 @@ This is sent because SMS delivery may have failed.
               </div>
             </div>
             <div class="mb-3">
-              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐���</div>
+              <div class="text-yellow-400 text-sm">⭐⭐⭐⭐����</div>
               <div class="bg-teal-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Brand Package</div>
             </div>
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -9716,7 +9858,7 @@ This is sent because SMS delivery may have failed.
                     <span class="star-rating" data-rating="2" onclick="window.setRating(2)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
                     <span class="star-rating" data-rating="3" onclick="window.setRating(3)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
                     <span class="star-rating" data-rating="4" onclick="window.setRating(4)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">⭐</span>
-                    <span class="star-rating" data-rating="5" onclick="window.setRating(5)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">���</span>
+                    <span class="star-rating" data-rating="5" onclick="window.setRating(5)" style="cursor: pointer; margin-right: 10px; filter: drop-shadow(2px 2px 4px rgba(255,255,255,0.8)); color: #ffffff;">�����</span>
                   </div>
                 </div>
 
@@ -9784,7 +9926,7 @@ This is sent because SMS delivery may have failed.
           <!-- Limited Time Offer -->
           <div class="bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl p-4 inline-block mb-8">
             <div class="flex items-center justify-center space-x-2">
-              <span class="text-xl">🔥</span>
+              <span class="text-xl">��</span>
               <div>
                 <div class="font-bold">LIMITED TIME: Free Rush Delivery!</div>
                 <div class="text-sm opacity-90">Get your project 2 days faster - FREE ($50 value)</div>
@@ -10310,10 +10452,10 @@ This is sent because SMS delivery may have failed.
     </section>
 
     <!-- Sign In Modal -->
-    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" style="z-index: 9999; display: none;">
-      <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold text-gray-800">Sign In</h3>
+    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-4" style="z-index: 9999; display: none;">
+      <div class="bg-white rounded-xl p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4 sm:mb-6">
+          <h3 class="text-xl sm:text-2xl font-bold text-gray-800">Sign In</h3>
           <button onclick="closeSignInModal()" class="text-gray-500 hover:text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -10345,10 +10487,10 @@ This is sent because SMS delivery may have failed.
     </div>
 
     <!-- Sign Up Modal -->
-    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" style="z-index: 9999; display: none;">
-      <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold text-gray-800">Create Account</h3>
+    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-4" style="z-index: 9999; display: none;">
+      <div class="bg-white rounded-xl p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4 sm:mb-6">
+          <h3 class="text-xl sm:text-2xl font-bold text-gray-800">Create Account</h3>
           <button onclick="closeSignUpModal()" class="text-gray-500 hover:text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -10390,10 +10532,10 @@ This is sent because SMS delivery may have failed.
     </div>
 
     <!-- Order History Modal -->
-    <div id="orderHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-      <div class="bg-white rounded-xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold text-gray-800">My Orders & Receipts</h3>
+    <div id="orderHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+      <div class="bg-white rounded-xl p-4 sm:p-6 lg:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4 sm:mb-6">
+          <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">My Orders & Receipts</h3>
           <button onclick="closeOrderHistory()" class="text-gray-500 hover:text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -10413,8 +10555,8 @@ This is sent because SMS delivery may have failed.
     <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
       <div class="bg-white rounded-xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl">
         <!-- Fixed Header -->
-        <div class="flex justify-between items-center p-6 border-b border-gray-200 flex-shrink-0">
-          <h3 class="text-2xl font-bold text-gray-800">Edit Profile</h3>
+        <div class="flex justify-between items-center p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
+          <h3 class="text-xl sm:text-2xl font-bold text-gray-800">Edit Profile</h3>
           <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700 p-2 -m-2">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -10886,7 +11028,7 @@ This is sent because SMS delivery may have failed.
             chatSendBtn.setAttribute('data-initialized', 'true');
             console.log('✅ Send button event listener added');
           } else {
-            console.log('⚠️ Send button already initialized or not found', !!chatSendBtn);
+            console.log('��️ Send button already initialized or not found', !!chatSendBtn);
           }
 
           // Initialize send button
@@ -11087,7 +11229,7 @@ This is sent because SMS delivery may have failed.
           }
 
           if (typeof window.setRating === 'function' && typeof window.submitReview === 'function' && typeof window.toggleAllReviews === 'function') {
-            console.log('✅ Rating and review functions are properly defined');
+            console.log('�� Rating and review functions are properly defined');
           } else {
             console.error('❌ Rating and review functions not properly defined');
           }
@@ -11394,7 +11536,7 @@ This is sent because SMS delivery may have failed.
 
                 <div class="text-center">
                   <button type="button" onclick="resetForm()" class="bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-                    ���������� Back to Form
+                    ������������ Back to Form
                   </button>
                 </div>
               </div>
@@ -11489,10 +11631,10 @@ This is sent because SMS delivery may have failed.
                     <div class="bg-white rounded-lg p-4 mb-4 border border-green-200">
                       <p class="text-sm text-green-600 mb-2"><strong>What happens next:</strong></p>
                       <ul class="text-sm text-green-700 text-left space-y-1">
-                        <li>��� Receipt sent to your email address</li>
+                        <li>📧 Receipt sent to your email address</li>
                         <li>💰 We'll confirm your Venmo payment within 24 hours</li>
                         <li>📞 We'll contact you to discuss project details</li>
-                        <li>��� Project work begins once payment is confirmed</li>
+                        <li>🚀 Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
                     <div class="text-sm text-green-600 mb-4">
@@ -11516,9 +11658,9 @@ This is sent because SMS delivery may have failed.
                       <p class="text-sm text-yellow-600 mb-2"><strong>Next Steps:</strong></p>
                       <ul class="text-sm text-yellow-700 text-left space-y-1">
                         <li>📧 Manual receipt will be sent within 24 hours</li>
-                        <li>��� We'll confirm your Venmo payment</li>
+                        <li>✅ We'll confirm your Venmo payment</li>
                         <li>📞 We'll contact you to discuss your project</li>
-                        <li>����� Project work begins once payment is confirmed</li>
+                        <li>🚀 Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
                     <button type="button" onclick="location.reload()" class="bg-yellow-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-yellow-700 transition-colors">
@@ -11638,7 +11780,7 @@ This is sent because SMS delivery may have failed.
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ━�����━━━━━━━━�����━��━━
+      ��������━━━━━━━━�����━��━━
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -11647,7 +11789,7 @@ This is sent because SMS delivery may have failed.
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      💰��━━━━━���━━━━━━━━
+      💰��━━━���━���━━━���━━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
@@ -11974,7 +12116,7 @@ This is sent because SMS delivery may have failed.
             resolve(true);
 
           } catch (error) {
-            console.log('❌ Webhook form failed:', error);
+            console.log('��� Webhook form failed:', error);
             resolve(false);
           }
         });
@@ -12192,7 +12334,7 @@ This is sent because SMS delivery may have failed.
             return true;
           }
         } catch (error) {
-          console.log('❌ VoIP email alert failed:', error.message);
+          console.log('�� VoIP email alert failed:', error.message);
         }
 
         // Method 3: Console log for debugging (always succeeds)
@@ -12670,7 +12812,7 @@ This is sent because SMS delivery may have failed.
 
           console.log('✅ Chat system initialized with Zapier webhook to (402) 979-7184');
         } catch (error) {
-          console.error('❌ Error initializing chat system:', error);
+          console.error('��� Error initializing chat system:', error);
           console.log('ℹ�� Chat will still work with basic functionality');
         }
       }
@@ -12757,7 +12899,7 @@ Thanks,
           }
         } catch (error) {
           console.error('Error in emailDirectly:', error);
-          addAgentMessage("����� To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
+          addAgentMessage("������� To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
         }
       }
 
@@ -13235,7 +13377,7 @@ Thanks,
       // Debug function for troubleshooting review system
       function debugReviewSystem() {
         console.log('���� DEBUG: Review System Status');
-        console.log('══════════�����═══════════════���═�����═══��═��');
+        console.log('══════════������═════��═════════���═�����═══��═��');
 
         // Check form elements
         const elements = {
@@ -13310,7 +13452,7 @@ Thanks,
 
       // Quick test function
       function quickTestReview() {
-        console.log('�� Quick test review starting...');
+        console.log('���� Quick test review starting...');
 
         // Fill form with test data
         document.getElementById('reviewerName').value = 'Test Customer';
@@ -13831,7 +13973,7 @@ Thanks,
         }
       } catch (error) {
         console.error('❌ Reliable SMS test failed:', error);
-        alert('�� Reliable SMS test failed: ' + error.message);
+        alert('��� Reliable SMS test failed: ' + error.message);
       }
     }
 
@@ -13886,7 +14028,7 @@ Thanks,
         'enableSendButton': typeof window.enableSendButton
       };
 
-      console.log('📋 Chat Functions:');
+      console.log('�� Chat Functions:');
       Object.entries(functions).forEach(([name, type]) => {
         const status = type === 'function' ? '✅' : '❌';
         console.log(`  ${status} ${name}: ${type}`);
@@ -13947,7 +14089,7 @@ Thanks,
       // Test the function
       try {
         if (typeof window.safeToggleChat === 'function') {
-          console.log('���� Chat function is callable');
+          console.log('����� Chat function is callable');
           return true;
         }
       } catch (e) {
@@ -14004,7 +14146,7 @@ Thanks,
 
       // Ensure at least safeToggleChat is available
       if (typeof window.safeToggleChat !== 'function') {
-        console.log('��� Ensuring safeToggleChat is available...');
+        console.log('����� Ensuring safeToggleChat is available...');
         window.safeToggleChat = window.backupToggleChat || window.emergencyToggleChat || function() {
           alert('Chat not available. Call (402) 979-7184');
         };
@@ -14122,7 +14264,7 @@ Thanks,
         }
       };
 
-      console.log('✅ Chat system recovered! Try clicking the chat button now.');
+      console.log('��� Chat system recovered! Try clicking the chat button now.');
       console.log('�� Function type:', typeof window.safeToggleChat);
       return 'Chat system recovered';
     };
@@ -14179,7 +14321,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('����� Test SMS sent via ' + carrier.name);
+            console.log('������� Test SMS sent via ' + carrier.name);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
@@ -14303,11 +14445,11 @@ Thanks,
             '• Verizon: 4029797184@vtext.com\n' +
             '• AT&T: 4029797184@txt.att.net\n' +
             '• T-Mobile: 4029797184@tmomail.net\n' +
-            '��� Sprint: 4029797184@messaging.sprintpcs.com\n\n' +
+            '���� Sprint: 4029797184@messaging.sprintpcs.com\n\n' +
             'Run testDirectSMS() to test delivery');
     };
 
-    console.log('🔧 Additional SMS tools available:');
+    console.log('��� Additional SMS tools available:');
     console.log('  tryAlternativeSMS() - Try different delivery methods');
     console.log('  verifyPhoneSetup() - Check phone number configuration');
 
@@ -14333,7 +14475,7 @@ Thanks,
           console.log('������� VoIP SMS sent successfully');
           return true;
         } else {
-          console.log('⚠��� VoIP SMS logged for manual processing');
+          console.log('⚠����� VoIP SMS logged for manual processing');
           return true; // Still return true since we logged it
         }
       } catch (error) {
@@ -14739,7 +14881,7 @@ Thanks,
           console.log('✅ Fixed duplicate contact form IDs and added project fields');
         }
       } catch (error) {
-        console.error('��� Error fixing contact form IDs:', error);
+        console.error('����� Error fixing contact form IDs:', error);
       }
     });
   </script>
