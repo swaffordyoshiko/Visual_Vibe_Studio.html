@@ -281,6 +281,16 @@ const accurateRatingFixScript = document.createElement('script');
 accurateRatingFixScript.src = 'fix-accurate-ratings.js';
 document.head.appendChild(accurateRatingFixScript);
 
+// Load PERFECT RATINGS fix (highest priority - maintains 5/5 and 100%)
+const perfectRatingsScript = document.createElement('script');
+perfectRatingsScript.src = 'force-perfect-ratings.js';
+document.head.appendChild(perfectRatingsScript);
+
+// Load CURRENT RATINGS restore (final override - shows actual review status)
+const currentRatingsScript = document.createElement('script');
+currentRatingsScript.src = 'restore-current-ratings.js';
+document.head.appendChild(currentRatingsScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
