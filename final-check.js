@@ -1,18 +1,309 @@
 // Final validation that everything is working
 console.log('🔍 Final check script loading...');
 
+// Fix copy button notifications to use modern toast instead of embedded alerts
+console.log('🔧 Fixing copy button notifications...');
+
+// Override the copyToClipboard function to use modern toast notifications
+window.copyToClipboard = function(text, msg) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        // Use modern toast notification if available
+        if (window.toastManager) {
+          window.toastManager.success(msg || "Copied to clipboard!");
+        } else {
+          alert(msg || "Copied!");
+        }
+      }).catch(() => {
+        // Fallback for older browsers
+        fallbackCopyToClipboard(text, msg);
+      });
+    } else {
+      // Use fallback for non-secure contexts
+      fallbackCopyToClipboard(text, msg);
+    }
+  } catch(e) {
+    console.error('Copy failed:', e);
+    if (window.toastManager) {
+      window.toastManager.error("Copy failed");
+    } else {
+      alert("Copy failed");
+    }
+  }
+};
+
+// Fallback copy function using document.execCommand
+function fallbackCopyToClipboard(text, msg) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    document.execCommand('copy');
+    if (window.toastManager) {
+      window.toastManager.success(msg || "Copied to clipboard!");
+    } else {
+      alert(msg || "Copied!");
+    }
+  } catch (err) {
+    console.error('Fallback copy failed:', err);
+    if (window.toastManager) {
+      window.toastManager.error('Copy failed. Please manually copy the text.');
+    } else {
+      alert('Copy failed. Please manually copy the text.');
+    }
+  }
+
+  document.body.removeChild(textArea);
+}
+
+console.log('✅ Copy button notifications fixed - now using modern toast system');
+
+// Load the comprehensive notification modernization
+if (typeof window.toastManager !== 'undefined') {
+  // Override the global alert function to use modern toast
+  window.originalAlert = window.alert;
+  window.alert = function(message) {
+    console.log('🔄 Converting alert to modern toast:', message);
+    if (window.toastManager) {
+      // Determine toast type based on message content
+      const lowerMessage = message.toLowerCase();
+      let type = 'info';
+
+      if (lowerMessage.includes('error') || lowerMessage.includes('failed') || lowerMessage.includes('wrong') || lowerMessage.includes('invalid')) {
+        type = 'error';
+      } else if (lowerMessage.includes('success') || lowerMessage.includes('sent') || lowerMessage.includes('completed') || lowerMessage.includes('updated')) {
+        type = 'success';
+      } else if (lowerMessage.includes('warning') || lowerMessage.includes('missing') || lowerMessage.includes('required')) {
+        type = 'warning';
+      }
+
+      toastManager.show(message, type, {
+        duration: 5000,
+        title: type === 'error' ? 'Error' : type === 'success' ? 'Success' : type === 'warning' ? 'Warning' : 'Notice'
+      });
+    } else {
+      // Fallback to original alert if toast manager not available
+      window.originalAlert(message);
+    }
+  };
+
+  // Override the showAlert function to use modern toast
+  window.originalShowAlert = window.showAlert;
+  window.showAlert = function(message, type = 'info') {
+    console.log('🔄 Converting showAlert to modern toast:', message, type);
+    if (window.toastManager) {
+      // Map showAlert types to toast types
+      const typeMap = {
+        'success': 'success',
+        'error': 'error',
+        'warning': 'warning',
+        'info': 'info'
+      };
+
+      const toastType = typeMap[type] || 'info';
+      const titleMap = {
+        'success': 'Success',
+        'error': 'Error',
+        'warning': 'Warning',
+        'info': 'Notice'
+      };
+
+      toastManager.show(message, toastType, {
+        duration: type === 'error' ? 7000 : 5000,
+        title: titleMap[toastType]
+      });
+    } else {
+      // Fallback to original showAlert if toast manager not available
+      if (window.originalShowAlert) {
+        window.originalShowAlert(message, type);
+      } else {
+        window.alert(message);
+      }
+    }
+  };
+
+  // Create modern notification helper functions
+  window.showSuccess = function(message, options = {}) {
+    if (window.toastManager) {
+      toastManager.success(message, { title: 'Success', duration: 4000, ...options });
+    } else {
+      window.alert(message);
+    }
+  };
+
+  window.showError = function(message, options = {}) {
+    if (window.toastManager) {
+      toastManager.error(message, { title: 'Error', duration: 6000, ...options });
+    } else {
+      window.alert(message);
+    }
+  };
+
+  window.showWarning = function(message, options = {}) {
+    if (window.toastManager) {
+      toastManager.show(message, 'warning', { title: 'Warning', duration: 5000, ...options });
+    } else {
+      window.alert(message);
+    }
+  };
+
+  window.showInfo = function(message, options = {}) {
+    if (window.toastManager) {
+      toastManager.info(message, { title: 'Notice', duration: 4000, ...options });
+    } else {
+      window.alert(message);
+    }
+  };
+
+  console.log('✅ All notifications modernized - alert() and showAlert() now use toast system');
+}
+
+// Load viewport-aware toast system
+console.log('🍞 Loading viewport-aware toast system...');
+
+const viewportToastScript = document.createElement('script');
+viewportToastScript.src = 'viewport-toast.js';
+viewportToastScript.onload = function() {
+  console.log('✅ Viewport toast system loaded');
+};
+document.head.appendChild(viewportToastScript);
+
+// Also create a backup direct test right here
+setTimeout(() => {
+  console.log('🧪 Creating backup test notification...');
+  const backupTest = document.createElement('div');
+  backupTest.style.cssText = `
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    background: #00ff00 !important;
+    color: black !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    z-index: 999999999 !important;
+    box-shadow: 0 4px 20px rgba(0,255,0,0.3) !important;
+    border: 2px solid black !important;
+    max-width: 300px !important;
+    font-family: Arial, sans-serif !important;
+  `;
+  backupTest.innerHTML = 'BACKUP TEST: Notification system is loading...';
+  document.body.appendChild(backupTest);
+
+  setTimeout(() => {
+    if (backupTest.parentNode) {
+      backupTest.remove();
+    }
+  }, 5000);
+}, 1000);
+
+// Load the full emergency script asynchronously
+const emergencyScript = document.createElement('script');
+emergencyScript.src = 'toast-fix.js';
+document.head.appendChild(emergencyScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
   console.log('- Submit button:', !!document.getElementById('submitOrderBtn'));
   console.log('- simpleOrderSubmit function:', typeof window.simpleOrderSubmit);
   console.log('- Toast manager:', typeof window.toastManager);
+  console.log('- copyToClipboard function:', typeof window.copyToClipboard);
+  console.log('- Modern alert function:', typeof window.alert);
+  console.log('- Modern showAlert function:', typeof window.showAlert);
+  console.log('- showSuccess function:', typeof window.showSuccess);
+  console.log('- showError function:', typeof window.showError);
   
   if (typeof window.simpleOrderSubmit !== 'function') {
     console.error('❌ CRITICAL: simpleOrderSubmit function not found!');
   } else {
     console.log('✅ All systems ready for order submission');
   }
+
+  // Load notification test script for debugging
+  const testScript = document.createElement('script');
+  testScript.src = 'test-notifications.js';
+  document.head.appendChild(testScript);
+
+  // AGGRESSIVE NOTIFICATION OVERRIDE - Force all notifications to use modern toast
+  setTimeout(() => {
+    if (window.toastManager) {
+      console.log('🚀 AGGRESSIVE: Forcing all notifications to modern toast...');
+
+      // Store original functions
+      window.originalAlert = window.originalAlert || window.alert;
+      window.originalShowAlert = window.originalShowAlert || window.showAlert;
+
+      // FORCE OVERRIDE alert function
+      window.alert = function(message) {
+        console.log('🔄 AGGRESSIVE Converting alert to toast:', message);
+        if (window.toastManager && message) {
+          // Determine toast type based on message content
+          const lowerMessage = message.toLowerCase();
+          let type = 'info';
+
+          if (lowerMessage.includes('error') || lowerMessage.includes('failed') || lowerMessage.includes('wrong') || lowerMessage.includes('invalid') || lowerMessage.includes('not available') || lowerMessage.includes('not found') || lowerMessage.includes('unavailable') || lowerMessage.includes('missing')) {
+            type = 'error';
+          } else if (lowerMessage.includes('success') || lowerMessage.includes('sent') || lowerMessage.includes('completed') || lowerMessage.includes('updated') || lowerMessage.includes('received') || lowerMessage.includes('copied') || lowerMessage.includes('submitted')) {
+            type = 'success';
+          } else if (lowerMessage.includes('warning') || lowerMessage.includes('please') || lowerMessage.includes('refresh') || lowerMessage.includes('try again') || lowerMessage.includes('required') || lowerMessage.includes('loading')) {
+            type = 'warning';
+          }
+
+          toastManager.show(message, type, {
+            duration: type === 'error' ? 8000 : type === 'success' ? 4000 : 6000,
+            title: type === 'error' ? 'Error' : type === 'success' ? 'Success' : type === 'warning' ? 'Notice' : 'Information'
+          });
+        } else {
+          // Fallback to original alert
+          window.originalAlert(message);
+        }
+      };
+
+      // FORCE OVERRIDE showAlert function
+      window.showAlert = function(message, type = 'info') {
+        console.log('🔄 AGGRESSIVE Converting showAlert to toast:', message, type);
+        if (window.toastManager && message) {
+          const typeMap = {
+            'success': 'success',
+            'error': 'error',
+            'warning': 'warning',
+            'info': 'info'
+          };
+
+          const toastType = typeMap[type] || 'info';
+          const titleMap = {
+            'success': 'Success',
+            'error': 'Error',
+            'warning': 'Warning',
+            'info': 'Notice'
+          };
+
+          toastManager.show(message, toastType, {
+            duration: type === 'error' ? 8000 : type === 'success' ? 4000 : 6000,
+            title: titleMap[toastType]
+          });
+        } else {
+          // Fallback
+          if (window.originalShowAlert) {
+            window.originalShowAlert(message, type);
+          } else {
+            window.alert(message);
+          }
+        }
+      };
+
+      console.log('✅ AGGRESSIVE: All notifications now forced to modern toast system');
+    }
+  }, 500);
 });
 
 // Extra safety: prevent any form submissions
