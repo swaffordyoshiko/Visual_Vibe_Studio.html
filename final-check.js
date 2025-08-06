@@ -206,6 +206,11 @@ const profileSaveRefreshFixScript = document.createElement('script');
 profileSaveRefreshFixScript.src = 'fix-profile-save-refresh.js';
 document.head.appendChild(profileSaveRefreshFixScript);
 
+// Load profile picture click fix (makes profile picture clickable)
+const profilePictureClickFixScript = document.createElement('script');
+profilePictureClickFixScript.src = 'fix-profile-picture-click.js';
+document.head.appendChild(profilePictureClickFixScript);
+
 // Load order history content fix (replaces loading message with actual content)
 const orderHistoryContentFixScript = document.createElement('script');
 orderHistoryContentFixScript.src = 'fix-order-history-content.js';
