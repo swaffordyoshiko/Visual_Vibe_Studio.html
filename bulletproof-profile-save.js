@@ -342,6 +342,35 @@ console.log('🛡️ Loading bulletproof profile save system...');
     debugLog(`✅ Updated ${nameElements.length} name display(s) to: ${displayName}`);
   }
 
+  // Display profile picture in the edit modal
+  function displayProfilePictureInModal() {
+    debugLog('Displaying profile picture in modal...');
+
+    try {
+      const savedPicture = localStorage.getItem('visualVibeProfilePicture');
+      const profileDisplay = document.getElementById('profilePictureDisplay');
+      const profileInitials = document.getElementById('profileInitials');
+
+      if (savedPicture && profileDisplay) {
+        // Show the saved profile picture
+        profileDisplay.style.backgroundImage = `url(${savedPicture})`;
+        profileDisplay.style.backgroundSize = 'cover';
+        profileDisplay.style.backgroundPosition = 'center';
+        profileDisplay.innerHTML = ''; // Remove initials
+        debugLog('✅ Profile picture displayed in modal');
+
+      } else if (profileInitials && window.currentUser) {
+        // Show initials if no picture
+        const initials = getInitials(window.currentUser.name);
+        profileInitials.textContent = initials;
+        debugLog('✅ Profile initials displayed in modal');
+      }
+
+    } catch (error) {
+      debugLog('❌ Error displaying profile picture in modal:', error);
+    }
+  }
+
   // Load profile data with fallback chain
   function loadProfileDataBulletproof() {
     debugLog('Loading profile data with fallback chain...');
@@ -543,7 +572,10 @@ console.log('🛡️ Loading bulletproof profile save system...');
       // Load and populate data
       const profileData = loadProfileDataBulletproof();
       populateFormBulletproof(profileData);
-      
+
+      // Display existing profile picture in modal
+      displayProfilePictureInModal();
+
       // Set up form handler with force override
       const form = document.getElementById('profileForm');
       if (form) {
@@ -580,6 +612,49 @@ console.log('🛡️ Loading bulletproof profile save system...');
     window.loadProfileDataBulletproof = loadProfileDataBulletproof;
     window.updateAllProfileDisplays = updateAllProfileDisplays;
     window.updateProfilePictureDisplays = updateProfilePictureDisplays;
+    window.displayProfilePictureInModal = displayProfilePictureInModal;
+
+    // Enhanced profile picture change function for modal
+    window.changeProfilePictureManually = function() {
+      debugLog('📸 Manual profile picture change from modal...');
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+
+      fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageData = e.target.result;
+
+            // Save immediately (no confirmation needed in modal)
+            localStorage.setItem('visualVibeProfilePicture', imageData);
+
+            // Update modal display
+            displayProfilePictureInModal();
+
+            // Update all other displays
+            updateProfilePictureDisplays();
+
+            // Show success feedback
+            if (window.toastManager) {
+              window.toastManager.success('Profile picture updated!', { duration: 2000 });
+            }
+
+            debugLog('✅ Profile picture updated from modal');
+          };
+          reader.readAsDataURL(file);
+        }
+
+        document.body.removeChild(fileInput);
+      });
+
+      document.body.appendChild(fileInput);
+      fileInput.click();
+    };
 
     // Load and display profile picture immediately if user is logged in
     setTimeout(() => {
@@ -589,7 +664,7 @@ console.log('🛡️ Loading bulletproof profile save system...');
       }
     }, 1000);
 
-    debugLog('�� Bulletproof system initialized and ready');
+    debugLog('✅ Bulletproof system initialized and ready');
   }
   
   // Initialize immediately and on DOM ready
