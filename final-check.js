@@ -181,6 +181,11 @@ const definitiveSubmitReviewScript = document.createElement('script');
 definitiveSubmitReviewScript.src = 'fix-submitreview-definitive.js';
 document.head.appendChild(definitiveSubmitReviewScript);
 
+// Load showOrderHistory function fix
+const showOrderHistoryFixScript = document.createElement('script');
+showOrderHistoryFixScript.src = 'fix-show-order-history.js';
+document.head.appendChild(showOrderHistoryFixScript);
+
 // Load the full emergency script asynchronously
 const emergencyScript = document.createElement('script');
 emergencyScript.src = 'toast-fix.js';
