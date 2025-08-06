@@ -445,6 +445,12 @@ console.log('✅ Profile modal test script loading disabled to prevent element e
 // document.head.appendChild(profileModalButtonFixScript);
 console.log('✅ fix-profile-modal-buttons.js loading disabled to prevent conflicts');
 
+// Load View All Reviews fix
+const viewAllReviewsFixScript = document.createElement('script');
+viewAllReviewsFixScript.src = 'fix-view-all-reviews.js';
+document.head.appendChild(viewAllReviewsFixScript);
+console.log('🔧 View All Reviews fix loaded');
+
 // Load profile save refresh fix (prevents page refresh on Save Changes)
 const profileSaveRefreshFixScript = document.createElement('script');
 profileSaveRefreshFixScript.src = 'fix-profile-save-refresh.js';
