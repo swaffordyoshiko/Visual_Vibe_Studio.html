@@ -310,8 +310,12 @@ console.log('🔧 Loading comprehensive profile system fix...');
       // Save the image
       localStorage.setItem('visualVibeProfilePicture', imageData);
 
-      // Update all profile picture displays
-      updateProfilePictureDisplays(imageData);
+      // Update all profile picture displays using bulletproof system
+      if (window.updateProfilePictureDisplays) {
+        window.updateProfilePictureDisplays();
+      } else {
+        updateProfilePictureDisplays(imageData);
+      }
 
       // Close confirmation modal
       const modal = document.getElementById('profilePictureConfirmModal');
