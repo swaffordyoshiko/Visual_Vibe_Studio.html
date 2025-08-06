@@ -202,8 +202,10 @@ function initializeCurrentRatingsSystem() {
 
 // Make functions globally available
 window.updateCurrentRatings = updateCurrentRatings;
-window.calculateCurrentRatings = restoreAccurateCalculations().calculateCurrentRatings;
 window.disablePerfectRatings = disablePerfectRatings;
+
+// Ensure calculateCurrentRatings is available
+restoreAccurateCalculations();
 
 // Test function
 window.testCurrentRatings = function() {
