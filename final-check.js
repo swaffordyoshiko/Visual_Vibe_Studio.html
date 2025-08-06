@@ -420,6 +420,12 @@ profileModalFixScript.src = 'fix-profile-modal.js';
 document.head.appendChild(profileModalFixScript);
 
 // Load profile modal fix validation
+// Load enhanced profile system
+const enhancedProfileScript = document.createElement('script');
+enhancedProfileScript.src = 'profile-system-fix.js';
+document.head.appendChild(enhancedProfileScript);
+console.log('✅ Enhanced profile system loaded');
+
 // Temporarily disable test script that causes missing elements error
 // const profileModalTestScript = document.createElement('script');
 // profileModalTestScript.src = 'test-profile-modal-fix.js';
