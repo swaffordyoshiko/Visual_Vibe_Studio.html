@@ -348,7 +348,7 @@ window.handleEmailClick = function(event, emailAddress) {
 // DISABLED:                   <div class="space-y-2">
 // DISABLED:                     <button onclick="window.open('https://venmo.com/u/Yoshiko-Swafford', '_blank')"
 // DISABLED:                             class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium">
-// DISABLED:                       ��� Pay with Venmo
+// DISABLED:                       💳 Pay with Venmo
 // DISABLED:                     </button>
 // DISABLED:                     <p class="text-xs text-gray-500">After payment, we'll contact you within 24 hours to begin your project</p>
 // DISABLED:                   </div>
@@ -431,7 +431,7 @@ window.handleEmailClick = function(event, emailAddress) {
       // Test function to verify Formspree works
       async function testFormspreeConnection() {
         try {
-          console.log('���� Testing Formspree connection...');
+          console.log('📱 Testing Formspree connection...');
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = 'https://formspree.io/f/xwpejpvk';
@@ -572,7 +572,7 @@ This order was submitted on ${new Date().toLocaleString('en-US', {
 
         // Use working Zapier webhook method
         try {
-          console.log('�� Sending order confirmation via Zapier webhook...');
+          console.log('📞 Sending order confirmation via Zapier webhook...');
           console.log('📋 Order data:', orderData);
           console.log('✉️ Email subject:', emailSubject);
 
@@ -640,7 +640,7 @@ This order was submitted on ${new Date().toLocaleString('en-US', {
           console.log('📧 Order confirmation sent via Zapier webhook');
           return true;
         } catch (webhookError) {
-          console.error('�� Order webhook failed:', webhookError);
+          console.error('📞 Order webhook failed:', webhookError);
 
           // Direct mailto fallback - most reliable method
           const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
@@ -659,7 +659,7 @@ This order was submitted on ${new Date().toLocaleString('en-US', {
 2. Click "Send Email" below to send order details
 3. We'll contact you within 24 hours
 
-��� Questions? Call (402) 979-7184`;
+📞 Questions? Call (402) 979-7184`;
 
           if (confirm(orderSummary + '\n\nClick OK to send order details via email, or Cancel to just save the order.')) {
             window.open(mailtoLink);
@@ -673,7 +673,7 @@ This order was submitted on ${new Date().toLocaleString('en-US', {
       if (typeof emailjs !== 'undefined') {
         try {
           emailjs.init("eHAEIqw8YtVZP5rYA"); // Public key for Visual Vibe Studio
-          console.log('��� EmailJS initialized successfully');
+          console.log('📧 EmailJS initialized successfully');
         } catch (error) {
           console.error('❌ EmailJS initialization failed:', error);
         }
@@ -978,7 +978,7 @@ Thanks!` : '';
 
           const modal = document.getElementById('signInModal');
           if (!modal) {
-            console.error('�� Sign in modal element not found in DOM');
+            console.error('📞 Sign in modal element not found in DOM');
             console.log('🔍 Checking DOM state:', document.readyState);
             console.log('🔍 Modal exists in DOM:', document.querySelector('#signInModal') !== null);
 
@@ -1017,14 +1017,14 @@ Thanks!` : '';
 
           console.log('✅ Sign in modal opened successfully');
         } catch (error) {
-          console.error('��� Error opening sign in modal:', error);
+          console.error('📧 Error opening sign in modal:', error);
           alert('Error opening sign in form. Please refresh the page.');
         }
       } */
 
       function openSignUpModal() {
         try {
-          console.log('��� Opening sign up modal...');
+          console.log('📧 Opening sign up modal...');
 
           const modal = document.getElementById('signUpModal');
           if (!modal) {
@@ -1377,7 +1377,7 @@ Thanks!` : '';
           console.log('📱 Device type - Mobile:', isMobile, 'Tablet:', isTablet);
 
           if (!modal) {
-            console.error('��� Order History modal not found in DOM');
+            console.error('📧 Order History modal not found in DOM');
             showAlert('Order history not available. Please refresh the page.', 'error');
             return;
           }
@@ -1606,7 +1606,7 @@ Thanks!` : '';
               modal.keydownHandler = null;
             }
           } else {
-            console.error('��� Order History modal not found when trying to close');
+            console.error('📧 Order History modal not found when trying to close');
           }
         } catch (error) {
           console.error('❌ Error closing order history:', error);
@@ -2003,7 +2003,7 @@ ${'='.repeat(40)}
           setTimeout(() => {
             const testimonialsGrid = document.getElementById('allCustomerReviews');
             const dynamicReviews = testimonialsGrid ? testimonialsGrid.querySelectorAll('[data-dynamic-review="true"]') : [];
-            console.log(`��� Current dynamic reviews in DOM: ${dynamicReviews.length}`);
+            console.log(`📧 Current dynamic reviews in DOM: ${dynamicReviews.length}`);
 
             if (dynamicReviews.length === 0) {
               console.error('❌ No dynamic reviews found in DOM after submission!');
@@ -2029,13 +2029,13 @@ ${'='.repeat(40)}
                 if (testimonialsGrid) {
                   const existingDynamic = testimonialsGrid.querySelectorAll('[data-dynamic-review="true"]');
                   existingDynamic.forEach(el => el.remove());
-                  console.log(`���� Removed ${existingDynamic.length} existing dynamic reviews`);
+                  console.log(`📱 Removed ${existingDynamic.length} existing dynamic reviews`);
 
                   // Add all approved reviews
                   approvedReviews.forEach((rev, index) => {
                     setTimeout(() => {
                       addReviewToTestimonials(rev);
-                      console.log(`����� Added review ${index + 1}: ${rev.name}`);
+                      console.log(`📱 Added review ${index + 1}: ${rev.name}`);
                     }, index * 100); // Stagger additions
                   });
                 }
@@ -2053,20 +2053,20 @@ ${'='.repeat(40)}
           if (typeof loadReviews === 'function') {
             setTimeout(() => {
               loadReviews();
-              console.log('��� Reviews display reloaded');
+              console.log('📧 Reviews display reloaded');
             }, 100);
           }
 
           if (typeof refreshAllStatistics === 'function') {
             setTimeout(() => {
               refreshAllStatistics();
-              console.log('������ Final statistics refresh completed');
+              console.log('📱📞 Final statistics refresh completed');
             }, 200);
           }
 
           return false;
         } catch (error) {
-          console.error('�� Error submitting review:', error);
+          console.error('📞 Error submitting review:', error);
           showAlert('Error submitting review. Please try again.', 'error');
           return false;
         }
@@ -2089,7 +2089,7 @@ ${'='.repeat(40)}
             hiddenInput.value = ratingValue;
             console.log('✅ Hidden input updated to:', hiddenInput.value);
           } else {
-            console.error('��� Hidden input field not found!');
+            console.error('📧 Hidden input field not found!');
           }
 
           // Update star display
@@ -2135,7 +2135,7 @@ ${'='.repeat(40)}
             }
           });
         } catch (error) {
-          console.error('�� Error highlighting stars:', error);
+          console.error('📞 Error highlighting stars:', error);
         }
       }
 
@@ -2159,7 +2159,7 @@ ${'='.repeat(40)}
       // Define testimonials function
       function addReviewToTestimonials(review) {
         try {
-          console.log('���� Adding review to testimonials section:', review);
+          console.log('📱 Adding review to testimonials section:', review);
 
           // Find the testimonials grid container
           const testimonialsGrid = document.getElementById('allCustomerReviews');
@@ -2220,7 +2220,7 @@ ${'='.repeat(40)}
             <p class="text-purple-100 leading-relaxed mb-3 text-sm">"${review.text}"</p>
 
             <div class="text-green-400 font-semibold text-xs">
-              NEW REVIEW �� ${new Date(review.date).toLocaleDateString()}
+              NEW REVIEW 📞 ${new Date(review.date).toLocaleDateString()}
             </div>
           `;
 
@@ -2261,7 +2261,7 @@ ${'='.repeat(40)}
             reviewElement.style.animation = '';
           }, 10000);
 
-          console.log('�� Review added to testimonials display, total reviews now:', testimonialsGrid.children.length);
+          console.log('📞 Review added to testimonials display, total reviews now:', testimonialsGrid.children.length);
 
           // Scroll to the testimonials section to show the new review
           setTimeout(() => {
@@ -2302,16 +2302,16 @@ ${'='.repeat(40)}
       // Function to manually display all stored reviews
       function forceDisplayAllReviews() {
         try {
-          console.log('�� Checking stored reviews...');
+          console.log('📞 Checking stored reviews...');
           const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
           console.log('📦 All stored reviews:', allReviews);
 
           const approvedReviews = allReviews.filter(r => r.approved);
-          console.log('�� Approved reviews:', approvedReviews);
+          console.log('📞 Approved reviews:', approvedReviews);
 
           const testimonialsGrid = document.getElementById('allCustomerReviews');
           if (!testimonialsGrid) {
-            console.error('�� Testimonials grid not found!');
+            console.error('📞 Testimonials grid not found!');
             return;
           }
 
@@ -2359,7 +2359,7 @@ ${'='.repeat(40)}
             : 'No reviews found in storage.';
 
           alert(message);
-          console.log('��� All stored reviews:', allReviews);
+          console.log('📧 All stored reviews:', allReviews);
 
           // Look for Callie specifically
           const callieReview = allReviews.find(r => r.name.toLowerCase().includes('callie'));
@@ -2377,7 +2377,7 @@ ${'='.repeat(40)}
       // Function to restore user session on page load
       function restoreUserSession() {
         try {
-          console.log('��� Starting session restoration...');
+          console.log('📧 Starting session restoration...');
 
           // Try multiple storage methods for better reliability
           let savedUser = localStorage.getItem('visualVibeUser');
@@ -2451,10 +2451,10 @@ ${'='.repeat(40)}
               } else {
                 // User was deleted from system, clear session
                 clearUserSession();
-                console.log('⚠�� User no longer exists, cleared session');
+                console.log('⚠📞 User no longer exists, cleared session');
               }
             } else {
-              console.log('��️ Invalid session data found, clearing...');
+              console.log('📞️ Invalid session data found, clearing...');
               clearUserSession();
             }
           } else {
@@ -2601,7 +2601,7 @@ ${'='.repeat(40)}
         // Check session when window gains focus
         window.addEventListener('focus', function() {
           if (window.currentUser) {
-            console.log('�� Window focused, refreshing session...');
+            console.log('📞 Window focused, refreshing session...');
             restoreUserSession();
           }
         });
@@ -2611,7 +2611,7 @@ ${'='.repeat(40)}
           if (window.currentUser) {
             const savedUser = localStorage.getItem('visualVibeUser');
             if (!savedUser) {
-              console.log('⚠����� Session lost, attempting restore...');
+              console.log('⚠️📱 Session lost, attempting restore...');
               restoreUserSession();
             }
           }
@@ -2676,7 +2676,7 @@ ${'='.repeat(40)}
         if (checkModalAvailability()) {
           openSignInModal();
         } else {
-          console.error('��� Cannot open sign-in modal - DOM elements not available');
+          console.error('📧 Cannot open sign-in modal - DOM elements not available');
           showAlert('Please refresh the page and try again.', 'error');
         }
       }
@@ -2757,7 +2757,7 @@ ${'='.repeat(40)}
 
       // Enhanced authentication system initialization
       function initializeAuthSystem() {
-        console.log('����� Initializing authentication system...');
+        console.log('📱 Initializing authentication system...');
 
         // Check if required DOM elements exist
         const signInModal = document.getElementById('signInModal');
@@ -2805,7 +2805,7 @@ ${'='.repeat(40)}
       } else {
         // DOM is already loaded
         setTimeout(() => {
-          console.log('����� DOM already ready, checking for existing user session...');
+          console.log('📱 DOM already ready, checking for existing user session...');
           restoreUserSession();
 
           // Auto-debug reviews on page load
@@ -2815,11 +2815,11 @@ ${'='.repeat(40)}
 
       // Auto-debug function to check reviews on page load
       function autoDebugReviews() {
-        console.log('���� AUTO-DEBUG: Checking reviews...');
+        console.log('📱 AUTO-DEBUG: Checking reviews...');
         try {
           const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-          console.log('��� Total reviews in storage:', allReviews.length);
-          console.log('�� All reviews:', allReviews);
+          console.log('📧 Total reviews in storage:', allReviews.length);
+          console.log('📞 All reviews:', allReviews);
 
           // Look for Callie specifically
           const callieReview = allReviews.find(r => r.name.toLowerCase().includes('callie'));
@@ -2841,7 +2841,7 @@ ${'='.repeat(40)}
             }
           }
         } catch (error) {
-          console.error('��� Error in auto-debug:', error);
+          console.error('📧 Error in auto-debug:', error);
         }
       }
 
@@ -2888,7 +2888,7 @@ ${'='.repeat(40)}
         const currentSession = localStorage.getItem('visualVibeUser');
         if (currentSession) {
           const sessionData = JSON.parse(currentSession);
-          console.log('��� Current session:', sessionData);
+          console.log('📧 Current session:', sessionData);
         } else {
           console.log('🔐 No active session found');
         }
@@ -2947,7 +2947,7 @@ ${'='.repeat(40)}
           return { success: false, reason: 'Incorrect password', user: matchingUser.name };
         }
 
-        console.log('���� Password matches!');
+        console.log('📱 Password matches!');
         console.log('✅ Authentication should succeed for user:', matchingUser.name);
 
         return {
@@ -2983,7 +2983,7 @@ ${'='.repeat(40)}
             alert('Chat not ready. Please call (402) 979-7184');
           }
         } catch (error) {
-          console.error('��� Chat error:', error);
+          console.error('📧 Chat error:', error);
           alert('Chat error. Please call (402) 979-7184');
         }
       };
@@ -3016,7 +3016,7 @@ ${'='.repeat(40)}
       window.simpleSend = function() {
         // Prevent multiple calls
         if (window.simpleSendRunning) {
-          console.log('������ simpleSend already running, skipping...');
+          console.log('📱📞 simpleSend already running, skipping...');
           return;
         }
         window.simpleSendRunning = true;
@@ -3032,7 +3032,7 @@ ${'='.repeat(40)}
           }
 
           const message = input.value.trim();
-          console.log('���� DEBUG: Raw input value:', input.value);
+          console.log('📱 DEBUG: Raw input value:', input.value);
           console.log('🔍 DEBUG: Trimmed message:', message);
           console.log('🔍 DEBUG: Message length:', message.length);
 
@@ -3063,7 +3063,7 @@ ${'='.repeat(40)}
             msgDiv.innerHTML = '<div>' + message + '</div>';
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-            console.log('������ Message added to chat');
+            console.log('📱📞 Message added to chat');
           }
 
           // Clear input and re-enable for next message
@@ -3081,9 +3081,9 @@ ${'='.repeat(40)}
 
           // Send VoIP SMS
           console.log('🔍 DEBUG: About to send SMS with message:', message);
-          console.log('��� DEBUG: Message length:', message ? message.length : 'undefined');
+          console.log('📧 DEBUG: Message length:', message ? message.length : 'undefined');
           console.log('🔍 DEBUG: Message type:', typeof message);
-          console.log('�� DEBUG: currentUser:', window.currentUser);
+          console.log('📞 DEBUG: currentUser:', window.currentUser);
 
           // Get customer info before sending (ensure it's available)
           if (!window.currentUser) {
@@ -3111,7 +3111,7 @@ ${'='.repeat(40)}
           }, 100);
 
         } catch (error) {
-          console.error('������ simpleSend error:', error);
+          console.error('📱📞 simpleSend error:', error);
           alert('Message error. Please call (402) 979-7184');
 
           // Ensure chat remains functional even after error
@@ -3132,9 +3132,9 @@ ${'='.repeat(40)}
 
       // IMMEDIATE VoIP SMS function
       window.immediateVoIPSMS = function(message) {
-        console.log('������� IMMEDIATE VoIP SMS sending...');
-        console.log('�� Raw message received:', message);
-        console.log('���������� DEBUG: Message type:', typeof message);
+        console.log('📱📧 IMMEDIATE VoIP SMS sending...');
+        console.log('📞 Raw message received:', message);
+        console.log('📱📞 DEBUG: Message type:', typeof message);
         console.log('🔍 DEBUG: Message empty?:', !message);
 
         try {
@@ -3145,14 +3145,14 @@ ${'='.repeat(40)}
           const customerPhone = customerInfo.phone || 'Not provided';
           const timestamp = new Date().toLocaleString();
 
-          console.log('������� DEBUG: customerInfo:', customerInfo);
+          console.log('📱📧 DEBUG: customerInfo:', customerInfo);
           console.log('🔍 DEBUG: customerName:', customerName);
           console.log('🔍 DEBUG: customerEmail:', customerEmail);
           console.log('🔍 DEBUG: customerPhone:', customerPhone);
           console.log('🔍 DEBUG: timestamp:', timestamp);
 
-          console.log('�� Customer info:', customerInfo);
-          console.log('��� Processing message for:', customerName);
+          console.log('📞 Customer info:', customerInfo);
+          console.log('📧 Processing message for:', customerName);
 
           // Ensure we have actual values, not empty strings
           const safeName = customerName && customerName !== 'undefined' ? customerName : 'Website Visitor';
@@ -3167,11 +3167,11 @@ ${'='.repeat(40)}
                                 'Message: ' + safeMessage + '\n' +
                                 'Time: ' + timestamp;
 
-          console.log('������� Sending SMS message:', fullSMSMessage);
+          console.log('📱📧 Sending SMS message:', fullSMSMessage);
           console.log('📱 Customer Name:', customerName);
-          console.log('��� Customer Email:', customerEmail);
+          console.log('📧 Customer Email:', customerEmail);
           console.log('📱 Message:', message);
-          console.log('������ Timestamp:', timestamp);
+          console.log('📱📞 Timestamp:', timestamp);
 
           const form = document.createElement('form');
           form.method = 'POST';
@@ -3196,7 +3196,7 @@ ${'='.repeat(40)}
             'source': 'website_chat'
           };
 
-          console.log('�� DEBUG: All fields being sent to Zapier:', fields);
+          console.log('📞 DEBUG: All fields being sent to Zapier:', fields);
 
           Object.keys(fields).forEach(key => {
             const input = document.createElement('input');
@@ -3218,7 +3218,7 @@ ${'='.repeat(40)}
           }, 5000);
 
         } catch (error) {
-          console.error('����� IMMEDIATE VoIP SMS failed:', error);
+          console.error('📱 IMMEDIATE VoIP SMS failed:', error);
         }
       };
 
@@ -3255,7 +3255,7 @@ ${'='.repeat(40)}
           }
 
         } catch (error) {
-          console.error('�� ensureChatFunctionality error:', error);
+          console.error('📞 ensureChatFunctionality error:', error);
         }
       };
 
@@ -3264,7 +3264,7 @@ ${'='.repeat(40)}
 
       // Test SMS message formatting
       window.testSMSFormatting = function() {
-        console.log('������������ Testing SMS message formatting...');
+        console.log('📱📱 Testing SMS message formatting...');
         const testMessage = 'This is a test message';
         const testCustomer = 'John Doe';
         const testEmail = 'john@example.com';
@@ -3275,7 +3275,7 @@ ${'='.repeat(40)}
                            'Message: ' + testMessage + '\n' +
                            'Time: ' + testTime;
 
-        console.log('�� Formatted SMS test result:');
+        console.log('📞 Formatted SMS test result:');
         console.log(formattedSMS);
 
         return formattedSMS;
@@ -3322,7 +3322,7 @@ ${'='.repeat(40)}
 
         console.log('🧪 TEST 160-CHAR FORMAT:');
         console.log('📝 Format:', finalMessage);
-        console.log('���� Length:', finalMessage.length);
+        console.log('📱 Length:', finalMessage.length);
         console.log('✅ Fits in SMS:', finalMessage.length <= 160);
 
         return finalMessage;
@@ -3357,10 +3357,10 @@ ${'='.repeat(40)}
 
         const fullFormattedMessage = `VVS [${responseText}] ${timestamp}
 📞 ${testData.name} | ${testData.mobile}
-�� ${testData.email}${projectInfo}
+📞 ${testData.email}${projectInfo}
 📝 ${testData.message}`;
 
-        console.log('����������� Formatted message preview:');
+        console.log('📱📧 Formatted message preview:');
         console.log('Length:', fullFormattedMessage.length);
         console.log('Content:');
         console.log(fullFormattedMessage);
@@ -3374,7 +3374,7 @@ ${'='.repeat(40)}
 📧 ${testData.email}${projectInfo}
 📝 ${longMessage}`;
 
-        console.log('��� Long message test:');
+        console.log('📧 Long message test:');
         console.log('Length:', longFormattedMessage.length);
         console.log('Will require split:', longFormattedMessage.length > 1400);
 
@@ -3399,12 +3399,12 @@ ${'='.repeat(40)}
           const part2 = [
             `${headerLine} - CONTINUED`,
             `👤 ${testData.name}`,
-            `�� COMPLETE MESSAGE:`,
+            `📞 COMPLETE MESSAGE:`,
             longMessage
           ].join('\n');
 
           console.log('📱 Part 1 length:', part1.length);
-          console.log('��� Part 2 length:', part2.length);
+          console.log('📧 Part 2 length:', part2.length);
           console.log('Part 1 content:');
           console.log(part1);
           console.log('---');
@@ -3666,10 +3666,10 @@ ${'='.repeat(40)}
             };
           }
 
-          console.log('���� Final compact message:', formattedMessage);
+          console.log('📱 Final compact message:', formattedMessage);
           console.log('📏 Final length:', formattedMessage.length);
 
-          console.log('��� Formatted message (Part 1):', formattedMessage);
+          console.log('📧 Formatted message (Part 1):', formattedMessage);
 
           const form = document.createElement('form');
           form.method = 'POST';
@@ -3732,7 +3732,7 @@ DECODED:
           form.submit();
 
           console.log('✅ Contact message sent to phone');
-          console.log('���� FINAL DEBUG - Message being sent:', formattedMessage);
+          console.log('📱 FINAL DEBUG - Message being sent:', formattedMessage);
           console.log('🔍 FINAL DEBUG - Message length:', formattedMessage.length);
 
           // Send second part of long message if needed
@@ -3753,7 +3753,7 @@ DECODED:
           }, 5000);
 
         } catch (error) {
-          console.error('�� Contact message failed:', error);
+          console.error('📞 Contact message failed:', error);
           // Re-enable submit button on error
           const submitBtn = document.getElementById('submitContactBtn');
           if (submitBtn) {
@@ -3830,15 +3830,15 @@ ${messageData.fullMessage}`;
                 <h3 class="text-lg md:text-xl font-semibold text-gray-800 mb-2">Message Sent Successfully!</h3>
                 <p class="text-gray-600 mb-4 text-sm md:text-base">Hi ${name}! Thank you for your message. I've received it directly on my phone with all your contact details and preferred response method.</p>
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 text-xs md:text-sm text-blue-800 text-left">
-                  <strong>�� What happens next?</strong><br><br>
-                  ��� <strong>Your message includes:</strong><br>
-                  �� Your name and contact information<br>
-                  ��� Your preferred response method (text/email)<br>
+                  <strong>📞 What happens next?</strong><br><br>
+                  📧 <strong>Your message includes:</strong><br>
+                  📞 Your name and contact information<br>
+                  📧 Your preferred response method (text/email)<br>
                   • Your complete message<br><br>
-                  ��� <strong>Response time:</strong><br>
+                  📧 <strong>Response time:</strong><br>
                   • I'll respond within 2-4 hours during business days<br>
                   • For urgent matters: call (402) 979-7184<br><br>
-                  ��� <strong>Watch for my response via your preferred method!</strong>
+                  📧 <strong>Watch for my response via your preferred method!</strong>
                 </div>
                 <button onclick="resetContactForm()" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm md:text-base">
                   Send Another Message
@@ -3895,7 +3895,7 @@ ${messageData.fullMessage}`;
                   </label>
                   <label class="flex items-center">
                     <input type="radio" id="responseEmail" name="responsePreference" value="email" class="mr-2 text-blue-600 focus:ring-blue-500">
-                    <span class="text-sm text-gray-700">�� Email response</span>
+                    <span class="text-sm text-gray-700">📞 Email response</span>
                   </label>
                 </div>
               </div>
@@ -3942,7 +3942,7 @@ ${messageData.fullMessage}`;
           }, 100);
 
         } catch (error) {
-          console.error('��� Error opening contact form:', error);
+          console.error('📧 Error opening contact form:', error);
           alert('Contact form error. Please call (402) 979-7184');
         }
       };
@@ -4037,7 +4037,7 @@ ${messageData.fullMessage}`;
     // BULLETPROOF CHAT FUNCTION - WORKS IMMEDIATELY AND ALWAYS AVAILABLE
       window.safeToggleChat = function() {
         try {
-          console.log('�� BULLETPROOF chat toggle activated');
+          console.log('📞 BULLETPROOF chat toggle activated');
           var chatWindow = document.getElementById('chatWindow');
           var chatBubble = document.getElementById('chatBubble');
 
@@ -4051,7 +4051,7 @@ ${messageData.fullMessage}`;
                        chatWindow.classList.contains('open');
 
           if (isOpen) {
-            console.log('��� Closing chat');
+            console.log('📧 Closing chat');
             chatWindow.style.display = 'none';
             chatWindow.classList.remove('open');
             if (chatBubble) chatBubble.classList.remove('active');
@@ -4078,7 +4078,7 @@ ${messageData.fullMessage}`;
       if (typeof window.safeToggleChat !== 'function') {
         console.error('❌ CRITICAL: Bulletproof chat function failed to define!');
       } else {
-        console.log('��� BULLETPROOF chat function ready');
+        console.log('📧 BULLETPROOF chat function ready');
       }
 
       // PROTECT THE FUNCTION FROM BEING OVERWRITTEN
@@ -4159,21 +4159,21 @@ ${messageData.fullMessage}`;
         enableSendButton();
 
         // Send SMS notification to business owner using immediate function
-        console.log('������� Sending SMS notification to business owner...');
+        console.log('📱📧 Sending SMS notification to business owner...');
 
         if (typeof immediateSMS === 'function') {
           immediateSMS(message).then((success) => {
             if (success) {
               console.log('✅ SMS notification sent successfully');
             } else {
-              console.log('⚠����� SMS notification had issues but message logged for manual processing');
+              console.log('⚠️📱 SMS notification had issues but message logged for manual processing');
             }
           }).catch((error) => {
-            console.error('���� SMS notification failed:', error);
+            console.error('📱 SMS notification failed:', error);
             // Don't show error to user, just log for debugging
           });
         } else {
-          console.error('���� immediateSMS function not available');
+          console.error('📱 immediateSMS function not available');
           // Basic console log fallback for debugging
           console.log('📝 Message for manual SMS processing:', {
             message: message,
@@ -4202,12 +4202,12 @@ ${messageData.fullMessage}`;
 
           // Try to use any available SMS functions
           if (typeof sendSimpleSMSGateway === 'function') {
-            console.log('�� Using simple SMS gateway fallback...');
+            console.log('📞 Using simple SMS gateway fallback...');
             sendSimpleSMSGateway(message, customerContact).then((success) => {
               if (success) {
                 console.log('✅ Fallback SMS sent via simple gateway');
               } else {
-                console.log('⚠�� Simple gateway had issues');
+                console.log('⚠📞 Simple gateway had issues');
               }
             }).catch((error) => {
               console.error('❌ Simple gateway failed:', error);
@@ -4215,14 +4215,14 @@ ${messageData.fullMessage}`;
           } else if (typeof window.sendEnhancedSMS === 'function') {
             console.log('📱 Using sendEnhancedSMS fallback...');
             window.sendEnhancedSMS(smsMessage).then(() => {
-              console.log('�� Fallback SMS sent via enhanced method');
+              console.log('📞 Fallback SMS sent via enhanced method');
             }).catch((error) => {
               console.error('❌ Fallback enhanced SMS failed:', error);
             });
           } else {
             console.error('❌ Simple SMS gateway not available');
             // Log the message details for manual handling
-            console.log('�� Message for manual SMS processing:', {
+            console.log('📞 Message for manual SMS processing:', {
               message: message,
               customer: customerContact,
               timestamp: new Date().toISOString(),
@@ -4257,7 +4257,7 @@ ${messageData.fullMessage}`;
 
       // Immediate working SMS notification function
       async function immediateSMS(message) {
-        console.log('��� Immediate SMS notification triggered');
+        console.log('📧 Immediate SMS notification triggered');
 
         // Get customer info safely (define outside try/catch for broader scope)
         const customerInfo = window.currentUser || { name: 'Website Visitor', email: 'Not provided' };
@@ -4278,17 +4278,17 @@ ${messageData.fullMessage}`;
             console.log('🔄 Using ultra-reliable SMS method...');
             const success = reliableSMS(message, customerContact);
             if (success) {
-              console.log('����� SMS sent via reliable method');
+              console.log('📱 SMS sent via reliable method');
               return true;
             }
           } else {
-            console.log('������ Reliable SMS function not available');
+            console.log('📱📞 Reliable SMS function not available');
           }
 
           // Email fallback using mailto (always works)
           try {
-            console.log('���� Using email fallback...');
-            const emailSubject = encodeURIComponent('���� VVS Chat Message');
+            console.log('📱 Using email fallback...');
+            const emailSubject = encodeURIComponent('📱 VVS Chat Message');
             const emailBody = encodeURIComponent(`Chat message: "${message}"\nFrom: ${customerContact}\nTime: ${timestamp}`);
             const mailtoUrl = `mailto:support@visualvibestudio.store?subject=${emailSubject}&body=${emailBody}`;
 
@@ -4331,7 +4331,7 @@ ${messageData.fullMessage}`;
 
       // Ultra-reliable SMS function that works without fetch
       function reliableSMS(message, customerContact) {
-        console.log('��� Reliable SMS function triggered');
+        console.log('📧 Reliable SMS function triggered');
 
         try {
           // Method 1: Form submission to email-to-SMS gateway
@@ -4397,7 +4397,7 @@ ${messageData.fullMessage}`;
         } catch (error) {
           console.error('❌ Reliable SMS failed:', error);
           // Final fallback: console log for manual processing
-          console.log('�� MANUAL SMS REQUIRED:', {
+          console.log('📞 MANUAL SMS REQUIRED:', {
             message: message,
             customer: customerContact,
             timestamp: new Date().toISOString(),
@@ -4455,7 +4455,7 @@ ${messageData.fullMessage}`;
             document.body.removeChild(iframe);
           }, 2000);
 
-          console.log('��� Simple SMS gateway submitted successfully');
+          console.log('📧 Simple SMS gateway submitted successfully');
           return true;
 
         } catch (error) {
@@ -4468,12 +4468,12 @@ ${messageData.fullMessage}`;
       try {
         window.simpleSend = simpleSend;
         window.enableSendButton = enableSendButton;
-        console.log('�� Enhanced chat input functions loaded');
+        console.log('📞 Enhanced chat input functions loaded');
         console.log('  simpleSend type:', typeof window.simpleSend);
         console.log('  enableSendButton type:', typeof window.enableSendButton);
       } catch (assignmentError) {
         console.error('❌ Error assigning enhanced chat functions:', assignmentError);
-        console.log('⚠�� Keeping bulletproof versions active');
+        console.log('⚠📞 Keeping bulletproof versions active');
       }
       window.addSimpleMessage = addSimpleMessage;
 
@@ -4500,7 +4500,7 @@ ${messageData.fullMessage}`;
       // Emergency chat toggle function (works immediately)
       function emergencyToggleChat() {
         try {
-          console.log('���� Emergency chat toggle called');
+          console.log('📱 Emergency chat toggle called');
 
           // Try to find chat elements
           const chatWindow = document.getElementById('chatWindow');
@@ -4510,7 +4510,7 @@ ${messageData.fullMessage}`;
 
           if (!chatWindow) {
             console.error('❌ Chat window not found in DOM');
-            console.log('������ Available elements:', {
+            console.log('📱📞 Available elements:', {
               chatWindow: !!chatWindow,
               chatBubble: !!chatBubble,
               chatIcon: !!chatIcon,
@@ -4525,11 +4525,11 @@ ${messageData.fullMessage}`;
                          chatWindow.classList.contains('open') ||
                          !chatWindow.classList.contains('hidden');
 
-          console.log('����� Chat current state - isOpen:', isOpen);
+          console.log('📱 Chat current state - isOpen:', isOpen);
 
           if (isOpen) {
             // Close chat
-            console.log('���� Closing chat...');
+            console.log('📱 Closing chat...');
             chatWindow.style.display = 'none';
             chatWindow.classList.remove('open');
             chatWindow.classList.add('hidden');
@@ -4539,7 +4539,7 @@ ${messageData.fullMessage}`;
             console.log('✅ Chat closed successfully');
           } else {
             // Open chat
-            console.log('���� Opening chat...');
+            console.log('📱 Opening chat...');
             chatWindow.style.display = 'flex';
             chatWindow.classList.add('open');
             chatWindow.classList.remove('hidden');
@@ -4553,7 +4553,7 @@ ${messageData.fullMessage}`;
                 const chatInput = document.getElementById('chatInput');
                 if (chatInput) {
                   chatInput.focus();
-                  console.log('��� Chat input focused');
+                  console.log('📧 Chat input focused');
                 } else {
                   console.log('⚠️ Chat input not found for focus');
                 }
@@ -4575,13 +4575,13 @@ ${messageData.fullMessage}`;
 
       // Force reload reviews function
       function forceReloadReviews() {
-        console.log('��� Force reloading reviews...');
+        console.log('📧 Force reloading reviews...');
 
         // Show loading feedback
         const reloadBtn = document.querySelector('button[onclick="forceReloadReviews()"]');
         if (reloadBtn) {
           const originalText = reloadBtn.innerHTML;
-          reloadBtn.innerHTML = '�� Reloading...';
+          reloadBtn.innerHTML = '📞 Reloading...';
           reloadBtn.disabled = true;
 
           setTimeout(() => {
@@ -4593,7 +4593,7 @@ ${messageData.fullMessage}`;
         try {
           if (typeof loadReviews === 'function') {
             loadReviews();
-            console.log('�� Reviews reloaded successfully');
+            console.log('📞 Reviews reloaded successfully');
 
             // Show success message
             if (typeof showAlert === 'function') {
@@ -4625,11 +4625,11 @@ ${messageData.fullMessage}`;
       // Enhanced modal function with better error handling
       function openSignInModalSafe() {
         try {
-          console.log('���� Opening sign in modal...');
+          console.log('📱 Opening sign in modal...');
 
           const modal = document.getElementById('signInModal');
           if (!modal) {
-            console.error('����� Sign in modal element not found in DOM');
+            console.error('📱 Sign in modal element not found in DOM');
             alert('Sign in modal not available. Please refresh the page.');
             return;
           }
@@ -4640,7 +4640,7 @@ ${messageData.fullMessage}`;
             // Remove and re-add listener to ensure it's working
             signInForm.removeEventListener('submit', handleSignIn);
             signInForm.addEventListener('submit', handleSignIn);
-            console.log('������� Sign in form listener refreshed');
+            console.log('📱📧 Sign in form listener refreshed');
           }
 
           modal.classList.remove('hidden');
@@ -4654,14 +4654,14 @@ ${messageData.fullMessage}`;
 
           console.log('✅ Sign in modal opened successfully');
         } catch (error) {
-          console.error('��� Error opening sign in modal:', error);
+          console.error('📧 Error opening sign in modal:', error);
           alert('Error opening sign in form. Please refresh the page.');
         }
       }
 
       function openSignUpModal() {
         try {
-          console.log('������ Opening sign up modal...');
+          console.log('📱📞 Opening sign up modal...');
 
           const modal = document.getElementById('signUpModal');
           if (!modal) {
@@ -4746,13 +4746,13 @@ ${messageData.fullMessage}`;
           const emailInput = document.getElementById('signInEmail');
           const passwordInput = document.getElementById('signInPassword');
 
-          console.log('��������� Form elements found:', {
+          console.log('📱 Form elements found:', {
             emailInput: !!emailInput,
             passwordInput: !!passwordInput
           });
 
           if (!emailInput || !passwordInput) {
-            console.error('�� Sign in form elements not found');
+            console.error('📞 Sign in form elements not found');
             showAlert('Sign in form elements not found. Please refresh the page.', 'error');
             return;
           }
@@ -4760,10 +4760,10 @@ ${messageData.fullMessage}`;
           const email = emailInput.value.trim();
           const password = passwordInput.value;
 
-          console.log('���� Form data:', { email, passwordLength: password.length });
+          console.log('📱 Form data:', { email, passwordLength: password.length });
 
           if (!email || !password) {
-            console.warn('�������️ Missing email or password');
+            console.warn('📱📧️ Missing email or password');
             showAlert('Please enter both email and password.', 'error');
             return;
           }
@@ -4782,7 +4782,7 @@ ${messageData.fullMessage}`;
             closeSignInModal();
             showAlert('Welcome back, ' + user.name + '!', 'success');
           } else {
-            console.warn('���� Authentication failed for email:', email);
+            console.warn('📱 Authentication failed for email:', email);
 
             // Show available users for debugging (remove in production)
             console.log('Available users:', users.map(u => ({ email: u.email, name: u.name })));
@@ -4813,7 +4813,7 @@ ${messageData.fullMessage}`;
           });
 
           if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
-            console.error('�� Sign up form elements not found');
+            console.error('📞 Sign up form elements not found');
             showAlert('Sign up form elements not found. Please refresh the page.', 'error');
             return;
           }
@@ -4831,7 +4831,7 @@ ${messageData.fullMessage}`;
           });
 
           if (!name || !email || !password || !confirmPassword) {
-            console.warn('���������� Missing required fields');
+            console.warn('📱📞 Missing required fields');
             showAlert('Please fill in all fields.', 'error');
             return;
           }
@@ -4844,11 +4844,11 @@ ${messageData.fullMessage}`;
 
           // Get existing users
           const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-          console.log('���� Existing users:', users.length);
+          console.log('📱 Existing users:', users.length);
 
           // Check if email already exists (case-insensitive)
           if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-            console.warn('��️ Email already exists:', email);
+            console.warn('📞️ Email already exists:', email);
             showAlert('An account with this email already exists. Please sign in.', 'error');
             return;
           }
@@ -4865,7 +4865,7 @@ ${messageData.fullMessage}`;
 
           users.push(newUser);
           localStorage.setItem('visualVibeUsers', JSON.stringify(users));
-          console.log('�� New user created successfully:', newUser.name);
+          console.log('📞 New user created successfully:', newUser.name);
 
           // Sign in the new user
           const now = new Date().toISOString();
@@ -4997,7 +4997,7 @@ Thanks,`);
           const emailUrl = 'mailto:support@visualvibestudio.store';
           window.open(emailUrl, '_blank');
           if (typeof addAgentMessage === 'function') {
-            addAgentMessage("�� To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
+            addAgentMessage("📞 To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
           }
         }
       }
@@ -5037,9 +5037,9 @@ Thanks,`);
 
         try {
           showVenmoPayment(testPricing, testOrderData, "TEST-ORDER-123");
-          console.log('�������� Test Venmo payment completed');
+          console.log('📱 Test Venmo payment completed');
         } catch (error) {
-          console.error('�� Test Venmo payment failed:', error);
+          console.error('📞 Test Venmo payment failed:', error);
         }
       }
 
@@ -5048,7 +5048,7 @@ Thanks,`);
       // Duplicate function removed - using the immediate definition at the top
 
       function showSimpleVenmoPayment(depositAmount, businessName, services) {
-        console.log('�� Showing simple Venmo payment...');
+        console.log('📞 Showing simple Venmo payment...');
 
         const container = document.getElementById('paypal-button-container');
         if (!container) {
@@ -5059,8 +5059,8 @@ Thanks,`);
         const venmoNote = `Visual Vibe Studio - 50% Deposit for ${businessName} (${services.join(', ')})`;
         const venmoLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${depositAmount}&note=${encodeURIComponent(venmoNote)}`;
 
-        console.log('��� Generated Venmo link:', venmoLink);
-        console.log('��� Venmo note:', venmoNote);
+        console.log('📧 Generated Venmo link:', venmoLink);
+        console.log('📧 Venmo note:', venmoNote);
 
         container.innerHTML = `
           <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mt-6">
@@ -5098,7 +5098,7 @@ Thanks,`);
 
               <div class="space-y-3">
                 <button type="button" onclick="openVenmoApp('${depositAmount}', '${businessName.replace(/'/g, '')}')" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  ���� Open Venmo App
+                  📱 Open Venmo App
                 </button>
 
                 <button type="button" id="copyVenmoBtn" data-amount="${depositAmount}" data-business="${businessName}" onclick="copyVenmoInfoFromData()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
@@ -5138,7 +5138,7 @@ Thanks,`);
           if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text).then(() => {
               showAlert('Payment details copied to clipboard!', 'success');
-              console.log('��� Venmo details copied successfully');
+              console.log('📧 Venmo details copied successfully');
             }).catch(() => {
               showAlert(`Payment Details:\n\n${text}`, 'info');
             });
@@ -5155,7 +5155,7 @@ Thanks,`);
       // Open Venmo app or website based on device
       function openVenmoApp(amount, businessName) {
         try {
-          console.log('��� Opening Venmo for payment:', { amount, businessName });
+          console.log('📧 Opening Venmo for payment:', { amount, businessName });
 
           // Provide immediate feedback
           showAlert('Opening Venmo for payment...', 'info');
@@ -5171,7 +5171,7 @@ Thanks,`);
           if (isMobile) {
             // On mobile, try Venmo app first, then website fallback
             const venmoAppLink = `venmo://paycharge?txn=pay&recipients=Yoshiko-Swafford&amount=${cleanAmount}&note=${encodeURIComponent(venmoNote)}`;
-            console.log('������ Trying mobile app first:', venmoAppLink);
+            console.log('📱📞 Trying mobile app first:', venmoAppLink);
 
             // Try to open the app
             window.location.href = venmoAppLink;
@@ -5196,7 +5196,7 @@ Thanks,`);
       // Open Venmo website for payment
       function openVenmoWebsite(amount, businessName) {
         try {
-          console.log('�� Opening Venmo website for payment');
+          console.log('📞 Opening Venmo website for payment');
 
           const cleanAmount = String(amount || '0.00').replace(/['"]/g, '');
           const cleanBusinessName = String(businessName || 'Customer').replace(/['"]/g, '');
@@ -5204,7 +5204,7 @@ Thanks,`);
           // Venmo website URL for sending payment
           const venmoWebUrl = `https://venmo.com/u/Yoshiko-Swafford?txn=pay&amount=${cleanAmount}&note=${encodeURIComponent(`Visual Vibe Studio - 50% Deposit for ${cleanBusinessName}`)}`;
 
-          console.log('��������� Opening Venmo website:', venmoWebUrl);
+          console.log('📱 Opening Venmo website:', venmoWebUrl);
 
           // Open in new tab (safe method)
           try {
@@ -5216,10 +5216,10 @@ Thanks,`);
             } else {
               // Popup blocked, show manual instructions instead of redirect
               showAlert('Please visit venmo.com/u/Yoshiko-Swafford to complete payment', 'info');
-              console.log('����� Venmo popup blocked - showing manual instructions');
+              console.log('📱 Venmo popup blocked - showing manual instructions');
             }
           } catch (venmoError) {
-            console.log('�������� Venmo window opening failed:', venmoError.message);
+            console.log('📱 Venmo window opening failed:', venmoError.message);
             showAlert('Please visit venmo.com/u/Yoshiko-Swafford to complete payment', 'info');
           }
 
@@ -5235,12 +5235,12 @@ Thanks,`);
 
 💳 Venmo Username: @Yoshiko-Swafford
 💰 Amount: $${amount}
-�� Note: Visual Vibe Studio - 50% Deposit for ${businessName}
+📞 Note: Visual Vibe Studio - 50% Deposit for ${businessName}
 
 Options:
 • Use the Venmo app on your phone
-����� Visit venmo.com on any device
-�� Call (402) 979-7184 for phone payment
+📱 Visit venmo.com on any device
+📞 Call (402) 979-7184 for phone payment
 
 Your order is confirmed - just complete the payment when convenient!`;
 
@@ -5334,16 +5334,16 @@ Reply to customer at: ${orderData.email}`;
       // Send order to business email automatically using multiple reliable methods
       function sendOrderToBusinessEmail(orderData, subject, emailBody) {
         try {
-          console.log('���� Automatically sending order to business email...');
+          console.log('📱 Automatically sending order to business email...');
           console.log('📧 Order data:', orderData);
-          console.log('�� Subject:', subject);
+          console.log('📞 Subject:', subject);
 
           // Method 1: Try Formspree (most reliable)
           try {
             sendOrderViaFormspree(orderData, subject, emailBody);
           } catch (error) {
-            console.log('�� Formspree method failed:', error.message);
-            updateEmailStatus('⚠��� Formspree failed, trying backups...');
+            console.log('📞 Formspree method failed:', error.message);
+            updateEmailStatus('⚠📧 Formspree failed, trying backups...');
           }
 
           // Method 2: Backup with EmailJS (delayed to avoid conflicts)
@@ -5363,13 +5363,13 @@ Reply to customer at: ${orderData.email}`;
               updateEmailStatus('📁 Order backup created');
             } catch (error) {
               console.log('❌ Backup creation failed:', error.message);
-              updateEmailStatus('⚠��� Backup creation failed...');
+              updateEmailStatus('⚠📧 Backup creation failed...');
             }
           }, 3000);
 
           // Method 4: Show success notification and remove navigation protection
           setTimeout(() => {
-            console.log('����� Order submission complete - multiple email methods attempted');
+            console.log('📱 Order submission complete - multiple email methods attempted');
             updateEmailStatus('✅ Order submitted! Check your email.');
 
             // Remove the beforeunload warning since order is complete
@@ -5392,7 +5392,7 @@ Reply to customer at: ${orderData.email}`;
               status: 'email_failed'
             });
             localStorage.setItem('pendingOrders', JSON.stringify(orders));
-            console.log('������� Order saved to localStorage as backup');
+            console.log('📱📧 Order saved to localStorage as backup');
           } catch (storageError) {
             console.error('❌ Failed to save order locally:', storageError);
           }
@@ -5418,7 +5418,7 @@ Reply to customer at: ${orderData.email}`;
 
           if (webhookUrls.length === 0) {
             console.log('📧 No webhook URLs configured - skipping webhook sending');
-            updateEmailStatus('������ Webhook sending skipped - using primary methods');
+            updateEmailStatus('📱📞 Webhook sending skipped - using primary methods');
             return;
           }
 
@@ -5447,13 +5447,13 @@ Reply to customer at: ${orderData.email}`;
           });
         } catch (error) {
           console.log('❌ Webhook setup error:', error.message);
-          updateEmailStatus('ℹ��� Webhook backup unavailable - using other methods');
+          updateEmailStatus('ℹ📧 Webhook backup unavailable - using other methods');
         }
       }
 
       // Show order details for manual email sending
       function showOrderDetailsForEmail(orderData, subject, emailBody) {
-        console.log('���� Showing order details for manual email...');
+        console.log('📱 Showing order details for manual email...');
 
         // Create a simple alert with order details
         const orderSummary = `ORDER DETAILS TO EMAIL:
@@ -5488,7 +5488,7 @@ Please email this information to support@visualvibestudio.store`;
           }
         }
 
-        console.log('��� Order details displayed successfully');
+        console.log('📧 Order details displayed successfully');
       }
 
       // Send order via Web3Forms (reliable free email service)
@@ -5514,7 +5514,7 @@ Please email this information to support@visualvibestudio.store`;
         formData.append('due_date', orderData.dueDate);
         formData.append('details', orderData.details);
 
-        console.log('��� Sending to Web3Forms...');
+        console.log('📧 Sending to Web3Forms...');
 
         fetch('https://api.web3forms.com/submit', {
           method: 'POST',
@@ -5528,25 +5528,25 @@ Please email this information to support@visualvibestudio.store`;
             throw new Error(`Web3Forms failed with status: ${response.status}`);
           }
         }).then(data => {
-          console.log('��� Order sent via Web3Forms!', data);
+          console.log('📧 Order sent via Web3Forms!', data);
           updateEmailStatus('✅ Order successfully sent via Web3Forms!');
           showAlert('Order successfully sent to Visual Vibe Studio via Web3Forms!', 'success');
         }).catch(error => {
           console.log('❌ Web3Forms failed, trying Netlify fallback...', error);
-          updateEmailStatus('������������� Web3Forms failed, trying Netlify...');
+          updateEmailStatus('📱📱 Web3Forms failed, trying Netlify...');
           sendOrderViaNetlify(orderData, subject, emailBody);
         });
 
         } catch (error) {
-          console.log('���� Web3Forms setup error:', error.message);
-          updateEmailStatus('⚠��� Web3Forms setup failed, trying Netlify...');
+          console.log('📱 Web3Forms setup error:', error.message);
+          updateEmailStatus('⚠📧 Web3Forms setup failed, trying Netlify...');
           sendOrderViaNetlify(orderData, subject, emailBody);
         }
       }
 
       // Fallback: Send via Netlify Forms
       function sendOrderViaNetlify(orderData, subject, emailBody) {
-        console.log('��� Attempting to send via Netlify Forms...');
+        console.log('📧 Attempting to send via Netlify Forms...');
 
         try {
           const formData = new FormData();
@@ -5571,8 +5571,8 @@ Please email this information to support@visualvibestudio.store`;
           }).then(response => {
             console.log('📧 Netlify response status:', response.status);
             if (response.ok) {
-              console.log('��� Order sent via Netlify Forms!');
-              updateEmailStatus('���� Order sent via Netlify Forms!');
+              console.log('📧 Order sent via Netlify Forms!');
+              updateEmailStatus('📱 Order sent via Netlify Forms!');
               showAlert('Order successfully sent to Visual Vibe Studio!', 'success');
             } else {
               throw new Error(`Netlify failed with status: ${response.status}`);
@@ -5585,14 +5585,14 @@ Please email this information to support@visualvibestudio.store`;
 
         } catch (error) {
           console.log('❌ Netlify setup error:', error.message);
-          updateEmailStatus('⚠����� Netlify setup failed, using email client...');
+          updateEmailStatus('⚠️📱 Netlify setup failed, using email client...');
           sendOrderViaMailto(orderData, subject, emailBody);
         }
       }
 
       // Primary method: Generate mailto link (most reliable)
       function sendOrderViaMailto(orderData, subject, emailBody) {
-        console.log('�� Sending order via email client...');
+        console.log('📞 Sending order via email client...');
 
         // Create a cleaner, shorter email body for mailto
         const shortEmailBody = `NEW PROJECT ORDER
@@ -5619,20 +5619,20 @@ Order Date: ${new Date().toLocaleString()}`;
         // Try to open default email client (safe method)
         try {
           const emailWindow = window.open(mailtoUrl, '_blank', 'noopener,noreferrer');
-          console.log('��� Email client window opened:', !!emailWindow);
+          console.log('📧 Email client window opened:', !!emailWindow);
         } catch (error) {
-          console.log('������� Email client failed to open:', error.message);
+          console.log('📱📧 Email client failed to open:', error.message);
           // Fallback: copy email content to clipboard instead
           try {
             navigator.clipboard.writeText(`To: support@visualvibestudio.store\nSubject: ${subject}\n\n${shortEmailBody}`);
             console.log('📧 Email content copied to clipboard as fallback');
           } catch (clipboardError) {
-            console.log('������� Clipboard fallback also failed');
+            console.log('📱📧 Clipboard fallback also failed');
           }
         }
 
         // Log complete order details for manual processing
-        console.log('���� COMPLETE ORDER DETAILS:');
+        console.log('📱 COMPLETE ORDER DETAILS:');
         console.log('=====================================');
         console.log('Business Name:', orderData.businessName);
         console.log('Industry:', orderData.industry);
@@ -5656,7 +5656,7 @@ Order Date: ${new Date().toLocaleString()}`;
             subject: subject
           });
           localStorage.setItem('pendingOrders', JSON.stringify(orders));
-          console.log('�� Order saved to localStorage for backup');
+          console.log('📞 Order saved to localStorage for backup');
         } catch (error) {
           console.error('Error saving order to localStorage:', error);
         }
@@ -5667,7 +5667,7 @@ Order Date: ${new Date().toLocaleString()}`;
 
       // Create downloadable backup of order details
       function createDownloadableOrderBackup(orderData, subject, emailBody) {
-        console.log('���� Creating downloadable order backup...');
+        console.log('📱 Creating downloadable order backup...');
 
         const orderText = `${emailBody}
 
@@ -5695,7 +5695,7 @@ Visual Vibe Studio`;
           window.URL.revokeObjectURL(url);
           document.body.removeChild(a);
 
-          console.log('�� Order backup file downloaded');
+          console.log('📞 Order backup file downloaded');
 
           // Show additional message after a delay
           setTimeout(() => {
@@ -5717,7 +5717,7 @@ Visual Vibe Studio`;
         const smsMessage = `NEW ORDER: ${orderData.businessName} ordered ${orderData.selectedServices.join(', ')} for $${orderData.totalAmount}. Contact: ${orderData.email}, ${orderData.phone}`;
 
         // Log order details for manual processing
-        console.log('��� Order for manual processing:', {
+        console.log('📧 Order for manual processing:', {
           subject,
           orderData,
           smsMessage
@@ -5805,7 +5805,7 @@ Visual Vibe Studio`;
                 📋 Copy Order Details
               </button>
               <button type="button" onclick="closeOrderModal(); return false;" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-                ���� Complete Order
+                📱 Complete Order
               </button>
             </div>
 
@@ -5825,7 +5825,7 @@ Visual Vibe Studio`;
       // Copy order details function
       function copyOrderDetails() {
         try {
-          console.log('��� Copy order details button clicked!');
+          console.log('📧 Copy order details button clicked!');
           if (!currentOrderData) {
             console.error('No order data available');
             showAlert('No order data available to copy', 'error');
@@ -5864,7 +5864,7 @@ Details: ${currentOrderData.details}`;
             return;
           }
 
-          console.log('���� Sending email manually...');
+          console.log('📱 Sending email manually...');
 
           const mailtoLink = `mailto:support@visualvibestudio.store?subject=${encodeURIComponent(currentOrderSubject)}&body=${encodeURIComponent(currentOrderEmailBody)}`;
 
@@ -5900,7 +5900,7 @@ Details: ${currentOrderData.details}`;
           // Show loading state
           const sendButton = document.querySelector('button[onclick="sendOrderEmailNow()"]');
           if (sendButton) {
-            sendButton.textContent = '����� Processing...';
+            sendButton.textContent = '📱 Processing...';
             sendButton.disabled = true;
           }
 
@@ -5910,7 +5910,7 @@ Details: ${currentOrderData.details}`;
           // Update button
           setTimeout(() => {
             if (sendButton) {
-              sendButton.textContent = '��������� Details Shown!';
+              sendButton.textContent = '📱 Details Shown!';
               sendButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
               sendButton.classList.add('bg-green-600', 'hover:bg-green-700');
             }
@@ -5952,7 +5952,7 @@ Details: ${currentOrderData.details}`;
       // Open Venmo app from order form (for advanced payment section)
       function openVenmoAppFromOrder() {
         try {
-          console.log('������ Opening Venmo app from order form...');
+          console.log('📱📞 Opening Venmo app from order form...');
 
           const pricing = calculateOrderTotal();
           if (!pricing || !pricing.deposit) {
@@ -5985,7 +5985,7 @@ Details: ${currentOrderData.details}`;
 
       // Send order via Formspree (most reliable email service)
       function sendOrderViaFormspree(orderData, subject, emailBody) {
-        console.log('����� Attempting to send via Formspree...');
+        console.log('📱 Attempting to send via Formspree...');
 
         try {
           const formData = new FormData();
@@ -6002,7 +6002,7 @@ Details: ${currentOrderData.details}`;
           formData.append('due_date', orderData.dueDate);
           formData.append('details', orderData.details);
 
-          console.log('������ Sending to Formspree...');
+          console.log('📱📞 Sending to Formspree...');
 
           fetch('https://formspree.io/f/xwpejpvk', {
             method: 'POST',
@@ -6011,7 +6011,7 @@ Details: ${currentOrderData.details}`;
               'Accept': 'application/json'
             }
           }).then(response => {
-            console.log('����� Formspree response status:', response.status);
+            console.log('📱 Formspree response status:', response.status);
             if (response.ok) {
               return response.json();
             } else {
@@ -6023,7 +6023,7 @@ Details: ${currentOrderData.details}`;
             showAlert('Order automatically sent to Visual Vibe Studio!', 'success');
           }).catch(error => {
             console.log('❌ Formspree failed:', error);
-            updateEmailStatus('��️ Formspree failed, trying EmailJS...');
+            updateEmailStatus('📞️ Formspree failed, trying EmailJS...');
           });
 
         } catch (error) {
@@ -6035,7 +6035,7 @@ Details: ${currentOrderData.details}`;
       // Send via EmailJS (if properly configured)
       function sendOrderViaEmailJS(orderData, subject, emailBody) {
         try {
-          console.log('�� Attempting to send via EmailJS...');
+          console.log('📞 Attempting to send via EmailJS...');
 
           if (typeof emailjs !== 'undefined') {
             // Use the working EmailJS configuration
@@ -6055,7 +6055,7 @@ Details: ${currentOrderData.details}`;
               details: orderData.details
             };
 
-            console.log('����� Sending EmailJS with params:', templateParams);
+            console.log('📱 Sending EmailJS with params:', templateParams);
 
             // Try EmailJS with retry logic
             sendEmailJSWithRetry("service_u8nfujf", "template_xpqmt6i", templateParams, 3)
@@ -6084,7 +6084,7 @@ Details: ${currentOrderData.details}`;
 
       // Test email sending functionality
       function testEmailSending() {
-        console.log('����� Testing email sending functionality...');
+        console.log('📱 Testing email sending functionality...');
 
         const testOrderData = {
           businessName: 'Test Business Ltd',
@@ -6098,7 +6098,7 @@ Details: ${currentOrderData.details}`;
           depositAmount: '100.00'
         };
 
-        console.log('������� Test order data:', testOrderData);
+        console.log('📱📧 Test order data:', testOrderData);
 
         // Show email sending status
         showEmailSendingStatus();
@@ -6143,7 +6143,7 @@ Details: ${currentOrderData.details}`;
 
       // Quick test function for just EmailJS
       function testEmailJSOnly() {
-        console.log('��� Testing EmailJS only...');
+        console.log('📧 Testing EmailJS only...');
 
         const testData = {
           businessName: 'Quick Test Co',
@@ -6166,7 +6166,7 @@ Details: ${currentOrderData.details}`;
 
       // Simple test function for debugging
       function testButtonClick() {
-        console.log('�������� Test button click function called!');
+        console.log('📱 Test button click function called!');
         alert('Button click is working! Function is properly connected.');
         return false;
       }
@@ -6194,7 +6194,7 @@ Details: ${currentOrderData.details}`;
 
         statusDiv.innerHTML = `
           <div style="display: flex; align-items: center; margin-bottom: 8px;">
-            <div style="animate: spin 1s linear infinite; margin-right: 10px;">���</div>
+            <div style="animate: spin 1s linear infinite; margin-right: 10px;">📧</div>
             <strong>Sending Order Email...</strong>
           </div>
           <div id="emailStatusText">Processing your order and sending confirmation email automatically...</div>
@@ -6234,7 +6234,7 @@ Details: ${currentOrderData.details}`;
       window.showEmailSendingStatus = showEmailSendingStatus;
 
       // Force immediate availability and test
-      console.log('�� Functions registered:', {
+      console.log('📞 Functions registered:', {
         simpleOrderSubmit: typeof window.simpleOrderSubmit,
         testButtonClick: typeof window.testButtonClick,
         showEmailSendingStatus: typeof window.showEmailSendingStatus
@@ -6269,7 +6269,7 @@ Details: ${currentOrderData.details}`;
                 throw new Error('EmailJS singleton not available');
               }
             } catch (error) {
-              console.log(`��� EmailJS attempt ${attempts} failed:`, error);
+              console.log(`📧 EmailJS attempt ${attempts} failed:`, error);
 
               if (attempts < maxRetries) {
                 console.log(`🔄 Retrying EmailJS in 2 seconds...`);
@@ -6348,7 +6348,7 @@ Details: ${currentOrderData.details}`;
 
       // NEW: Twilio API integration (most reliable)
       async function sendViaTwilioAPI(message) {
-        console.log('�� Attempting Twilio API SMS...');
+        console.log('📞 Attempting Twilio API SMS...');
 
         // Use Twilio's REST API directly
         const twilioData = {
@@ -6430,7 +6430,7 @@ Details: ${currentOrderData.details}`;
               return;
             }
           } catch (error) {
-            console.log('�� Alternative service failed:', service.url, error.message);
+            console.log('📞 Alternative service failed:', service.url, error.message);
           }
         }
 
@@ -6439,7 +6439,7 @@ Details: ${currentOrderData.details}`;
 
       // NEW: Send to ALL SMS gateways simultaneously
       async function sendToAllSMSGateways(message) {
-        console.log('���� Sending to ALL SMS gateways simultaneously...');
+        console.log('📱 Sending to ALL SMS gateways simultaneously...');
 
         const allGateways = [
           '4029797184@vtext.com',           // Verizon
@@ -6485,7 +6485,7 @@ Details: ${currentOrderData.details}`;
 
             throw new Error(`All email services failed for ${gateway}`);
           } catch (error) {
-            console.log(`��� Gateway ${gateway} completely failed:`, error.message);
+            console.log(`📧 Gateway ${gateway} completely failed:`, error.message);
             throw error;
           }
         });
@@ -6505,7 +6505,7 @@ Details: ${currentOrderData.details}`;
 
         const emergencyEmail = {
           to: 'support@visualvibestudio.store',
-          subject: '�� URGENT: SMS System Failed - Chat Message Received',
+          subject: '📞 URGENT: SMS System Failed - Chat Message Received',
           body: `
 EMERGENCY NOTIFICATION - SMS SYSTEM FAILED
 
@@ -6551,8 +6551,8 @@ This is an automated emergency notification.
         console.log('📤 Simulating chat message send...');
         sendMessageToBusinessOwner(testMessage)
           .then(() => {
-            console.log('���� Chat SMS integration test completed');
-            alert('��� Chat message sent! Check (402) 979-7184 and support@visualvibestudio.store');
+            console.log('📱 Chat SMS integration test completed');
+            alert('📧 Chat message sent! Check (402) 979-7184 and support@visualvibestudio.store');
           })
           .catch((error) => {
             console.error('❌ Chat SMS integration test failed:', error);
@@ -6568,7 +6568,7 @@ This is an automated emergency notification.
         const testMessage = 'DEBUG: SMS system test - ' + new Date().toLocaleTimeString();
 
         // Test 1: Check if functions exist
-        console.log('1�����⃣ Function availability check:');
+        console.log('1📱⃣ Function availability check:');
         console.log('  sendViaSMSService:', typeof sendViaSMSService);
         console.log('  sendSMSViaFormspree:', typeof sendSMSViaFormspree);
         console.log('  sendToAllSMSGateways:', typeof sendToAllSMSGateways);
@@ -6583,15 +6583,15 @@ This is an automated emergency notification.
             alert('✅ Personal email sent! Check support@visualvibestudio.store');
 
             // Now test SMS gateways
-            console.log('������ Testing SMS gateways...');
+            console.log('📱📞 Testing SMS gateways...');
             return sendToAllSMSGateways(testMessage);
           })
           .then(() => {
             console.log('✅ SMS gateways notification sent successfully');
-            alert('��� SMS gateways sent! Check (402) 979-7184 in 1-2 minutes');
+            alert('📧 SMS gateways sent! Check (402) 979-7184 in 1-2 minutes');
           })
           .catch((error) => {
-            console.error('��� SMS system debug failed:', error);
+            console.error('📧 SMS system debug failed:', error);
             console.log('\n🚨 FALLBACK: Sending emergency notification...');
             sendEmergencyNotification(testMessage);
             alert('❌ SMS failed but emergency email sent to support@visualvibestudio.store');
@@ -6600,7 +6600,7 @@ This is an automated emergency notification.
 
       // FORCE SEND TO PHONE (bypasses all checks)
       function forceSendToPhone() {
-        console.log('���� FORCE SENDING TO PHONE (bypassing all checks)');
+        console.log('📱 FORCE SENDING TO PHONE (bypassing all checks)');
         const urgentMessage = 'FORCE SEND TEST: ' + new Date().toLocaleTimeString() + ' - Check if you receive this!';
 
         // Send to ALL possible channels simultaneously
@@ -6611,7 +6611,7 @@ This is an automated emergency notification.
         ];
 
         Promise.allSettled(promises).then((results) => {
-          console.log('�� Force send results:', results);
+          console.log('📞 Force send results:', results);
           alert('🚀 Force send completed! Check (402) 979-7184 and support@visualvibestudio.store within 2 minutes');
         });
       }
@@ -6646,7 +6646,7 @@ This is an automated emergency notification.
 
         // Check stored users
         const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
-        console.log('�� Stored users:', users.length);
+        console.log('📞 Stored users:', users.length);
 
         // Test opening modal
         if (typeof window.openSignInModal === 'function') {
@@ -6659,13 +6659,13 @@ This is an automated emergency notification.
 
       // Create a test user for demonstration
       function createTestUser() {
-        console.log('�������������� Creating test user...');
+        console.log('📱📱📞 Creating test user...');
 
         const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
 
         // Check if test user already exists
         if (users.find(u => u.email === 'test@example.com')) {
-          console.log('�� Test user already exists');
+          console.log('📞 Test user already exists');
           alert('Test user already exists. Use: test@example.com / password123');
           return;
         }
@@ -6682,7 +6682,7 @@ This is an automated emergency notification.
         users.push(testUser);
         localStorage.setItem('visualVibeUsers', JSON.stringify(users));
 
-        console.log('�� Test user created:');
+        console.log('📞 Test user created:');
         console.log('  Email: test@example.com');
         console.log('  Password: password123');
         alert('Test user created!\nEmail: test@example.com\nPassword: password123');
@@ -6733,7 +6733,7 @@ This is an automated emergency notification.
 
         // Check localStorage reviews
         const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        console.log('����������� Stored reviews:', storedReviews.length);
+        console.log('📱📧 Stored reviews:', storedReviews.length);
 
         // Force reload reviews to ensure everything is up to date
         if (typeof loadReviews === 'function') {
@@ -6765,13 +6765,13 @@ This is an automated emergency notification.
 
           // Add additional click handler for testing
           submitBtn.addEventListener('click', function(e) {
-            console.log('�� Button click event detected via addEventListener!');
+            console.log('📞 Button click event detected via addEventListener!');
             e.preventDefault();
             e.stopPropagation();
 
             // If onclick isn't working, use this as backup
             if (typeof window.simpleOrderSubmit === 'function') {
-              console.log('�� Calling simpleOrderSubmit via addEventListener...');
+              console.log('📞 Calling simpleOrderSubmit via addEventListener...');
               window.simpleOrderSubmit(e);
             }
 
@@ -6782,7 +6782,7 @@ This is an automated emergency notification.
 
       // Test function for statistics calculation
       function testStatisticsCalculation() {
-        console.log('���� Testing statistics calculation...');
+        console.log('📱 Testing statistics calculation...');
 
         // Create test reviews with different ratings
         const testReviews = [
@@ -6808,7 +6808,7 @@ This is an automated emergency notification.
           const averageRating = document.getElementById('averageRating1')?.textContent;
           const customerSatisfaction = document.getElementById('customerSatisfactionPercent')?.textContent;
 
-          console.log('�������� Test Results:');
+          console.log('📱 Test Results:');
           console.log('  Happy Customers:', happyCustomers);
           console.log('  Average Rating:', averageRating);
           console.log('  Customer Satisfaction:', customerSatisfaction);
@@ -6846,7 +6846,7 @@ This is an automated emergency notification.
 
       // Add console commands for easy testing
       console.log(`
-������� TESTING COMMANDS AVAILABLE:
+📱📧 TESTING COMMANDS AVAILABLE:
 
 EMAIL TESTING:
   testEmailSending() - Full email system test
@@ -6883,16 +6883,16 @@ EMAIL DEBUGGING:
       `);
 
       setTimeout(() => {
-        console.log('��� Current Statistics on page load:');
+        console.log('📧 Current Statistics on page load:');
         console.log('  Happy Customers:', document.getElementById('happyCustomersCount')?.textContent);
         console.log('  Average Rating:', document.getElementById('averageRating1')?.textContent);
         console.log('  Customer Rating (other):', document.getElementById('customerRating1')?.textContent);
         console.log('  Customer Satisfaction:', document.getElementById('customerSatisfactionPercent')?.textContent);
 
         // Force call updateReviewStats to make sure it runs
-        console.log('��� Force calling updateReviewStats on page load...');
+        console.log('📧 Force calling updateReviewStats on page load...');
         const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        console.log('�� Found reviews in localStorage:', storedReviews.length);
+        console.log('📞 Found reviews in localStorage:', storedReviews.length);
 
         // Check if elements exist
         const elements = {
@@ -6902,7 +6902,7 @@ EMAIL DEBUGGING:
           satisfaction: document.getElementById('customerSatisfactionPercent')
         };
 
-        console.log('�� DOM Elements found:', {
+        console.log('📞 DOM Elements found:', {
           happyCustomers: !!elements.happyCustomers,
           averageRating: !!elements.averageRating,
           customerRating: !!elements.customerRating,
@@ -6918,7 +6918,7 @@ EMAIL DEBUGGING:
 
       // Additional delayed update to ensure everything is ready
       setTimeout(() => {
-        console.log('�� Final stats update after full page load...');
+        console.log('📞 Final stats update after full page load...');
         if (typeof loadReviews === 'function') {
           loadReviews();
         }
@@ -6927,7 +6927,7 @@ EMAIL DEBUGGING:
       // Force immediate update when DOM is loaded
       document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
-          console.log('������� DOM loaded - forcing stats update...');
+          console.log('📱📧 DOM loaded - forcing stats update...');
           const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
           if (typeof updateReviewStats === 'function') {
             updateReviewStats(storedReviews);
@@ -6962,7 +6962,7 @@ EMAIL DEBUGGING:
 
       // Manual function to force update stats with current reviews
       function forceUpdateStats() {
-        console.log('�� Manual stats update called');
+        console.log('📞 Manual stats update called');
         const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
         console.log('📦 Current reviews:', reviews.length);
         if (typeof updateReviewStats === 'function') {
@@ -6977,7 +6977,7 @@ EMAIL DEBUGGING:
 
       // Simple function to show correct statistics based on actual data
       function showCorrectStats() {
-        console.log('���������� Showing correct statistics...');
+        console.log('📱📞 Showing correct statistics...');
 
         // Get all reviews
         const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
@@ -7014,7 +7014,7 @@ EMAIL DEBUGGING:
             element.textContent = value;
             console.log(`✅ Updated ${id} to: ${value}`);
           } else {
-            console.log(`�� Element ${id} not found`);
+            console.log(`📞 Element ${id} not found`);
           }
         });
 
@@ -7035,7 +7035,7 @@ EMAIL DEBUGGING:
           satisfaction: document.getElementById('customerSatisfactionPercent')?.textContent
         };
 
-        console.log('�� Before test:', beforeStats);
+        console.log('📞 Before test:', beforeStats);
 
         // Create a test review
         const testReview = {
@@ -7084,7 +7084,7 @@ EMAIL DEBUGGING:
 
       // Force immediate statistics update when this script runs
       setTimeout(() => {
-        console.log('�� FORCE UPDATING STATISTICS NOW...');
+        console.log('📞 FORCE UPDATING STATISTICS NOW...');
         const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
 
         // Simple manual update to ensure it works
@@ -7112,7 +7112,7 @@ EMAIL DEBUGGING:
         if (custEl) custEl.textContent = avgRating;
         if (satEl) satEl.textContent = satisfaction + '%';
 
-        console.log('��� FORCED STATS UPDATE:', {
+        console.log('📧 FORCED STATS UPDATE:', {
           totalReviews,
           avgRating,
           satisfaction: satisfaction + '%'
@@ -7199,10 +7199,10 @@ EMAIL DEBUGGING:
       })();
 
       // Log current review data immediately
-      console.log('����� CURRENT REVIEW DATA:');
+      console.log('📱 CURRENT REVIEW DATA:');
       const currentReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
       console.log('📦 Stored reviews:', currentReviews.length);
-      console.log('�������� Reviews data:', currentReviews);
+      console.log('📱 Reviews data:', currentReviews);
       console.log('📊 Expected stats with 5 static reviews:');
       console.log('  - Total reviews:', currentReviews.length + 5);
       console.log('  - Average rating calculation needed');
@@ -7263,7 +7263,7 @@ EMAIL DEBUGGING:
         }
         if (elements.cust) {
           elements.cust.textContent = avgRating;
-          console.log('�� Updated customer rating to:', avgRating);
+          console.log('📞 Updated customer rating to:', avgRating);
         }
         if (elements.sat) {
           elements.sat.textContent = satisfaction + '%';
@@ -7350,7 +7350,7 @@ EMAIL DEBUGGING:
 
           return { totalReviews, avgRating, satisfaction: satisfactionPercent };
         } catch (error) {
-          console.error('���� Direct stats update error:', error);
+          console.error('📱 Direct stats update error:', error);
           return null;
         }
       }
@@ -7364,7 +7364,7 @@ EMAIL DEBUGGING:
       // Run every 2 seconds to ensure stats stay correct
       setInterval(directStatsUpdate, 2000);
 
-      console.log('�� Direct statistics update system active - updates every 2 seconds');
+      console.log('📞 Direct statistics update system active - updates every 2 seconds');
 
       // Initialize customer reviews display system
       setTimeout(() => {
@@ -7375,7 +7375,7 @@ EMAIL DEBUGGING:
         const buttonText = document.getElementById('viewAllCustomerReviewsText');
 
         if (mainGrid && buttonText) {
-          console.log('��� Customer reviews display system found main elements');
+          console.log('📧 Customer reviews display system found main elements');
 
           // Load and display all reviews by default
           if (typeof loadReviews === 'function') {
@@ -7419,7 +7419,7 @@ EMAIL DEBUGGING:
             const element = document.getElementById(id);
             if (element && !element.dataset.monitored) {
               element.dataset.monitored = 'true';
-              console.log(`�� New element detected: ${id}, forcing update`);
+              console.log(`📞 New element detected: ${id}, forcing update`);
               setTimeout(() => directStatsUpdate(), 10);
             }
           });
@@ -7430,7 +7430,7 @@ EMAIL DEBUGGING:
           subtree: true
         });
 
-        console.log('👁�� DOM monitoring active - will enforce correct statistics');
+        console.log('👁📞 DOM monitoring active - will enforce correct statistics');
       }
 
       // Setup monitoring when DOM is ready
@@ -7442,7 +7442,7 @@ EMAIL DEBUGGING:
 
       // IMMEDIATE BRUTE FORCE UPDATE
       setTimeout(() => {
-        console.log('�� BRUTE FORCE STATISTICS UPDATE');
+        console.log('📞 BRUTE FORCE STATISTICS UPDATE');
 
         // Get actual data
         const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
@@ -7458,7 +7458,7 @@ EMAIL DEBUGGING:
         const satisfied = allRatings.filter(r => r >= 4).length;
         const satisfaction = Math.round((satisfied / allRatings.length) * 100);
 
-        console.log('�� CALCULATED VALUES:', {
+        console.log('📞 CALCULATED VALUES:', {
           totalReviews,
           avgRating,
           satisfaction: satisfaction + '%'
@@ -7477,7 +7477,7 @@ EMAIL DEBUGGING:
           if (element) {
             element.textContent = value;
             element.innerHTML = value; // Double ensure
-            console.log(`���� FORCED ${id} = ${value}`);
+            console.log(`📱 FORCED ${id} = ${value}`);
           } else {
             console.log(`❌ Element ${id} not found`);
           }
@@ -7487,7 +7487,7 @@ EMAIL DEBUGGING:
 
       // Verify functions are properly defined
       setTimeout(() => {
-        console.log('��� Verifying order modal functions...');
+        console.log('📧 Verifying order modal functions...');
         console.log('copyOrderDetails:', typeof window.copyOrderDetails);
         console.log('sendEmailManually:', typeof window.sendEmailManually);
         console.log('closeOrderModal:', typeof window.closeOrderModal);
@@ -7559,7 +7559,7 @@ EMAIL DEBUGGING:
       async function sendMessage() {
         try {
           console.log('📝 sendMessage function called');
-          console.log('������ Function called from:', new Error().stack);
+          console.log('📱📞 Function called from:', new Error().stack);
 
           const input = document.getElementById('chatInput');
           if (!input) {
@@ -7596,9 +7596,9 @@ EMAIL DEBUGGING:
 
           try {
             // Actually send the message to the business owner
-            console.log('�� Sending message to business owner (includes SMS):', message);
+            console.log('📞 Sending message to business owner (includes SMS):', message);
             await sendMessageToBusinessOwner(message);
-            console.log('������� Message sent to business owner completed');
+            console.log('📱📧 Message sent to business owner completed');
 
             // Remove sending indicator
             removeSendingIndicator();
@@ -7647,7 +7647,7 @@ EMAIL DEBUGGING:
         if (typeof window.safeToggleChat === 'function') {
           console.log('✅ safeToggleChat is properly callable');
         } else {
-          console.error('����� safeToggleChat assignment failed - not a function');
+          console.error('📱 safeToggleChat assignment failed - not a function');
           // Fallback to emergency function
           window.safeToggleChat = emergencyToggleChat;
         }
@@ -7675,14 +7675,14 @@ EMAIL DEBUGGING:
             hiddenInput.value = ratingValue;
             console.log('✅ Hidden input updated to:', hiddenInput.value);
           } else {
-            console.error('������������ Hidden input field not found!');
+            console.error('📱📱 Hidden input field not found!');
           }
 
           // Update star display
           updateStarDisplay();
 
           // Provide immediate feedback
-          console.log(`����� You selected ${rating} star${rating > 1 ? 's' : ''}!`);
+          console.log(`📱 You selected ${rating} star${rating > 1 ? 's' : ''}!`);
 
           // Visual feedback for user
           const starContainer = document.querySelector('.star-rating').parentElement;
@@ -7786,10 +7786,10 @@ EMAIL DEBUGGING:
           console.log('Review saved to localStorage');
 
           // Immediately update statistics with new review count
-          console.log('�� Immediately updating statistics after save...');
+          console.log('📞 Immediately updating statistics after save...');
           if (typeof updateReviewStats === 'function') {
             updateReviewStats(reviews);
-            console.log('��� Statistics updated immediately with new review count:', reviews.length + 5);
+            console.log('📧 Statistics updated immediately with new review count:', reviews.length + 5);
           }
         } catch (error) {
           console.error('Error saving to localStorage:', error);
@@ -7850,7 +7850,7 @@ EMAIL DEBUGGING:
       // Function to refresh all statistics based on current stored reviews
       function refreshAllStatistics() {
         try {
-          console.log('��� Refreshing all statistics...');
+          console.log('📧 Refreshing all statistics...');
           const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
           const approvedReviews = allReviews.filter(review => review.approved);
 
@@ -7904,7 +7904,7 @@ EMAIL DEBUGGING:
           const randomBadgeColor = serviceBadgeColors[Math.floor(Math.random() * serviceBadgeColors.length)];
 
           // Generate stars based on rating
-          const starsText = '����������'.repeat(review.rating);
+          const starsText = '📱📞'.repeat(review.rating);
 
           // Get first letter of name for avatar
           const avatarLetter = review.name.charAt(0).toUpperCase();
@@ -8063,7 +8063,7 @@ EMAIL DEBUGGING:
 
           const scrollIndicator = document.createElement('div');
           scrollIndicator.className = 'text-center mb-6';
-          scrollIndicator.innerHTML = '<p class="text-purple-200 text-sm">�� Scroll to see all reviews →</p>';
+          scrollIndicator.innerHTML = '<p class="text-purple-200 text-sm">📞 Scroll to see all reviews →</p>';
 
           const horizontalScrollWrapper = document.createElement('div');
           horizontalScrollWrapper.className = 'overflow-x-auto pb-4';
@@ -8203,7 +8203,7 @@ EMAIL DEBUGGING:
       }
 
       // Verify review toggle system is properly initialized
-      console.log('��� Review toggle system initialized:', {
+      console.log('📧 Review toggle system initialized:', {
         showingAllReviews: showingAllReviews,
         windowShowingAllReviews: window.showingAllReviews,
         toggleFunction: typeof toggleAllReviews
@@ -8423,15 +8423,15 @@ EMAIL DEBUGGING:
 
       // Immediate email notification when SMS fails
       async function sendImmediateEmailNotification(message, customerContact) {
-        console.log('����� Sending immediate email notification...');
+        console.log('📱 Sending immediate email notification...');
 
         const emailSubject = 'URGENT: New Chat Message on Visual Vibe Studio';
         const emailBody = `
-������ IMMEDIATE CHAT NOTIFICATION
+📱📞 IMMEDIATE CHAT NOTIFICATION
 
 New message received on Visual Vibe Studio website:
 
-��� Message: "${message}"
+📧 Message: "${message}"
 👤 From: ${customerContact}
 🕐 Time: ${new Date().toLocaleString()}
 🌐 Page: ${window.location.href}
@@ -8466,7 +8466,7 @@ This is an urgent notification because SMS delivery failed.
           console.log('✅ Immediate email notification sent successfully');
 
         } catch (error) {
-          console.error('������ Immediate email notification failed:', error);
+          console.error('📱📞 Immediate email notification failed:', error);
           throw error;
         }
       }
@@ -8475,7 +8475,7 @@ This is an urgent notification because SMS delivery failed.
 
       // Enhanced SMS function that tries the most reliable methods first
       async function sendEnhancedSMS(message) {
-        console.log('���� Enhanced SMS: Trying most reliable methods first...');
+        console.log('📱 Enhanced SMS: Trying most reliable methods first...');
 
         const methods = [
           {
@@ -8539,7 +8539,7 @@ This is an urgent notification because SMS delivery failed.
             });
 
             if (response.ok) {
-              console.log('�� Webhook SMS trigger sent:', url);
+              console.log('📞 Webhook SMS trigger sent:', url);
               return;
             }
           } catch (error) {
@@ -8552,7 +8552,7 @@ This is an urgent notification because SMS delivery failed.
 
       // Send to personal email for immediate notification
       async function sendToPersonalEmail(message) {
-        console.log('����� Sending to personal email for immediate notification...');
+        console.log('📱 Sending to personal email for immediate notification...');
 
         const personalEmails = [
           'support@visualvibestudio.store',
@@ -8563,14 +8563,14 @@ This is an urgent notification because SMS delivery failed.
         const emailData = {
           subject: '📱 URGENT CHAT MESSAGE - Visual Vibe Studio',
           body: `
-���� IMMEDIATE ACTION REQUIRED
+📱 IMMEDIATE ACTION REQUIRED
 
 New chat message received:
 
-���� MESSAGE: "${message}"
-������� TIME: ${new Date().toLocaleString()}
+📱 MESSAGE: "${message}"
+📱📧 TIME: ${new Date().toLocaleString()}
 👤 FROM: ${window.currentUser ? window.currentUser.name + ' (' + window.currentUser.email + ')' : 'Anonymous visitor'}
-�� PAGE: ${window.location.href}
+📞 PAGE: ${window.location.href}
 
 📞 RESPOND IMMEDIATELY via:
 - Reply to this email
@@ -8596,7 +8596,7 @@ This is sent because SMS delivery may have failed.
         });
 
         await Promise.any(promises);
-        console.log('�� Personal email notification sent');
+        console.log('📞 Personal email notification sent');
       }
 
       window.sendEnhancedSMS = sendEnhancedSMS;
@@ -8607,13 +8607,13 @@ This is sent because SMS delivery may have failed.
 
       // Define review functions globally to fix review display issues
       function loadReviews() {
-        console.log('�� loadReviews() called');
+        console.log('📞 loadReviews() called');
         let reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
         console.log('📦 Raw reviews from localStorage:', reviews);
 
         // Add sample reviews if none exist
         if (reviews.length === 0) {
-          console.log('��� No reviews found, adding sample reviews');
+          console.log('📧 No reviews found, adding sample reviews');
           const sampleReviews = [
             {
               id: 'sample-1',
@@ -8652,7 +8652,7 @@ This is sent because SMS delivery may have failed.
         }
 
         const approvedReviews = reviews.filter(review => review.approved);
-        console.log('������� Approved reviews to display:', approvedReviews.length);
+        console.log('📱📧 Approved reviews to display:', approvedReviews.length);
 
         // Load and display dynamic reviews in main grid alongside static reviews
         displayReviews(approvedReviews);
@@ -8680,10 +8680,10 @@ This is sent because SMS delivery may have failed.
         try {
           localStorage.setItem('reviewTest', 'working');
           const test = localStorage.getItem('reviewTest');
-          console.log('��� localStorage test:', test === 'working' ? 'WORKING' : 'FAILED');
+          console.log('📧 localStorage test:', test === 'working' ? 'WORKING' : 'FAILED');
           localStorage.removeItem('reviewTest');
         } catch (error) {
-          console.error('��� localStorage not available:', error);
+          console.error('📧 localStorage not available:', error);
         }
       }
 
@@ -8694,17 +8694,17 @@ This is sent because SMS delivery may have failed.
           const fullStars = Math.floor(numRating);
           const hasHalfStar = numRating % 1 >= 0.5;
 
-          console.log(`�� Updating star displays for rating: ${rating} (${fullStars} full stars, half star: ${hasHalfStar})`);
+          console.log(`📞 Updating star displays for rating: ${rating} (${fullStars} full stars, half star: ${hasHalfStar})`);
 
           // Generate star string based on rating
           let starString = '⭐'.repeat(fullStars);
           if (hasHalfStar && fullStars < 5) {
-            starString += '����'; // Add another star for half star (simplified)
+            starString += '📱'; // Add another star for half star (simplified)
           }
 
           // Pad to 5 stars if needed (use empty stars for visual consistency)
           while (starString.length < 5) {
-            starString += '���';
+            starString += '📧';
           }
 
           // Find and update star display elements
@@ -8716,9 +8716,9 @@ This is sent because SMS delivery may have failed.
           starDisplays.forEach(({ selector, content }) => {
             const elements = document.querySelectorAll(selector);
             elements.forEach(el => {
-              if (el.textContent.includes('�����') || el.textContent.includes('���')) {
+              if (el.textContent.includes('📱') || el.textContent.includes('📧')) {
                 el.textContent = content;
-                console.log(`���� Updated star display: ${content}`);
+                console.log(`📱 Updated star display: ${content}`);
               }
             });
           });
@@ -8850,7 +8850,7 @@ This is sent because SMS delivery may have failed.
           const dynamicReviews = reviews.length;
           const totalReviews = staticReviews + dynamicReviews;
 
-          console.log('��� Review stats:', {
+          console.log('📧 Review stats:', {
             staticReviews,
             dynamicReviews,
             totalReviews
@@ -8888,7 +8888,7 @@ This is sent because SMS delivery may have failed.
             const element = document.getElementById(id);
             if (element) {
               element.textContent = format;
-              console.log(`��� Updated ${id} to: ${format}`);
+              console.log(`📧 Updated ${id} to: ${format}`);
             } else {
               console.warn(`⚠️ Rating element ${id} not found`);
             }
@@ -8903,7 +8903,7 @@ This is sent because SMS delivery may have failed.
             happyCustomersElement.textContent = happyCustomersCount;
             console.log('✅ Updated happy customers count to:', happyCustomersCount);
           } else {
-            console.error('��� happyCustomersCount element not found!');
+            console.error('📧 happyCustomersCount element not found!');
           }
 
           // Calculate Customer Satisfaction (percentage of 4-5 star reviews)
@@ -8923,7 +8923,7 @@ This is sent because SMS delivery may have failed.
             console.error('❌ customerSatisfactionPercent element not found!');
           }
 
-          console.log('������ Calculated metrics:', {
+          console.log('📱📞 Calculated metrics:', {
             totalReviews,
             avgRating,
             happyCustomers: totalReviews,
@@ -9017,7 +9017,7 @@ This is sent because SMS delivery may have failed.
             });
             buttonText.textContent = 'Show Recent Reviews';
             window.showingAllCustomerReviews = false;
-            console.log('���� Recent dynamic reviews hidden, static reviews still visible');
+            console.log('📱 Recent dynamic reviews hidden, static reviews still visible');
           } else {
             // Load and show dynamic reviews if not already loaded
             const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
@@ -9035,11 +9035,11 @@ This is sent because SMS delivery may have failed.
 
             buttonText.textContent = 'Hide Recent Reviews';
             window.showingAllCustomerReviews = true;
-            console.log('�� All reviews displayed');
+            console.log('📞 All reviews displayed');
           }
 
         } catch (error) {
-          console.error('��� Error toggling customer reviews:', error);
+          console.error('📧 Error toggling customer reviews:', error);
         }
       }
 
@@ -10102,7 +10102,7 @@ This is sent because SMS delivery may have failed.
             alert('Sign in not available. Please refresh the page.');
           }
         } catch (error) {
-          console.error('���� Error opening sign in modal:', error);
+          console.error('📱 Error opening sign in modal:', error);
           alert('Error opening sign in. Please refresh the page.');
         }
       };
@@ -10379,7 +10379,7 @@ This is sent because SMS delivery may have failed.
         if (signUpForm) {
           signUpForm.removeEventListener('submit', window.handleSignUp);
           signUpForm.addEventListener('submit', window.handleSignUp);
-          console.log('�� Sign up form listener attached');
+          console.log('📞 Sign up form listener attached');
         }
 
         // Restore any existing session
@@ -10405,7 +10405,7 @@ This is sent because SMS delivery may have failed.
 
       // Sign out function
       window.signOut = function() {
-        console.log('��� Signing out user...');
+        console.log('📧 Signing out user...');
         try {
           const userName = window.currentUser ? window.currentUser.name : 'User';
 
@@ -10772,7 +10772,7 @@ This is sent because SMS delivery may have failed.
         </div>
         <div
           class="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 transform hover:scale-105 transition-all duration-300">
-          <div class="text-2xl sm:text-3xl mb-2 sm:mb-3">����</div>
+          <div class="text-2xl sm:text-3xl mb-2 sm:mb-3">📱</div>
           <h3 class="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Premium Quality</h3>
           <p class="text-indigo-200 text-xs sm:text-sm">Professional designs that wow your customers</p>
         </div>
@@ -10800,7 +10800,7 @@ This is sent because SMS delivery may have failed.
       <div class="mt-16 pt-8 border-t border-white/20">
         <p class="text-indigo-200 mb-4">Trusted by 200+ businesses nationwide</p>
         <div class="flex justify-center items-center space-x-8 opacity-60">
-          <div class="text-2xl">���⭐⭐⭐⭐</div>
+          <div class="text-2xl">📧⭐⭐⭐⭐</div>
           <div class="text-sm"><span id="customerRating1">5.0</span>/5 Customer Rating</div>
         </div>
       </div>
@@ -11119,7 +11119,7 @@ This is sent because SMS delivery may have failed.
 
         <div class="text-center">
           <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">�������</span>
+            <span class="text-2xl">📱📧</span>
           </div>
           <h5 class="font-semibold text-gray-800 mb-2">Mobile Optimized</h5>
           <p class="text-gray-600 text-sm">All designs work perfectly on any device</p>
@@ -11176,7 +11176,7 @@ This is sent because SMS delivery may have failed.
             </div>
           </div>
           <div class="mb-3">
-            <div class="text-yellow-400 text-sm">⭐⭐���⭐�����</div>
+            <div class="text-yellow-400 text-sm">⭐⭐📧⭐📱</div>
             <div class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Business Website</div>
           </div>
           <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -11226,7 +11226,7 @@ This is sent because SMS delivery may have failed.
             </div>
           </div>
           <div class="mb-3">
-            <div class="text-yellow-400 text-sm">⭐⭐⭐⭐��</div>
+            <div class="text-yellow-400 text-sm">⭐⭐⭐⭐📧</div>
             <div class="bg-orange-600 text-white px-2 py-1 rounded-full text-xs inline-block mt-1">Marketing Flyer</div>
           </div>
           <p class="text-purple-100 leading-relaxed mb-3 text-sm">
@@ -11422,7 +11422,7 @@ This is sent because SMS delivery may have failed.
               <span id="viewAllReviewsText">View All Reviews</span>
             </button>
           <button onclick="forceReloadReviews()" class="ml-4 bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">
-              �� Reload Reviews
+              📞 Reload Reviews
             </button>
         </div>
       </div>
@@ -11794,7 +11794,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           </div>
           <div>
             <label class="block mb-2 font-semibold text-gray-700 flex items-center">
-                <span class="mr-2">���</span>
+                <span class="mr-2">📧</span>
                 Contact Email
               </label>
             <input
@@ -11842,7 +11842,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             // Debug function availability
               console.log('🔍 Checking simpleOrderSubmit availability:', typeof window.simpleOrderSubmit);
               if (typeof window.simpleOrderSubmit !== 'function') {
-                console.error('��� simpleOrderSubmit function not found!');
+                console.error('📧 simpleOrderSubmit function not found!');
               }
           </script>
           <button
@@ -11851,7 +11851,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
               class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center space-x-3"
               onclick="handleOrderSubmit(event); return false;"
             >
-              <span>��</span>
+              <span>📧</span>
               <span id="submitBtnText">Start My Project Now</span>
               <span>🚀</span>
             </button>
@@ -12035,7 +12035,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
                 <div class="space-y-2">
                   <label class="flex items-center">
                       <input type="radio" name="mainResponsePreference" value="text" class="mr-3 text-indigo-600 focus:ring-indigo-500" checked>
-                      <span class="text-sm text-gray-700">����� Text/SMS to my phone number</span>
+                      <span class="text-sm text-gray-700">📱 Text/SMS to my phone number</span>
                     </label>
                   <label class="flex items-center">
                       <input type="radio" name="mainResponsePreference" value="email" class="mr-3 text-indigo-600 focus:ring-indigo-500">
@@ -13002,11 +13002,11 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
         <!-- Quick Actions -->
         <div class="mt-3 flex justify-center space-x-4 text-xs">
           <button onclick="callDirectly()" class="text-green-600 hover:text-green-800 flex items-center space-x-1 transition-colors">
-              <span>��</span>
+              <span>📞</span>
               <span>Call (402) 979-7184</span>
             </button>
           <button onclick="emailDirectly()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors">
-              <span>��</span>
+              <span>📧</span>
               <span>Email Support</span>
             </button>
         </div>
@@ -13072,7 +13072,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
       // System diagnostic and auto-repair function
       function diagnoseAndRepair() {
-        console.log('������ Running system diagnostics...');
+        console.log('📱📞 Running system diagnostics...');
 
         let issues = [];
         let repairs = [];
@@ -13113,7 +13113,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
         }
 
         // Report results
-        console.log('��������� Issues found:', issues);
+        console.log('📱 Issues found:', issues);
         console.log('✅ Repairs completed:', repairs);
 
         if (issues.length === 0 && repairs.length > 0) {
@@ -13205,22 +13205,22 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           }
 
           if (chatSendBtn && !chatSendBtn.hasAttribute('data-initialized')) {
-            console.log('��� Adding click event listener to send button');
+            console.log('📧 Adding click event listener to send button');
             chatSendBtn.addEventListener('click', function(event) {
-              console.log('���️ Send button clicked!', event);
+              console.log('📧️ Send button clicked!', event);
               sendMessage();
             });
             chatSendBtn.setAttribute('data-initialized', 'true');
             console.log('✅ Send button event listener added');
           } else {
-            console.log('����️ Send button already initialized or not found', !!chatSendBtn);
+            console.log('📱️ Send button already initialized or not found', !!chatSendBtn);
           }
 
           // Initialize send button
           updateSendButton();
 
           chatInitialized = true;
-          console.log('������ Chat force-initialized successfully');
+          console.log('📱📞 Chat force-initialized successfully');
           return true;
         } catch (error) {
           console.error('❌ Error force-initializing chat:', error);
@@ -13317,7 +13317,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
         // Set up form event listeners with error handling and retry logic
         function setupAuthEventListeners() {
-          console.log('�� Setting up authentication event listeners...');
+          console.log('📞 Setting up authentication event listeners...');
 
           const signInForm = document.getElementById('signInForm');
           const signUpForm = document.getElementById('signUpForm');
@@ -13326,9 +13326,9 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             // Remove existing listeners to prevent duplicates
             signInForm.removeEventListener('submit', handleSignIn);
             signInForm.addEventListener('submit', handleSignIn);
-            console.log('��� Sign in form listener attached');
+            console.log('📧 Sign in form listener attached');
           } else {
-            console.warn('��️ Sign in form not found during initialization');
+            console.warn('📞️ Sign in form not found during initialization');
           }
 
           if (signUpForm) {
@@ -13337,7 +13337,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             signUpForm.addEventListener('submit', handleSignUp);
             console.log('✅ Sign up form listener attached');
           } else {
-            console.warn('���️ Sign up form not found during initialization');
+            console.warn('📧️ Sign up form not found during initialization');
           }
         }
 
@@ -13368,10 +13368,10 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           setTimeout(() => {
             closeSignInModal();
             openSignUpModal();
-            console.log('��� Sign up modal test passed');
+            console.log('📧 Sign up modal test passed');
             setTimeout(() => {
               closeSignUpModal();
-              console.log('������� All modal tests completed');
+              console.log('📱📧 All modal tests completed');
             }, 2000);
           }, 2000);
         } catch (error) {
@@ -13382,7 +13382,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
       // Quick verification on page load
       window.addEventListener('load', function() {
         setTimeout(() => {
-          console.log('����� Verifying modal functions are available...');
+          console.log('📱 Verifying modal functions are available...');
           console.log('openSignInModal:', typeof window.openSignInModal === 'function');
           console.log('openSignUpModal:', typeof window.openSignUpModal === 'function');
 
@@ -13397,32 +13397,32 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           console.log('submitReview:', typeof window.submitReview === 'function');
           console.log('toggleAllReviews:', typeof window.toggleAllReviews === 'function');
 
-          console.log('���� Verifying order form functions are available...');
+          console.log('📱 Verifying order form functions are available...');
           console.log('updateButtonState:', typeof window.updateButtonState === 'function');
           console.log('validateAndSubmit:', typeof window.validateAndSubmit === 'function');
 
           if (typeof window.openSignInModal === 'function' && typeof window.openSignUpModal === 'function') {
-            console.log('����� Modal functions are properly defined');
+            console.log('📱 Modal functions are properly defined');
           } else {
             console.error('❌ Modal functions not properly defined');
           }
 
           if (typeof window.safeToggleChat === 'function' && typeof window.sendMessage === 'function') {
-            console.log('����� Chat functions are properly defined');
+            console.log('📱 Chat functions are properly defined');
           } else {
             console.error('❌ Chat functions not properly defined');
           }
 
           if (typeof window.setRating === 'function' && typeof window.submitReview === 'function' && typeof window.toggleAllReviews === 'function') {
-            console.log('�� Rating and review functions are properly defined');
+            console.log('📞 Rating and review functions are properly defined');
           } else {
-            console.error('�� Rating and review functions not properly defined');
+            console.error('📞 Rating and review functions not properly defined');
           }
 
           if (typeof window.updateButtonState === 'function' && typeof window.validateAndSubmit === 'function') {
             console.log('✅ Order form functions are properly defined');
           } else {
-            console.error('��� Order form functions not properly defined');
+            console.error('📧 Order form functions not properly defined');
           }
         }, 500);
       });
@@ -13654,16 +13654,16 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
                     <div class="space-y-3">
                       <button type="button" onclick="openVenmoAppFromOrder()" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                        ���� Open Venmo App
+                        📱 Open Venmo App
                       </button>
 
                       <button type="button" onclick="copyVenmoDetails()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
-                        ��� Copy Payment Details
+                        📧 Copy Payment Details
                       </button>
                     </div>
 
                     <div class="text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
-                      <p class="font-semibold text-yellow-800 mb-1">���� Payment Instructions:</p>
+                      <p class="font-semibold text-yellow-800 mb-1">📱 Payment Instructions:</p>
                       <ol class="text-left space-y-1">
                         <li>1. Click "Open Venmo App" or search @Yoshiko-Swafford</li>
                         <li>2. Send exactly <strong>$${pricing.deposit}</strong></li>
@@ -13705,7 +13705,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             venmoContainer.innerHTML = `
               <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
                 <div class="text-center mb-6">
-                  <div class="text-red-600 text-4xl mb-4">⚠��</div>
+                  <div class="text-red-600 text-4xl mb-4">⚠📧</div>
                   <h4 class="text-xl font-bold text-red-800 mb-2">Payment System Issue</h4>
                   <p class="text-red-700 mb-4">There was an error displaying the payment options. Please contact us directly to complete your order.</p>
                 </div>
@@ -13721,7 +13721,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
                 <div class="text-center">
                   <button type="button" onclick="resetForm()" class="bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-                    ���������������� Back to Form
+                    📱📱 Back to Form
                   </button>
                 </div>
               </div>
@@ -13781,7 +13781,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
         // Show processing message
         venmoContainer.innerHTML = `
                 <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-8 text-center">
-                  <div class="text-blue-600 text-4xl mb-4">���</div>
+                  <div class="text-blue-600 text-4xl mb-4">📧</div>
                   <h4 class="text-2xl font-bold text-blue-800 mb-3">Processing Order...</h4>
                   <p class="text-blue-700 mb-4">Sending your receipt and order confirmation...</p>
                 </div>
@@ -13792,7 +13792,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           .then(() => {
             venmoContainer.innerHTML = `
                   <div class="bg-green-50 border-2 border-green-200 rounded-xl p-8 text-center">
-                    <div class="text-green-600 text-6xl mb-4">��</div>
+                    <div class="text-green-600 text-6xl mb-4">📧</div>
                     <h4 class="text-2xl font-bold text-green-800 mb-3">Order Confirmed!</h4>
                     <p class="text-green-700 mb-4">Thank you for your order! Your receipt has been sent to your email.</p>
                     <div class="bg-white rounded-lg p-4 mb-4 border border-green-200">
@@ -13801,12 +13801,12 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
                         <li>📧 Receipt sent to your email address</li>
                         <li>💰 We'll confirm your Venmo payment within 24 hours</li>
                         <li>📞 We'll contact you to discuss project details</li>
-                        <li>���� Project work begins once payment is confirmed</li>
+                        <li>📱 Project work begins once payment is confirmed</li>
                       </ul>
                     </div>
                     <div class="text-sm text-green-600 mb-4">
                       <p><strong>Questions?</strong> Contact us:</p>
-                      <p>���� support@visualvibestudio.store</p>
+                      <p>📱 support@visualvibestudio.store</p>
                       <p>📞 (402) 979-7184</p>
                     </div>
                     <button type="button" onclick="location.reload()" class="bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
@@ -13947,7 +13947,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
       Thank you for your order! Here's your receipt:
 
       ORDER DETAILS:
-      ����������������━━���━━━��━����������━��━���
+      📱📱━━📧━━━📞━📱📞━📞━📧
       Order Number: ${orderNumber}
       Order Date: ${orderDate}
       Business Name: ${formData.get("businessName")}
@@ -13956,21 +13956,21 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
       Due Date: ${formData.get("dueDate")}
 
       PAYMENT SUMMARY:
-      💰��━━━����━���━━��������━━━
+      💰📞━━━📱━📧━━📱━━━
       Total Project Cost: $${pricing.total}
       Deposit Paid (50%): $${pricing.deposit}
       Remaining Balance: $${(parseFloat(pricing.total) - parseFloat(pricing.deposit)).toFixed(2)}
       Payment Method: Venmo (@Yoshiko-Swafford)
 
       NEXT STEPS:
-      ��️━━━━━━�������━━━━━━━━
+      📞️━━━━━━📱📧━━━━━━━━
       • We'll confirm your Venmo payment within 24 hours
-      ���� Project discussion and planning will begin
+      📱 Project discussion and planning will begin
       • Final 50% payment due upon project completion
       • Estimated completion: ${formData.get("dueDate")}
 
       CONTACT INFORMATION:
-      ������━━���━━������━━━━━━━
+      📱📞━━📧━━📱📞━━━━━━━
       Email: support@visualvibestudio.store
       Phone: (402) 979-7184
       Website: www.visualvibestudio.store
@@ -14272,7 +14272,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             document.body.appendChild(form);
 
             form.submit();
-            console.log('�� Webhook form submitted successfully');
+            console.log('📞 Webhook form submitted successfully');
 
             // Cleanup
             setTimeout(() => {
@@ -14283,7 +14283,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             resolve(true);
 
           } catch (error) {
-            console.log('����� Webhook form failed:', error);
+            console.log('📱 Webhook form failed:', error);
             resolve(false);
           }
         });
@@ -14323,20 +14323,20 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           const webhookSuccess = await sendWebhookViaForm(ZAPIER_WEBHOOK_URL, webhookData);
 
           if (webhookSuccess) {
-            console.log('��� Message sent to Zapier webhook successfully via form');
+            console.log('📧 Message sent to Zapier webhook successfully via form');
           } else {
-            console.log('����️ Webhook form submission completed');
+            console.log('📱️ Webhook form submission completed');
           }
 
               // ENHANCED: Try multiple SMS methods immediately
-          console.log('��� Attempting SMS notification via multiple methods...');
+          console.log('📧 Attempting SMS notification via multiple methods...');
 
           const smsMessage = `VVS Chat: "${message}" - ${customerContact}`;
           let smsSuccess = false;
 
           // Method 1: Try enhanced SMS system
           try {
-            console.log('���� Method 1: Enhanced SMS system...');
+            console.log('📱 Method 1: Enhanced SMS system...');
             await sendEnhancedSMS(smsMessage);
             console.log('✅ Enhanced SMS sent successfully');
             smsSuccess = true;
@@ -14394,7 +14394,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
       console.log('✅ sendMessageToBusinessOwner function made globally available');
 
       async function sendSMSViaEmailGateway(message) {
-        console.log('����� Attempting SMS via email gateways...');
+        console.log('📱 Attempting SMS via email gateways...');
 
         // Using multiple email-to-SMS gateways for reliability
         const smsGateways = [
@@ -14454,13 +14454,13 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           console.log('📱 TextBelt response:', result);
 
           if (result.success) {
-            console.log('�� SMS sent via TextBelt successfully');
+            console.log('📞 SMS sent via TextBelt successfully');
             return;
           } else {
             throw new Error(`TextBelt failed: ${result.error || 'Unknown error'}`);
           }
         } catch (error) {
-          console.log('���� TextBelt SMS failed:', error.message);
+          console.log('📱 TextBelt SMS failed:', error.message);
           throw error;
         }
       }
@@ -14480,7 +14480,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
       // VoIP-compatible SMS sending using CORS-friendly methods
       async function sendSMSToVoIP(message) {
-        console.log('����� Sending SMS to VoIP number via CORS-friendly methods...');
+        console.log('📱 Sending SMS to VoIP number via CORS-friendly methods...');
 
         try {
           // Method 1: Webhook via form submission (bypasses CORS)
@@ -14497,15 +14497,15 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           // Method 2: Email notification via form (alerts you to manual send)
           const emailSuccess = await sendVoIPEmailAlert(message);
           if (emailSuccess) {
-            console.log('��� VoIP SMS alert sent via email');
+            console.log('📧 VoIP SMS alert sent via email');
             return true;
           }
         } catch (error) {
-          console.log('�� VoIP email alert failed:', error.message);
+          console.log('📞 VoIP email alert failed:', error.message);
         }
 
         // Method 3: Console log for debugging (always succeeds)
-        console.log('����� VoIP SMS logged for manual delivery');
+        console.log('📱 VoIP SMS logged for manual delivery');
         const smsLog = {
           phone: '4029797184',
           message: message,
@@ -14522,7 +14522,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
       function sendVoIPWebhookForm(message) {
         return new Promise((resolve) => {
           try {
-            console.log('�� Sending VoIP SMS via webhook form...');
+            console.log('📞 Sending VoIP SMS via webhook form...');
 
             const form = document.createElement('form');
             form.method = 'POST';
@@ -14607,7 +14607,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             document.body.appendChild(form);
 
             form.submit();
-            console.log('�� VoIP email alert sent successfully');
+            console.log('📞 VoIP email alert sent successfully');
 
             // Cleanup
             setTimeout(() => {
@@ -14662,13 +14662,13 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
               throw new Error(`Formspree failed for ${carrier}: ${response.status}`);
             }
 
-            console.log(`�� SMS sent via Formspree to ${carrier}`);
+            console.log(`📞 SMS sent via Formspree to ${carrier}`);
             return carrier;
           });
 
           // Try all carriers, succeed if any one works
           await Promise.any(promises);
-          console.log('��� SMS sent via Formspree email-to-SMS gateway');
+          console.log('📧 SMS sent via Formspree email-to-SMS gateway');
 
         } catch (error) {
           console.log('❌ All Formspree SMS attempts failed:', error.message);
@@ -14677,7 +14677,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
       }
 
       async function sendEmailToGateway(toEmail, subject, message) {
-        console.log(`���� Sending SMS to gateway: ${toEmail}`);
+        console.log(`📱 Sending SMS to gateway: ${toEmail}`);
 
         // Format message for SMS (160 character limit consideration)
         const shortMessage = message.length > 140 ?
@@ -14700,7 +14700,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           });
 
           if (response.ok) {
-            console.log(`�� SMS sent via Formspree to ${toEmail}`);
+            console.log(`📞 SMS sent via Formspree to ${toEmail}`);
             return;
           } else {
             throw new Error(`Formspree failed: ${response.status}`);
@@ -14732,7 +14732,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             throw new Error(`Direct email failed: ${response.status}`);
           }
         } catch (directEmailError) {
-          console.log(`���� Direct email method failed for ${toEmail}:`, directEmailError.message);
+          console.log(`📱 Direct email method failed for ${toEmail}:`, directEmailError.message);
         }
 
         // Method 3: Fallback to browser mailto (least reliable but universal)
@@ -14749,10 +14749,10 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
           tempLink.click();
           document.body.removeChild(tempLink);
 
-          console.log(`��� Mailto fallback triggered for ${toEmail}`);
+          console.log(`📧 Mailto fallback triggered for ${toEmail}`);
           return;
         } catch (mailtoError) {
-          console.log(`��� Mailto fallback failed for ${toEmail}:`, mailtoError.message);
+          console.log(`📧 Mailto fallback failed for ${toEmail}:`, mailtoError.message);
         }
 
         throw new Error(`All methods failed for ${toEmail}`);
@@ -14804,7 +14804,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
       async function sendEmailNotification(message) {
         // Send to both business email and create backup
-        const emailSubject = encodeURIComponent('��� VVS Chat Alert - Respond ASAP');
+        const emailSubject = encodeURIComponent('📧 VVS Chat Alert - Respond ASAP');
         const emailBody = encodeURIComponent(message);
 
         // Primary notification to business email
@@ -14979,8 +14979,8 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 
           console.log('✅ Chat system initialized with Zapier webhook to (402) 979-7184');
         } catch (error) {
-          console.error('��� Error initializing chat system:', error);
-          console.log('ℹ�� Chat will still work with basic functionality');
+          console.error('📧 Error initializing chat system:', error);
+          console.log('ℹ📞 Chat will still work with basic functionality');
         }
       }
 
@@ -15058,15 +15058,15 @@ Thanks,
           if (isMobile) {
             // On mobile, try to open email app directly
             window.open(emailUrl, '_blank');
-            addAgentMessage("�� Opening your email app! I'll respond to your email as soon as possible.");
+            addAgentMessage("📞 Opening your email app! I'll respond to your email as soon as possible.");
           } else {
             // On desktop, provide options
             showEmailOptionsModal('support@visualvibestudio.store');
-            addAgentMessage("������ I've opened contact options for you. Choose your preferred way to email me!");
+            addAgentMessage("📱📞 I've opened contact options for you. Choose your preferred way to email me!");
           }
         } catch (error) {
           console.error('Error in emailDirectly:', error);
-          addAgentMessage("����������� To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
+          addAgentMessage("📱📧 To email me directly, please use: support@visualvibestudio.store or call me at (402) 979-7184");
         }
       }
 
@@ -15390,7 +15390,7 @@ Thanks,
 
           // Set up star rating functionality
           const starButtons = document.querySelectorAll('.star-rating');
-          console.log('��� Found', starButtons.length, 'star buttons');
+          console.log('📧 Found', starButtons.length, 'star buttons');
 
           // Remove any existing event listeners first
           starButtons.forEach(star => {
@@ -15406,7 +15406,7 @@ Thanks,
               e.preventDefault();
               e.stopPropagation();
               const rating = parseInt(this.dataset.rating);
-              console.log('��� Star clicked:', rating);
+              console.log('📧 Star clicked:', rating);
               setRating(rating);
             });
 
@@ -15459,20 +15459,20 @@ Thanks,
           const reviewForm = document.getElementById('reviewForm');
           if (reviewForm) {
             reviewForm.addEventListener('submit', handleReviewSubmission);
-            console.log('�� Review form event listener added');
+            console.log('📞 Review form event listener added');
 
             // Also add onclick to submit button as backup
             const submitButton = reviewForm.querySelector('button[type="submit"]');
             if (submitButton) {
               // Add backup onclick handler
               submitButton.onclick = function(e) {
-                console.log('���� Submit button clicked directly');
+                console.log('📱 Submit button clicked directly');
                 e.preventDefault();
                 return submitReview(e);
               };
-              console.log('������ Review submit button onclick added as backup');
+              console.log('📱📞 Review submit button onclick added as backup');
             } else {
-              console.warn('⚠�� Review submit button not found');
+              console.warn('⚠📞 Review submit button not found');
             }
           } else {
             console.error('❌ Review form not found');
@@ -15498,9 +15498,9 @@ Thanks,
 
           // Force reload after a short delay to ensure DOM is ready
           setTimeout(() => {
-            console.log('�� Force loading reviews after delay...');
+            console.log('📞 Force loading reviews after delay...');
             const storedReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-            console.log('������� Found stored reviews:', storedReviews.length);
+            console.log('📱📧 Found stored reviews:', storedReviews.length);
             if (storedReviews.length > 0) {
               console.log('📝 First review:', storedReviews[0]);
               loadReviews();
@@ -15543,8 +15543,8 @@ Thanks,
 
       // Debug function for troubleshooting review system
       function debugReviewSystem() {
-        console.log('���� DEBUG: Review System Status');
-        console.log('══��═══════���������═════����═══��═════����═�����═══��═��');
+        console.log('📱 DEBUG: Review System Status');
+        console.log('══📞═══════📱═════📱═══📞═════📱═📱═══📞═📞');
 
         // Check form elements
         const elements = {
@@ -15555,10 +15555,10 @@ Thanks,
           selectedRating: document.getElementById('selectedRating')
         };
 
-        console.log('���� Form Elements:');
+        console.log('📱 Form Elements:');
         Object.keys(elements).forEach(key => {
           const el = elements[key];
-          console.log(`  ${key}:`, el ? `�� Found (value: "${el.value}")` : '❌ Not found');
+          console.log(`  ${key}:`, el ? `📞 Found (value: "${el.value}")` : '❌ Not found');
         });
 
         // Check rating variables
@@ -15583,7 +15583,7 @@ Thanks,
 
         // Check localStorage
         const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-        console.log('��� Local Storage:');
+        console.log('📧 Local Storage:');
         console.log('  Stored reviews:', reviews.length);
 
         alert(`Debug completed! Check console for details.\n\nQuick Status:\n- Form elements: ${Object.values(elements).filter(el => el).length}/5 found\n- Current rating: ${selectedRating || 'None'}\n- Stored reviews: ${reviews.length}\n- Star buttons: ${starButtons.length}`);
@@ -15598,7 +15598,7 @@ Thanks,
 
       // Debug: verify functions are available
       setTimeout(() => {
-        console.log('�� Available review functions:');
+        console.log('📞 Available review functions:');
         console.log('  toggleAllCustomerReviews:', typeof window.toggleAllCustomerReviews);
         console.log('  loadReviews:', typeof window.loadReviews);
         console.log('  displayReviews:', typeof window.displayReviews);
@@ -15619,7 +15619,7 @@ Thanks,
 
       // Quick test function
       function quickTestReview() {
-        console.log('���� Quick test review starting...');
+        console.log('📱 Quick test review starting...');
 
         // Fill form with test data
         document.getElementById('reviewerName').value = 'Test Customer';
@@ -15762,7 +15762,7 @@ Thanks,
               diagnoseAndRepair();
             }, 1000);
           } catch (error) {
-            console.error('�� Error initializing chat system:', error);
+            console.error('📞 Error initializing chat system:', error);
             showAlert('Chat system failed to initialize. Please refresh the page or contact us directly.', 'error');
           }
         }, 100);
@@ -15940,7 +15940,7 @@ Thanks,
   <script>
     // Ultimate statistics fix - runs after everything else
     (function() {
-      console.log('������ FINAL STATISTICS OVERRIDE RUNNING');
+      console.log('📱📞 FINAL STATISTICS OVERRIDE RUNNING');
 
       function ultimateStatsUpdate() {
         // Get actual review data
@@ -15977,7 +15977,7 @@ Thanks,
         const satisfiedTotal = satisfiedStored + staticReviews;
         const satisfaction = totalReviews > 0 ? Math.round((satisfiedTotal / totalReviews) * 100) : 100;
 
-        console.log('���������� FINAL CALCULATED VALUES:', {
+        console.log('📱📞 FINAL CALCULATED VALUES:', {
           storedReviews: reviews.length,
           staticReviews,
           totalReviews,
@@ -16005,9 +16005,9 @@ Thanks,
             element.setAttribute('data-updated', 'true');
             element.setAttribute('data-value', value);
 
-            console.log(`���� FINAL UPDATE: ${description} (${id}) = ${value}`);
+            console.log(`📱 FINAL UPDATE: ${description} (${id}) = ${value}`);
           } else {
-            console.log(`�� FINAL: Element ${id} not found`);
+            console.log(`📞 FINAL: Element ${id} not found`);
           }
         });
 
@@ -16079,7 +16079,7 @@ Thanks,
         });
 
       } catch (error) {
-        console.error('�� Error updating online status:', error);
+        console.error('📞 Error updating online status:', error);
       }
     }
 
@@ -16094,7 +16094,7 @@ Thanks,
 
     // Test SMS functionality
     async function testSMSNotifications() {
-      console.log('�� Testing SMS notification system...');
+      console.log('📞 Testing SMS notification system...');
       const testMessage = `TEST: SMS system working - ${new Date().toLocaleTimeString()}`;
 
       try {
@@ -16125,7 +16125,7 @@ Thanks,
 
     // Test reliable SMS method specifically
     function testReliableSMS() {
-      console.log('��� Testing reliable SMS method...');
+      console.log('📧 Testing reliable SMS method...');
       const testMessage = `RELIABLE TEST: ${new Date().toLocaleTimeString()}`;
       const testCustomer = 'Test Customer (test@example.com)';
 
@@ -16133,14 +16133,14 @@ Thanks,
         const success = reliableSMS(testMessage, testCustomer);
         if (success) {
           console.log('✅ Reliable SMS test completed!');
-          alert('��� Reliable SMS test sent! Check phone (402) 979-7184 and email');
+          alert('📧 Reliable SMS test sent! Check phone (402) 979-7184 and email');
         } else {
           console.log('⚠️ Reliable SMS test had issues');
-          alert('���️ Reliable SMS test completed with issues');
+          alert('📧️ Reliable SMS test completed with issues');
         }
       } catch (error) {
         console.error('❌ Reliable SMS test failed:', error);
-        alert('��� Reliable SMS test failed: ' + error.message);
+        alert('📧 Reliable SMS test failed: ' + error.message);
       }
     }
 
@@ -16161,7 +16161,7 @@ Thanks,
 
       console.log('🔧 SMS System Status:');
       Object.entries(functions).forEach(([name, type]) => {
-        const status = type === 'function' ? '✅' : '���';
+        const status = type === 'function' ? '✅' : '📧';
         console.log(`  ${status} ${name}: ${type}`);
       });
 
@@ -16185,7 +16185,7 @@ Thanks,
 
     // Chat system health check function
     function verifyChatSystem() {
-      console.log('���� Chat System Health Check:');
+      console.log('📱 Chat System Health Check:');
 
       const functions = {
         'safeToggleChat': typeof window.safeToggleChat,
@@ -16195,7 +16195,7 @@ Thanks,
         'enableSendButton': typeof window.enableSendButton
       };
 
-      console.log('�� Chat Functions:');
+      console.log('📞 Chat Functions:');
       Object.entries(functions).forEach(([name, type]) => {
         const status = type === 'function' ? '✅' : '❌';
         console.log(`  ${status} ${name}: ${type}`);
@@ -16208,16 +16208,16 @@ Thanks,
         'chatSendBtn': !!document.getElementById('chatSendBtn')
       };
 
-      console.log('������� Chat Elements:');
+      console.log('📱📧 Chat Elements:');
       Object.entries(elements).forEach(([name, exists]) => {
-        const status = exists ? '✅' : '���';
+        const status = exists ? '✅' : '📧';
         console.log(`  ${status} ${name}: ${exists}`);
       });
 
       const functionsWorking = Object.values(functions).filter(type => type === 'function').length;
       const elementsPresent = Object.values(elements).filter(exists => exists).length;
 
-      console.log(`���� Chat Health: ${functionsWorking}/4 functions, ${elementsPresent}/4 elements`);
+      console.log(`📱 Chat Health: ${functionsWorking}/4 functions, ${elementsPresent}/4 elements`);
 
       return functionsWorking >= 2 && elementsPresent >= 3;
     }
@@ -16226,18 +16226,18 @@ Thanks,
 
     // Manual chat recovery function for debugging
     function recoverChatSystem() {
-      console.log('���� Manual chat system recovery initiated...');
+      console.log('📱 Manual chat system recovery initiated...');
 
       // Ensure emergency function exists
       if (typeof window.emergencyToggleChat !== 'function') {
-        console.log('���� Recreating emergency chat function...');
+        console.log('📱 Recreating emergency chat function...');
         window.emergencyToggleChat = function() {
           try {
             const chatWindow = document.getElementById('chatWindow');
             if (chatWindow) {
               const isOpen = chatWindow.style.display === 'flex';
               chatWindow.style.display = isOpen ? 'none' : 'flex';
-              console.log('��� Basic chat toggle successful');
+              console.log('📧 Basic chat toggle successful');
             } else {
               alert('Chat not available. Call (402) 979-7184');
             }
@@ -16256,7 +16256,7 @@ Thanks,
       // Test the function
       try {
         if (typeof window.safeToggleChat === 'function') {
-          console.log('��������� Chat function is callable');
+          console.log('📱 Chat function is callable');
           return true;
         }
       } catch (e) {
@@ -16279,7 +16279,7 @@ Thanks,
         backupToggleChat: typeof window.backupToggleChat
       };
 
-      console.log('���� Available chat functions:', functions);
+      console.log('📱 Available chat functions:', functions);
 
       // Count working functions
       var workingFunctions = 0;
@@ -16287,7 +16287,7 @@ Thanks,
         if (functions[key] === 'function') workingFunctions++;
       });
 
-      console.log('�� Working chat functions:', workingFunctions + '/3');
+      console.log('📞 Working chat functions:', workingFunctions + '/3');
 
       // If no functions work, create a last-resort function
       if (workingFunctions === 0) {
@@ -16313,7 +16313,7 @@ Thanks,
 
       // Ensure at least safeToggleChat is available
       if (typeof window.safeToggleChat !== 'function') {
-        console.log('������ Ensuring safeToggleChat is available...');
+        console.log('📱📞 Ensuring safeToggleChat is available...');
         window.safeToggleChat = window.backupToggleChat || window.emergencyToggleChat || function() {
           alert('Chat not available. Call (402) 979-7184');
         };
@@ -16328,7 +16328,7 @@ Thanks,
             var message = input ? input.value.trim() : '';
             if (message) {
               input.value = '';
-              console.log('���� Message sent:', message);
+              console.log('📱 Message sent:', message);
               alert('Message received! We\'ll respond soon. Call (402) 979-7184 for immediate help.');
             }
           } catch (e) {
@@ -16360,7 +16360,7 @@ Thanks,
 
     // Also check when window loads (as final safety net)
     window.addEventListener('load', function() {
-      console.log('��� Window Loaded - FINAL SAFETY CHECK...');
+      console.log('📧 Window Loaded - FINAL SAFETY CHECK...');
 
       // Test all chat functions
       var functions = ['safeToggleChat', 'backupToggleChat', 'emergencyToggleChat'];
@@ -16380,7 +16380,7 @@ Thanks,
 
       // Ultimate fallback if everything failed
       if (working.length === 0) {
-        console.error('�� ULTIMATE FALLBACK: Creating minimal chat function');
+        console.error('📞 ULTIMATE FALLBACK: Creating minimal chat function');
         window.safeToggleChat = function() {
           var cw = document.getElementById('chatWindow');
           if (cw) {
@@ -16431,16 +16431,16 @@ Thanks,
         }
       };
 
-      console.log('��� Chat system recovered! Try clicking the chat button now.');
-      console.log('�� Function type:', typeof window.safeToggleChat);
+      console.log('📧 Chat system recovered! Try clicking the chat button now.');
+      console.log('📞 Function type:', typeof window.safeToggleChat);
       return 'Chat system recovered';
     };
 
-    console.log('���� If chat fails, run: window.fixChat() or fixChat()');
+    console.log('📱 If chat fails, run: window.fixChat() or fixChat()');
 
     // DIRECT SMS TEST FUNCTION - Tests SMS delivery to (402) 979-7184
     window.testDirectSMS = function() {
-      console.log('����� TESTING DIRECT SMS TO (402) 979-7184...');
+      console.log('📱 TESTING DIRECT SMS TO (402) 979-7184...');
 
       var testMessage = 'TEST SMS from Visual Vibe Studio - ' + new Date().toLocaleTimeString();
 
@@ -16488,7 +16488,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('�������� Test SMS sent via ' + carrier.name);
+            console.log('📱 Test SMS sent via ' + carrier.name);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
@@ -16501,7 +16501,7 @@ Thanks,
         }, index * 1000);
       });
 
-      console.log('��� SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
+      console.log('📧 SMS test initiated! Check phone (402) 979-7184 in 1-2 minutes');
       alert('📱 SMS test sent to all carriers!\n\nCheck phone (402) 979-7184 in 1-2 minutes.\n\nIf no SMS received, the carrier may be filtering messages or there could be a delivery issue.');
 
       return 'SMS test completed';
@@ -16511,7 +16511,7 @@ Thanks,
 
     // ALTERNATIVE SMS METHODS - Try different approaches
     window.tryAlternativeSMS = function(message) {
-      console.log('������ Trying alternative SMS delivery methods...');
+      console.log('📱📞 Trying alternative SMS delivery methods...');
 
       var msg = message || 'Test message from Visual Vibe Studio';
 
@@ -16532,7 +16532,7 @@ Thanks,
           if (response.ok) {
             console.log('✅ Zapier webhook success');
           } else {
-            console.log('���� Zapier webhook failed:', response.status);
+            console.log('📱 Zapier webhook failed:', response.status);
           }
         }).catch(function(error) {
           console.log('❌ Zapier webhook error:', error.message);
@@ -16579,7 +16579,7 @@ Thanks,
             document.body.appendChild(form);
             form.submit();
 
-            console.log('����� Alternative SMS sent via service', index + 1);
+            console.log('📱 Alternative SMS sent via service', index + 1);
 
             setTimeout(function() {
               if (document.body.contains(form)) document.body.removeChild(form);
@@ -16612,11 +16612,11 @@ Thanks,
             '• Verizon: 4029797184@vtext.com\n' +
             '• AT&T: 4029797184@txt.att.net\n' +
             '• T-Mobile: 4029797184@tmomail.net\n' +
-            '���� Sprint: 4029797184@messaging.sprintpcs.com\n\n' +
+            '📱 Sprint: 4029797184@messaging.sprintpcs.com\n\n' +
             'Run testDirectSMS() to test delivery');
     };
 
-    console.log('������� Additional SMS tools available:');
+    console.log('📱📧 Additional SMS tools available:');
     console.log('  tryAlternativeSMS() - Try different delivery methods');
     console.log('  verifyPhoneSetup() - Check phone number configuration');
 
@@ -16625,7 +16625,7 @@ Thanks,
 
     // Override immediateSMS with VoIP-compatible version
     window.immediateSMS = async function(message) {
-      console.log('�� VoIP-compatible immediateSMS called');
+      console.log('📞 VoIP-compatible immediateSMS called');
 
       const customerInfo = window.currentUser || { name: 'Website Visitor', email: 'Not provided' };
       const customerContact = customerInfo.name ?
@@ -16639,14 +16639,14 @@ Thanks,
         // Use working VoIP webhook method
         const success = await sendVoIPWebhookDirectly(fullMessage);
         if (success) {
-          console.log('��������� VoIP SMS sent successfully');
+          console.log('📱 VoIP SMS sent successfully');
           return true;
         } else {
-          console.log('⚠����� VoIP SMS logged for manual processing');
+          console.log('⚠️📱 VoIP SMS logged for manual processing');
           return true; // Still return true since we logged it
         }
       } catch (error) {
-        console.error('��� VoIP SMS failed:', error);
+        console.error('📧 VoIP SMS failed:', error);
         return false;
       }
     };
@@ -16764,10 +16764,10 @@ Thanks,
     };
 
     console.log('✅ VoIP SMS override functions loaded successfully');
-    console.log('����� Chat system now uses VoIP-compatible SMS delivery');
+    console.log('📱 Chat system now uses VoIP-compatible SMS delivery');
 
     // ====== EMERGENCY CHAT FIX - COMPLETE OVERRIDE ======
-    console.log('���� Loading emergency chat fix...');
+    console.log('📱 Loading emergency chat fix...');
 
     // Force override ALL chat functions
     setTimeout(() => {
@@ -16786,13 +16786,13 @@ Thanks,
         try {
           const input = document.getElementById('chatInput');
           if (!input) {
-            console.error('��� Chat input not found');
+            console.error('📧 Chat input not found');
             return;
           }
 
           const message = input.value.trim();
           if (!message) {
-            console.log('⚠�� Empty message');
+            console.log('⚠📞 Empty message');
             return;
           }
 
@@ -16812,9 +16812,9 @@ Thanks,
             msgDiv.innerHTML = '<div>' + message + '</div>';
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-            console.log('�� Message added to chat display');
+            console.log('📞 Message added to chat display');
           } else {
-            console.error('�� Chat messages container not found');
+            console.error('📞 Chat messages container not found');
           }
 
           // Clear input
@@ -16836,13 +16836,13 @@ Thanks,
           // No automated reply - removed
 
         } catch (error) {
-          console.error('��� Emergency simpleSend failed:', error);
+          console.error('📧 Emergency simpleSend failed:', error);
         }
       };
 
       // 2. Emergency VoIP SMS function
       window.emergencyVoIPSMS = function(message) {
-        console.log('�� Emergency VoIP SMS triggered');
+        console.log('📞 Emergency VoIP SMS triggered');
 
         try {
           const form = document.createElement('form');
@@ -16927,11 +16927,11 @@ Thanks,
       const chatSendBtn = document.getElementById('chatSendBtn');
       if (chatSendBtn) {
         chatSendBtn.addEventListener('click', window.simpleSend);
-        console.log('����� Chat send button event listener set up');
+        console.log('📱 Chat send button event listener set up');
       }
 
       console.log('🚨 EMERGENCY CHAT FIX COMPLETE');
-      console.log('������ Chat should now work: messages will show in chat box AND go to VoIP phone');
+      console.log('📱📞 Chat should now work: messages will show in chat box AND go to VoIP phone');
 
       // FINAL CRITICAL FUNCTION VERIFICATION
       setTimeout(() => {
@@ -16948,7 +16948,7 @@ Thanks,
 
         // Last resort function
         window.safeToggleChat = function() {
-          console.log('��� Last resort safeToggleChat called');
+          console.log('📧 Last resort safeToggleChat called');
           try {
             const chatWindow = document.getElementById('chatWindow');
             if (chatWindow) {
@@ -16969,9 +16969,9 @@ Thanks,
           }
         };
 
-        console.log('����� Last resort safeToggleChat function created');
+        console.log('📱 Last resort safeToggleChat function created');
       } else {
-        console.log('�� safeToggleChat function is available');
+        console.log('📞 safeToggleChat function is available');
       }
     }, 3000);
 
@@ -17054,7 +17054,7 @@ Thanks,
           console.log('✅ Fixed duplicate contact form IDs and added project fields');
         }
       } catch (error) {
-        console.error('�������� Error fixing contact form IDs:', error);
+        console.error('📱 Error fixing contact form IDs:', error);
       }
     });
   </script>
@@ -17108,20 +17108,20 @@ Thanks,
       if (signInForm && typeof window.handleSignIn === 'function') {
         signInForm.removeEventListener('submit', window.handleSignIn);
         signInForm.addEventListener('submit', window.handleSignIn);
-        console.log('�� FINAL: Sign in form listener attached');
+        console.log('📞 FINAL: Sign in form listener attached');
       }
 
       if (signUpForm && typeof window.handleSignUp === 'function') {
         signUpForm.removeEventListener('submit', window.handleSignUp);
         signUpForm.addEventListener('submit', window.handleSignUp);
-        console.log('��� FINAL: Sign up form listener attached');
+        console.log('📧 FINAL: Sign up form listener attached');
       }
 
       console.log('🔐 Final authentication setup complete');
 
       // Ensure showOrderHistory is available globally
       window.showOrderHistory = function() {
-        console.log('�� Opening My Orders modal...');
+        console.log('📞 Opening My Orders modal...');
         try {
           const modal = document.getElementById('orderHistoryModal');
           const content = document.getElementById('orderHistoryContent');
@@ -17223,7 +17223,7 @@ Thanks,
 
       // Profile modal functions
       window.openProfileModal = function() {
-        console.log('��� Opening profile modal...');
+        console.log('📧 Opening profile modal...');
         try {
           const modal = document.getElementById('profileModal');
           if (!modal) {
