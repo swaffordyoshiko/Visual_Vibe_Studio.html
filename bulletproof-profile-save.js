@@ -93,7 +93,7 @@ console.log('🛡️ Loading bulletproof profile save system...');
     
     if (errors.length > 0) {
       debugLog('Validation errors:', errors);
-      alert('Please fix these errors:\n• ' + errors.join('\n• '));
+      alert('Please fix these errors:\n��� ' + errors.join('\n• '));
       return false;
     }
     
@@ -357,17 +357,77 @@ console.log('🛡️ Loading bulletproof profile save system...');
         profileDisplay.style.backgroundSize = 'cover';
         profileDisplay.style.backgroundPosition = 'center';
         profileDisplay.innerHTML = ''; // Remove initials
-        debugLog('✅ Profile picture displayed in modal');
+
+        // IMPORTANT: Make sure it's NOT clickable
+        profileDisplay.onclick = null;
+        profileDisplay.removeAttribute('onclick');
+        profileDisplay.style.cursor = 'default';
+
+        debugLog('✅ Profile picture displayed in modal (not clickable)');
 
       } else if (profileInitials && window.currentUser) {
         // Show initials if no picture
         const initials = getInitials(window.currentUser.name);
         profileInitials.textContent = initials;
-        debugLog('✅ Profile initials displayed in modal');
+
+        // IMPORTANT: Make sure initials are NOT clickable
+        if (profileDisplay) {
+          profileDisplay.onclick = null;
+          profileDisplay.removeAttribute('onclick');
+          profileDisplay.style.cursor = 'default';
+        }
+
+        debugLog('✅ Profile initials displayed in modal (not clickable)');
       }
 
     } catch (error) {
       debugLog('❌ Error displaying profile picture in modal:', error);
+    }
+  }
+
+  // Disable ALL automatic profile picture prompts
+  function disableAllAutoPrompts() {
+    debugLog('🚫 Disabling all automatic profile picture prompts...');
+
+    try {
+      // Override any existing auto-prompt functions
+      window.confirmProfilePhotoChange = function() {
+        debugLog('🚫 Auto profile photo prompt disabled');
+        return false;
+      };
+
+      window.showProfilePictureOptions = function() {
+        debugLog('🚫 Auto profile picture options disabled');
+        return false;
+      };
+
+      // Remove any existing auto-prompt modals
+      const autoModals = document.querySelectorAll('#profilePhotoConfirmationModal, #profilePictureOptionsModal');
+      autoModals.forEach(modal => {
+        if (modal) {
+          modal.remove();
+          debugLog('✅ Removed auto-prompt modal');
+        }
+      });
+
+      // Disable any automatic click handlers on profile pictures
+      const profileElements = document.querySelectorAll('.profile-picture, [data-profile-picture], .w-20.h-20.rounded-full');
+      profileElements.forEach(element => {
+        // Remove all click event listeners
+        element.onclick = null;
+        element.removeAttribute('onclick');
+
+        // Clone to remove all event listeners
+        const newElement = element.cloneNode(true);
+        if (element.parentNode) {
+          element.parentNode.replaceChild(newElement, element);
+        }
+      });
+
+      debugLog('✅ All automatic profile picture prompts disabled');
+
+    } catch (error) {
+      debugLog('❌ Error disabling auto prompts:', error);
     }
   }
 
@@ -601,7 +661,10 @@ console.log('🛡️ Loading bulletproof profile save system...');
   // Initialize bulletproof system
   function initializeBulletproofSystem() {
     debugLog('🚀 Initializing bulletproof profile system...');
-    
+
+    // Disable ALL automatic profile picture prompts
+    disableAllAutoPrompts();
+
     // Override existing functions with bulletproof versions
     window.openProfileModal = bulletproofOpenModal;
     window.handleProfileUpdate = bulletproofFormHandler;
