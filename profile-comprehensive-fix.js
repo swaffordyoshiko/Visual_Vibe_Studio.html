@@ -541,3 +541,362 @@ console.log('🔧 Loading comprehensive profile fix...');
 })();
 
 console.log('✅ Comprehensive profile fix loaded - All profile saving and photo upload issues should be resolved');
+
+// ENHANCED PROFILE FIXES - Fix field mapping and auto-popup issues
+(function() {
+  'use strict';
+
+  let isEnhancedFixInitialized = false;
+
+  function initializeEnhancedProfileFixes() {
+    if (isEnhancedFixInitialized) return;
+    isEnhancedFixInitialized = true;
+
+    console.log('🔧 Initializing enhanced profile fixes...');
+
+    // Fix 1: Correct profile form saving with proper field mapping
+    setupCorrectProfileFormHandling();
+
+    // Fix 2: Prevent auto-popup of profile picture options
+    fixProfilePictureAutoPopup();
+
+    console.log('✅ Enhanced profile fixes initialized');
+  }
+
+  function setupCorrectProfileFormHandling() {
+    console.log('📝 Setting up correct profile form handling...');
+
+    // Override with correct field mapping
+    window.handleProfileUpdate = function(event) {
+      console.log('💾 Handling profile update with correct fields...');
+
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      try {
+        // Get form data with CORRECT field IDs from HTML
+        const profileData = {
+          firstName: getFieldValue('profileFirstName'),
+          lastName: getFieldValue('profileLastName'),
+          fullName: getFieldValue('profileFirstName') + ' ' + getFieldValue('profileLastName'),
+          email: getFieldValue('profileEmail'),
+          phone: getFieldValue('profilePhone'),
+          companyName: getFieldValue('profileCompanyName'),
+          lastUpdated: new Date().toISOString()
+        };
+
+        console.log('📊 Profile data gathered:', profileData);
+
+        // Validate required fields
+        if (!profileData.firstName || !profileData.lastName || !profileData.email) {
+          if (window.toastManager) {
+            window.toastManager.error('Please fill in all required fields', { duration: 4000 });
+          } else {
+            alert('Please fill in all required fields (First Name, Last Name, Email)');
+          }
+          return false;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(profileData.email)) {
+          if (window.toastManager) {
+            window.toastManager.error('Please enter a valid email address', { duration: 4000 });
+          } else {
+            alert('Please enter a valid email address');
+          }
+          return false;
+        }
+
+        // Save to localStorage
+        localStorage.setItem('visualVibeProfileData', JSON.stringify(profileData));
+
+        // Update current user object
+        if (window.currentUser) {
+          Object.assign(window.currentUser, {
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
+            name: profileData.fullName,
+            email: profileData.email,
+            phone: profileData.phone,
+            companyName: profileData.companyName,
+            lastUpdated: profileData.lastUpdated
+          });
+
+          localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+
+          // Update in users array
+          const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+          const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+          if (userIndex !== -1) {
+            Object.assign(users[userIndex], window.currentUser);
+            localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+          }
+        }
+
+        // Update UI elements
+        updateProfileUIElements(profileData);
+
+        // Show success message
+        if (window.toastManager) {
+          window.toastManager.success('Profile updated successfully! 🎉', { duration: 3000 });
+        } else {
+          alert('Profile updated successfully! 🎉');
+        }
+
+        // Close modal after delay
+        setTimeout(() => {
+          if (typeof window.closeProfileModal === 'function') {
+            window.closeProfileModal();
+          }
+        }, 1500);
+
+        console.log('✅ Profile updated successfully');
+        return false;
+
+      } catch (error) {
+        console.error('❌ Error updating profile:', error);
+        if (window.toastManager) {
+          window.toastManager.error('Failed to update profile. Please try again.', { duration: 4000 });
+        } else {
+          alert('Failed to update profile. Please try again.');
+        }
+        return false;
+      }
+    };
+
+    // Enhance openProfileModal to load data correctly
+    const originalOpenProfileModal = window.openProfileModal;
+    window.openProfileModal = function() {
+      console.log('👤 Opening profile modal with data loading...');
+
+      if (typeof originalOpenProfileModal === 'function') {
+        originalOpenProfileModal();
+      } else {
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+        }
+      }
+
+      setTimeout(() => {
+        loadCurrentUserDataIntoForm();
+        setupFormSubmissionHandler();
+        setupControlledProfilePictureButton();
+      }, 200);
+    };
+  }
+
+  function loadCurrentUserDataIntoForm() {
+    console.log('📋 Loading user data into form...');
+
+    if (!window.currentUser) return;
+
+    const savedProfile = JSON.parse(localStorage.getItem('visualVibeProfileData') || '{}');
+    const userData = { ...window.currentUser, ...savedProfile };
+
+    // Populate form with correct field IDs
+    setFieldValue('profileFirstName', userData.firstName || userData.name?.split(' ')[0] || '');
+    setFieldValue('profileLastName', userData.lastName || userData.name?.split(' ').slice(1).join(' ') || '');
+    setFieldValue('profileEmail', userData.email || '');
+    setFieldValue('profilePhone', userData.phone || '');
+    setFieldValue('profileCompanyName', userData.companyName || userData.company || '');
+
+    console.log('✅ Form populated with user data');
+  }
+
+  function setupFormSubmissionHandler() {
+    const form = document.getElementById('profileForm');
+    if (!form) return;
+
+    // Clean up existing handlers
+    form.onsubmit = null;
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+
+    // Add our handler
+    newForm.addEventListener('submit', window.handleProfileUpdate);
+
+    console.log('✅ Form submission handler attached');
+  }
+
+  function fixProfilePictureAutoPopup() {
+    console.log('📸 Fixing profile picture auto-popup issue...');
+
+    // Override any existing auto-click handlers
+    window.setupControlledProfilePictureButton = function() {
+      const modal = document.getElementById('profileModal');
+      if (!modal) return;
+
+      // Find and disable any auto-click handlers on profile picture
+      const profilePictureArea = modal.querySelector('.w-20.h-20') ||
+                               modal.querySelector('[id*="profile"]') ||
+                               modal.querySelector('.rounded-full');
+
+      if (profilePictureArea) {
+        // Remove all click handlers
+        profilePictureArea.onclick = null;
+        profilePictureArea.replaceWith(profilePictureArea.cloneNode(true));
+
+        // Get the fresh element
+        const newProfilePictureArea = modal.querySelector('.w-20.h-20') ||
+                                     modal.querySelector('[id*="profile"]') ||
+                                     modal.querySelector('.rounded-full');
+
+        if (newProfilePictureArea) {
+          // Only add a manual "Change Picture" button
+          addChangePictureButton(newProfilePictureArea);
+        }
+      }
+    };
+  }
+
+  function addChangePictureButton(profilePictureArea) {
+    // Check if button already exists
+    if (profilePictureArea.parentElement.querySelector('.change-picture-btn')) {
+      return;
+    }
+
+    const changePictureBtn = document.createElement('button');
+    changePictureBtn.type = 'button';
+    changePictureBtn.className = 'change-picture-btn w-full mt-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium py-2 px-3 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors';
+    changePictureBtn.textContent = '📸 Change Profile Picture';
+
+    changePictureBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('📸 Manual change picture button clicked');
+      showManualProfilePictureOptions();
+    });
+
+    profilePictureArea.parentElement.appendChild(changePictureBtn);
+    console.log('✅ Manual change picture button added');
+  }
+
+  function showManualProfilePictureOptions() {
+    // Remove any existing modals
+    const existing = document.getElementById('manualProfilePictureModal');
+    if (existing) existing.remove();
+
+    const optionsModal = document.createElement('div');
+    optionsModal.id = 'manualProfilePictureModal';
+    optionsModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4';
+
+    optionsModal.innerHTML = `
+      <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Change Profile Picture</h3>
+
+        <div class="space-y-3">
+          <button id="manualUploadPicture" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+            <span>📁</span>
+            <span>Upload New Picture</span>
+          </button>
+
+          <button id="manualUseInitials" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2">
+            <span>🔤</span>
+            <span>Use Initials</span>
+          </button>
+
+          <button id="manualCancelChange" class="w-full bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(optionsModal);
+
+    // Setup handlers
+    optionsModal.querySelector('#manualUploadPicture').onclick = function() {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageUrl = e.target.result;
+            localStorage.setItem('visualVibeProfilePicture', imageUrl);
+            updateProfilePictureDisplay(imageUrl);
+            if (window.toastManager) {
+              window.toastManager.success('Profile picture updated! 📸', { duration: 3000 });
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+        optionsModal.remove();
+      };
+      fileInput.click();
+    };
+
+    optionsModal.querySelector('#manualUseInitials').onclick = function() {
+      localStorage.removeItem('visualVibeProfilePicture');
+      updateProfilePictureDisplay(null);
+      if (window.toastManager) {
+        window.toastManager.success('Reset to initials! 🔤', { duration: 3000 });
+      }
+      optionsModal.remove();
+    };
+
+    optionsModal.querySelector('#manualCancelChange').onclick = function() {
+      optionsModal.remove();
+    };
+
+    optionsModal.onclick = function(e) {
+      if (e.target === optionsModal) {
+        optionsModal.remove();
+      }
+    };
+  }
+
+  function updateProfilePictureDisplay(imageUrl) {
+    const profileAreas = document.querySelectorAll('.w-20.h-20, [data-profile-picture], .profile-picture');
+
+    profileAreas.forEach(area => {
+      if (imageUrl) {
+        area.innerHTML = `<img src="${imageUrl}" alt="Profile" class="w-full h-full object-cover rounded-full">`;
+      } else {
+        const initials = getInitials();
+        area.innerHTML = `<div class="w-full h-full bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg">${initials}</div>`;
+      }
+    });
+  }
+
+  function updateProfileUIElements(profileData) {
+    const nameElements = document.querySelectorAll('[data-user-name], .user-name');
+    nameElements.forEach(el => {
+      el.textContent = profileData.fullName;
+    });
+
+    const emailElements = document.querySelectorAll('[data-user-email], .user-email');
+    emailElements.forEach(el => {
+      el.textContent = profileData.email;
+    });
+  }
+
+  function getFieldValue(fieldId) {
+    const field = document.getElementById(fieldId);
+    return field ? field.value.trim() : '';
+  }
+
+  function setFieldValue(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.value = value || '';
+    }
+  }
+
+  function getInitials() {
+    if (window.currentUser && window.currentUser.name) {
+      return window.currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    }
+    return 'U';
+  }
+
+  // Initialize enhanced fixes
+  setTimeout(initializeEnhancedProfileFixes, 3000);
+
+})();
