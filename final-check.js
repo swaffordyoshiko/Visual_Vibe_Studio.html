@@ -196,6 +196,11 @@ const profileModalTestScript = document.createElement('script');
 profileModalTestScript.src = 'test-profile-modal-fix.js';
 document.head.appendChild(profileModalTestScript);
 
+// Load profile modal button fix (ensures Save Changes and Cancel buttons work)
+const profileModalButtonFixScript = document.createElement('script');
+profileModalButtonFixScript.src = 'fix-profile-modal-buttons.js';
+document.head.appendChild(profileModalButtonFixScript);
+
 // Load order history content fix (replaces loading message with actual content)
 const orderHistoryContentFixScript = document.createElement('script');
 orderHistoryContentFixScript.src = 'fix-order-history-content.js';
