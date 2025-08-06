@@ -98,6 +98,18 @@ function ensureProfileModalExists() {
           <div class="flex-1 overflow-y-auto p-6">
             <form id="profileForm" onsubmit="handleProfileUpdate(event)">
 
+              <!-- Profile Picture Section -->
+              <div class="text-center mb-6">
+                <div class="relative inline-block">
+                  <div id="profilePictureDisplay" class="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">
+                    <span id="profileInitials">VS</span>
+                  </div>
+                </div>
+                <button type="button" onclick="changeProfilePictureManually()" class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                  📸 Change Profile Picture
+                </button>
+              </div>
+
               <!-- Personal Information -->
               <div class="space-y-4">
                 <div>
