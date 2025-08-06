@@ -342,7 +342,7 @@ class MyOrdersFix {
 
       // Only save if we have meaningful data
       if (orderData.customerName || orderData.email || orderData.phone) {
-        console.log('💾 Saving captured order data:', orderData);
+        console.log('���� Saving captured order data:', orderData);
         window.saveOrderToUser(orderData);
       } else {
         console.log('⚠️ No meaningful order data to capture');
@@ -790,6 +790,14 @@ const emailButtonsFixScript = document.createElement('script');
 emailButtonsFixScript.src = 'fix-email-buttons.js';
 emailButtonsFixScript.onload = function() {
   console.log('📧 Email buttons fix script loaded successfully');
+
+  // Also load the test script
+  const emailTestScript = document.createElement('script');
+  emailTestScript.src = 'email-button-test.js';
+  emailTestScript.onload = function() {
+    console.log('🧪 Email button test script loaded');
+  };
+  document.head.appendChild(emailTestScript);
 };
 emailButtonsFixScript.onerror = function() {
   console.error('❌ Failed to load email buttons fix script');
