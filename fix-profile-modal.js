@@ -142,9 +142,11 @@ function createOpenProfileModalFunction() {
       document.body.style.overflow = 'hidden';
       
       console.log('✅ Profile modal opened');
-      
-      // Load existing profile data
-      loadProfileData();
+
+      // Load existing profile data after DOM is ready
+      setTimeout(() => {
+        loadProfileData();
+      }, 200);
       
     } catch (error) {
       console.error('❌ Error in openProfileModal:', error);
@@ -242,42 +244,81 @@ function createHandleProfileUpdateFunction() {
 
 function loadProfileData() {
   console.log('📊 Loading existing profile data...');
-  
+
   try {
     const savedProfile = JSON.parse(localStorage.getItem('visualVibeProfile') || '{}');
-    
-    // Populate form fields
-    if (savedProfile.fullName) document.getElementById('profileFullName').value = savedProfile.fullName;
-    if (savedProfile.email) document.getElementById('profileEmail').value = savedProfile.email;
-    if (savedProfile.phone) document.getElementById('profilePhone').value = savedProfile.phone;
-    if (savedProfile.company) document.getElementById('profileCompany').value = savedProfile.company;
-    if (savedProfile.location) document.getElementById('profileLocation').value = savedProfile.location;
-    
-    // Set checkboxes
-    document.getElementById('emailNotifications').checked = savedProfile.emailNotifications !== false;
-    document.getElementById('smsNotifications').checked = savedProfile.smsNotifications === true;
-    document.getElementById('marketingEmails').checked = savedProfile.marketingEmails !== false;
-    
+
+    // Populate form fields with null checks
+    const fullNameEl = document.getElementById('profileFullName');
+    if (fullNameEl && savedProfile.fullName) fullNameEl.value = savedProfile.fullName;
+
+    const emailEl = document.getElementById('profileEmail');
+    if (emailEl && savedProfile.email) emailEl.value = savedProfile.email;
+
+    const phoneEl = document.getElementById('profilePhone');
+    if (phoneEl && savedProfile.phone) phoneEl.value = savedProfile.phone;
+
+    const companyEl = document.getElementById('profileCompany');
+    if (companyEl && savedProfile.company) companyEl.value = savedProfile.company;
+
+    const locationEl = document.getElementById('profileLocation');
+    if (locationEl && savedProfile.location) locationEl.value = savedProfile.location;
+
+    // Set checkboxes with null checks
+    const emailNotifEl = document.getElementById('emailNotifications');
+    if (emailNotifEl) emailNotifEl.checked = savedProfile.emailNotifications !== false;
+
+    const smsNotifEl = document.getElementById('smsNotifications');
+    if (smsNotifEl) smsNotifEl.checked = savedProfile.smsNotifications === true;
+
+    const marketingEl = document.getElementById('marketingEmails');
+    if (marketingEl) marketingEl.checked = savedProfile.marketingEmails !== false;
+
     // Update initials
     updateProfileInitials(savedProfile.fullName);
-    
-    console.log('✅ Profile data loaded');
-    
+
+    console.log('✅ Profile data loaded successfully');
+
   } catch (error) {
     console.error('❌ Error loading profile data:', error);
+    console.log('Will retry loading profile data in 500ms...');
+
+    // Retry after a delay to ensure DOM is ready
+    setTimeout(() => {
+      try {
+        loadProfileData();
+      } catch (retryError) {
+        console.error('❌ Retry failed:', retryError);
+      }
+    }, 500);
   }
 }
 
 function updateProfileInitials(fullName) {
   try {
     const initialsEl = document.getElementById('profileInitials');
-    if (initialsEl && fullName) {
-      const names = fullName.trim().split(' ');
-      const initials = names.length >= 2 ? 
-        (names[0][0] + names[names.length - 1][0]).toUpperCase() :
-        names[0].substring(0, 2).toUpperCase();
-      
-      initialsEl.textContent = initials;
+    if (initialsEl) {
+      if (fullName && fullName.trim()) {
+        const names = fullName.trim().split(' ').filter(name => name.length > 0);
+        let initials = 'VS'; // Default
+
+        if (names.length >= 2) {
+          initials = (names[0][0] + names[names.length - 1][0]).toUpperCase();
+        } else if (names.length === 1 && names[0].length >= 2) {
+          initials = names[0].substring(0, 2).toUpperCase();
+        } else if (names.length === 1 && names[0].length === 1) {
+          initials = names[0].toUpperCase() + 'S';
+        }
+
+        initialsEl.textContent = initials;
+        console.log(`✅ Updated initials to: ${initials}`);
+      } else {
+        // Set default initials if no name provided
+        initialsEl.textContent = 'VS';
+        console.log('ℹ️ Set default initials: VS');
+      }
+    } else {
+      console.warn('⚠️ Profile initials element not found');
     }
   } catch (error) {
     console.error('❌ Error updating initials:', error);
