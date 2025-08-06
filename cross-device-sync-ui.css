@@ -1,0 +1,219 @@
+/* Cross-Device Sync Status Indicator */
+
+.sync-status-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #4CAF50, #2196F3);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.sync-status-indicator:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.sync-status-indicator.syncing {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  animation: pulse-sync 2s infinite;
+}
+
+.sync-status-indicator.offline {
+  background: linear-gradient(135deg, #F44336, #D32F2F);
+}
+
+.sync-status-icon {
+  font-size: 14px;
+  animation: rotate-sync 2s linear infinite;
+}
+
+.sync-status-indicator.syncing .sync-status-icon {
+  animation: rotate-sync 1s linear infinite;
+}
+
+.sync-status-indicator.offline .sync-status-icon {
+  animation: none;
+}
+
+@keyframes pulse-sync {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes rotate-sync {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sync-tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  margin-top: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sync-status-indicator:hover .sync-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(4px);
+}
+
+.sync-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 12px;
+  border: 6px solid transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Auth form enhancements */
+.auth-form {
+  position: relative;
+}
+
+.auth-form::before {
+  content: '🔄 Syncs across all devices';
+  position: absolute;
+  top: -30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: #4CAF50;
+  font-weight: 600;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 6px 12px;
+  border-radius: 15px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+/* Welcome message enhancement */
+.cross-device-welcome {
+  background: linear-gradient(135deg, #E8F5E8, #E3F2FD);
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cross-device-welcome::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.cross-device-welcome h3 {
+  color: #2E7D32;
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.cross-device-welcome p {
+  color: #1B5E20;
+  margin: 0;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.device-icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 24px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .sync-status-indicator {
+    top: 5px;
+    right: 5px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .sync-tooltip {
+    right: -20px;
+    font-size: 10px;
+  }
+  
+  .auth-form::before {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  
+  .cross-device-welcome {
+    margin: 12px 0;
+    padding: 12px;
+  }
+  
+  .cross-device-welcome h3 {
+    font-size: 16px;
+  }
+  
+  .device-icons {
+    font-size: 20px;
+    gap: 8px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .sync-tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+  }
+  
+  .sync-tooltip::before {
+    border-bottom-color: rgba(255, 255, 255, 0.95);
+  }
+  
+  .cross-device-welcome {
+    background: linear-gradient(135deg, #1B5E20, #0D47A1);
+    border-color: #4CAF50;
+  }
+  
+  .cross-device-welcome h3,
+  .cross-device-welcome p {
+    color: #E8F5E8;
+  }
+}
