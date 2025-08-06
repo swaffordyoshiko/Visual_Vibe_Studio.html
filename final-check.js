@@ -186,6 +186,11 @@ const showOrderHistoryFixScript = document.createElement('script');
 showOrderHistoryFixScript.src = 'fix-show-order-history.js';
 document.head.appendChild(showOrderHistoryFixScript);
 
+// Load profile modal function fix
+const profileModalFixScript = document.createElement('script');
+profileModalFixScript.src = 'fix-profile-modal.js';
+document.head.appendChild(profileModalFixScript);
+
 // Load order history content fix (replaces loading message with actual content)
 const orderHistoryContentFixScript = document.createElement('script');
 orderHistoryContentFixScript.src = 'fix-order-history-content.js';
