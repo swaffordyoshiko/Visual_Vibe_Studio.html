@@ -1,6 +1,74 @@
 // Final validation that everything is working
 console.log('🔍 Final check script loading...');
 
+// Business Hours Status System
+function updateQuickResponseStatus() {
+  try {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    const currentTime = currentHour + (currentMinutes / 60);
+
+    // Business hours: Monday-Friday 9AM-6PM
+    const isWeekday = currentDay >= 1 && currentDay <= 5;
+    const isDuringBusinessHours = currentTime >= 9.0 && currentTime < 18.0;
+    const isOnline = isWeekday && isDuringBusinessHours;
+
+    // Find the Quick Response section
+    const headings = document.querySelectorAll('h4');
+    let quickResponseSection = null;
+
+    for (let heading of headings) {
+      if (heading.textContent && heading.textContent.includes('Quick Response')) {
+        quickResponseSection = heading;
+        break;
+      }
+    }
+
+    if (quickResponseSection) {
+      const container = quickResponseSection.closest('div');
+      if (container) {
+        const statusIndicator = container.querySelector('.rounded-full');
+        const statusText = container.querySelector('span:not(.italic)');
+
+        if (statusIndicator && statusText && statusText.textContent.trim() !== '') {
+          // Add IDs for consistency with existing system
+          statusIndicator.id = 'statusIndicator';
+          statusText.id = 'statusText';
+
+          if (isOnline) {
+            statusIndicator.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+            statusText.textContent = 'Online now';
+            statusText.className = 'text-sm text-indigo-200';
+          } else {
+            statusIndicator.className = 'w-2 h-2 bg-gray-400 rounded-full';
+            statusText.textContent = 'Offline - Business hours: Mon-Fri 9AM-6PM';
+            statusText.className = 'text-sm text-indigo-300';
+          }
+
+          console.log('📅 Quick Response status updated:', {
+            day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][currentDay],
+            time: `${currentHour}:${currentMinutes.toString().padStart(2, '0')}`,
+            isOnline: isOnline
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error updating Quick Response status:', error);
+  }
+}
+
+// Initialize business hours status
+setTimeout(() => {
+  updateQuickResponseStatus();
+  // Update every minute
+  setInterval(updateQuickResponseStatus, 60000);
+}, 1000);
+
+console.log('🕒 Business hours status system initialized for Quick Response section');
+
 // Fix copy button notifications to use modern toast instead of embedded alerts
 console.log('🔧 Fixing copy button notifications...');
 
