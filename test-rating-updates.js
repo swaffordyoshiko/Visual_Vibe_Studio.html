@@ -1,5 +1,5 @@
 // Manual test functions for rating updates
-console.log('🧪 Loading rating update test functions...');
+console.log('�� Loading rating update test functions...');
 
 // Function to manually test rating updates
 function testRatingUpdate() {
@@ -87,18 +87,7 @@ function createTestButton() {
   button.id = 'testRatingButton';
   button.innerHTML = '🧪 Test Rating Update';
   button.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 999999;
-    background: #3B82F6;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: none !important;
   `;
 
   button.onclick = function() {
