@@ -335,21 +335,24 @@ console.log('🔧 Loading comprehensive profile system fix...');
   
   function updateProfileInitials(fullName) {
     if (!fullName) return;
-    
+
     const initials = fullName.split(' ')
       .filter(n => n.length > 0)
       .map(n => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
-    
-    // Update all initial displays
+
+    // Update all initial displays (if any exist)
     const initialElements = document.querySelectorAll('#profileInitials, .profile-initials, [data-profile-initials]');
-    initialElements.forEach(el => {
-      el.textContent = initials;
-    });
-    
-    console.log(`✅ Updated profile initials to: ${initials}`);
+    if (initialElements.length > 0) {
+      initialElements.forEach(el => {
+        el.textContent = initials;
+      });
+      console.log(`✅ Updated ${initialElements.length} profile initial display(s) to: ${initials}`);
+    } else {
+      console.log(`ℹ️ No profile initial elements found to update`);
+    }
   }
   
   // Enhanced profile modal opener
@@ -391,28 +394,9 @@ console.log('🔧 Loading comprehensive profile system fix...');
   }
   
   function setupUserInitiatedProfilePictureButton() {
-    // Remove any existing profile picture click handlers that auto-prompt
-    const profilePicArea = document.querySelector('#profileInitials');
-    if (profilePicArea && profilePicArea.parentElement) {
-      // Clone to remove all event listeners
-      const newPicArea = profilePicArea.parentElement.cloneNode(true);
-      profilePicArea.parentElement.parentNode.replaceChild(newPicArea, profilePicArea.parentElement);
-      
-      // Add user-initiated button
-      const buttonContainer = newPicArea.parentElement;
-      let changeButton = buttonContainer.querySelector('.change-picture-btn');
-      
-      if (!changeButton) {
-        changeButton = document.createElement('button');
-        changeButton.type = 'button';
-        changeButton.className = 'change-picture-btn mt-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium';
-        changeButton.textContent = '📸 Change Profile Picture';
-        changeButton.onclick = userInitiatedProfilePictureChange;
-        
-        buttonContainer.appendChild(changeButton);
-        console.log('✅ User-initiated profile picture button added');
-      }
-    }
+    // Profile picture section has been removed from the modal
+    // Picture changes are now handled separately if needed
+    console.log('✅ Profile picture section removed - no setup needed');
   }
   
   // Initialize the enhanced system
