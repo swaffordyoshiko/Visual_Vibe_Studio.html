@@ -109,10 +109,10 @@ console.log('🛡️ Loading bulletproof profile save system...');
   // Bulletproof save with multiple redundancy
   function saveProfileDataBulletproof(data) {
     debugLog('Starting bulletproof save process...');
-    
+
     let saveSuccess = false;
     const saveResults = {};
-    
+
     try {
       // 1. Save to main profile storage
       try {
@@ -122,6 +122,17 @@ console.log('🛡️ Loading bulletproof profile save system...');
       } catch (e) {
         saveResults.profileStorage = false;
         debugLog('❌ Failed to save to profile storage:', e);
+      }
+
+      // 1.5. Also save profile picture if it exists
+      try {
+        const savedPicture = localStorage.getItem('visualVibeProfilePicture');
+        if (savedPicture) {
+          data.profilePicture = savedPicture;
+          debugLog('✅ Profile picture included in save data');
+        }
+      } catch (e) {
+        debugLog('❌ Failed to include profile picture:', e);
       }
       
       // 2. Save backup copy
@@ -198,7 +209,139 @@ console.log('🛡️ Loading bulletproof profile save system...');
       return false;
     }
   }
-  
+
+  // Update all profile displays (pictures and names)
+  function updateAllProfileDisplays(profileData) {
+    debugLog('Updating all profile displays...');
+
+    try {
+      // Update profile pictures
+      updateProfilePictureDisplays();
+
+      // Update profile initials
+      if (profileData.fullName || profileData.firstName) {
+        const fullName = profileData.fullName || `${profileData.firstName} ${profileData.lastName}`;
+        updateProfileInitials(fullName);
+      }
+
+      // Update profile name displays
+      updateProfileNameDisplays(profileData);
+
+      debugLog('✅ All profile displays updated');
+
+    } catch (error) {
+      debugLog('❌ Error updating profile displays:', error);
+    }
+  }
+
+  // Update profile picture displays everywhere
+  function updateProfilePictureDisplays() {
+    debugLog('Updating profile picture displays...');
+
+    try {
+      const savedPicture = localStorage.getItem('visualVibeProfilePicture');
+
+      if (savedPicture) {
+        debugLog('✅ Found saved profile picture, updating displays');
+
+        // Update main profile button in header
+        const profileButton = document.querySelector('button[onclick*="openProfileModal"]');
+        if (profileButton) {
+          // Replace SVG with image
+          profileButton.innerHTML = `
+            <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-white">
+              <img src="${savedPicture}" alt="Profile" class="w-full h-full object-cover">
+            </div>
+          `;
+          debugLog('✅ Updated main profile button with picture');
+        }
+
+        // Update any other profile picture containers
+        const profileImages = document.querySelectorAll('.profile-picture, [data-profile-picture]');
+        profileImages.forEach(img => {
+          if (img.tagName === 'IMG') {
+            img.src = savedPicture;
+          } else {
+            img.style.backgroundImage = `url(${savedPicture})`;
+            img.style.backgroundSize = 'cover';
+            img.style.backgroundPosition = 'center';
+          }
+        });
+
+        // Update profile icons in any modals or other areas
+        const profileIcons = document.querySelectorAll('.w-8.h-8.rounded-full, .w-10.h-10.rounded-full');
+        profileIcons.forEach(icon => {
+          if (icon.querySelector('svg')) {
+            icon.innerHTML = `<img src="${savedPicture}" alt="Profile" class="w-full h-full object-cover rounded-full">`;
+          }
+        });
+
+        debugLog('✅ Updated all profile picture displays');
+
+      } else {
+        debugLog('No saved profile picture found');
+
+        // Restore to initials if no picture
+        const profileButton = document.querySelector('button[onclick*="openProfileModal"]');
+        if (profileButton && window.currentUser) {
+          const initials = getInitials(window.currentUser.name);
+          profileButton.innerHTML = `
+            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+              ${initials}
+            </div>
+          `;
+          debugLog('✅ Restored profile button to initials');
+        }
+      }
+
+    } catch (error) {
+      debugLog('❌ Error updating profile pictures:', error);
+    }
+  }
+
+  // Update profile initials
+  function updateProfileInitials(fullName) {
+    if (!fullName) return;
+
+    const initials = getInitials(fullName);
+    debugLog(`Updating profile initials to: ${initials}`);
+
+    // Update all initial displays
+    const initialElements = document.querySelectorAll('#profileInitials, .profile-initials, [data-profile-initials]');
+    initialElements.forEach(el => {
+      el.textContent = initials;
+    });
+
+    debugLog(`✅ Updated ${initialElements.length} initial display(s)`);
+  }
+
+  // Get initials from name
+  function getInitials(name) {
+    if (!name) return 'U';
+
+    return name.split(' ')
+      .filter(n => n.length > 0)
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  // Update profile name displays
+  function updateProfileNameDisplays(profileData) {
+    debugLog('Updating profile name displays...');
+
+    const displayName = profileData.fullName || `${profileData.firstName} ${profileData.lastName}` || 'User';
+
+    // Update any name display elements
+    const nameElements = document.querySelectorAll('#userName, .user-name, [data-user-name]');
+    nameElements.forEach(el => {
+      el.textContent = displayName;
+    });
+
+    debugLog(`✅ Updated ${nameElements.length} name display(s) to: ${displayName}`);
+  }
+
   // Load profile data with fallback chain
   function loadProfileDataBulletproof() {
     debugLog('Loading profile data with fallback chain...');
@@ -337,7 +480,10 @@ console.log('🛡️ Loading bulletproof profile save system...');
         }
         
         debugLog('✅ Profile save completed successfully');
-        
+
+        // Update profile displays immediately
+        updateAllProfileDisplays(profileData);
+
         // Close modal after delay
         setTimeout(() => {
           if (window.closeProfileModal) {
@@ -432,8 +578,18 @@ console.log('🛡️ Loading bulletproof profile save system...');
     window.gatherProfileData = gatherProfileData;
     window.saveProfileDataBulletproof = saveProfileDataBulletproof;
     window.loadProfileDataBulletproof = loadProfileDataBulletproof;
-    
-    debugLog('✅ Bulletproof system initialized and ready');
+    window.updateAllProfileDisplays = updateAllProfileDisplays;
+    window.updateProfilePictureDisplays = updateProfilePictureDisplays;
+
+    // Load and display profile picture immediately if user is logged in
+    setTimeout(() => {
+      if (window.currentUser) {
+        updateProfilePictureDisplays();
+        debugLog('✅ Profile picture loaded on page load');
+      }
+    }, 1000);
+
+    debugLog('�� Bulletproof system initialized and ready');
   }
   
   // Initialize immediately and on DOM ready
