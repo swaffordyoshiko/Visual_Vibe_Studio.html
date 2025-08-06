@@ -408,7 +408,13 @@ document.head.appendChild(showOrderHistoryFixScript);
 console.log('✅ fix-profile-modal.js loading disabled to prevent form duplication');
 
 // Load profile modal fix validation
-// Load enhanced profile system
+// Load bulletproof profile save system (highest priority)
+const bulletproofProfileScript = document.createElement('script');
+bulletproofProfileScript.src = 'bulletproof-profile-save.js';
+document.head.appendChild(bulletproofProfileScript);
+console.log('🛡️ Bulletproof profile save system loaded');
+
+// Load enhanced profile system (for picture functionality)
 const enhancedProfileScript = document.createElement('script');
 enhancedProfileScript.src = 'profile-system-fix.js';
 document.head.appendChild(enhancedProfileScript);
