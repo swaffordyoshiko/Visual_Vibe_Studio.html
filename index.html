@@ -3,6 +3,12 @@
 <html lang="en">
 
 <head>
+  <script>
+window.handleEmailClick = function(event, emailAddress) {
+  if (event && event.preventDefault) event.preventDefault();
+  window.location.href = 'mailto:' + (emailAddress || 'support@visualvibestudio.store');
+};
+</script>
   <script>window.simpleOrderSubmit = function() { console.log("Fallback function called - main script will override"); return false; };</script>
   <script>window.copyToClipboard = function(text, msg) { try { if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => window.toastManager ? toastManager.success(msg || "Copied to clipboard!") : alert(msg || "Copied!")); } else { window.toastManager ? toastManager.error("Copy not supported") : alert("Copy not supported"); } } catch(e) { window.toastManager ? toastManager.error("Copy failed") : alert("Copy failed"); } };</script>
 <link rel="stylesheet" href="toast-notifications.css">
