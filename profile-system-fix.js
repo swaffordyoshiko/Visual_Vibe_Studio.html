@@ -11,16 +11,30 @@ console.log('🔧 Loading comprehensive profile system fix...');
   
   // Disable all automatic profile picture change prompts
   function disableAutoPrompts() {
-    // Override any existing auto-prompt functions
+    // Override any existing auto-prompt functions to prevent ANY auto-popups
     window.confirmProfilePhotoChange = function() {
-      console.log('🚫 Auto profile photo prompts disabled');
+      console.log('🚫 Auto profile photo prompts disabled - no action taken');
+      return false;
     };
-    
+
+    window.showProfilePictureOptions = function() {
+      console.log('🚫 Auto profile picture options disabled - no action taken');
+      return false;
+    };
+
     // Remove any existing confirmation modals
-    const existingModals = document.querySelectorAll('#profilePhotoConfirmationModal');
+    const existingModals = document.querySelectorAll('#profilePhotoConfirmationModal, #profilePictureOptionsModal');
     existingModals.forEach(modal => modal.remove());
-    
-    console.log('✅ Auto profile prompts disabled');
+
+    // Remove click handlers from any profile picture elements
+    const profilePics = document.querySelectorAll('.w-20.h-20.rounded-full, .profile-picture');
+    profilePics.forEach(pic => {
+      pic.onclick = null;
+      pic.removeAttribute('onclick');
+      pic.style.cursor = 'default';
+    });
+
+    console.log('✅ All auto profile prompts and click handlers disabled');
   }
   
   // Enhanced profile data gathering that captures ALL fields
