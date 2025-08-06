@@ -738,4 +738,49 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 1000);
 });
 
+// Contact Support function for My Orders modal
+window.handleContactSupport = function() {
+  console.log('📞 Contact support clicked from My Orders...');
+
+  try {
+    // Close the modal first
+    if (typeof window.closeOrderHistory === 'function') {
+      window.closeOrderHistory();
+    } else {
+      // Fallback method to close modal
+      const modal = document.getElementById('orderHistoryModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Wait a moment for modal to close, then scroll to contact
+    setTimeout(() => {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+        console.log('✅ Scrolled to contact section');
+
+        // Optional: Show a toast notification
+        if (window.toastManager) {
+          window.toastManager.success('Contact form ready! Fill out your details below.', { duration: 3000 });
+        }
+      } else {
+        console.error('❌ Contact section not found');
+        // Fallback: scroll to bottom of page
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+    }, 300);
+
+  } catch (error) {
+    console.error('❌ Error in handleContactSupport:', error);
+    alert('Unable to navigate to contact form. Please scroll down to the contact section.');
+  }
+};
+
 console.log('📋 My Orders display fix loaded');
