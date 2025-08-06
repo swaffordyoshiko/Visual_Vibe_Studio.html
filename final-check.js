@@ -186,6 +186,11 @@ const showOrderHistoryFixScript = document.createElement('script');
 showOrderHistoryFixScript.src = 'fix-show-order-history.js';
 document.head.appendChild(showOrderHistoryFixScript);
 
+// Load order history content fix (replaces loading message with actual content)
+const orderHistoryContentFixScript = document.createElement('script');
+orderHistoryContentFixScript.src = 'fix-order-history-content.js';
+document.head.appendChild(orderHistoryContentFixScript);
+
 // Load the full emergency script asynchronously
 const emergencyScript = document.createElement('script');
 emergencyScript.src = 'toast-fix.js';
