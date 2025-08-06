@@ -542,6 +542,17 @@ console.log('🔧 Loading comprehensive profile fix...');
 
 console.log('✅ Comprehensive profile fix loaded - All profile saving and photo upload issues should be resolved');
 
+// Load the complete profile fix script
+const completeProfileFixScript = document.createElement('script');
+completeProfileFixScript.src = 'complete-profile-fix.js';
+completeProfileFixScript.onload = function() {
+  console.log('🔧 Complete profile fix script loaded successfully');
+};
+completeProfileFixScript.onerror = function() {
+  console.error('❌ Failed to load complete profile fix script');
+};
+document.head.appendChild(completeProfileFixScript);
+
 // ENHANCED PROFILE FIXES - Fix field mapping and auto-popup issues
 (function() {
   'use strict';
