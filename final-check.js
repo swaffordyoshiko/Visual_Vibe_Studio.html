@@ -191,6 +191,11 @@ const profileModalFixScript = document.createElement('script');
 profileModalFixScript.src = 'fix-profile-modal.js';
 document.head.appendChild(profileModalFixScript);
 
+// Load profile modal fix validation
+const profileModalTestScript = document.createElement('script');
+profileModalTestScript.src = 'test-profile-modal-fix.js';
+document.head.appendChild(profileModalTestScript);
+
 // Load order history content fix (replaces loading message with actual content)
 const orderHistoryContentFixScript = document.createElement('script');
 orderHistoryContentFixScript.src = 'fix-order-history-content.js';
