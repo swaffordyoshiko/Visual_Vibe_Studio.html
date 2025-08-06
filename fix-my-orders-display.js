@@ -640,7 +640,7 @@ class MyOrdersFix {
 
 // Helper functions
 window.refreshOrderHistory = function() {
-  console.log('🔄 Refreshing order history...');
+  console.log('��� Refreshing order history...');
   if (window.myOrdersFix) {
     window.myOrdersFix.migratePendingOrders();
   }
@@ -784,3 +784,14 @@ window.handleContactSupport = function() {
 };
 
 console.log('📋 My Orders display fix loaded');
+
+// Load email buttons fix
+const emailButtonsFixScript = document.createElement('script');
+emailButtonsFixScript.src = 'fix-email-buttons.js';
+emailButtonsFixScript.onload = function() {
+  console.log('📧 Email buttons fix script loaded successfully');
+};
+emailButtonsFixScript.onerror = function() {
+  console.error('❌ Failed to load email buttons fix script');
+};
+document.head.appendChild(emailButtonsFixScript);
