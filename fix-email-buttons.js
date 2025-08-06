@@ -54,18 +54,11 @@ I'd like to get in touch regarding your services.
 
 Thank you!`;
         
-        // Try to open email client directly first
-        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        
-        console.log('📧 Opening email client with:', mailtoLink);
-        
-        // Use window.open for better compatibility
-        const emailWindow = window.open(mailtoLink, '_self');
-        
-        // Fallback: show email options modal if direct email doesn't work
-        setTimeout(() => {
-          showSimpleEmailOptions(email, subject, body);
-        }, 1000);
+        // Show email options modal directly for better user experience
+        console.log('📧 Showing email options modal for user choice...');
+
+        // Direct show modal instead of trying direct email first
+        showSimpleEmailOptions(email, subject, body);
         
         // Show success message
         if (window.toastManager) {
@@ -182,14 +175,74 @@ Thank you!`;
     if (defaultEmailBtn) {
       defaultEmailBtn.addEventListener('click', function() {
         console.log('📧 Default email button clicked:', mailtoLink);
+
+        // Try multiple methods for maximum compatibility
+        let emailOpened = false;
+
         try {
-          window.location.href = mailtoLink;
+          // Method 1: Try creating a temporary link and clicking it
+          const tempLink = document.createElement('a');
+          tempLink.href = mailtoLink;
+          tempLink.style.display = 'none';
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          document.body.removeChild(tempLink);
+          emailOpened = true;
+          console.log('✅ Email opened via temporary link method');
+        } catch (error) {
+          console.log('⚠️ Temporary link method failed:', error);
+        }
+
+        if (!emailOpened) {
+          try {
+            // Method 2: Try window.open with _top target
+            window.open(mailtoLink, '_top');
+            emailOpened = true;
+            console.log('✅ Email opened via window.open method');
+          } catch (error) {
+            console.log('⚠️ Window.open method failed:', error);
+          }
+        }
+
+        if (!emailOpened) {
+          try {
+            // Method 3: Direct location change
+            window.location.href = mailtoLink;
+            emailOpened = true;
+            console.log('✅ Email opened via location.href method');
+          } catch (error) {
+            console.log('⚠️ Location.href method failed:', error);
+          }
+        }
+
+        if (!emailOpened) {
+          try {
+            // Method 4: Try location.assign
+            window.location.assign(mailtoLink);
+            emailOpened = true;
+            console.log('✅ Email opened via location.assign method');
+          } catch (error) {
+            console.log('⚠️ Location.assign method failed:', error);
+          }
+        }
+
+        if (emailOpened) {
           if (window.toastManager) {
             window.toastManager.success('Opening your default email app...', { duration: 3000 });
+          } else {
+            console.log('✅ Default email app should be opening...');
           }
-        } catch (error) {
-          console.error('❌ Error opening default email:', error);
+        } else {
+          console.error('❌ All methods failed to open default email app');
+
+          // Final fallback: Show manual instructions
+          if (window.toastManager) {
+            window.toastManager.error('Unable to open email app automatically. Please copy the email address and compose manually.', { duration: 5000 });
+          } else {
+            alert('Unable to open email app automatically. Email: support@visualvibestudio.store');
+          }
         }
+
         modal.remove();
       });
     }
@@ -324,7 +377,7 @@ Thank you!`;
   // Test function
   window.testEmailButtons = function() {
     console.log('🧪 Testing email buttons...');
-    
+
     const tests = [
       {
         name: 'handleEmailClick function exists',
@@ -343,26 +396,111 @@ Thank you!`;
         test: () => document.querySelectorAll('a[href*="mailto:support@visualvibestudio.store"]').length > 0
       }
     ];
-    
+
     console.log('🧪 Running email button tests...');
-    
+
     tests.forEach(test => {
       const passed = test.test();
       console.log(`${passed ? '✅' : '❌'} ${test.name}: ${passed}`);
     });
-    
-    // Test clicking the main button
-    console.log('🧪 Testing main email button click...');
-    window.handleEmailClick({ preventDefault: () => {}, target: { id: 'mainSendEmailBtn' } }, 'support@visualvibestudio.store');
+
+    // Test showing the email modal
+    console.log('🧪 Testing email modal display...');
+    showSimpleEmailOptions('support@visualvibestudio.store', 'Test Subject', 'Test body message');
+  };
+
+  // Quick test function for modal
+  window.testEmailModal = function() {
+    console.log('🧪 Testing email modal...');
+    showSimpleEmailOptions('support@visualvibestudio.store', 'Test Email Modal', 'This is a test of the email modal functionality.');
+  };
+
+  // Test function specifically for default email app
+  window.testDefaultEmailApp = function() {
+    console.log('🧪 Testing default email app functionality...');
+
+    const email = 'support@visualvibestudio.store';
+    const subject = 'Test from Visual Vibe Studio';
+    const body = 'This is a test email to verify the default email app functionality.';
+
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    console.log('📧 Testing mailto link:', mailtoLink);
+
+    // Test all methods
+    let methodsToTry = [
+      {
+        name: 'Temporary Link Method',
+        func: () => {
+          const tempLink = document.createElement('a');
+          tempLink.href = mailtoLink;
+          tempLink.style.display = 'none';
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          document.body.removeChild(tempLink);
+        }
+      },
+      {
+        name: 'Window Open Method',
+        func: () => window.open(mailtoLink, '_top')
+      },
+      {
+        name: 'Location Href Method',
+        func: () => window.location.href = mailtoLink
+      },
+      {
+        name: 'Location Assign Method',
+        func: () => window.location.assign(mailtoLink)
+      }
+    ];
+
+    // Just test the first method for now to avoid opening multiple email clients
+    try {
+      console.log('🧪 Trying temporary link method...');
+      methodsToTry[0].func();
+      console.log('✅ Test completed - check if email client opened');
+    } catch (error) {
+      console.error('❌ Test failed:', error);
+    }
   };
   
+  // Create immediate backup email function available globally
+  window.immediateEmailFallback = function(emailAddress) {
+    const email = emailAddress || 'support@visualvibestudio.store';
+    const subject = 'Inquiry from Visual Vibe Studio Website';
+    const body = `Hi Yoshiko,
+
+I'm interested in your design services. Please get back to me when you have a chance.
+
+Thanks!`;
+
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    console.log('🔧 Using immediate email fallback:', mailtoLink);
+
+    // Try the most reliable method first
+    try {
+      const tempLink = document.createElement('a');
+      tempLink.href = mailtoLink;
+      tempLink.target = '_top';
+      tempLink.style.display = 'none';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+      return true;
+    } catch (error) {
+      console.error('❌ Immediate email fallback failed:', error);
+      return false;
+    }
+  };
+
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeEmailButtonFix);
   } else {
     initializeEmailButtonFix();
   }
-  
+
   // Also initialize with delays
   setTimeout(initializeEmailButtonFix, 1000);
   setTimeout(initializeEmailButtonFix, 3000);
