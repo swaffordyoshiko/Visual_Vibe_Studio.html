@@ -542,16 +542,25 @@ console.log('🔧 Loading comprehensive profile fix...');
 
 console.log('✅ Comprehensive profile fix loaded - All profile saving and photo upload issues should be resolved');
 
-// Load the complete profile fix script
-const completeProfileFixScript = document.createElement('script');
-completeProfileFixScript.src = 'complete-profile-fix.js';
-completeProfileFixScript.onload = function() {
-  console.log('🔧 Complete profile fix script loaded successfully');
+// Load the DEFINITIVE profile fix script with highest priority
+const definitiveProfileFixScript = document.createElement('script');
+definitiveProfileFixScript.src = 'definitive-profile-fix.js';
+definitiveProfileFixScript.onload = function() {
+  console.log('🔧 DEFINITIVE profile fix script loaded successfully');
+  console.log('🚀 This fix takes priority over all other profile scripts');
+
+  // Also load the test script
+  const testScript = document.createElement('script');
+  testScript.src = 'test-complete-profile-fix.js';
+  testScript.onload = function() {
+    console.log('🧪 Profile fix test script loaded');
+  };
+  document.head.appendChild(testScript);
 };
-completeProfileFixScript.onerror = function() {
-  console.error('❌ Failed to load complete profile fix script');
+definitiveProfileFixScript.onerror = function() {
+  console.error('❌ Failed to load definitive profile fix script');
 };
-document.head.appendChild(completeProfileFixScript);
+document.head.appendChild(definitiveProfileFixScript);
 
 // ENHANCED PROFILE FIXES - Fix field mapping and auto-popup issues
 (function() {
