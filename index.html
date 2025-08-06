@@ -11,12 +11,15 @@ window.handleEmailClick = function(event, emailAddress) {
 </script>
   <script>window.simpleOrderSubmit = function() { console.log("Fallback function called - main script will override"); return false; };</script>
   <script>window.copyToClipboard = function(text, msg) { try { if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => window.toastManager ? window.toastManager.success(msg || "Copied to clipboard!") : alert(msg || "Copied!")); } else { window.toastManager ? window.toastManager.error("Copy not supported") : alert("Copy not supported"); } } catch(e) { window.toastManager ? window.toastManager.error("Copy failed") : alert("Copy failed"); } };</script>
+<link rel="stylesheet" href="mobile-first.css">
+<link rel="stylesheet" href="mobile-glitch-fix.css">
 <link rel="stylesheet" href="responsive-critical.css">
 <link rel="stylesheet" href="toast-notifications.css">
 <link rel="stylesheet" href="responsive-fixes.css">
+<script src="mobile-glitch-fix.js"></script>
 <script src="toast-notifications.js"></script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -11869,6 +11872,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 <script src="emergency-backup.js"></script>
 <script src="modern-form-notifications.js"></script>
 <script src="responsive-enhancements.js"></script>
+<script src="mobile-monitor.js"></script>
 
   <!-- Professional Section Divider -->
   <div class="section-divider"></div>
