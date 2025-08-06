@@ -542,25 +542,41 @@ console.log('🔧 Loading comprehensive profile fix...');
 
 console.log('✅ Comprehensive profile fix loaded - All profile saving and photo upload issues should be resolved');
 
-// Load the DEFINITIVE profile fix script with highest priority
-const definitiveProfileFixScript = document.createElement('script');
-definitiveProfileFixScript.src = 'definitive-profile-fix.js';
-definitiveProfileFixScript.onload = function() {
-  console.log('🔧 DEFINITIVE profile fix script loaded successfully');
-  console.log('🚀 This fix takes priority over all other profile scripts');
+// Load the COMPREHENSIVE COMPLETE profile system with ALL fields
+const comprehensiveCompleteScript = document.createElement('script');
+comprehensiveCompleteScript.src = 'comprehensive-profile-complete.js';
+comprehensiveCompleteScript.onload = function() {
+  console.log('🔧 COMPREHENSIVE COMPLETE profile system loaded successfully');
+  console.log('🚀 Saves ALL fields: full name, email, phone, company, location, preferences');
 
-  // Also load the test script
-  const testScript = document.createElement('script');
-  testScript.src = 'test-complete-profile-fix.js';
-  testScript.onload = function() {
-    console.log('🧪 Profile fix test script loaded');
+  // Load the profile picture button addition
+  const pictureButtonScript = document.createElement('script');
+  pictureButtonScript.src = 'add-profile-picture-button.js';
+  pictureButtonScript.onload = function() {
+    console.log('📸 Profile picture button script loaded');
+
+    // Also load the test scripts
+    const testScript = document.createElement('script');
+    testScript.src = 'test-complete-profile-fix.js';
+    testScript.onload = function() {
+      console.log('🧪 Profile fix test script loaded');
+
+      // Load comprehensive fields test
+      const fieldsTestScript = document.createElement('script');
+      fieldsTestScript.src = 'test-all-profile-fields.js';
+      fieldsTestScript.onload = function() {
+        console.log('🧪 All profile fields test script loaded');
+      };
+      document.head.appendChild(fieldsTestScript);
+    };
+    document.head.appendChild(testScript);
   };
-  document.head.appendChild(testScript);
+  document.head.appendChild(pictureButtonScript);
 };
-definitiveProfileFixScript.onerror = function() {
-  console.error('❌ Failed to load definitive profile fix script');
+comprehensiveCompleteScript.onerror = function() {
+  console.error('❌ Failed to load comprehensive complete profile script');
 };
-document.head.appendChild(definitiveProfileFixScript);
+document.head.appendChild(comprehensiveCompleteScript);
 
 // ENHANCED PROFILE FIXES - Fix field mapping and auto-popup issues
 (function() {
