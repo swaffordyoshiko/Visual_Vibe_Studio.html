@@ -296,6 +296,16 @@ const triggerCurrentRatingsScript = document.createElement('script');
 triggerCurrentRatingsScript.src = 'trigger-current-ratings.js';
 document.head.appendChild(triggerCurrentRatingsScript);
 
+// Load rating mismatch diagnostic tool
+const ratingMismatchDiagnostic = document.createElement('script');
+ratingMismatchDiagnostic.src = 'diagnose-rating-mismatch.js';
+document.head.appendChild(ratingMismatchDiagnostic);
+
+// Load REVIEW COUNT FIX (highest priority - ensures accurate counting)
+const reviewCountFixScript = document.createElement('script');
+reviewCountFixScript.src = 'fix-review-count.js';
+document.head.appendChild(reviewCountFixScript);
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📋 Final validation checklist:');
   console.log('- Form element:', !!document.getElementById('orderForm'));
