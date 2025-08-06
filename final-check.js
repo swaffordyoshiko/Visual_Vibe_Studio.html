@@ -401,9 +401,11 @@ showOrderHistoryFixScript.src = 'fix-show-order-history.js';
 document.head.appendChild(showOrderHistoryFixScript);
 
 // Load profile modal function fix
-const profileModalFixScript = document.createElement('script');
-profileModalFixScript.src = 'fix-profile-modal.js';
-document.head.appendChild(profileModalFixScript);
+// Disabled to prevent duplicate profile modal creation
+// const profileModalFixScript = document.createElement('script');
+// profileModalFixScript.src = 'fix-profile-modal.js';
+// document.head.appendChild(profileModalFixScript);
+console.log('✅ fix-profile-modal.js loading disabled to prevent form duplication');
 
 // Load profile modal fix validation
 // Load enhanced profile system
@@ -419,9 +421,11 @@ console.log('✅ Enhanced profile system loaded');
 console.log('✅ Profile modal test script loading disabled to prevent element errors');
 
 // Load profile modal button fix (ensures Save Changes and Cancel buttons work)
-const profileModalButtonFixScript = document.createElement('script');
-profileModalButtonFixScript.src = 'fix-profile-modal-buttons.js';
-document.head.appendChild(profileModalButtonFixScript);
+// Disabled to prevent duplicate profile modal functionality
+// const profileModalButtonFixScript = document.createElement('script');
+// profileModalButtonFixScript.src = 'fix-profile-modal-buttons.js';
+// document.head.appendChild(profileModalButtonFixScript);
+console.log('✅ fix-profile-modal-buttons.js loading disabled to prevent conflicts');
 
 // Load profile save refresh fix (prevents page refresh on Save Changes)
 const profileSaveRefreshFixScript = document.createElement('script');
