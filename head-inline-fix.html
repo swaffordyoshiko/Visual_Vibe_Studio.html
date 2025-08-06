@@ -1,0 +1,9 @@
+<!-- Add this script tag in the <head> section of index.html, before any other scripts -->
+<script>
+// Immediate handleEmailClick fix - must be in HTML head
+window.handleEmailClick = function(event, emailAddress) {
+  if (event && event.preventDefault) event.preventDefault();
+  window.location.href = 'mailto:' + (emailAddress || 'support@visualvibestudio.store');
+};
+console.log('✅ handleEmailClick function defined in head');
+</script>
