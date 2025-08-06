@@ -39,11 +39,12 @@ function preventProfileFormRefresh() {
       });
       
       // Find Save Changes button by ID and text content
-      const saveBtn = document.getElementById('saveProfileBtn') || 
-                     form.querySelector('button:contains("Save Changes")') ||
+      const saveBtn = document.getElementById('saveProfileBtn') ||
                      form.querySelector('button[onclick*="save"]') ||
-                     Array.from(form.querySelectorAll('button')).find(btn => 
-                       btn.textContent.includes('Save') || btn.textContent.includes('💾')
+                     Array.from(form.querySelectorAll('button')).find(btn =>
+                       btn.textContent.includes('Save') ||
+                       btn.textContent.includes('💾') ||
+                       btn.textContent.toLowerCase().includes('save changes')
                      );
       
       if (saveBtn) {
