@@ -191,6 +191,11 @@ const orderHistoryContentFixScript = document.createElement('script');
 orderHistoryContentFixScript.src = 'fix-order-history-content.js';
 document.head.appendChild(orderHistoryContentFixScript);
 
+// Load DIRECT orders loading fix (immediate loading message replacement)
+const directOrdersLoadingFixScript = document.createElement('script');
+directOrdersLoadingFixScript.src = 'direct-fix-orders-loading.js';
+document.head.appendChild(directOrdersLoadingFixScript);
+
 // Load the full emergency script asynchronously
 const emergencyScript = document.createElement('script');
 emergencyScript.src = 'toast-fix.js';
