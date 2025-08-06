@@ -11,11 +11,9 @@ function createOpenProfileModalFunction() {
       let modal = document.getElementById('profileModal');
       
       if (!modal) {
-        // Create the modal if it doesn't exist
-        modal = document.createElement('div');
-        modal.id = 'profileModal';
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-        modal.style.display = 'none';
+        // Modal creation disabled - handled by final-check.js to prevent duplication
+        console.log('❌ Profile modal not found - should be created by final-check.js');
+        return;
         
         modal.innerHTML = `
           <div class="bg-white rounded-xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl">
