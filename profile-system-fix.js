@@ -221,45 +221,133 @@ console.log('🔧 Loading comprehensive profile system fix...');
   // User-initiated profile picture change function
   function userInitiatedProfilePictureChange() {
     console.log('📸 User initiated profile picture change');
-    
+
     // Create file input
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
     fileInput.style.display = 'none';
-    
+
     fileInput.addEventListener('change', function(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
           const imageData = e.target.result;
-          
-          // Save the image
-          localStorage.setItem('visualVibeProfilePicture', imageData);
-          
-          // Update all profile picture displays
-          updateProfilePictureDisplays(imageData);
-          
-          // Show success message
-          if (window.toastManager) {
-            window.toastManager.success('Profile picture updated successfully!');
-          } else {
-            alert('Profile picture updated successfully!');
-          }
-          
-          console.log('✅ Profile picture updated');
+
+          // Show confirmation dialog with preview
+          showProfilePictureConfirmation(imageData);
+
+          console.log('✅ Profile picture loaded, showing confirmation');
         };
         reader.readAsDataURL(file);
       }
-      
+
       // Clean up
       document.body.removeChild(fileInput);
     });
-    
+
     // Trigger file selection
     document.body.appendChild(fileInput);
     fileInput.click();
+  }
+
+  // Show confirmation dialog with OK button
+  function showProfilePictureConfirmation(imageData) {
+    // Remove any existing confirmation modal
+    const existingModal = document.getElementById('profilePictureConfirmModal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    // Create confirmation modal
+    const modal = document.createElement('div');
+    modal.id = 'profilePictureConfirmModal';
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4';
+
+    modal.innerHTML = `
+      <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Confirm Profile Picture</h3>
+
+        <div class="text-center mb-6">
+          <div class="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-gray-200">
+            <img src="${imageData}" alt="Profile Picture Preview" class="w-full h-full object-cover">
+          </div>
+          <p class="text-gray-600 text-sm">Do you want to use this as your profile picture?</p>
+        </div>
+
+        <div class="flex gap-3">
+          <button
+            onclick="cancelProfilePictureChange()"
+            class="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="confirmProfilePictureChange('${imageData}')"
+            class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-colors"
+          >
+            OK, Use This Picture
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Prevent closing by clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        cancelProfilePictureChange();
+      }
+    });
+
+    document.body.appendChild(modal);
+    console.log('✅ Profile picture confirmation modal shown');
+  }
+
+  // Confirm and apply the profile picture change
+  function confirmProfilePictureChange(imageData) {
+    try {
+      // Save the image
+      localStorage.setItem('visualVibeProfilePicture', imageData);
+
+      // Update all profile picture displays
+      updateProfilePictureDisplays(imageData);
+
+      // Close confirmation modal
+      const modal = document.getElementById('profilePictureConfirmModal');
+      if (modal) {
+        modal.remove();
+      }
+
+      // Show success message
+      if (window.toastManager) {
+        window.toastManager.success('Profile picture updated successfully!');
+      } else {
+        alert('Profile picture updated successfully!');
+      }
+
+      console.log('✅ Profile picture confirmed and updated');
+
+    } catch (error) {
+      console.error('❌ Error confirming profile picture:', error);
+      alert('Error updating profile picture. Please try again.');
+    }
+  }
+
+  // Cancel profile picture change
+  function cancelProfilePictureChange() {
+    // Close confirmation modal
+    const modal = document.getElementById('profilePictureConfirmModal');
+    if (modal) {
+      modal.remove();
+    }
+
+    // Show cancelled message
+    if (window.toastManager) {
+      window.toastManager.info('Profile picture change cancelled');
+    }
+
+    console.log('❌ Profile picture change cancelled');
   }
   
   function updateProfilePictureDisplays(imageData) {
@@ -414,6 +502,8 @@ console.log('🔧 Loading comprehensive profile system fix...');
     // Make utility functions available
     window.loadAllProfileData = loadAllProfileData;
     window.saveAllProfileData = saveAllProfileData;
+    window.confirmProfilePictureChange = confirmProfilePictureChange;
+    window.cancelProfilePictureChange = cancelProfilePictureChange;
     
     console.log('✅ Enhanced profile system initialized');
   }
