@@ -1,0 +1,110 @@
+/* Critical responsive fixes - loaded immediately */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Immediate mobile fixes */
+@media (max-width: 767px) {
+  .text-6xl, .text-5xl {
+    font-size: 2.5rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  .text-4xl {
+    font-size: 2rem !important;
+  }
+  
+  .py-20 {
+    padding: 3rem 1rem !important;
+  }
+  
+  .py-16 {
+    padding: 2rem 1rem !important;
+  }
+  
+  .px-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .flex-wrap {
+    flex-wrap: wrap !important;
+  }
+  
+  input, select, textarea, button {
+    font-size: 16px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Hero section mobile */
+  .hero-section {
+    padding: 2rem 1rem !important;
+  }
+  
+  .hero-section h1 {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Form mobile adjustments */
+  #orderForm {
+    padding: 1rem !important;
+  }
+  
+  /* Navigation mobile */
+  nav {
+    flex-wrap: wrap !important;
+    padding: 1rem !important;
+  }
+}
+
+/* Tablet fixes */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  .hero-section h1 {
+    font-size: 3rem !important;
+  }
+}
+
+/* Landscape phone fixes */
+@media (max-height: 500px) and (orientation: landscape) {
+  .py-20, .py-16 {
+    padding: 1rem !important;
+  }
+  
+  .text-6xl, .text-5xl {
+    font-size: 2rem !important;
+  }
+  
+  .hero-section {
+    padding: 1rem !important;
+  }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+  button, a, input, select {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+}
