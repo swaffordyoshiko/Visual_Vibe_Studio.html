@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile First-Click Fix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="toast-notifications.js"></script>
+    <link rel="stylesheet" href="toast-notifications.css">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">🎯 Profile First-Click Save Fix Test</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Test Setup</h2>
+            <div class="space-y-3">
+                <button id="createTestUser" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    1. Create Test User
+                </button>
+                <button id="loadProfileFix" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    2. Load Profile Fix
+                </button>
+                <button id="openProfile" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                    3. Open Profile Modal
+                </button>
+                <button id="testSave" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                    4. Test First-Click Save
+                </button>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">System Status</h2>
+            <div id="systemStatus" class="font-mono text-sm space-y-1">
+                <div id="userStatus">❌ No test user created</div>
+                <div id="fixStatus">❌ Profile fix not loaded</div>
+                <div id="modalStatus">❌ Profile modal not tested</div>
+                <div id="saveStatus">❌ First-click save not tested</div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Console Log</h2>
+            <div id="consoleLog" class="font-mono text-xs bg-black text-green-400 p-4 rounded max-h-64 overflow-y-auto">
+                Ready to test profile first-click save fix...<br>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Modal (copied from main site) -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800">Edit Profile</h3>
+                <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700 p-2 -m-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Form -->
+            <div class="flex-1 overflow-y-auto px-6 py-4">
+                <form id="profileForm" class="space-y-4">
+                    <!-- First Name -->
+                    <div>
+                        <label for="profileFirstName" class="block text-sm font-medium text-gray-700 mb-2">
+                            First Name *
+                        </label>
+                        <input
+                            type="text"
+                            id="profileFirstName"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your first name"
+                        />
+                    </div>
+                    
+                    <!-- Last Name -->
+                    <div>
+                        <label for="profileLastName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Last Name *
+                        </label>
+                        <input
+                            type="text"
+                            id="profileLastName"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your last name"
+                        />
+                    </div>
+                    
+                    <!-- Company Name -->
+                    <div>
+                        <label for="profileCompanyName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Company Name
+                        </label>
+                        <input
+                            type="text"
+                            id="profileCompanyName"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your company name (optional)"
+                        />
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div>
+                        <label for="profilePhone" class="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Number
+                        </label>
+                        <input
+                            type="tel"
+                            id="profilePhone"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your phone number (optional)"
+                        />
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label for="profileEmail" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email Address *
+                        </label>
+                        <input
+                            type="email"
+                            id="profileEmail"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your email address"
+                        />
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="flex gap-3 p-6 border-t">
+                <button
+                    type="submit"
+                    form="profileForm"
+                    class="flex-1 bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors focus:ring-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl"
+                >
+                    💾 Save Changes
+                </button>
+                <button
+                    type="button"
+                    onclick="closeProfileModal()"
+                    class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                >
+                    ❌ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test functions
+        let testUser = null;
+        
+        function log(message) {
+            const logDiv = document.getElementById('consoleLog');
+            logDiv.innerHTML += message + '<br>';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(statusId, message, success = false) {
+            const statusEl = document.getElementById(statusId);
+            statusEl.textContent = (success ? '✅' : '❌') + ' ' + message;
+        }
+        
+        // 1. Create Test User
+        document.getElementById('createTestUser').onclick = function() {
+            log('Creating test user...');
+            
+            testUser = {
+                id: 'test-user-' + Date.now(),
+                firstName: 'Test',
+                lastName: 'User',
+                email: 'test@example.com',
+                name: 'Test User',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save to storage
+            const users = [testUser];
+            localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+            
+            // Set as current user
+            window.currentUser = {
+                id: testUser.id,
+                name: testUser.name,
+                email: testUser.email,
+                lastActivity: new Date().toISOString()
+            };
+            localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+            
+            log('✅ Test user created: ' + testUser.name);
+            updateStatus('userStatus', 'Test user created: ' + testUser.name, true);
+        };
+        
+        // 2. Load Profile Fix
+        document.getElementById('loadProfileFix').onclick = function() {
+            log('Loading profile first-click fix...');
+            
+            const script = document.createElement('script');
+            script.src = 'PROFILE-FIRST-CLICK-FIX.js';
+            script.onload = function() {
+                log('✅ Profile fix loaded successfully');
+                updateStatus('fixStatus', 'Profile fix loaded and active', true);
+                
+                // Test if functions are available
+                setTimeout(() => {
+                    if (typeof window.openProfileModal === 'function') {
+                        log('✅ openProfileModal function is available');
+                    }
+                    if (typeof window.handleProfileUpdate === 'function') {
+                        log('✅ handleProfileUpdate function is available');
+                    }
+                    if (typeof window.testDefinitiveProfile === 'function') {
+                        log('✅ testDefinitiveProfile function is available');
+                    }
+                }, 100);
+            };
+            script.onerror = function() {
+                log('❌ Failed to load profile fix');
+                updateStatus('fixStatus', 'Failed to load profile fix', false);
+            };
+            
+            document.head.appendChild(script);
+        };
+        
+        // 3. Open Profile Modal
+        document.getElementById('openProfile').onclick = function() {
+            log('Opening profile modal...');
+            
+            if (!window.currentUser) {
+                log('❌ No current user - create test user first');
+                return;
+            }
+            
+            if (typeof window.openProfileModal !== 'function') {
+                log('❌ openProfileModal function not available - load profile fix first');
+                return;
+            }
+            
+            try {
+                window.openProfileModal();
+                log('✅ Profile modal opened');
+                updateStatus('modalStatus', 'Profile modal opened successfully', true);
+            } catch (error) {
+                log('❌ Error opening profile modal: ' + error.message);
+                updateStatus('modalStatus', 'Error opening profile modal', false);
+            }
+        };
+        
+        // 4. Test First-Click Save
+        document.getElementById('testSave').onclick = function() {
+            log('Testing first-click save...');
+            
+            if (!document.getElementById('profileModal').classList.contains('hidden')) {
+                log('❌ Profile modal is not open - open it first');
+                return;
+            }
+            
+            // Open modal and test save
+            if (typeof window.openProfileModal === 'function') {
+                window.openProfileModal();
+                
+                setTimeout(() => {
+                    // Fill form with test data
+                    document.getElementById('profileFirstName').value = 'Test';
+                    document.getElementById('profileLastName').value = 'User Updated';
+                    document.getElementById('profileEmail').value = 'testupdated@example.com';
+                    document.getElementById('profileCompanyName').value = 'Test Company';
+                    document.getElementById('profilePhone').value = '555-123-4567';
+                    
+                    log('📝 Form filled with test data');
+                    
+                    // Try to save
+                    setTimeout(() => {
+                        const saveBtn = document.querySelector('#profileForm button[type="submit"]');
+                        if (saveBtn) {
+                            log('💾 Clicking save button for first-click test...');
+                            saveBtn.click();
+                            
+                            // Check if save was successful
+                            setTimeout(() => {
+                                const savedData = localStorage.getItem('visualVibeProfileData');
+                                if (savedData) {
+                                    const parsed = JSON.parse(savedData);
+                                    if (parsed.lastName === 'User Updated') {
+                                        log('🎉 SUCCESS! First-click save worked!');
+                                        updateStatus('saveStatus', 'First-click save SUCCESSFUL!', true);
+                                    } else {
+                                        log('❌ Data not saved correctly');
+                                        updateStatus('saveStatus', 'Data not saved correctly', false);
+                                    }
+                                } else {
+                                    log('❌ No profile data found in storage');
+                                    updateStatus('saveStatus', 'No profile data saved', false);
+                                }
+                            }, 1000);
+                        } else {
+                            log('❌ Save button not found');
+                        }
+                    }, 200);
+                }, 500);
+            }
+        };
+        
+        // Simple close modal function
+        window.closeProfileModal = function() {
+            const modal = document.getElementById('profileModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        };
+        
+        // Override console.log to capture logs
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+            ).join(' ');
+            
+            if (message.includes('DEFINITIVE') || message.includes('PROFILE') || message.includes('Fix')) {
+                log(message);
+            }
+        };
+        
+        log('Test page loaded. Follow the numbered buttons to test the profile fix.');
+    </script>
+</body>
+</html>
