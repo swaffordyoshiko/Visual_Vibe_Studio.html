@@ -201,6 +201,11 @@ const profileModalButtonFixScript = document.createElement('script');
 profileModalButtonFixScript.src = 'fix-profile-modal-buttons.js';
 document.head.appendChild(profileModalButtonFixScript);
 
+// Load profile save refresh fix (prevents page refresh on Save Changes)
+const profileSaveRefreshFixScript = document.createElement('script');
+profileSaveRefreshFixScript.src = 'fix-profile-save-refresh.js';
+document.head.appendChild(profileSaveRefreshFixScript);
+
 // Load order history content fix (replaces loading message with actual content)
 const orderHistoryContentFixScript = document.createElement('script');
 orderHistoryContentFixScript.src = 'fix-order-history-content.js';
