@@ -80,10 +80,10 @@ body {
     margin-right: auto !important;
   }
   
-  /* Grid mobile fixes */
-  .grid {
-    display: flex !important;
-    flex-direction: column !important;
+  /* Grid mobile fixes - allow some multi-column layouts */
+  .grid-cols-1 {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
     gap: 1rem !important;
   }
   
@@ -100,7 +100,6 @@ body {
   
   /* Button mobile fixes */
   button, .btn {
-    width: 100% !important;
     min-height: 44px !important;
     padding: 12px 20px !important;
     font-size: 16px !important;
