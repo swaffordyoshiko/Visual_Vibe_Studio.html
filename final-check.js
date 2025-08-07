@@ -637,7 +637,7 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
       return;
     }
     
-    console.log(`🗑️ Deleting order: ${orderId}`);
+    console.log(`��️ Deleting order: ${orderId}`);
     
     try {
       // Remove from ALL storage locations
@@ -794,9 +794,207 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
     return originalSetInterval.call(this, callback, delay, ...args);
   };
   
+  // FIX SIGN-UP AUTHENTICATION ISSUES
+  console.log('🔐 Fixing sign-up authentication conflicts...');
+
+  // Override handleSignUp to fix account existence checking
+  window.handleSignUp = function(e) {
+    console.log('📝 [FIXED] Processing sign up with conflict resolution...');
+    if (e) e.preventDefault();
+
+    try {
+      const nameInput = document.getElementById('signUpName');
+      const emailInput = document.getElementById('signUpEmail');
+      const passwordInput = document.getElementById('signUpPassword');
+      const confirmPasswordInput = document.getElementById('signUpConfirmPassword');
+
+      if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+        alert('Form elements not found. Please refresh the page.');
+        return;
+      }
+
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      // Validation
+      if (!name || !email || !password || !confirmPassword) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      console.log(`📝 Creating account for: ${name} (${email})`);
+
+      // Get existing users
+      const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+      console.log(`👥 Current users in database: ${users.length}`);
+
+      // SMART CONFLICT RESOLUTION - Check for real vs phantom accounts
+      const existingUser = users.find(u => u.email.toLowerCase() === email);
+      if (existingUser) {
+        console.log('🔍 Found existing user, checking if real or phantom:', existingUser);
+
+        // Check if it's a phantom account from cross-device sync
+        const isPhantomAccount = (
+          existingUser.syncedFromCloud === true ||
+          existingUser.password === 'temp123' ||
+          existingUser.password === 'temporary' ||
+          !existingUser.createdAt ||
+          existingUser.accountVersion !== '2.0'
+        );
+
+        if (isPhantomAccount) {
+          console.log('👻 Phantom account detected, overwriting with real account...');
+
+          // Remove phantom account
+          const userIndex = users.findIndex(u => u.email.toLowerCase() === email);
+          if (userIndex !== -1) {
+            users.splice(userIndex, 1);
+          }
+
+          // Continue with normal sign-up process
+        } else {
+          console.log('❌ Real account already exists:', email);
+          alert('An account already exists with this email. Please sign in instead.');
+
+          // Switch to sign-in and pre-fill email
+          setTimeout(() => {
+            if (typeof window.switchToSignIn === 'function') {
+              window.switchToSignIn();
+              setTimeout(() => {
+                const signInEmailInput = document.getElementById('signInEmail');
+                if (signInEmailInput) {
+                  signInEmailInput.value = email;
+                }
+              }, 200);
+            }
+          }, 1000);
+          return;
+        }
+      }
+
+      // Create new user with comprehensive data
+      const newUser = {
+        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: name,
+        firstName: name.split(' ')[0],
+        lastName: name.split(' ').slice(1).join(' ') || '',
+        email: email,
+        password: password,
+        orders: [],
+        reviews: [],
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        accountVersion: '2.0',
+        realAccount: true // Mark as real account vs phantom
+      };
+
+      // Add to users array
+      users.push(newUser);
+      localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+      console.log('✅ New user created and saved:', newUser.name);
+
+      // Create session and individual user storage
+      const sessionUser = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        orders: [],
+        reviews: [],
+        signedIn: true,
+        signInTime: new Date().toISOString()
+      };
+
+      // Set current user and session
+      window.currentUser = sessionUser;
+      localStorage.setItem('visualVibeUser', JSON.stringify(sessionUser));
+      localStorage.setItem(`user_${email}`, JSON.stringify(newUser));
+
+      console.log('✅ User session created:', sessionUser.name);
+
+      // Clear form
+      nameInput.value = '';
+      emailInput.value = '';
+      passwordInput.value = '';
+      confirmPasswordInput.value = '';
+
+      // Close modal and show success
+      if (typeof window.closeSignUpModal === 'function') {
+        window.closeSignUpModal();
+      }
+
+      alert(`✅ Welcome ${name}! Your account has been created successfully.`);
+
+      // Update UI to show signed in state
+      if (typeof window.updateSignInUI === 'function') {
+        window.updateSignInUI();
+      }
+
+    } catch (error) {
+      console.error('❌ Sign-up error:', error);
+      alert('❌ Sign up failed. Please try again.');
+    }
+  };
+
+  // Clean up phantom accounts on load
+  setTimeout(() => {
+    try {
+      const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+      const beforeCount = users.length;
+
+      // Remove phantom accounts
+      const cleanUsers = users.filter(user => {
+        const isPhantom = (
+          user.syncedFromCloud === true ||
+          user.password === 'temp123' ||
+          user.password === 'temporary' ||
+          !user.createdAt ||
+          (user.accountVersion !== '2.0' && !user.realAccount)
+        );
+
+        if (isPhantom) {
+          console.log('🧹 Removing phantom account:', user.email);
+          return false;
+        }
+        return true;
+      });
+
+      const afterCount = cleanUsers.length;
+
+      if (beforeCount !== afterCount) {
+        localStorage.setItem('visualVibeUsers', JSON.stringify(cleanUsers));
+        console.log(`🧹 Cleaned up ${beforeCount - afterCount} phantom accounts`);
+      }
+
+    } catch (error) {
+      console.error('❌ Error cleaning phantom accounts:', error);
+    }
+  }, 2000);
+
   console.log('✅ FINAL CHECK COMPLETE');
   console.log('✅ Edit Profile: No auto-opening, saves all data on first attempt');
   console.log('✅ My Orders: No auto-opening, shows orders AND reviews with working delete buttons');
   console.log('✅ Picture Uploader: Only opens when clicking change picture button');
+  console.log('✅ Sign-Up: Fixed phantom account conflicts, smart conflict resolution');
   
 })();
