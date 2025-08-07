@@ -1,5 +1,7 @@
-// DEFINITIVE SIGN-UP CONFLICT FIX
-console.log('🚨 Loading definitive sign-up conflict fix...');
+// DEFINITIVE SIGN-UP CONFLICT FIX - DISABLED
+// This script is disabled because simple-signup-override.js provides better functionality
+console.log('🚨 fix-signup-conflicts.js DISABLED - using simple-signup-override.js instead');
+return; // Exit immediately
 
 (function() {
   'use strict';
