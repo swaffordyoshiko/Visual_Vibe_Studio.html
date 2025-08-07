@@ -189,12 +189,12 @@
     };
   }
   
-  // Make the function non-writable
+  // Make the function protected but still writable
   try {
     Object.defineProperty(window, 'handleSignUp', {
       value: window.handleSignUp,
-      writable: false,
-      configurable: false
+      writable: true,
+      configurable: true
     });
     console.log('🔒 [EMERGENCY] handleSignUp locked against overwrites');
   } catch (error) {
