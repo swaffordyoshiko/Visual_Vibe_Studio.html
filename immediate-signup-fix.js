@@ -550,3 +550,64 @@ if (document.readyState === 'loading') {
 } else {
   setTimeout(initialize, 100);
 }
+
+// REMOVE SYNC BUTTONS AND TEST NOTIFICATIONS
+(function removeSyncAndTestElements() {
+  console.log('🧹 Removing sync buttons and test notifications...');
+
+  function cleanup() {
+    // Remove sync status indicator (green "synced" button at top right)
+    document.querySelectorAll('.sync-status-indicator').forEach(el => el.remove());
+
+    // Remove help button (blue "sync help" button at bottom left)
+    document.querySelectorAll('.cross-device-help-btn').forEach(el => el.remove());
+
+    // Remove any button with sync help text
+    document.querySelectorAll('button').forEach(btn => {
+      if (btn.textContent && (btn.textContent.includes('Sync Help') || btn.textContent.includes('❓'))) {
+        btn.remove();
+      }
+    });
+
+    // Remove cross-device welcome messages
+    document.querySelectorAll('.cross-device-welcome').forEach(el => el.remove());
+
+    // Remove test notifications
+    const testSelectors = ['.toast-container', '.notification-test', '.test-notification'];
+    testSelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => el.remove());
+    });
+
+    // Remove any element containing test notification text
+    document.querySelectorAll('*').forEach(el => {
+      if (el.textContent &&
+          (el.textContent.includes('Profile fix test passed') ||
+           el.textContent.includes('tests passed ✅') ||
+           el.textContent.includes('Profile picture modal test'))) {
+        el.remove();
+      }
+    });
+
+    // Disable sync UI creation
+    if (window.SyncStatusUI) {
+      window.SyncStatusUI = function() { return { init: () => {}, createSyncIndicator: () => {}, updateSyncStatus: () => {} }; };
+    }
+    window.syncStatusUI = null;
+    window.updateSyncStatusUI = () => {};
+
+    console.log('✅ Sync elements and tests removed');
+  }
+
+  // Run cleanup multiple times to catch dynamic elements
+  cleanup();
+  setTimeout(cleanup, 1000);
+  setTimeout(cleanup, 3000);
+
+  // Watch for new elements being added
+  const observer = new MutationObserver(() => {
+    setTimeout(cleanup, 100);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+
+console.log('✅ Authentication system with sync removal loaded');
