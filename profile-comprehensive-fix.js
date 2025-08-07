@@ -26,13 +26,21 @@ console.log('🔧 Loading unified profile fix from comprehensive profile fix...'
         signinScript.onload = function() {
           console.log('✅ Profile picture on signin script loaded');
 
-          // Load profile picture modal test
-          const pictureTestScript = document.createElement('script');
-          pictureTestScript.src = 'test-profile-picture-modal.js';
-          pictureTestScript.onload = function() {
-            console.log('✅ Profile picture modal test script loaded');
+          // Load My Orders inquiries fix
+          const inquiriesScript = document.createElement('script');
+          inquiriesScript.src = 'fix-my-orders-inquiries.js';
+          inquiriesScript.onload = function() {
+            console.log('✅ My Orders inquiries fix loaded');
+
+            // Load profile picture modal test
+            const pictureTestScript = document.createElement('script');
+            pictureTestScript.src = 'test-profile-picture-modal.js';
+            pictureTestScript.onload = function() {
+              console.log('✅ Profile picture modal test script loaded');
+            };
+            document.head.appendChild(pictureTestScript);
           };
-          document.head.appendChild(pictureTestScript);
+          document.head.appendChild(inquiriesScript);
         };
         document.head.appendChild(signinScript);
       };
@@ -771,7 +779,7 @@ document.head.appendChild(comprehensiveCompleteScript);
   }
 
   function loadCurrentUserDataIntoForm() {
-    console.log('📋 Loading user data into form...');
+    console.log('���� Loading user data into form...');
 
     if (!window.currentUser) return;
 
