@@ -1,3 +1,211 @@
+// ULTIMATE MOBILE MIRROR + IMMEDIATE AUTHENTICATION FIX
+console.log('🚀 ULTIMATE MOBILE MIRROR + AUTH FIX: Starting...');
+
+// MOBILE MIRROR FIX - Force mobile to look like desktop
+(function mobileMirrorFix() {
+  if (window.innerWidth <= 767) {
+    console.log('📱 Applying mobile mirror fix...');
+
+    // Create ultimate mobile mirror styles
+    const mirrorStyles = document.createElement('style');
+    mirrorStyles.id = 'mobile-mirror-fix';
+    mirrorStyles.innerHTML = `
+      @media (max-width: 767px) {
+        /* Hide mobile navigation */
+        #mobileMenuBtn {
+          display: none !important;
+          visibility: hidden !important;
+        }
+
+        #mobileMenu {
+          display: none !important;
+          visibility: hidden !important;
+        }
+
+        /* Show desktop navigation */
+        nav.hidden,
+        nav.md\\:flex,
+        .hidden.md\\:flex {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+          padding: 0.5rem !important;
+        }
+
+        nav.hidden.md\\:flex a,
+        nav.md\\:flex a {
+          font-size: 14px !important;
+          padding: 0.5rem 0.75rem !important;
+          white-space: nowrap !important;
+        }
+
+        /* Show desktop auth states */
+        #signedOutState {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          flex-direction: row !important;
+          gap: 0.5rem !important;
+        }
+
+        #signedInState {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          flex-direction: row !important;
+          gap: 0.5rem !important;
+        }
+
+        /* Hide mobile auth states */
+        #mobileSignedOutState,
+        #mobileSignedInState {
+          display: none !important;
+          visibility: hidden !important;
+        }
+
+        /* Force desktop grid layouts */
+        .grid.grid-cols-1.md\\:grid-cols-2 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1rem !important;
+        }
+
+        .grid.grid-cols-1.md\\:grid-cols-3,
+        .grid.grid-cols-1.lg\\:grid-cols-3 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+        }
+
+        .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+        }
+
+        /* Larger mobile screens get 3 columns */
+        @media (min-width: 375px) and (max-width: 767px) {
+          .grid.grid-cols-1.md\\:grid-cols-3,
+          .grid.grid-cols-1.lg\\:grid-cols-3,
+          .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0.5rem !important;
+          }
+        }
+
+        /* Show hidden desktop elements */
+        .hidden.md\\:block {
+          display: block !important;
+          visibility: visible !important;
+        }
+
+        .hidden.md\\:flex {
+          display: flex !important;
+          visibility: visible !important;
+        }
+
+        .hidden.md\\:grid {
+          display: grid !important;
+          visibility: visible !important;
+        }
+
+        .hidden.lg\\:block {
+          display: block !important;
+          visibility: visible !important;
+        }
+
+        .hidden.lg\\:flex {
+          display: flex !important;
+          visibility: visible !important;
+        }
+
+        /* Force horizontal flex layouts */
+        .flex.flex-col.md\\:flex-row,
+        .flex.flex-col.sm\\:flex-row {
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: 0.75rem !important;
+          justify-content: center !important;
+        }
+
+        /* Header desktop layout */
+        header .max-w-7xl {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          flex-wrap: wrap !important;
+          gap: 0.5rem !important;
+        }
+
+        /* Prevent overflow */
+        html, body {
+          overflow-x: hidden !important;
+        }
+      }
+    `;
+
+    document.head.appendChild(mirrorStyles);
+
+    // Apply DOM fixes immediately
+    setTimeout(() => {
+      console.log('🔧 Applying mobile mirror DOM fixes...');
+
+      // Hide mobile menu button
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      if (mobileBtn) {
+        mobileBtn.style.display = 'none';
+        mobileBtn.style.visibility = 'hidden';
+        mobileBtn.remove(); // Remove completely
+      }
+
+      // Hide mobile menu
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu) {
+        mobileMenu.style.display = 'none';
+        mobileMenu.style.visibility = 'hidden';
+      }
+
+      // Show desktop navigation
+      const desktopNavs = document.querySelectorAll('nav.hidden, nav.md\\:flex, .hidden.md\\:flex');
+      desktopNavs.forEach(nav => {
+        nav.classList.remove('hidden');
+        nav.style.display = 'flex';
+        nav.style.visibility = 'visible';
+        nav.style.opacity = '1';
+      });
+
+      // Show desktop auth states
+      const signedOutState = document.getElementById('signedOutState');
+      if (signedOutState) {
+        signedOutState.style.display = 'flex';
+        signedOutState.style.visibility = 'visible';
+        signedOutState.style.opacity = '1';
+      }
+
+      const signedInState = document.getElementById('signedInState');
+      if (signedInState) {
+        signedInState.style.display = 'flex';
+        signedInState.style.visibility = 'visible';
+        signedInState.style.opacity = '1';
+      }
+
+      // Hide mobile auth states
+      const mobileAuthStates = ['mobileSignedOutState', 'mobileSignedInState'];
+      mobileAuthStates.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.style.display = 'none';
+          element.style.visibility = 'hidden';
+        }
+      });
+
+      console.log('✅ Mobile mirror DOM fixes applied');
+    }, 100);
+
+    console.log('✅ Mobile mirror fix loaded and active');
+  }
+})();
+
 // IMMEDIATE AUTHENTICATION FIX - Complete sign in and sign up solution
 console.log('🚀 IMMEDIATE AUTH FIX: Loading complete authentication system...');
 
@@ -90,7 +298,7 @@ function getUsersFromStorage() {
     
     const users = JSON.parse(usersData);
     if (!Array.isArray(users)) {
-      console.warn('⚠️ Invalid users data format, resetting to empty array');
+      console.warn('��️ Invalid users data format, resetting to empty array');
       localStorage.setItem('visualVibeUsers', JSON.stringify([]));
       return [];
     }
@@ -132,7 +340,7 @@ function saveUsersToStorage(users) {
 
 // Initialize authentication system
 function initAuth() {
-  console.log('🔧 Setting up authentication functions...');
+  console.log('�� Setting up authentication functions...');
   
   // Modal control functions
   window.openSignInModal = function() {
