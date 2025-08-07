@@ -140,30 +140,32 @@ window.testUnifiedProfileFix = function() {
   
   if (passedTests === totalTests) {
     console.log('✅ All tests passed! Unified profile fix is working correctly.');
-    
-    if (window.toastManager) {
-      window.toastManager.success(`Profile fix test passed! ${passedTests}/${totalTests} ✅`, { duration: 4000 });
-    } else {
-      alert(`Profile fix test passed! ${passedTests}/${totalTests} tests passed ✅`);
-    }
+
+    // Notifications disabled to prevent spam to end users
+    // if (window.toastManager) {
+    //   window.toastManager.success(`Profile fix test passed! ${passedTests}/${totalTests} ✅`, { duration: 4000 });
+    // } else {
+    //   alert(`Profile fix test passed! ${passedTests}/${totalTests} tests passed ✅`);
+    // }
   } else {
     console.log(`⚠️ Some tests failed. ${passedTests}/${totalTests} tests passed.`);
-    
-    if (window.toastManager) {
-      window.toastManager.warning(`Profile fix test: ${passedTests}/${totalTests} passed ⚠️`, { duration: 4000 });
-    } else {
-      alert(`Profile fix test: ${passedTests}/${totalTests} tests passed ⚠️`);
-    }
+
+    // Notifications disabled to prevent spam to end users
+    // if (window.toastManager) {
+    //   window.toastManager.warning(`Profile fix test: ${passedTests}/${totalTests} passed ⚠️`, { duration: 4000 });
+    // } else {
+    //   alert(`Profile fix test: ${passedTests}/${totalTests} tests passed ⚠️`);
+    // }
   }
   
   return results;
 };
 
-// Auto-run test after a delay to ensure everything is loaded
-setTimeout(() => {
-  console.log('🧪 Auto-running unified profile fix test...');
-  window.testUnifiedProfileFix();
-}, 3000);
+// Auto-run test DISABLED (was causing notifications to end users)
+// setTimeout(() => {
+//   console.log('🧪 Auto-running unified profile fix test...');
+//   window.testUnifiedProfileFix();
+// }, 3000);
 
 console.log('🧪 Unified profile fix test script loaded');
 console.log('💡 Run window.testUnifiedProfileFix() manually to test again');
