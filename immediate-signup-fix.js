@@ -109,7 +109,7 @@ function getUsersFromStorage() {
       localStorage.setItem('visualVibeUsers', JSON.stringify(validUsers));
     }
     
-    console.log(`📋 Found ${validUsers.length} valid users in storage`);
+    console.log(`��� Found ${validUsers.length} valid users in storage`);
     return validUsers;
   } catch (error) {
     console.error('❌ Error reading users from storage:', error);
@@ -611,6 +611,271 @@ if (document.readyState === 'loading') {
 })();
 
 console.log('✅ Authentication system with sync removal loaded');
+
+// ABSOLUTE FINAL MOBILE MIRROR - Runs after everything else
+setTimeout(() => {
+  if (window.innerWidth <= 767) {
+    console.log('💥 ABSOLUTE FINAL MOBILE MIRROR: Executing final override...');
+
+    // NUCLEAR CSS OVERRIDE - Highest specificity possible
+    const finalMobileCSS = document.createElement('style');
+    finalMobileCSS.id = 'absolute-final-mobile-mirror';
+    finalMobileCSS.innerHTML = `
+      /* ABSOLUTE FINAL MOBILE MIRROR - NUCLEAR OVERRIDE */
+
+      @media (max-width: 767px) {
+
+        /* FORCE HIDE MOBILE ELEMENTS - ALL VARIATIONS */
+        button[id="mobileMenuBtn"],
+        #mobileMenuBtn,
+        header button.md\\:hidden,
+        [class*="md:hidden"][id="mobileMenuBtn"] {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          left: -99999px !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        div[id="mobileMenu"],
+        #mobileMenu,
+        [class*="md:hidden"][id="mobileMenu"] {
+          display: none !important;
+          visibility: hidden !important;
+          position: absolute !important;
+          left: -99999px !important;
+        }
+
+        div[id="mobileSignedOutState"],
+        div[id="mobileSignedInState"],
+        #mobileSignedOutState,
+        #mobileSignedInState {
+          display: none !important;
+          visibility: hidden !important;
+          position: absolute !important;
+          left: -99999px !important;
+        }
+
+        /* FORCE SHOW DESKTOP NAVIGATION - ALL VARIATIONS */
+        header nav[class*="hidden"][class*="md:flex"],
+        nav.hidden.md\\:flex,
+        header nav.hidden.md\\:flex,
+        nav[class~="hidden"][class~="md:flex"] {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+          padding: 0.5rem !important;
+          left: auto !important;
+          right: auto !important;
+          top: auto !important;
+          bottom: auto !important;
+          width: auto !important;
+          height: auto !important;
+          overflow: visible !important;
+          z-index: auto !important;
+        }
+
+        header nav[class*="hidden"][class*="md:flex"] a,
+        nav.hidden.md\\:flex a,
+        header nav.hidden.md\\:flex a {
+          display: inline-block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          font-size: 14px !important;
+          padding: 0.4rem 0.6rem !important;
+          color: rgb(55 65 81) !important;
+          white-space: nowrap !important;
+          text-decoration: none !important;
+        }
+
+        /* FORCE SHOW DESKTOP AUTH STATES */
+        div[id="signedOutState"],
+        #signedOutState {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+        }
+
+        div[id="signedInState"],
+        #signedInState {
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+        }
+
+        /* FORCE MULTI-COLUMN GRIDS */
+        .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4.xl\\:grid-cols-5 {
+          display: grid !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+        }
+
+        @media (min-width: 375px) and (max-width: 767px) {
+          .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4.xl\\:grid-cols-5 {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0.5rem !important;
+          }
+        }
+
+        /* OTHER GRIDS */
+        .grid.grid-cols-1.md\\:grid-cols-2 {
+          display: grid !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1rem !important;
+        }
+
+        .grid.grid-cols-1.md\\:grid-cols-3 {
+          display: grid !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+        }
+
+        /* FORCE HORIZONTAL FLEX */
+        .flex.flex-col.sm\\:flex-row {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: 0.75rem !important;
+          justify-content: center !important;
+        }
+
+        /* SHOW ALL HIDDEN DESKTOP ELEMENTS */
+        .hidden.md\\:flex {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+
+        .hidden.md\\:block {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+
+        .hidden.md\\:grid {
+          display: grid !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+      }
+    `;
+
+    // Insert at very top of head for absolute priority
+    document.head.insertBefore(finalMobileCSS, document.head.firstChild);
+    console.log('☢️ Final mobile CSS nuclear override injected');
+
+    // FINAL DOM NUCLEAR MANIPULATION
+    setTimeout(() => {
+      console.log('☢️ Executing final DOM nuclear manipulation...');
+
+      // NUCLEAR DESTROY MOBILE ELEMENTS
+      const mobileElementsToNuke = [
+        '#mobileMenuBtn',
+        'button#mobileMenuBtn',
+        'header button.md\\:hidden',
+        '#mobileMenu',
+        '#mobileSignedOutState',
+        '#mobileSignedInState'
+      ];
+
+      mobileElementsToNuke.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          console.log(`☢️ NUCLEAR DESTROY: ${selector}`);
+          el.remove();
+        });
+      });
+
+      // NUCLEAR FORCE SHOW DESKTOP NAV
+      const desktopNavs = document.querySelectorAll('header nav.hidden.md\\:flex, nav.hidden.md\\:flex, header nav[class*="hidden"][class*="md:flex"]');
+      desktopNavs.forEach(nav => {
+        console.log('☢️ NUCLEAR FORCE SHOW: Desktop navigation');
+        nav.classList.remove('hidden');
+        nav.style.cssText = `
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+          padding: 0.5rem !important;
+          left: auto !important;
+          right: auto !important;
+          top: auto !important;
+          bottom: auto !important;
+          width: auto !important;
+          height: auto !important;
+          overflow: visible !important;
+          z-index: auto !important;
+        `;
+      });
+
+      // NUCLEAR FORCE DESKTOP AUTH
+      const signedOutState = document.getElementById('signedOutState');
+      if (signedOutState) {
+        console.log('☢️ NUCLEAR FORCE SHOW: Desktop signed out state');
+        signedOutState.style.cssText = `
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+        `;
+      }
+
+      const signedInState = document.getElementById('signedInState');
+      if (signedInState) {
+        console.log('☢️ NUCLEAR FORCE SHOW: Desktop signed in state');
+        signedInState.style.cssText = `
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+        `;
+      }
+
+      // NUCLEAR FORCE MULTI-COLUMN GRIDS
+      const serviceGrid = document.querySelector('#services .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4.xl\\:grid-cols-5');
+      if (serviceGrid) {
+        console.log('☢️ NUCLEAR FORCE: Multi-column service grid');
+        const columns = window.innerWidth >= 375 ? 3 : 2;
+        serviceGrid.style.cssText = `
+          display: grid !important;
+          grid-template-columns: repeat(${columns}, 1fr) !important;
+          gap: ${columns === 3 ? '0.5rem' : '0.75rem'} !important;
+        `;
+      }
+
+      console.log('☢️ Final DOM nuclear manipulation complete');
+
+    }, 100);
+
+    console.log('💥 ABSOLUTE FINAL MOBILE MIRROR: Nuclear override complete');
+  }
+}, 3000); // Run after final-check.js has finished
 
 // DIRECT INLINE MOBILE MIRROR - No external file dependencies
 (function directInlineMobileMirror() {
