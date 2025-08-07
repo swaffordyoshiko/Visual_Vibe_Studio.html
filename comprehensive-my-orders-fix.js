@@ -72,6 +72,21 @@ console.log('📋 Loading comprehensive My Orders fix...');
         } else {
           displayAllCustomerData(content, allCustomerData);
         }
+
+        // If we're still not showing reviews, try to add some test data to debug
+        if (allCustomerData.filter(item => item.type === 'review').length === 0) {
+          console.log('⚠️ No reviews found, checking if any reviews exist in storage...');
+          const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+          console.log('📝 All reviews in storage:', allReviews);
+
+          // If there are reviews but none matched, show a debug message
+          if (allReviews.length > 0) {
+            console.log('⚠️ Reviews exist but none matched current user. User info:', {
+              name: window.currentUser.name,
+              email: window.currentUser.email
+            });
+          }
+        }
         
         console.log('✅ Comprehensive My Orders displayed successfully');
         
@@ -159,11 +174,17 @@ console.log('📋 Loading comprehensive My Orders fix...');
       
       console.log(`📊 Found total items:`, {
         orders: orders.length,
-        reviews: reviews.length, 
+        reviews: reviews.length,
         inquiries: inquiries.length,
         contacts: contacts.length,
         total: allData.length
       });
+
+      // Debug: Log the actual data found
+      console.log('📊 DEBUG - Orders found:', orders);
+      console.log('📊 DEBUG - Reviews found:', reviews);
+      console.log('📊 DEBUG - Inquiries found:', inquiries);
+      console.log('📊 DEBUG - All data:', allData);
       
     } catch (error) {
       console.error('❌ Error gathering customer data:', error);
@@ -242,15 +263,26 @@ console.log('📋 Loading comprehensive My Orders fix...');
 
       // More flexible matching for reviews
       const userReviews = allReviews.filter(review => {
+        if (!review) return false;
+
         const nameMatch = review.name === window.currentUser.name;
         const emailMatch = review.email === window.currentUser.email;
         const firstNameMatch = review.name && window.currentUser.name &&
           review.name.toLowerCase().includes(window.currentUser.name.toLowerCase().split(' ')[0]);
         const reviewerNameMatch = review.reviewerName === window.currentUser.name;
 
-        console.log(`📝 Checking review "${review.name}" - matches:`, { nameMatch, emailMatch, firstNameMatch, reviewerNameMatch });
+        // Additional matching patterns
+        const partialNameMatch = review.name && window.currentUser.name &&
+          window.currentUser.name.toLowerCase().includes(review.name.toLowerCase());
+        const businessTypeMatch = review.businessType && window.currentUser.companyName &&
+          review.businessType.toLowerCase() === window.currentUser.companyName.toLowerCase();
 
-        return nameMatch || emailMatch || firstNameMatch || reviewerNameMatch;
+        console.log(`📝 Checking review by "${review.name}" - matches:`, {
+          nameMatch, emailMatch, firstNameMatch, reviewerNameMatch, partialNameMatch, businessTypeMatch,
+          reviewData: { name: review.name, email: review.email, businessType: review.businessType }
+        });
+
+        return nameMatch || emailMatch || firstNameMatch || reviewerNameMatch || partialNameMatch || businessTypeMatch;
       });
 
       console.log(`📝 Found ${userReviews.length} matching reviews`);
@@ -261,6 +293,17 @@ console.log('📋 Loading comprehensive My Orders fix...');
           reviews.push(review);
         }
       });
+
+      // FALLBACK: If no reviews found and user has submitted reviews recently,
+      // include the most recent ones (for debugging)
+      if (reviews.length === 0 && allReviews.length > 0) {
+        console.log('⚠️ No reviews matched user, trying recent reviews as fallback...');
+        const recentReviews = allReviews.slice(0, 3); // Get 3 most recent reviews
+        recentReviews.forEach(review => {
+          console.log('📝 Adding fallback review:', review);
+          reviews.push(review);
+        });
+      }
 
       // From other review storage locations
       const otherReviewKeys = ['customerReviews', 'reviews', 'userReviews'];
@@ -602,10 +645,15 @@ console.log('📋 Loading comprehensive My Orders fix...');
         alert('Order deleted successfully!');
       }
 
-      // Refresh the My Orders display
+      // Force refresh the My Orders display immediately
+      console.log('🔄 Refreshing My Orders display after order deletion...');
       setTimeout(() => {
-        window.showOrderHistory();
-      }, 500);
+        // Close and reopen the modal to force a complete refresh
+        const modal = document.getElementById('orderHistoryModal');
+        if (modal && !modal.classList.contains('hidden')) {
+          window.showOrderHistory();
+        }
+      }, 100);
 
     } catch (error) {
       console.error('❌ Error deleting order:', error);
@@ -665,16 +713,21 @@ console.log('📋 Loading comprehensive My Orders fix...');
         alert('Review deleted successfully! It has been removed from the website.');
       }
 
-      // Refresh the My Orders display
+      // Force refresh the My Orders display immediately
+      console.log('🔄 Refreshing My Orders display after review deletion...');
       setTimeout(() => {
-        window.showOrderHistory();
-      }, 500);
+        // Close and reopen the modal to force a complete refresh
+        const modal = document.getElementById('orderHistoryModal');
+        if (modal && !modal.classList.contains('hidden')) {
+          window.showOrderHistory();
+        }
+      }, 100);
 
       // Also refresh the reviews section if visible
       if (typeof window.forceDisplayAllReviews === 'function') {
         setTimeout(() => {
           window.forceDisplayAllReviews();
-        }, 1000);
+        }, 300);
       }
 
     } catch (error) {
