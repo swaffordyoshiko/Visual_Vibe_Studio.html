@@ -139,7 +139,6 @@ window.handleEmailClick = function(event, emailAddress) {
             emailInput.value = '';
             messageInput.value = '';
 
-            // Re-enable button
             if (submitBtn) {
               submitBtn.disabled = false;
               submitBtn.textContent = '📧 Send Message';
@@ -151,7 +150,6 @@ window.handleEmailClick = function(event, emailAddress) {
           console.error('❌ Error in submitContactForm (immediate):', error);
           alert('There was an error submitting your message. Please try again.');
 
-          // Re-enable button on error
           const submitBtn = document.getElementById('submitContactBtn') || document.getElementById('submitContactBtn2');
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -3072,11 +3070,9 @@ ${'='.repeat(40)}
             console.log('📱📞 Message added to chat');
           }
 
-          // Clear input and re-enable for next message
           input.value = '';
           input.focus(); // Keep focus for continuous typing
 
-          // Re-enable send button and update state
           setTimeout(() => {
             if (sendBtn) {
               sendBtn.disabled = true; // Will be enabled when user types again
@@ -3760,7 +3756,6 @@ DECODED:
 
         } catch (error) {
           console.error('📞 Contact message failed:', error);
-          // Re-enable submit button on error
           const submitBtn = document.getElementById('submitContactBtn');
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -5503,7 +5498,6 @@ Please email this information to support@visualvibestudio.store`;
 
         try {
           const formData = new FormData();
-        formData.append('access_key', 'a1b2c3d4-e5f6-7890-1234-567890abcdef'); // Valid UUID format for web3forms.com
         formData.append('redirect', 'false'); // Don't redirect after submission
         formData.append('subject', subject);
         formData.append('from_name', orderData.businessName);
@@ -6549,7 +6543,6 @@ This is an automated emergency notification.
         }
       }
 
-      // Test chat message sending end-to-end
       function testChatSMSIntegration() {
         console.log('💬 Testing complete chat SMS integration...');
         const testMessage = 'URGENT TEST: Chat SMS integration check - ' + new Date().toLocaleTimeString();
@@ -7624,7 +7617,6 @@ EMAIL DEBUGGING:
 
         } catch (error) {
           console.error('Error in sendMessage:', error);
-          // Re-enable send button on error
           const sendBtn = document.getElementById('chatSendBtn');
           if (sendBtn) {
             sendBtn.disabled = false;
@@ -9078,7 +9070,6 @@ This is sent because SMS delivery may have failed.
     /* Loading states */
     .loading {
       opacity: 0.6;
-      pointer-events: none;
     }
 
     /* Smooth scrolling */
@@ -9200,7 +9191,6 @@ This is sent because SMS delivery may have failed.
       .logo,
       .icon {
         image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
       }
     }
 
@@ -9525,7 +9515,6 @@ This is sent because SMS delivery may have failed.
     .chat-message.user {
       background: #e5e7eb;
       color: #374151;
-      align-self: flex-end;
       border-bottom-right-radius: 4px;
     }
 
@@ -9586,7 +9575,6 @@ This is sent because SMS delivery may have failed.
     .chat-input-container {
       display: flex;
       gap: 8px;
-      align-items: flex-end;
     }
 
     .chat-input {
@@ -9865,16 +9853,12 @@ This is sent because SMS delivery may have failed.
       opacity: 0.8;
     }
 
-    .floating-elements {
       position: absolute;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      pointer-events: none;
     }
 
-    .floating-elements::before,
-    .floating-elements::after {
       content: '';
       position: absolute;
       border-radius: 50%;
@@ -9882,7 +9866,6 @@ This is sent because SMS delivery may have failed.
       animation: float 6s ease-in-out infinite;
     }
 
-    .floating-elements::before {
       width: 120px;
       height: 120px;
       top: 20%;
@@ -9890,7 +9873,6 @@ This is sent because SMS delivery may have failed.
       animation-delay: 0s;
     }
 
-    .floating-elements::after {
       width: 80px;
       height: 80px;
       top: 60%;
@@ -10596,7 +10578,6 @@ This is sent because SMS delivery may have failed.
 
 <body class="relative bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 text-gray-900">
   <!-- Global Professional Background Elements -->
-  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div
       class="absolute top-1/4 left-0 w-64 h-64 bg-gradient-to-r from-indigo-100/20 to-transparent rounded-full blur-3xl animate-pulse">
     </div>
@@ -10741,7 +10722,6 @@ This is sent because SMS delivery may have failed.
     <div class="absolute inset-0 geometric-pattern opacity-30"></div>
 
     <!-- Floating Professional Elements -->
-    <div class="floating-elements">
       <div class="absolute top-1/4 left-1/4 w-24 h-24 glass-morphism rounded-full animate-pulse"></div>
       <div class="absolute top-1/3 right-1/4 w-16 h-16 glass-morphism rounded-full animate-bounce"
         style="animation-delay: 2s;"></div>
@@ -11147,7 +11127,6 @@ This is sent because SMS delivery may have failed.
     style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #d946ef 50%, #ec4899 75%, #f59e0b 100%); background-size: 400% 400%; animation: gradientShift 8s ease infinite;">
     <!-- Professional Background Elements -->
     <div class="absolute inset-0 geometric-pattern opacity-20"></div>
-    <div class="floating-elements">
       <div class="absolute top-1/4 left-1/4 w-32 h-32 glass-morphism rounded-full neon-glow"></div>
       <div class="absolute bottom-1/4 right-1/4 w-24 h-24 glass-morphism rounded-full neon-glow"
         style="animation-delay: 2s;"></div>
@@ -11879,7 +11858,6 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 <script src="simple-order.js"></script>
 <script src="emergency-backup.js"></script>
 <script src="modern-form-notifications.js"></script>
-<script src="responsive-enhancements.js"></script>
 <script src="mobile-monitor.js"></script>
 
   <!-- Professional Section Divider -->
@@ -14598,7 +14576,6 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
             form.method = 'POST';
             form.action = 'https://formspree.io/f/xwpejpvk';
             form.style.display = 'none';
-            form.target = 'voip-email-frame-' + Date.now();
 
             const iframe = document.createElement('iframe');
             iframe.name = form.target;
@@ -17476,7 +17453,6 @@ Thanks,
   </script>
 
   
-<script src="profile-modal-existence-fix.js"></script>
 <script src="orders-modal-reopen-fix.js"></script>
 <script src="profile-picture-uploader-fix.js"></script>
 <script src="consolidated-final-fix.js"></script>
@@ -17484,6 +17460,6 @@ Thanks,
 <script src="final-optimization.js"></script>
 <script src="ultimate-fix.js"></script>
 <script src="fix-signup-conflicts.js"></script>
--e 
+<script src="debug-signup-issue.js"></script>
 </body>
 </html>
