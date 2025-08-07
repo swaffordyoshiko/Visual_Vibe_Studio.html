@@ -335,8 +335,11 @@ console.log('📸 Adding profile picture upload to edit profile modal...');
         modalDisplay.innerHTML = `<span id="profileInitials" class="text-white text-2xl font-bold">${initials}</span>`;
       }
     }
-    
-    // Update profile pictures throughout the website
+
+    // Update header profile icons (desktop and mobile)
+    updateHeaderProfileIcons(imageData);
+
+    // Update other profile pictures throughout the website
     const profilePictures = document.querySelectorAll('.profile-picture, [data-profile-picture], .user-avatar');
     profilePictures.forEach(el => {
       if (imageData) {
@@ -346,8 +349,50 @@ console.log('📸 Adding profile picture upload to edit profile modal...');
         el.innerHTML = `<div class="w-full h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">${initials}</div>`;
       }
     });
-    
+
     console.log('✅ All profile picture displays updated');
+  }
+
+  function updateHeaderProfileIcons(imageData) {
+    console.log('🔄 Updating header profile icons...');
+
+    // Find desktop profile button (in signed in state)
+    const desktopProfileButton = document.querySelector('#signedInState button[onclick*="openProfileModal"]');
+    if (desktopProfileButton) {
+      const iconContainer = desktopProfileButton.querySelector('.bg-indigo-100');
+      if (iconContainer) {
+        if (imageData) {
+          // Replace with profile picture
+          iconContainer.innerHTML = `<img src="${imageData}" alt="Profile" class="w-8 h-8 object-cover rounded-full">`;
+          iconContainer.className = 'p-0 rounded-full group-hover:opacity-80 transition-opacity border-2 border-indigo-200';
+        } else {
+          // Show initials
+          const initials = getProfileInitials();
+          iconContainer.innerHTML = `<div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${initials}</div>`;
+          iconContainer.className = 'p-0 rounded-full group-hover:opacity-80 transition-opacity';
+        }
+        console.log('✅ Updated desktop header profile icon');
+      }
+    }
+
+    // Find mobile profile button (in mobile signed in state)
+    const mobileProfileButton = document.querySelector('#mobileSignedInState button[onclick*="openProfileModal"]');
+    if (mobileProfileButton) {
+      const svgIcon = mobileProfileButton.querySelector('svg');
+      if (svgIcon) {
+        if (imageData) {
+          // Replace SVG with profile picture
+          svgIcon.outerHTML = `<img src="${imageData}" alt="Profile" class="w-8 h-8 object-cover rounded-full border-2 border-indigo-200">`;
+        } else {
+          // Show initials instead of SVG
+          const initials = getProfileInitials();
+          svgIcon.outerHTML = `<div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-indigo-200">${initials}</div>`;
+        }
+        console.log('✅ Updated mobile header profile icon');
+      }
+    }
+
+    console.log('✅ Header profile icons updated');
   }
   
   function loadExistingProfileData() {
@@ -407,15 +452,40 @@ console.log('📸 Adding profile picture upload to edit profile modal...');
     }
   }
   
+  // Function to load and display existing profile picture on page load
+  function loadExistingProfilePictureOnPageLoad() {
+    console.log('🖼️ Loading existing profile picture on page load...');
+
+    try {
+      const savedPicture = localStorage.getItem('visualVibeProfilePicture');
+      if (savedPicture) {
+        console.log('✅ Found existing profile picture, updating displays...');
+        updateAllProfilePictureDisplays(savedPicture);
+      } else {
+        console.log('ℹ️ No existing profile picture found, showing initials...');
+        updateAllProfilePictureDisplays(null);
+      }
+    } catch (error) {
+      console.error('❌ Error loading existing profile picture:', error);
+    }
+  }
+
   // Initialize
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addProfilePictureToModal);
+    document.addEventListener('DOMContentLoaded', function() {
+      addProfilePictureToModal();
+      setTimeout(loadExistingProfilePictureOnPageLoad, 500);
+    });
   } else {
     setTimeout(addProfilePictureToModal, 100);
+    setTimeout(loadExistingProfilePictureOnPageLoad, 800);
   }
-  
+
   // Also initialize after delay to ensure other scripts load
-  setTimeout(addProfilePictureToModal, 1000);
+  setTimeout(function() {
+    addProfilePictureToModal();
+    loadExistingProfilePictureOnPageLoad();
+  }, 2000);
   
 })();
 
