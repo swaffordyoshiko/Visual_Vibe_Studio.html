@@ -797,9 +797,10 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   // FIX SIGN-UP AUTHENTICATION ISSUES
   console.log('🔐 Fixing sign-up authentication conflicts...');
 
-  // Override handleSignUp to fix account existence checking
-  window.handleSignUp = function(e) {
-    console.log('📝 [FIXED] Processing sign up with conflict resolution...');
+  // NOTE: handleSignUp override disabled - conflicts with fix-signup-conflicts.js
+  // Using dedicated fix-signup-conflicts.js for signup handling instead
+  window.handleSignUp_DISABLED_FROM_FINAL_CHECK = function(e) {
+    console.log('📝 [DISABLED] This signup function is disabled - using fix-signup-conflicts.js instead');
     if (e) e.preventDefault();
 
     try {
