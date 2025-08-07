@@ -1,3 +1,13 @@
+// IMMEDIATE DOM TRANSFORM + ULTIMATE MOBILE MIRROR + AUTH FIX
+console.log('🚀 DOM TRANSFORM + MOBILE MIRROR + AUTH FIX: Starting...');
+
+// LOAD IMMEDIATE DOM TRANSFORMATION FIRST
+if (window.innerWidth <= 767) {
+  console.log('📱 Loading immediate DOM transform...');
+  document.write('<script src="immediate-dom-transform.js"><\/script>');
+  console.log('✅ DOM transform loaded');
+}
+
 // ULTIMATE MOBILE MIRROR + IMMEDIATE AUTHENTICATION FIX
 console.log('🚀 ULTIMATE MOBILE MIRROR + AUTH FIX: Starting...');
 
@@ -298,7 +308,7 @@ function getUsersFromStorage() {
     
     const users = JSON.parse(usersData);
     if (!Array.isArray(users)) {
-      console.warn('��️ Invalid users data format, resetting to empty array');
+      console.warn('⚠️ Invalid users data format, resetting to empty array');
       localStorage.setItem('visualVibeUsers', JSON.stringify([]));
       return [];
     }
@@ -340,7 +350,7 @@ function saveUsersToStorage(users) {
 
 // Initialize authentication system
 function initAuth() {
-  console.log('�� Setting up authentication functions...');
+  console.log('🔧 Setting up authentication functions...');
   
   // Modal control functions
   window.openSignInModal = function() {
