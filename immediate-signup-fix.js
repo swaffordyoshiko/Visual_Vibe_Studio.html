@@ -612,15 +612,418 @@ if (document.readyState === 'loading') {
 
 console.log('✅ Authentication system with sync removal loaded');
 
-// ADD AGGRESSIVE MOBILE MIRROR SYSTEM
-(function addAggressiveMobileMirror() {
-  console.log('📱 Adding aggressive mobile mirror system...');
+// INLINE AGGRESSIVE MOBILE MIRROR - Force desktop layout on mobile
+(function inlineAggressiveMobileMirror() {
+  console.log('🚀 INLINE AGGRESSIVE MOBILE MIRROR: Starting...');
 
-  const script = document.createElement('script');
-  script.src = 'aggressive-mobile-mirror.js';
-  script.id = 'aggressive-mobile-mirror';
+  // Only run on mobile
+  if (window.innerWidth > 767) {
+    console.log('⚠️ Not mobile, skipping mobile mirror');
+    return;
+  }
 
-  document.head.appendChild(script);
+  function forceMobileToDesktop() {
+    console.log('📱 Forcing mobile to mirror desktop immediately...');
 
-  console.log('✅ Aggressive mobile mirror system loading...');
+    // CREATE AGGRESSIVE INLINE STYLES
+    const aggressiveStyles = document.createElement('style');
+    aggressiveStyles.id = 'inline-aggressive-mobile-mirror';
+    aggressiveStyles.innerHTML = `
+      /* INLINE AGGRESSIVE MOBILE MIRROR - Force desktop layout */
+
+      @media (max-width: 767px) {
+
+        /* COMPLETELY HIDE MOBILE ELEMENTS */
+        #mobileMenuBtn {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          left: -9999px !important;
+        }
+
+        #mobileMenu {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          left: -9999px !important;
+        }
+
+        #mobileSignedOutState,
+        #mobileSignedInState {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          left: -9999px !important;
+        }
+
+        /* FORCE DESKTOP NAVIGATION TO SHOW */
+        nav.hidden,
+        nav.md\\:flex,
+        .hidden.md\\:flex {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          left: auto !important;
+          right: auto !important;
+          top: auto !important;
+          bottom: auto !important;
+          width: auto !important;
+          height: auto !important;
+          overflow: visible !important;
+          clip: unset !important;
+          clip-path: unset !important;
+          transform: none !important;
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+          padding: 0.5rem !important;
+        }
+
+        nav.hidden.md\\:flex a,
+        nav.md\\:flex a {
+          font-size: 14px !important;
+          padding: 0.4rem 0.6rem !important;
+          white-space: nowrap !important;
+          display: inline-block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+        }
+
+        /* FORCE DESKTOP AUTH STATES TO SHOW */
+        #signedOutState {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-direction: row !important;
+          gap: 0.5rem !important;
+          left: auto !important;
+          right: auto !important;
+          top: auto !important;
+          bottom: auto !important;
+        }
+
+        #signedInState {
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+          left: auto !important;
+          right: auto !important;
+          top: auto !important;
+          bottom: auto !important;
+        }
+
+        /* DESKTOP GRID LAYOUTS - FORCE MULTI-COLUMN */
+        .grid.grid-cols-1.md\\:grid-cols-2 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1rem !important;
+          display: grid !important;
+        }
+
+        .grid.grid-cols-1.md\\:grid-cols-3,
+        .grid.grid-cols-1.lg\\:grid-cols-3 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          display: grid !important;
+        }
+
+        .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          display: grid !important;
+        }
+
+        .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          display: grid !important;
+        }
+
+        /* LARGER MOBILE SCREENS GET 3 COLUMNS */
+        @media (min-width: 375px) and (max-width: 767px) {
+          .grid.grid-cols-1.md\\:grid-cols-3,
+          .grid.grid-cols-1.lg\\:grid-cols-3,
+          .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3,
+          .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0.5rem !important;
+          }
+        }
+
+        /* EXTRA LARGE MOBILE SCREENS GET 4+ COLUMNS */
+        @media (min-width: 425px) and (max-width: 767px) {
+          .grid.grid-cols-1.md\\:grid-cols-4,
+          .grid.grid-cols-1.lg\\:grid-cols-4,
+          .grid.grid-cols-1.xl\\:grid-cols-5 {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0.5rem !important;
+          }
+        }
+
+        /* HORIZONTAL FLEX LAYOUTS */
+        .flex.flex-col.md\\:flex-row,
+        .flex.flex-col.sm\\:flex-row {
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: 0.75rem !important;
+          justify-content: center !important;
+          display: flex !important;
+        }
+
+        /* SHOW ALL HIDDEN DESKTOP ELEMENTS */
+        .hidden.md\\:block {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+
+        .hidden.md\\:inline {
+          display: inline !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+
+        .hidden.md\\:inline-block {
+          display: inline-block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+
+        .hidden.md\\:grid {
+          display: grid !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+
+        /* HEADER LAYOUT DESKTOP STYLE */
+        header .max-w-7xl {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          flex-wrap: wrap !important;
+          gap: 0.5rem !important;
+        }
+
+        /* FORM LAYOUTS DESKTOP STYLE */
+        form .grid.grid-cols-1.md\\:grid-cols-2 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          display: grid !important;
+        }
+
+        /* DESKTOP TEXT SIZES */
+        .text-xs { font-size: 0.75rem !important; }
+        .text-sm { font-size: 0.875rem !important; }
+        .text-base { font-size: 1rem !important; }
+        .text-lg { font-size: 1.125rem !important; }
+        .text-xl { font-size: 1.25rem !important; }
+        .text-2xl { font-size: 1.5rem !important; }
+        .text-3xl { font-size: 1.875rem !important; }
+        .text-4xl { font-size: 2.25rem !important; }
+        .text-5xl { font-size: 2.5rem !important; }
+        .text-6xl { font-size: 3rem !important; }
+
+        /* DESKTOP SPACING */
+        section {
+          padding: 3rem 1rem !important;
+        }
+
+        .py-16 {
+          padding-top: 3rem !important;
+          padding-bottom: 3rem !important;
+        }
+
+        .py-20 {
+          padding-top: 4rem !important;
+          padding-bottom: 4rem !important;
+        }
+
+        /* BUTTONS DESKTOP STYLE */
+        button, .btn, a.btn {
+          padding: 0.75rem 1.5rem !important;
+          font-size: 14px !important;
+          border-radius: 6px !important;
+          white-space: nowrap !important;
+        }
+
+        /* CONTAINERS DESKTOP STYLE */
+        .container,
+        .max-w-7xl,
+        .max-w-6xl,
+        .max-w-5xl,
+        .max-w-4xl,
+        .max-w-3xl,
+        .max-w-2xl {
+          width: 100% !important;
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+
+        /* PREVENT OVERFLOW */
+        html, body {
+          overflow-x: hidden !important;
+        }
+      }
+    `;
+
+    // Remove any existing styles
+    const existing = document.getElementById('inline-aggressive-mobile-mirror');
+    if (existing) existing.remove();
+
+    // Add the aggressive styles immediately
+    document.head.appendChild(aggressiveStyles);
+    console.log('✅ Inline aggressive mobile mirror styles added');
+
+    // IMMEDIATE DOM MANIPULATION
+    setTimeout(() => {
+      console.log('🔧 Applying immediate DOM fixes...');
+
+      // FORCEFULLY HIDE MOBILE ELEMENTS
+      const mobileElements = [
+        '#mobileMenuBtn',
+        '#mobileMenu',
+        '#mobileSignedOutState',
+        '#mobileSignedInState'
+      ];
+
+      mobileElements.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (el) {
+          el.style.display = 'none';
+          el.style.visibility = 'hidden';
+          el.style.opacity = '0';
+          el.style.position = 'absolute';
+          el.style.left = '-9999px';
+          el.remove(); // Completely remove mobile elements
+        }
+      });
+
+      // FORCEFULLY SHOW DESKTOP NAVIGATION
+      const desktopNavs = document.querySelectorAll('nav.hidden, nav.md\\:flex, .hidden.md\\:flex');
+      desktopNavs.forEach(nav => {
+        nav.classList.remove('hidden');
+        nav.style.display = 'flex';
+        nav.style.visibility = 'visible';
+        nav.style.opacity = '1';
+        nav.style.position = 'relative';
+        nav.style.flexWrap = 'wrap';
+        nav.style.justifyContent = 'center';
+        nav.style.gap = '0.5rem';
+      });
+
+      // FORCEFULLY SHOW DESKTOP AUTH STATES
+      const signedOutState = document.getElementById('signedOutState');
+      if (signedOutState) {
+        signedOutState.style.display = 'flex';
+        signedOutState.style.visibility = 'visible';
+        signedOutState.style.opacity = '1';
+        signedOutState.style.position = 'relative';
+        signedOutState.style.flexDirection = 'row';
+        signedOutState.style.gap = '0.5rem';
+      }
+
+      const signedInState = document.getElementById('signedInState');
+      if (signedInState) {
+        signedInState.style.visibility = 'visible';
+        signedInState.style.opacity = '1';
+        signedInState.style.position = 'relative';
+        signedInState.style.flexDirection = 'row';
+        signedInState.style.alignItems = 'center';
+        signedInState.style.gap = '0.5rem';
+      }
+
+      // FORCE GRID LAYOUTS TO BE MULTI-COLUMN
+      const grids = document.querySelectorAll('.grid');
+      grids.forEach(grid => {
+        if (grid.classList.contains('grid-cols-1')) {
+          let columns = 2; // Default to 2 columns
+
+          if (grid.classList.contains('md:grid-cols-3') ||
+              grid.classList.contains('lg:grid-cols-3') ||
+              grid.classList.contains('xl:grid-cols-5')) {
+            columns = window.innerWidth >= 375 ? 3 : 2;
+          }
+
+          grid.style.display = 'grid';
+          grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+          grid.style.gap = '0.75rem';
+        }
+      });
+
+      // FORCE FLEX LAYOUTS TO BE HORIZONTAL
+      const flexLayouts = document.querySelectorAll('.flex.flex-col.md\\:flex-row, .flex.flex-col.sm\\:flex-row');
+      flexLayouts.forEach(flex => {
+        flex.style.display = 'flex';
+        flex.style.flexDirection = 'row';
+        flex.style.flexWrap = 'wrap';
+        flex.style.gap = '0.75rem';
+        flex.style.justifyContent = 'center';
+      });
+
+      // SHOW ALL HIDDEN DESKTOP ELEMENTS
+      const hiddenDesktopElements = document.querySelectorAll('.hidden.md\\:block, .hidden.md\\:flex, .hidden.md\\:grid, .hidden.md\\:inline, .hidden.md\\:inline-block');
+      hiddenDesktopElements.forEach(el => {
+        el.classList.remove('hidden');
+        const displayType = el.classList.contains('md:flex') ? 'flex' :
+                           el.classList.contains('md:grid') ? 'grid' :
+                           el.classList.contains('md:inline') ? 'inline' :
+                           el.classList.contains('md:inline-block') ? 'inline-block' : 'block';
+        el.style.display = displayType;
+        el.style.visibility = 'visible';
+        el.style.opacity = '1';
+        el.style.position = 'relative';
+      });
+
+      console.log('✅ Immediate DOM fixes applied');
+    }, 50);
+  }
+
+  // Execute immediately
+  forceMobileToDesktop();
+
+  // Re-apply on any changes or delays
+  setTimeout(forceMobileToDesktop, 500);
+  setTimeout(forceMobileToDesktop, 1000);
+  setTimeout(forceMobileToDesktop, 2000);
+
+  // Watch for DOM changes and re-apply
+  const observer = new MutationObserver(() => {
+    if (window.innerWidth <= 767) {
+      setTimeout(forceMobileToDesktop, 100);
+    }
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class', 'style']
+  });
+
+  // Re-apply on resize
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      if (window.innerWidth <= 767) {
+        forceMobileToDesktop();
+      }
+    }, 100);
+  });
+
+  console.log('🚀 INLINE AGGRESSIVE MOBILE MIRROR: Loaded and monitoring');
+
 })();
