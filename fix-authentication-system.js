@@ -141,8 +141,8 @@ console.log('🔐 Loading comprehensive authentication fix...');
   function fixSignUpProcess() {
     console.log('📝 Fixing sign-up process...');
     
-    window.handleSignUp = function(e) {
-      console.log('📝 [FIXED] Processing sign up...');
+    window.handleSignUp_AUTH_SYSTEM_DISABLED = function(e) {
+      console.log('📝 [AUTH SYSTEM DISABLED] Using fix-signup-conflicts.js instead');
       if (e) e.preventDefault();
       
       try {
