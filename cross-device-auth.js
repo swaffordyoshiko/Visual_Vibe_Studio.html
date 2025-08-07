@@ -336,9 +336,9 @@ window.crossDeviceAuth = new CrossDeviceAuth();
 window.originalHandleSignUp = window.handleSignUp;
 window.originalHandleSignIn = window.handleSignIn;
 
-// Enhanced sign up handler
-window.handleSignUp = async function(e) {
-  console.log('📝 Processing cross-device sign up...');
+// NOTE: Cross-device signup disabled - using fix-signup-conflicts.js instead
+window.handleSignUp_CROSS_DEVICE_DISABLED = async function(e) {
+  console.log('📝 [CROSS-DEVICE DISABLED] Using fix-signup-conflicts.js instead');
   e.preventDefault();
 
   try {
