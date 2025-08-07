@@ -3,8 +3,15 @@ console.log('📸 Adding profile picture upload to edit profile modal...');
 
 (function() {
   'use strict';
-  
+
+  // Prevent multiple initialization
+  if (window.profilePictureModalInitialized) {
+    console.log('ℹ️ Profile picture modal already initialized');
+    return;
+  }
+
   function addProfilePictureToModal() {
+    window.profilePictureModalInitialized = true;
     console.log('📸 Setting up profile picture section in modal...');
     
     // Override the openProfileModal function to add picture section
@@ -28,6 +35,7 @@ console.log('📸 Adding profile picture upload to edit profile modal...');
       
       // Add profile picture section after modal is shown
       setTimeout(() => {
+        cleanupExistingProfilePictureSections();
         insertProfilePictureSection();
         loadExistingProfileData();
         loadExistingProfilePicture();
@@ -47,23 +55,62 @@ console.log('📸 Adding profile picture upload to edit profile modal...');
       };
     }
   }
-  
+
+  function cleanupExistingProfilePictureSections() {
+    console.log('🧹 Cleaning up existing profile picture sections...');
+
+    const modal = document.getElementById('profileModal');
+    if (!modal) return;
+
+    // Remove all profile picture related elements from the modal
+    const elementsToRemove = modal.querySelectorAll(`
+      #profilePictureSection,
+      [data-profile-picture-section],
+      [id*="profilePicture"],
+      [id*="ProfilePicture"],
+      input[type="file"][accept*="image"],
+      button[onclick*="profilePicture"],
+      button[onclick*="ProfilePicture"],
+      .profile-picture-upload,
+      .profile-upload-section
+    `);
+
+    elementsToRemove.forEach(el => {
+      console.log('🗑️ Removing:', el.id || el.className);
+      el.remove();
+    });
+
+    console.log('✅ Cleanup completed');
+  }
+
   function insertProfilePictureSection() {
     const form = document.getElementById('profileForm');
     if (!form) {
       console.error('❌ Profile form not found');
       return;
     }
-    
-    // Check if section already exists
-    if (document.getElementById('profilePictureSection')) {
-      console.log('ℹ️ Profile picture section already exists');
-      return;
-    }
+
+    // Remove any existing profile picture sections to prevent duplicates
+    const existingSections = document.querySelectorAll('#profilePictureSection, [data-profile-picture-section]');
+    existingSections.forEach(section => {
+      console.log('🗑️ Removing existing profile picture section');
+      section.remove();
+    });
+
+    // Also remove any other profile upload elements that might exist
+    const existingUploaders = document.querySelectorAll('input[type="file"][accept*="image"], [id*="profilePicture"], [id*="ProfilePicture"]');
+    existingUploaders.forEach(uploader => {
+      // Only remove if it's inside the profile form
+      if (form.contains(uploader)) {
+        console.log('🗑️ Removing existing profile uploader');
+        uploader.closest('div')?.remove();
+      }
+    });
     
     // Create profile picture section
     const profilePictureSection = document.createElement('div');
     profilePictureSection.id = 'profilePictureSection';
+    profilePictureSection.setAttribute('data-profile-picture-section', 'true');
     profilePictureSection.className = 'text-center pb-6 border-b border-gray-200 mb-6';
     
     profilePictureSection.innerHTML = `
