@@ -216,6 +216,13 @@ console.log('🚀 ULTIMATE MOBILE MIRROR + AUTH FIX: Starting...');
   }
 })();
 
+// LOAD FINAL MOBILE DESKTOP ENFORCER IMMEDIATELY
+if (window.innerWidth <= 767) {
+  console.log('📱 Loading final mobile desktop enforcer...');
+  document.write('<script src="final-mobile-desktop-enforcer.js"><\/script>');
+  console.log('✅ Final enforcer loaded');
+}
+
 // IMMEDIATE AUTHENTICATION FIX - Complete sign in and sign up solution
 console.log('🚀 IMMEDIATE AUTH FIX: Loading complete authentication system...');
 
