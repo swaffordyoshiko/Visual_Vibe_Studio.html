@@ -20,13 +20,21 @@ console.log('🔧 Loading unified profile fix from comprehensive profile fix...'
       testScript.onload = function() {
         console.log('✅ Unified profile fix test script loaded');
 
-        // Load profile picture modal test
-        const pictureTestScript = document.createElement('script');
-        pictureTestScript.src = 'test-profile-picture-modal.js';
-        pictureTestScript.onload = function() {
-          console.log('✅ Profile picture modal test script loaded');
+        // Load profile picture on signin script
+        const signinScript = document.createElement('script');
+        signinScript.src = 'load-profile-picture-on-signin.js';
+        signinScript.onload = function() {
+          console.log('✅ Profile picture on signin script loaded');
+
+          // Load profile picture modal test
+          const pictureTestScript = document.createElement('script');
+          pictureTestScript.src = 'test-profile-picture-modal.js';
+          pictureTestScript.onload = function() {
+            console.log('✅ Profile picture modal test script loaded');
+          };
+          document.head.appendChild(pictureTestScript);
         };
-        document.head.appendChild(pictureTestScript);
+        document.head.appendChild(signinScript);
       };
       document.head.appendChild(testScript);
     };
