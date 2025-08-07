@@ -9,8 +9,14 @@ console.log('📋 Loading comprehensive My Orders fix...');
   function initializeComprehensiveOrders() {
     if (comprehensiveOrdersInitialized) return;
     comprehensiveOrdersInitialized = true;
-    
+
     console.log('🚀 Initializing comprehensive My Orders system...');
+
+    // Clean up any debug reviews first
+    cleanupDebugReviews();
+
+    // Ensure this is the ONLY showOrderHistory implementation running
+    console.log('🛡️ Ensuring single implementation...');
     
     // Override showOrderHistory with comprehensive version
     window.showOrderHistory = function() {
@@ -118,6 +124,46 @@ console.log('📋 Loading comprehensive My Orders fix...');
     
     console.log('✅ Comprehensive My Orders system initialized');
   }
+
+  function cleanupDebugReviews() {
+    try {
+      console.log('🧹 Cleaning up debug reviews...');
+
+      // Remove debug reviews from main storage
+      const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+      const cleanedReviews = reviews.filter(review =>
+        !review.id || !review.id.toString().startsWith('debug-')
+      );
+
+      if (cleanedReviews.length !== reviews.length) {
+        localStorage.setItem('visualVibeReviews', JSON.stringify(cleanedReviews));
+        console.log(`✅ Removed ${reviews.length - cleanedReviews.length} debug reviews`);
+      }
+
+      // Remove from user accounts
+      const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+      let usersChanged = false;
+      users.forEach(user => {
+        if (user.reviews) {
+          const originalLength = user.reviews.length;
+          user.reviews = user.reviews.filter(review =>
+            !review.id || !review.id.toString().startsWith('debug-')
+          );
+          if (user.reviews.length !== originalLength) {
+            usersChanged = true;
+          }
+        }
+      });
+
+      if (usersChanged) {
+        localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+        console.log('✅ Cleaned debug reviews from user accounts');
+      }
+
+    } catch (error) {
+      console.error('❌ Error cleaning debug reviews:', error);
+    }
+  }
   
   function getAllCustomerData() {
     const allData = [];
@@ -181,10 +227,18 @@ console.log('📋 Loading comprehensive My Orders fix...');
       });
 
       // Debug: Log the actual data found
-      console.log('📊 DEBUG - Orders found:', orders);
-      console.log('📊 DEBUG - Reviews found:', reviews);
-      console.log('📊 DEBUG - Inquiries found:', inquiries);
-      console.log('📊 DEBUG - All data:', allData);
+      console.log('📊 DEBUG - Orders found:', orders.length, orders);
+      console.log('📊 DEBUG - Reviews found:', reviews.length, reviews);
+      console.log('📊 DEBUG - Inquiries found:', inquiries.length, inquiries);
+      console.log('📊 DEBUG - Contacts found:', contacts.length, contacts);
+      console.log('📊 DEBUG - All data combined:', allData.length, allData);
+
+      // Show breakdown by type
+      const breakdown = allData.reduce((acc, item) => {
+        acc[item.type] = (acc[item.type] || 0) + 1;
+        return acc;
+      }, {});
+      console.log('📊 DEBUG - Data breakdown by type:', breakdown);
       
     } catch (error) {
       console.error('❌ Error gathering customer data:', error);
@@ -294,16 +348,8 @@ console.log('📋 Loading comprehensive My Orders fix...');
         }
       });
 
-      // FALLBACK: If no reviews found and user has submitted reviews recently,
-      // include the most recent ones (for debugging)
-      if (reviews.length === 0 && allReviews.length > 0) {
-        console.log('⚠️ No reviews matched user, trying recent reviews as fallback...');
-        const recentReviews = allReviews.slice(0, 3); // Get 3 most recent reviews
-        recentReviews.forEach(review => {
-          console.log('📝 Adding fallback review:', review);
-          reviews.push(review);
-        });
-      }
+      // NO FALLBACK - Only show REAL customer reviews that actually match
+      console.log(`📝 Final customer reviews found: ${reviews.length}`);
 
       // From other review storage locations
       const otherReviewKeys = ['customerReviews', 'reviews', 'userReviews'];
@@ -474,13 +520,17 @@ console.log('📋 Loading comprehensive My Orders fix...');
         `;
         
       case 'review':
+        // Get a reliable identifier for the review
+        const reviewId = item.id || `review-${Date.now()}`;
+        console.log('📝 Displaying review with ID:', reviewId, 'Original item:', item);
+
         return `
-          <div class="border rounded-lg p-4 bg-purple-50 border-purple-200">
+          <div class="border rounded-lg p-4 bg-purple-50 border-purple-200" data-review-id="${reviewId}">
             <div class="flex justify-between items-start mb-3">
               <div>
                 <h4 class="font-semibold text-gray-800 flex items-center">
                   <span class="bg-purple-600 text-white text-xs px-2 py-1 rounded mr-2">REVIEW</span>
-                  ${item.service || 'Service Review'}
+                  ${item.service || item.serviceUsed || 'Service Review'}
                 </h4>
                 <p class="text-sm text-gray-500">${date}</p>
               </div>
@@ -489,8 +539,9 @@ console.log('📋 Loading comprehensive My Orders fix...');
                   <span class="text-yellow-400 text-lg">${'★'.repeat(item.rating || 5)}</span>
                   <span class="text-gray-400 text-lg">${'★'.repeat(Math.max(0, 5 - (item.rating || 5)))}</span>
                 </div>
-                <button onclick="deleteReview('${item.id}')"
-                        class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors ml-2">
+                <button onclick="deleteReview('${reviewId}')"
+                        class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                        title="Delete review from website">
                   🗑️ Delete
                 </button>
               </div>
@@ -499,12 +550,16 @@ console.log('📋 Loading comprehensive My Orders fix...');
             <div class="space-y-2">
               <div>
                 <p class="text-sm font-medium text-gray-600">Your Review:</p>
-                <p class="text-gray-800 bg-white p-3 rounded border text-sm">${item.text || item.comment || 'No review text'}</p>
+                <p class="text-gray-800 bg-white p-3 rounded border text-sm">${item.text || item.comment || item.reviewText || 'No review text'}</p>
               </div>
               <div class="flex justify-between text-sm text-gray-600">
-                <span>Business: ${item.businessType || 'N/A'}</span>
+                <span>Business: ${item.businessType || item.business || 'N/A'}</span>
                 <span>Rating: ${item.rating || 5}/5 stars</span>
               </div>
+            </div>
+
+            <div class="mt-2 text-xs text-gray-500">
+              Review ID: ${reviewId} | Reviewer: ${item.name || 'N/A'}
             </div>
           </div>
         `;
