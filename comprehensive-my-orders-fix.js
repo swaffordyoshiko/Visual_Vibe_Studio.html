@@ -223,38 +223,54 @@ console.log('📋 Loading comprehensive My Orders fix...');
   
   function getCustomerReviews() {
     const reviews = [];
-    
+
     try {
+      console.log('🔍 Searching for customer reviews...');
+
       // From user account
       const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
       const user = users.find(u => u.id === window.currentUser.id);
       if (user && user.reviews) {
         reviews.push(...user.reviews);
+        console.log(`📝 Found ${user.reviews.length} reviews in user account`);
       }
-      
+
       // From main reviews storage - match by name or email
       const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-      const userReviews = allReviews.filter(review =>
-        review.name === window.currentUser.name ||
-        review.email === window.currentUser.email ||
-        (review.name && window.currentUser.name && 
-         review.name.toLowerCase().includes(window.currentUser.name.toLowerCase().split(' ')[0]))
-      );
-      
+      console.log(`📝 Total reviews in storage: ${allReviews.length}`);
+      console.log('📝 Current user:', { name: window.currentUser.name, email: window.currentUser.email });
+
+      // More flexible matching for reviews
+      const userReviews = allReviews.filter(review => {
+        const nameMatch = review.name === window.currentUser.name;
+        const emailMatch = review.email === window.currentUser.email;
+        const firstNameMatch = review.name && window.currentUser.name &&
+          review.name.toLowerCase().includes(window.currentUser.name.toLowerCase().split(' ')[0]);
+        const reviewerNameMatch = review.reviewerName === window.currentUser.name;
+
+        console.log(`📝 Checking review "${review.name}" - matches:`, { nameMatch, emailMatch, firstNameMatch, reviewerNameMatch });
+
+        return nameMatch || emailMatch || firstNameMatch || reviewerNameMatch;
+      });
+
+      console.log(`📝 Found ${userReviews.length} matching reviews`);
+
       // Add non-duplicate reviews
       userReviews.forEach(review => {
         if (!reviews.find(existing => existing.id === review.id)) {
           reviews.push(review);
         }
       });
-      
+
       // From other review storage locations
       const otherReviewKeys = ['customerReviews', 'reviews', 'userReviews'];
       otherReviewKeys.forEach(key => {
         try {
           const stored = JSON.parse(localStorage.getItem(key) || '[]');
           const userRevs = stored.filter(review =>
-            review.name === window.currentUser.name || review.email === window.currentUser.email
+            review.name === window.currentUser.name ||
+            review.email === window.currentUser.email ||
+            review.reviewerName === window.currentUser.name
           );
           userRevs.forEach(review => {
             if (!reviews.find(existing => existing.id === review.id)) {
@@ -265,11 +281,13 @@ console.log('📋 Loading comprehensive My Orders fix...');
           // Ignore errors for optional storage
         }
       });
-      
+
+      console.log(`📝 Total customer reviews found: ${reviews.length}`);
+
     } catch (error) {
       console.error('❌ Error getting customer reviews:', error);
     }
-    
+
     return reviews;
   }
   
@@ -371,11 +389,17 @@ console.log('📋 Loading comprehensive My Orders fix...');
                 </h4>
                 <p class="text-sm text-gray-500">${date}</p>
               </div>
-              <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}">
-                ${(item.status || 'Pending').charAt(0).toUpperCase() + (item.status || 'pending').slice(1)}
-              </span>
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Complete
+                </span>
+                <button onclick="deleteOrder('${item.orderNumber || item.id}')"
+                        class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors">
+                  🗑️ Delete
+                </button>
+              </div>
             </div>
-            
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <p class="text-sm font-medium text-gray-600">Business:</p>
@@ -408,12 +432,18 @@ console.log('📋 Loading comprehensive My Orders fix...');
                 </h4>
                 <p class="text-sm text-gray-500">${date}</p>
               </div>
-              <div class="flex items-center">
-                <span class="text-yellow-400 text-lg">${'★'.repeat(item.rating || 5)}</span>
-                <span class="text-gray-400 text-lg">${'★'.repeat(Math.max(0, 5 - (item.rating || 5)))}</span>
+              <div class="flex items-center space-x-2">
+                <div class="flex items-center">
+                  <span class="text-yellow-400 text-lg">${'★'.repeat(item.rating || 5)}</span>
+                  <span class="text-gray-400 text-lg">${'★'.repeat(Math.max(0, 5 - (item.rating || 5)))}</span>
+                </div>
+                <button onclick="deleteReview('${item.id}')"
+                        class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors ml-2">
+                  🗑️ Delete
+                </button>
               </div>
             </div>
-            
+
             <div class="space-y-2">
               <div>
                 <p class="text-sm font-medium text-gray-600">Your Review:</p>
@@ -513,9 +543,149 @@ console.log('📋 Loading comprehensive My Orders fix...');
     setTimeout(initializeComprehensiveOrders, 100);
   }
   
+  // DELETE FUNCTIONALITY FOR ORDERS AND REVIEWS
+  window.deleteOrder = function(orderNumber) {
+    if (!orderNumber || orderNumber === 'N/A') {
+      alert('Cannot delete order: Invalid order number');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      console.log('🗑️ Deleting order:', orderNumber);
+
+      // Delete from user account orders
+      const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+      const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+      if (userIndex !== -1 && users[userIndex].orders) {
+        users[userIndex].orders = users[userIndex].orders.filter(order =>
+          order.orderNumber !== orderNumber && order.id !== orderNumber
+        );
+        localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+        console.log('✅ Order deleted from user account');
+      }
+
+      // Delete from pending orders
+      const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+      const filteredPending = pendingOrders.filter(order =>
+        order.orderNumber !== orderNumber && order.id !== orderNumber
+      );
+      if (filteredPending.length !== pendingOrders.length) {
+        localStorage.setItem('pendingOrders', JSON.stringify(filteredPending));
+        console.log('✅ Order deleted from pending orders');
+      }
+
+      // Delete from other order storage locations
+      const otherOrderKeys = ['visualVibeOrders', 'customerOrders', 'orders'];
+      otherOrderKeys.forEach(key => {
+        try {
+          const stored = JSON.parse(localStorage.getItem(key) || '[]');
+          const filtered = stored.filter(order =>
+            order.orderNumber !== orderNumber && order.id !== orderNumber
+          );
+          if (filtered.length !== stored.length) {
+            localStorage.setItem(key, JSON.stringify(filtered));
+            console.log(`✅ Order deleted from ${key}`);
+          }
+        } catch (e) {
+          // Ignore errors for optional storage
+        }
+      });
+
+      // Show success message
+      if (window.toastManager) {
+        window.toastManager.success('Order deleted successfully!');
+      } else {
+        alert('Order deleted successfully!');
+      }
+
+      // Refresh the My Orders display
+      setTimeout(() => {
+        window.showOrderHistory();
+      }, 500);
+
+    } catch (error) {
+      console.error('❌ Error deleting order:', error);
+      alert('Error deleting order. Please try again.');
+    }
+  };
+
+  window.deleteReview = function(reviewId) {
+    if (!reviewId) {
+      alert('Cannot delete review: Invalid review ID');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this review? This will remove it from the website and cannot be undone.')) {
+      return;
+    }
+
+    try {
+      console.log('🗑️ Deleting review:', reviewId);
+
+      // Delete from user account reviews
+      const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+      const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+      if (userIndex !== -1 && users[userIndex].reviews) {
+        users[userIndex].reviews = users[userIndex].reviews.filter(review => review.id !== reviewId);
+        localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+        console.log('✅ Review deleted from user account');
+      }
+
+      // Delete from main reviews storage
+      const allReviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
+      const filteredReviews = allReviews.filter(review => review.id !== reviewId);
+      if (filteredReviews.length !== allReviews.length) {
+        localStorage.setItem('visualVibeReviews', JSON.stringify(filteredReviews));
+        console.log('✅ Review deleted from main reviews storage');
+      }
+
+      // Delete from other review storage locations
+      const otherReviewKeys = ['customerReviews', 'reviews', 'userReviews'];
+      otherReviewKeys.forEach(key => {
+        try {
+          const stored = JSON.parse(localStorage.getItem(key) || '[]');
+          const filtered = stored.filter(review => review.id !== reviewId);
+          if (filtered.length !== stored.length) {
+            localStorage.setItem(key, JSON.stringify(filtered));
+            console.log(`✅ Review deleted from ${key}`);
+          }
+        } catch (e) {
+          // Ignore errors for optional storage
+        }
+      });
+
+      // Show success message
+      if (window.toastManager) {
+        window.toastManager.success('Review deleted successfully! It has been removed from the website.');
+      } else {
+        alert('Review deleted successfully! It has been removed from the website.');
+      }
+
+      // Refresh the My Orders display
+      setTimeout(() => {
+        window.showOrderHistory();
+      }, 500);
+
+      // Also refresh the reviews section if visible
+      if (typeof window.forceDisplayAllReviews === 'function') {
+        setTimeout(() => {
+          window.forceDisplayAllReviews();
+        }, 1000);
+      }
+
+    } catch (error) {
+      console.error('❌ Error deleting review:', error);
+      alert('Error deleting review. Please try again.');
+    }
+  };
+
   // Initialize after delay to override other scripts
   setTimeout(initializeComprehensiveOrders, 3000);
-  
+
 })();
 
-console.log('✅ Comprehensive My Orders fix loaded - Will show ALL reviews, orders, and inquiries');
+console.log('✅ Comprehensive My Orders fix loaded - Will show ALL reviews, orders, and inquiries with delete functionality');
