@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Signup Now</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 40px; 
+            text-align: center; 
+            background: #f8f9fa;
+        }
+        .container { 
+            max-width: 500px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            padding: 15px 30px; 
+            margin: 10px; 
+            font-size: 16px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            min-width: 200px;
+        }
+        .fix-btn { background: #28a745; color: white; }
+        .test-btn { background: #007bff; color: white; }
+        .clear-btn { background: #dc3545; color: white; }
+        .status { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border-radius: 5px; 
+            min-height: 50px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Signup Error</h1>
+        <p>If you're getting "Account already exists" error, click the button below:</p>
+        
+        <button class="fix-btn" onclick="fixSignupError()">
+            🚨 FIX SIGNUP ERROR NOW
+        </button>
+        
+        <button class="test-btn" onclick="testSignup()">
+            🧪 TEST SIGNUP
+        </button>
+        
+        <button class="clear-btn" onclick="nuclearReset()">
+            💥 NUCLEAR RESET
+        </button>
+        
+        <div id="status" class="status info">
+            Ready to fix signup issues...
+        </div>
+        
+        <!-- Hidden signup form for testing -->
+        <div style="display: none;">
+            <form id="signUpForm">
+                <input type="text" id="signUpName" value="Test User">
+                <input type="email" id="signUpEmail" value="test@example.com">
+                <input type="password" id="signUpPassword" value="password123">
+                <input type="password" id="signUpConfirmPassword" value="password123">
+            </form>
+        </div>
+    </div>
+    
+    <script src="signup-error-fix.js"></script>
+    
+    <script>
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.innerHTML = message;
+        }
+        
+        function fixSignupError() {
+            updateStatus('🔧 Fixing signup error...', 'info');
+            
+            try {
+                // Use the fix from our script
+                if (typeof window.emergencySignupFix === 'function') {
+                    window.emergencySignupFix();
+                    updateStatus('✅ Signup error fixed! You can now try signing up again.', 'success');
+                } else {
+                    // Manual fix
+                    localStorage.clear();
+                    window.currentUser = null;
+                    updateStatus('✅ Manual fix applied. Try signing up now.', 'success');
+                }
+            } catch (error) {
+                updateStatus(`❌ Fix failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function testSignup() {
+            updateStatus('🧪 Testing signup...', 'info');
+            
+            try {
+                // Override alert to capture result
+                const originalAlert = window.alert;
+                let alertMessage = '';
+                window.alert = function(msg) {
+                    alertMessage = msg;
+                    console.log('Alert:', msg);
+                };
+                
+                // Test signup
+                if (typeof window.handleSignUp === 'function') {
+                    const mockEvent = { preventDefault: () => {} };
+                    window.handleSignUp(mockEvent);
+                    
+                    setTimeout(() => {
+                        window.alert = originalAlert;
+                        
+                        if (alertMessage.includes('successfully') || alertMessage.includes('Welcome')) {
+                            updateStatus(`✅ ${alertMessage}`, 'success');
+                        } else if (alertMessage.includes('already exists')) {
+                            updateStatus(`❌ ${alertMessage}`, 'error');
+                        } else if (alertMessage) {
+                            updateStatus(`⚠️ ${alertMessage}`, 'info');
+                        } else {
+                            updateStatus('✅ Signup test completed without errors', 'success');
+                        }
+                    }, 100);
+                } else {
+                    updateStatus('❌ handleSignUp function not found', 'error');
+                }
+            } catch (error) {
+                updateStatus(`❌ Test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function nuclearReset() {
+            if (confirm('This will clear ALL localStorage data. Are you sure?')) {
+                updateStatus('💥 Nuclear reset in progress...', 'info');
+                
+                localStorage.clear();
+                window.currentUser = null;
+                
+                setTimeout(() => {
+                    updateStatus('💥 Nuclear reset complete. Page will reload in 2 seconds...', 'success');
+                    
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }, 500);
+            }
+        }
+        
+        // Check status on load
+        setTimeout(() => {
+            const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            let status = `📊 Current state: ${users.length} users in storage`;
+            if (currentUser) {
+                status += `, logged in as: ${currentUser.name}`;
+            }
+            
+            updateStatus(status, 'info');
+        }, 500);
+    </script>
+</body>
+</html>
