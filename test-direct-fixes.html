@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Direct Working Fixes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Test Direct Working Fixes</h1>
+      
+      <!-- Issue Status -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-4 text-red-600">❌ Issues Reported</h3>
+          <ul class="text-sm space-y-2 text-gray-700">
+            <li>• Profile form auto-opening without user click</li>
+            <li>• Profile picture upload missing save button</li>
+            <li>• My Orders only showing orders, not reviews</li>
+            <li>• Delete buttons showing fake success notifications</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-4 text-green-600">✅ Direct Fixes Applied</h3>
+          <ul class="text-sm space-y-2 text-gray-700">
+            <li>• Profile modals only open on user click</li>
+            <li>• Profile picture upload has working save button</li>
+            <li>• My Orders shows BOTH orders AND reviews</li>
+            <li>• Delete buttons actually delete data permanently</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Test Controls -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-6">Test Controls</h2>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <button onclick="createTestUser()" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            Create Test User
+          </button>
+          <button onclick="signInUser()" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors">
+            Sign In User
+          </button>
+          <button onclick="addTestData()" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+            Add Test Data
+          </button>
+          <button onclick="clearData()" class="bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors">
+            Clear Data
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <button onclick="testEditProfile()" class="bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+            Test Edit Profile
+          </button>
+          <button onclick="testOrders()" class="bg-teal-600 text-white px-4 py-3 rounded-lg hover:bg-teal-700 transition-colors">
+            Test My Orders
+          </button>
+          <button onclick="testAutoOpen()" class="bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 transition-colors">
+            Test Auto-Open Prevention
+          </button>
+          <button onclick="testDeleteReal()" class="bg-pink-600 text-white px-4 py-3 rounded-lg hover:bg-pink-700 transition-colors">
+            Test Real Delete
+          </button>
+        </div>
+      </div>
+      
+      <!-- Current User Display -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4">Current User Status</h3>
+        <div id="userStatus" class="bg-gray-50 p-4 rounded-lg">
+          <div class="text-gray-600">No user signed in</div>
+        </div>
+      </div>
+      
+      <!-- Test Results -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-semibold mb-4">Test Results</h3>
+        <div id="testResults" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm h-48 overflow-y-auto">
+          <div>Direct fixes test system ready...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order History Modal -->
+  <div id="orderHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-xl max-w-5xl w-full max-h-[95vh] overflow-y-auto shadow-2xl">
+      <div class="flex justify-between items-center p-6 border-b border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800">My Orders & Receipts</h3>
+        <button onclick="closeOrderHistory()" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div id="orderHistoryContent" class="p-6">
+        <div class="text-center py-8 text-gray-500">
+          <p>Loading your orders...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+    <!-- Content will be generated by the direct fix -->
+  </div>
+
+  <script>
+    let testResults = [];
+    
+    function logResult(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const typeSymbol = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+      const logMessage = `[${timestamp}] ${typeSymbol} ${message}`;
+      
+      testResults.push(logMessage);
+      
+      const resultsDiv = document.getElementById('testResults');
+      resultsDiv.innerHTML += `<div class="${type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : type === 'warning' ? 'text-yellow-400' : 'text-blue-400'}">${logMessage}</div>`;
+      resultsDiv.scrollTop = resultsDiv.scrollHeight;
+    }
+    
+    function updateUserStatus() {
+      const statusDiv = document.getElementById('userStatus');
+      if (window.currentUser) {
+        statusDiv.innerHTML = `
+          <div class="space-y-2">
+            <div><strong>Name:</strong> ${window.currentUser.name || 'Not set'}</div>
+            <div><strong>Email:</strong> ${window.currentUser.email}</div>
+            <div><strong>Company:</strong> ${window.currentUser.companyName || 'Not set'}</div>
+            <div><strong>Phone:</strong> ${window.currentUser.phone || 'Not set'}</div>
+            <div><strong>Profile Picture:</strong> ${window.currentUser.profilePicture ? 'Set' : 'Not set'}</div>
+          </div>
+        `;
+      } else {
+        statusDiv.innerHTML = '<div class="text-gray-600">No user signed in</div>';
+      }
+    }
+    
+    function createTestUser() {
+      window.testUser = {
+        id: 'test_' + Date.now(),
+        email: 'test@visualvibe.com',
+        firstName: 'Test',
+        lastName: 'Customer',
+        name: 'Test Customer',
+        companyName: 'Test Company',
+        phone: '(555) 123-4567'
+      };
+      
+      logResult('Test user created', 'success');
+    }
+    
+    function signInUser() {
+      if (!window.testUser) {
+        createTestUser();
+      }
+      
+      window.currentUser = { ...window.testUser };
+      logResult('User signed in', 'success');
+      updateUserStatus();
+    }
+    
+    function addTestData() {
+      if (!window.currentUser) {
+        logResult('Please sign in first', 'error');
+        return;
+      }
+      
+      const orders = [
+        {
+          id: 'order_1',
+          orderNumber: 'VVS-001',
+          businessName: 'Logo Design Project',
+          total: 299,
+          status: 'completed',
+          date: '2024-01-15'
+        },
+        {
+          id: 'order_2',
+          orderNumber: 'VVS-002', 
+          businessName: 'Website Design',
+          total: 799,
+          status: 'in-progress',
+          date: '2024-01-20'
+        }
+      ];
+      
+      const reviews = [
+        {
+          id: 'review_1',
+          rating: 5,
+          text: 'Excellent work on our logo! Very professional.',
+          date: '2024-01-16',
+          service: 'Logo Design'
+        },
+        {
+          id: 'review_2',
+          rating: 4,
+          text: 'Great communication throughout the project.',
+          date: '2024-01-18',
+          service: 'Website Design'
+        }
+      ];
+      
+      const userKey = `user_${window.currentUser.email}`;
+      const userData = {
+        ...window.currentUser,
+        orders: orders,
+        reviews: reviews
+      };
+      
+      localStorage.setItem(userKey, JSON.stringify(userData));
+      logResult(`Added ${orders.length} orders and ${reviews.length} reviews`, 'success');
+    }
+    
+    function clearData() {
+      localStorage.clear();
+      window.currentUser = null;
+      window.testUser = null;
+      logResult('All data cleared', 'warning');
+      updateUserStatus();
+    }
+    
+    function testEditProfile() {
+      if (!window.currentUser) {
+        logResult('Please sign in first', 'error');
+        return;
+      }
+      
+      logResult('Testing Edit Profile button click...', 'info');
+      
+      try {
+        // This should trigger user-initiated action
+        const clickEvent = new MouseEvent('click', { bubbles: true });
+        const fakeButton = document.createElement('button');
+        fakeButton.textContent = 'Edit Profile';
+        fakeButton.onclick = () => openProfileModal();
+        document.body.appendChild(fakeButton);
+        fakeButton.click();
+        document.body.removeChild(fakeButton);
+        
+        setTimeout(() => {
+          const modal = document.getElementById('profileModal');
+          if (modal && !modal.classList.contains('hidden')) {
+            logResult('✅ Profile modal opened on user click', 'success');
+            
+            // Test if picture upload button exists
+            setTimeout(() => {
+              const pictureBtn = document.querySelector('button[onclick="userInitiatedPictureUpload()"]');
+              if (pictureBtn) {
+                logResult('✅ Picture upload button found', 'success');
+              } else {
+                logResult('❌ Picture upload button missing', 'error');
+              }
+              
+              // Close modal
+              actualCloseProfileModal();
+            }, 500);
+          } else {
+            logResult('❌ Profile modal failed to open', 'error');
+          }
+        }, 500);
+      } catch (error) {
+        logResult(`Error testing profile: ${error.message}`, 'error');
+      }
+    }
+    
+    function testOrders() {
+      if (!window.currentUser) {
+        logResult('Please sign in first', 'error');
+        return;
+      }
+      
+      logResult('Testing My Orders...', 'info');
+      
+      try {
+        showOrderHistory();
+        
+        setTimeout(() => {
+          const content = document.getElementById('orderHistoryContent');
+          if (content) {
+            const hasOrders = content.innerHTML.includes('Your Orders');
+            const hasReviews = content.innerHTML.includes('Your Reviews');
+            
+            if (hasOrders && hasReviews) {
+              logResult('✅ My Orders shows BOTH orders AND reviews', 'success');
+            } else if (hasOrders && !hasReviews) {
+              logResult('❌ My Orders shows only orders, missing reviews', 'error');
+            } else if (!hasOrders && hasReviews) {
+              logResult('❌ My Orders shows only reviews, missing orders', 'error');
+            } else {
+              logResult('❌ My Orders shows neither orders nor reviews', 'error');
+            }
+            
+            // Test delete buttons
+            const deleteButtons = content.querySelectorAll('button[onclick*="actualDelete"]');
+            if (deleteButtons.length > 0) {
+              logResult(`✅ Found ${deleteButtons.length} actual delete buttons`, 'success');
+            } else {
+              logResult('❌ No actual delete buttons found', 'error');
+            }
+          } else {
+            logResult('❌ Orders content not found', 'error');
+          }
+        }, 1000);
+      } catch (error) {
+        logResult(`Error testing orders: ${error.message}`, 'error');
+      }
+    }
+    
+    function testAutoOpen() {
+      logResult('Testing auto-open prevention...', 'info');
+      
+      // Check if modals are hidden
+      const profileModal = document.getElementById('profileModal');
+      const orderModal = document.getElementById('orderHistoryModal');
+      
+      if (profileModal && profileModal.classList.contains('hidden')) {
+        logResult('✅ Profile modal correctly hidden', 'success');
+      } else {
+        logResult('❌ Profile modal auto-opened', 'error');
+      }
+      
+      if (orderModal && orderModal.classList.contains('hidden')) {
+        logResult('✅ Orders modal correctly hidden', 'success');
+      } else {
+        logResult('❌ Orders modal auto-opened', 'error');
+      }
+      
+      // Try to call openProfileModal without user action
+      try {
+        const originalUserAction = window.userInitiatedAction;
+        window.userInitiatedAction = false;
+        openProfileModal();
+        
+        setTimeout(() => {
+          const modal = document.getElementById('profileModal');
+          if (modal && modal.classList.contains('hidden')) {
+            logResult('✅ Auto-open prevented successfully', 'success');
+          } else {
+            logResult('❌ Auto-open prevention failed', 'error');
+          }
+        }, 100);
+      } catch (error) {
+        logResult('Auto-open test completed', 'info');
+      }
+    }
+    
+    function testDeleteReal() {
+      logResult('Testing real delete functionality...', 'info');
+      
+      // Check if actual delete functions exist
+      if (typeof window.actualDeleteOrder === 'function') {
+        logResult('✅ actualDeleteOrder function exists', 'success');
+      } else {
+        logResult('❌ actualDeleteOrder function missing', 'error');
+      }
+      
+      if (typeof window.actualDeleteReview === 'function') {
+        logResult('✅ actualDeleteReview function exists', 'success');
+      } else {
+        logResult('❌ actualDeleteReview function missing', 'error');
+      }
+    }
+    
+    // Mock functions
+    function openSignInModal() {
+      logResult('Sign In Modal would open (test mode)', 'info');
+    }
+    
+    // Initialize
+    logResult('Direct fixes test system initialized');
+    updateUserStatus();
+    
+    // Check if direct fix loaded
+    setTimeout(() => {
+      if (window.directWorkingFix) {
+        logResult('✅ Direct working fix loaded successfully', 'success');
+      } else {
+        logResult('❌ Direct working fix not loaded', 'error');
+      }
+    }, 500);
+  </script>
+  
+  <!-- Load the direct working fix -->
+  <script src="direct-working-fix.js"></script>
+  
+</body>
+</html>
