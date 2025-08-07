@@ -1,12 +1,20 @@
 // SIMPLE, DIRECT SIGNUP OVERRIDE - NO CONFLICTS
 console.log('🚀 Loading simple signup override...');
 
+// IMMEDIATELY disable all other signup functions
+window.handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE = window.handleSignUp;
+delete window.handleSignUp;
+
 // Wait for DOM and completely override everything
 setTimeout(() => {
   console.log('🔧 Applying simple signup override...');
-  
+
   // Force override handleSignUp - nuclear approach
-  const originalHandleSignUp = window.handleSignUp;
+  try {
+    delete window.handleSignUp;
+  } catch (e) {
+    console.log('Could not delete existing handleSignUp');
+  }
   
   window.handleSignUp = function(e) {
     console.log('📝 [SIMPLE OVERRIDE] Processing sign up...');
@@ -52,15 +60,46 @@ setTimeout(() => {
       
       console.log('✅ Validation passed, creating account...');
       
-      // NUCLEAR APPROACH: Clear everything first
+      // NUCLEAR APPROACH: Clear everything first and provide debug info
+      console.log('🧹 About to clear all existing data for fresh signup...');
+
+      // Check what exists before clearing
+      const existingUsers = localStorage.getItem('visualVibeUsers');
+      if (existingUsers) {
+        try {
+          const users = JSON.parse(existingUsers);
+          const matchingUsers = users.filter(u => u.email && u.email.toLowerCase() === email);
+          console.log(`🔍 Found ${users.length} total users, ${matchingUsers.length} matching email ${email}`);
+          if (matchingUsers.length > 0) {
+            console.log('🗑️ Existing accounts for this email:', matchingUsers.map(u => ({
+              name: u.name,
+              realAccount: u.realAccount,
+              signUpMethod: u.signUpMethod,
+              createdAt: u.createdAt
+            })));
+          }
+        } catch (e) {
+          console.log('Could not parse existing users data');
+        }
+      }
+
       try {
+        // Clear all possible storage locations
         localStorage.removeItem('visualVibeUsers');
         localStorage.removeItem('visualVibeUser');
         localStorage.removeItem(`user_${email}`);
         localStorage.removeItem('visualVibeCloudSync');
         localStorage.removeItem('crossDeviceUsers');
         localStorage.removeItem('deviceFingerprint');
-        console.log('🧹 Cleared all existing data');
+
+        // Clear any other user-related items
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('user_') || key.includes('User') || key.includes('user')) {
+            localStorage.removeItem(key);
+          }
+        });
+
+        console.log('🧹 Cleared all existing data successfully');
       } catch (error) {
         console.log('⚠️ Could not clear some data:', error);
       }
@@ -216,5 +255,30 @@ window.forceSignUp = function(name, email, password) {
   console.log('✅ Force signup completed');
 };
 
+// NUCLEAR RESET FUNCTION
+window.nuclearResetSignup = function() {
+  console.log('💥 NUCLEAR RESET: Clearing ALL user data...');
+
+  // Clear localStorage completely
+  Object.keys(localStorage).forEach(key => {
+    if (key.includes('user') || key.includes('User') ||
+        key.includes('vibe') || key.includes('Vibe') ||
+        key.includes('auth') || key.includes('Auth') ||
+        key.includes('device') || key.includes('Device') ||
+        key.includes('sync') || key.includes('Sync')) {
+      localStorage.removeItem(key);
+      console.log('🗑️ Removed:', key);
+    }
+  });
+
+  // Reset global variables
+  window.currentUser = null;
+  window.selectedProfilePicture = null;
+
+  alert('💥 NUCLEAR RESET COMPLETE. All user data cleared. Try signing up again.');
+  console.log('✅ Nuclear reset completed');
+};
+
 console.log('🛡️ Simple signup protection loaded');
 console.log('💡 Manual override available: forceSignUp("Name", "email@example.com", "password")');
+console.log('💥 Nuclear reset available: nuclearResetSignup()');
