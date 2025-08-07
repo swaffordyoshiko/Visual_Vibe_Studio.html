@@ -1,0 +1,188 @@
+<!-- Add this script tag to the head section of index.html -->
+<script>
+// INLINE Profile Save Fix - Copy this into index.html head section
+console.log('🔧 Loading inline profile save fix...');
+
+(function() {
+  'use strict';
+  
+  function fixProfileSave() {
+    console.log('🎯 Fixing profile save functionality...');
+    
+    // Direct profile save function
+    window.handleProfileUpdate = function(event) {
+      console.log('💾 Profile save triggered...');
+      
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      
+      try {
+        if (!window.currentUser) {
+          alert('Please sign in to update your profile.');
+          return false;
+        }
+        
+        // Get form data
+        const firstName = document.getElementById('profileFirstName')?.value?.trim() || '';
+        const lastName = document.getElementById('profileLastName')?.value?.trim() || '';
+        const companyName = document.getElementById('profileCompanyName')?.value?.trim() || '';
+        const phone = document.getElementById('profilePhone')?.value?.trim() || '';
+        const email = document.getElementById('profileEmail')?.value?.trim() || '';
+        
+        // Validate
+        if (!firstName || !lastName || !email) {
+          alert('Please fill in all required fields (First Name, Last Name, Email).');
+          return false;
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          alert('Please enter a valid email address.');
+          return false;
+        }
+        
+        // Show loading
+        const saveBtn = document.querySelector('button[form="profileForm"]');
+        const originalText = saveBtn ? saveBtn.textContent : '';
+        if (saveBtn) {
+          saveBtn.textContent = 'Saving...';
+          saveBtn.disabled = true;
+        }
+        
+        // Save data
+        const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+        const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+        
+        if (userIndex === -1) {
+          alert('User not found. Please sign in again.');
+          if (saveBtn) {
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+          }
+          return false;
+        }
+        
+        // Check email uniqueness
+        const currentUser = users[userIndex];
+        if (email.toLowerCase() !== currentUser.email.toLowerCase()) {
+          const emailExists = users.some((u, index) => 
+            index !== userIndex && u.email.toLowerCase() === email.toLowerCase()
+          );
+          
+          if (emailExists) {
+            alert('This email address is already in use by another account.');
+            if (saveBtn) {
+              saveBtn.textContent = originalText;
+              saveBtn.disabled = false;
+            }
+            return false;
+          }
+        }
+        
+        // Update user
+        const profileData = {
+          firstName,
+          lastName,
+          companyName,
+          phone,
+          email,
+          name: firstName + ' ' + lastName,
+          lastUpdated: new Date().toISOString()
+        };
+        
+        users[userIndex] = {
+          ...currentUser,
+          ...profileData,
+          id: currentUser.id,
+          updatedAt: new Date().toISOString()
+        };
+        
+        // Save to storage
+        localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+        localStorage.setItem('visualVibeProfileData', JSON.stringify(profileData));
+        
+        // Update session
+        window.currentUser = {
+          id: users[userIndex].id,
+          name: users[userIndex].name,
+          email: users[userIndex].email,
+          lastActivity: new Date().toISOString()
+        };
+        localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+        
+        // Success
+        if (window.toastManager) {
+          window.toastManager.success('✅ Profile saved successfully!', { duration: 3000 });
+        } else {
+          alert('✅ Profile saved successfully!');
+        }
+        
+        // Update UI and close modal
+        if (window.updateAuthUI) window.updateAuthUI();
+        setTimeout(() => {
+          if (window.closeProfileModal) window.closeProfileModal();
+        }, 1500);
+        
+        console.log('✅ Profile saved successfully');
+        
+      } catch (error) {
+        console.error('❌ Error saving profile:', error);
+        alert('❌ An error occurred while saving. Please try again.');
+      } finally {
+        // Restore button
+        const saveBtn = document.querySelector('button[form="profileForm"]');
+        if (saveBtn) {
+          saveBtn.textContent = 'Save Changes';
+          saveBtn.disabled = false;
+        }
+      }
+      
+      return false;
+    };
+    
+    // Attach handler to form
+    function attachHandler() {
+      const form = document.getElementById('profileForm');
+      if (form) {
+        form.onsubmit = window.handleProfileUpdate;
+        form.addEventListener('submit', window.handleProfileUpdate);
+        console.log('✅ Profile form handler attached');
+      }
+      
+      const saveBtn = document.querySelector('button[form="profileForm"]');
+      if (saveBtn) {
+        saveBtn.onclick = function(e) {
+          e.preventDefault();
+          window.handleProfileUpdate(e);
+        };
+        console.log('✅ Save button handler attached');
+      }
+    }
+    
+    // Enhanced openProfileModal
+    const originalOpen = window.openProfileModal;
+    window.openProfileModal = function() {
+      if (typeof originalOpen === 'function') {
+        originalOpen();
+      }
+      setTimeout(attachHandler, 200);
+    };
+    
+    // Initialize
+    attachHandler();
+    console.log('✅ Profile save fix ready');
+  }
+  
+  // Run when ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixProfileSave);
+  } else {
+    fixProfileSave();
+  }
+  
+  setTimeout(fixProfileSave, 1000);
+  
+})();
+</script>
