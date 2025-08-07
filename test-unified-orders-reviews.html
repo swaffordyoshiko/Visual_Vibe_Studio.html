@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Unified Orders & Reviews</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Test Unified Orders & Reviews</h1>
+      
+      <!-- Test Controls -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-6">Test Controls</h2>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <button onclick="testSignIn()" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            Sign In Test User
+          </button>
+          <button onclick="showOrderHistory()" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors">
+            Open Orders & Reviews
+          </button>
+          <button onclick="addSampleData()" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+            Add Sample Data
+          </button>
+          <button onclick="clearAllData()" class="bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors">
+            Clear All Data
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <button onclick="testPageRefresh()" class="bg-yellow-600 text-white px-4 py-3 rounded-lg hover:bg-yellow-700 transition-colors">
+            Test Page Refresh
+          </button>
+          <button onclick="testMultipleOpens()" class="bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+            Test Multiple Opens
+          </button>
+          <button onclick="testEmptyState()" class="bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            Test Empty State
+          </button>
+        </div>
+      </div>
+      
+      <!-- Status Display -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4">Test Status</h3>
+        <div id="testStatus" class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg">
+          Ready for testing
+        </div>
+      </div>
+      
+      <!-- Test Results -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">Test Results</h3>
+        <div id="testResults" class="space-y-2 text-sm">
+          <div class="text-gray-600">No tests run yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order History Modal -->
+  <div id="orderHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-xl max-w-5xl w-full max-h-[95vh] overflow-y-auto shadow-2xl">
+      <div class="flex justify-between items-center p-6 border-b border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800">My Orders & Receipts</h3>
+        <button onclick="closeOrderHistory()" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div id="orderHistoryContent" class="p-6">
+        <div class="text-center py-8 text-gray-500">
+          <p>Loading your orders...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let testResults = [];
+    
+    function updateStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('testStatus');
+      const typeClasses = {
+        info: 'bg-blue-50 border-blue-200 text-blue-800',
+        success: 'bg-green-50 border-green-200 text-green-800',
+        error: 'bg-red-50 border-red-200 text-red-800',
+        warning: 'bg-yellow-50 border-yellow-200 text-yellow-800'
+      };
+      
+      statusDiv.className = `p-4 rounded-lg border ${typeClasses[type] || typeClasses.info}`;
+      statusDiv.textContent = message;
+      
+      // Add to test results
+      const timestamp = new Date().toLocaleTimeString();
+      testResults.push(`[${timestamp}] ${message}`);
+      updateTestResults();
+    }
+    
+    function updateTestResults() {
+      const resultsDiv = document.getElementById('testResults');
+      resultsDiv.innerHTML = testResults.slice(-10).map(result => 
+        `<div class="text-gray-700">${result}</div>`
+      ).join('');
+    }
+    
+    function testSignIn() {
+      window.currentUser = {
+        id: 'test-user-' + Date.now(),
+        email: 'test@visualvibestudio.com',
+        name: 'Test Customer',
+        firstName: 'Test',
+        lastName: 'Customer'
+      };
+      
+      updateStatus('✅ Test user signed in successfully', 'success');
+    }
+    
+    function addSampleData() {
+      if (!window.currentUser) {
+        updateStatus('❌ Please sign in first', 'error');
+        return;
+      }
+      
+      const sampleOrders = [
+        {
+          id: 'order_1',
+          orderNumber: 'VVS-001',
+          businessName: 'Acme Corp Logo Design',
+          total: 299,
+          status: 'completed',
+          date: '2024-01-15',
+          services: ['Logo Design', 'Brand Guidelines']
+        },
+        {
+          id: 'order_2', 
+          orderNumber: 'VVS-002',
+          businessName: 'Startup Web Design',
+          total: 599,
+          status: 'in-progress',
+          date: '2024-01-20',
+          services: ['Website Design', 'UI/UX']
+        },
+        {
+          id: 'order_3',
+          orderNumber: 'VVS-003',
+          businessName: 'Restaurant Menu Design',
+          total: 199,
+          status: 'pending',
+          date: '2024-01-25',
+          services: ['Menu Design']
+        }
+      ];
+      
+      const sampleReviews = [
+        {
+          id: 'review_1',
+          rating: 5,
+          text: 'Outstanding work on our logo! The team really understood our vision and delivered beyond expectations.',
+          date: '2024-01-16',
+          service: 'Logo Design'
+        },
+        {
+          id: 'review_2',
+          rating: 4,
+          text: 'Great design process and communication. Very professional team.',
+          date: '2024-01-18',
+          service: 'Brand Guidelines'
+        },
+        {
+          id: 'review_3',
+          rating: 5,
+          text: 'Amazing website design! Our conversion rate has increased significantly.',
+          date: '2024-01-22',
+          service: 'Website Design'
+        }
+      ];
+      
+      const userKey = `user_${window.currentUser.email}`;
+      const userData = {
+        orders: sampleOrders,
+        reviews: sampleReviews
+      };
+      
+      localStorage.setItem(userKey, JSON.stringify(userData));
+      updateStatus(`✅ Added ${sampleOrders.length} orders and ${sampleReviews.length} reviews`, 'success');
+    }
+    
+    function clearAllData() {
+      if (window.currentUser) {
+        const userKey = `user_${window.currentUser.email}`;
+        localStorage.removeItem(userKey);
+      }
+      localStorage.removeItem('visualVibeUsers');
+      window.currentUser = null;
+      updateStatus('🧹 All data cleared', 'warning');
+    }
+    
+    function testPageRefresh() {
+      updateStatus('🔄 Testing page refresh behavior...', 'info');
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
+    
+    function testMultipleOpens() {
+      updateStatus('🔁 Testing multiple modal opens...', 'info');
+      
+      let openCount = 0;
+      const testInterval = setInterval(() => {
+        if (openCount < 3) {
+          showOrderHistory();
+          setTimeout(closeOrderHistory, 500);
+          openCount++;
+        } else {
+          clearInterval(testInterval);
+          updateStatus('✅ Multiple opens test completed', 'success');
+        }
+      }, 1000);
+    }
+    
+    function testEmptyState() {
+      if (!window.currentUser) {
+        testSignIn();
+      }
+      
+      // Clear data temporarily
+      const userKey = `user_${window.currentUser.email}`;
+      const backup = localStorage.getItem(userKey);
+      localStorage.removeItem(userKey);
+      
+      updateStatus('🕳️ Testing empty state...', 'info');
+      showOrderHistory();
+      
+      // Restore data after 3 seconds
+      setTimeout(() => {
+        if (backup) {
+          localStorage.setItem(userKey, backup);
+        }
+        updateStatus('✅ Empty state test completed', 'success');
+      }, 3000);
+    }
+    
+    // Mock functions for testing
+    function openSignInModal() {
+      alert('Sign In Modal (test mode)');
+    }
+    
+    function openContactModal() {
+      alert('Contact Modal (test mode)');
+    }
+    
+    // Toast manager for notifications
+    window.toastManager = {
+      show: function(message, options = {}) {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white transition-all ${
+          options.type === 'success' ? 'bg-green-500' : 
+          options.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 300);
+        }, options.duration || 3000);
+      },
+      success: function(message, options) {
+        this.show(message, { ...options, type: 'success' });
+      },
+      error: function(message, options) {
+        this.show(message, { ...options, type: 'error' });
+      }
+    };
+    
+    // Initialize
+    updateStatus('Test page loaded and ready');
+  </script>
+  
+  <!-- Load the unified orders & reviews solution -->
+  <script src="unified-orders-reviews-final.js"></script>
+  
+  <script>
+    // Post-load verification
+    setTimeout(() => {
+      if (window.unifiedOrdersReviewsFinal) {
+        updateStatus('✅ Unified Orders & Reviews solution loaded successfully', 'success');
+      } else {
+        updateStatus('❌ Failed to load unified solution', 'error');
+      }
+    }, 100);
+  </script>
+</body>
+</html>
