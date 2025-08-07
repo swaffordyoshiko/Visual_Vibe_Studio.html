@@ -27,25 +27,8 @@ window.debugMyOrders = function() {
     }
   });
   
-  // Test adding a sample review for current user
-  if (window.currentUser) {
-    const sampleReview = {
-      id: 'debug-' + Date.now(),
-      name: window.currentUser.name,
-      email: window.currentUser.email,
-      service: 'Website Design',
-      rating: 5,
-      text: 'Great service! Debug review.',
-      businessType: 'Tech Company',
-      date: new Date().toISOString(),
-      approved: true
-    };
-    
-    const reviews = JSON.parse(localStorage.getItem('visualVibeReviews') || '[]');
-    reviews.unshift(sampleReview);
-    localStorage.setItem('visualVibeReviews', JSON.stringify(reviews));
-    console.log('✅ Added debug review for', window.currentUser.name);
-  }
+  // DISABLED: Not adding debug reviews automatically to avoid fake data
+  console.log('ℹ️ Debug review creation disabled to show only real customer data');
   
   // Test the showOrderHistory function
   setTimeout(() => {
@@ -64,11 +47,8 @@ window.clearDebugData = function() {
   console.log('✅ Debug data cleared');
 };
 
-// Auto-run debug after delay
-setTimeout(() => {
-  console.log('🐛 Auto-running My Orders debug...');
-  window.debugMyOrders();
-}, 4000);
+// DISABLED: Not auto-running debug to prevent interference
+console.log('ℹ️ Auto-debug disabled - run window.debugMyOrders() manually if needed');
 
 console.log('🐛 My Orders debug script loaded');
 console.log('💡 Run window.debugMyOrders() to test manually');
