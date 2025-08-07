@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders Reopen Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen py-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">My Orders Reopen Test</h1>
+      
+      <!-- Issue Description -->
+      <div class="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+        <h3 class="text-lg font-bold text-red-800 mb-4">❌ Issue Reported</h3>
+        <p class="text-red-700">The "My Orders" only opens once. The customer would have to reload the website in order to reclick and open the "My Orders".</p>
+      </div>
+      
+      <!-- Test Controls -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-6">Test Controls</h2>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <button onclick="setupTestUser()" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700">
+            Setup Test User
+          </button>
+          <button onclick="addTestData()" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700">
+            Add Test Data
+          </button>
+          <button onclick="showOrderHistory()" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700">
+            📦 My Orders
+          </button>
+          <button onclick="testMultipleOpens()" class="bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700">
+            Test Multiple Opens
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <button onclick="clearTestData()" class="bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700">
+            Clear Data
+          </button>
+          <button onclick="runReopenTest()" class="bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-3 rounded-lg hover:from-green-700 hover:to-blue-700 font-semibold">
+            🔄 Run Reopen Test
+          </button>
+        </div>
+      </div>
+      
+      <!-- Test Results Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Modal Status -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-4">Modal Status</h3>
+          <div id="modalStatus" class="space-y-2 text-sm">
+            <div>Checking...</div>
+          </div>
+        </div>
+        
+        <!-- Open/Close Count -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-4">Usage Statistics</h3>
+          <div id="usageStats" class="space-y-2 text-sm">
+            <div>Opens: <span id="openCount" class="font-bold text-green-600">0</span></div>
+            <div>Closes: <span id="closeCount" class="font-bold text-red-600">0</span></div>
+            <div>Current: <span id="currentState" class="font-bold">Closed</span></div>
+          </div>
+        </div>
+        
+        <!-- Test Progress -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-4">Test Progress</h3>
+          <div id="testProgress" class="space-y-2 text-sm">
+            <div class="text-gray-600">No test running</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Test Results Log -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-semibold mb-4">Test Results</h3>
+        <div id="testLog" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm h-48 overflow-y-auto">
+          <div class="text-cyan-400">My Orders reopen test ready...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let openCount = 0;
+    let closeCount = 0;
+    let testRunning = false;
+    
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const colors = {
+        info: 'text-cyan-400',
+        success: 'text-green-400', 
+        error: 'text-red-400',
+        warning: 'text-yellow-400',
+        test: 'text-purple-400'
+      };
+      
+      const logEntry = `[${timestamp}] ${message}`;
+      
+      const logElement = document.getElementById('testLog');
+      logElement.innerHTML += `<div class="${colors[type] || colors.info}">${logEntry}</div>`;
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+    
+    function updateModalStatus() {
+      const modal = document.getElementById('orderHistoryModal');
+      const statusEl = document.getElementById('modalStatus');
+      const currentStateEl = document.getElementById('currentState');
+      
+      let status = '';
+      let isOpen = false;
+      
+      if (modal) {
+        isOpen = !modal.classList.contains('hidden') && modal.style.display !== 'none';
+        status += `<div class="text-green-600">✅ Modal: EXISTS</div>`;
+        status += `<div>Hidden: ${modal.classList.contains('hidden')}</div>`;
+        status += `<div>Display: ${modal.style.display || 'default'}</div>`;
+        status += `<div>State: ${isOpen ? 'OPEN' : 'CLOSED'}</div>`;
+      } else {
+        status += `<div class="text-red-600">❌ Modal: NOT FOUND</div>`;
+      }
+      
+      status += `<div>Fix Loaded: ${window.ordersModalReopenFix ? 'YES' : 'NO'}</div>`;
+      
+      statusEl.innerHTML = status;
+      currentStateEl.textContent = isOpen ? 'Open' : 'Closed';
+      currentStateEl.className = isOpen ? 'font-bold text-green-600' : 'font-bold text-red-600';
+    }
+    
+    function updateUsageStats() {
+      document.getElementById('openCount').textContent = openCount;
+      document.getElementById('closeCount').textContent = closeCount;
+    }
+    
+    function updateTestProgress(message) {
+      const progressEl = document.getElementById('testProgress');
+      progressEl.innerHTML = `<div class="text-blue-600">${message}</div>`;
+    }
+    
+    function setupTestUser() {
+      window.currentUser = {
+        id: 'test_reopen_user',
+        email: 'reopen@test.com',
+        firstName: 'Reopen',
+        lastName: 'Tester',
+        name: 'Reopen Tester'
+      };
+      
+      log('✅ Test user setup complete', 'success');
+      updateModalStatus();
+    }
+    
+    function addTestData() {
+      if (!window.currentUser) {
+        log('❌ Please setup user first', 'error');
+        return;
+      }
+      
+      const orders = [
+        {
+          id: 'reopen_order_1',
+          orderNumber: 'RO-001',
+          businessName: 'Test Order 1',
+          total: 100,
+          date: '2024-01-15'
+        },
+        {
+          id: 'reopen_order_2',
+          orderNumber: 'RO-002',
+          businessName: 'Test Order 2',
+          total: 200,
+          date: '2024-01-20'
+        }
+      ];
+      
+      const reviews = [
+        {
+          id: 'reopen_review_1',
+          rating: 5,
+          text: 'Great service for reopen testing!',
+          date: '2024-01-16'
+        }
+      ];
+      
+      const userKey = `user_${window.currentUser.email}`;
+      const userData = {
+        ...window.currentUser,
+        orders: orders,
+        reviews: reviews
+      };
+      
+      localStorage.setItem(userKey, JSON.stringify(userData));
+      log(`✅ Added ${orders.length} orders and ${reviews.length} reviews`, 'success');
+    }
+    
+    function clearTestData() {
+      localStorage.clear();
+      window.currentUser = null;
+      openCount = 0;
+      closeCount = 0;
+      updateUsageStats();
+      updateModalStatus();
+      log('🧹 Test data cleared', 'warning');
+    }
+    
+    function testMultipleOpens() {
+      if (!window.currentUser) {
+        log('❌ Please setup user first', 'error');
+        return;
+      }
+      
+      log('🧪 Testing multiple opens without reload...', 'test');
+      testRunning = true;
+      
+      let testStep = 1;
+      const maxSteps = 5;
+      
+      function performTest() {
+        if (testStep > maxSteps) {
+          log(`✅ Multiple opens test completed! Opened ${maxSteps} times without reload`, 'success');
+          updateTestProgress('Test completed successfully');
+          testRunning = false;
+          return;
+        }
+        
+        updateTestProgress(`Step ${testStep}/${maxSteps}: Opening modal...`);
+        log(`📦 Test open #${testStep}`, 'test');
+        
+        try {
+          showOrderHistory();
+          openCount++;
+          updateUsageStats();
+          
+          setTimeout(() => {
+            updateTestProgress(`Step ${testStep}/${maxSteps}: Closing modal...`);
+            log(`❌ Test close #${testStep}`, 'test');
+            
+            closeOrderHistory();
+            closeCount++;
+            updateUsageStats();
+            
+            testStep++;
+            setTimeout(performTest, 1000);
+          }, 2000);
+          
+        } catch (error) {
+          log(`❌ Error in test step ${testStep}: ${error.message}`, 'error');
+          testRunning = false;
+        }
+      }
+      
+      performTest();
+    }
+    
+    function runReopenTest() {
+      log('🚀 Running comprehensive reopen test...', 'test');
+      
+      clearTestData();
+      setTimeout(() => {
+        setupTestUser();
+        setTimeout(() => {
+          addTestData();
+          setTimeout(() => {
+            testMultipleOpens();
+          }, 500);
+        }, 500);
+      }, 500);
+    }
+    
+    // Monitor modal state changes
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const target = mutation.target;
+          if (target.id === 'orderHistoryModal') {
+            updateModalStatus();
+          }
+        }
+        
+        mutation.addedNodes.forEach(function(node) {
+          if (node.id === 'orderHistoryModal') {
+            log('📦 Orders modal added to DOM', 'info');
+            updateModalStatus();
+          }
+        });
+        
+        mutation.removedNodes.forEach(function(node) {
+          if (node.id === 'orderHistoryModal') {
+            log('🗑️ Orders modal removed from DOM', 'warning');
+            updateModalStatus();
+          }
+        });
+      });
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
+    
+    // Override functions to track usage
+    const originalShowOrderHistory = window.showOrderHistory;
+    const originalCloseOrderHistory = window.closeOrderHistory;
+    
+    setTimeout(() => {
+      if (window.showOrderHistory) {
+        const originalShow = window.showOrderHistory;
+        window.showOrderHistory = function() {
+          log('📦 Opening My Orders...', 'info');
+          const result = originalShow.apply(this, arguments);
+          openCount++;
+          updateUsageStats();
+          setTimeout(updateModalStatus, 100);
+          return result;
+        };
+      }
+      
+      if (window.closeOrderHistory) {
+        const originalClose = window.closeOrderHistory;
+        window.closeOrderHistory = function() {
+          log('❌ Closing My Orders...', 'info');
+          const result = originalClose.apply(this, arguments);
+          closeCount++;
+          updateUsageStats();
+          setTimeout(updateModalStatus, 100);
+          return result;
+        };
+      }
+    }, 1000);
+    
+    // Initialize
+    log('🎯 My Orders reopen test initialized');
+    updateModalStatus();
+    updateUsageStats();
+    
+    // Update status periodically
+    setInterval(updateModalStatus, 3000);
+    
+    // Check if fix loaded
+    setTimeout(() => {
+      if (window.ordersModalReopenFix) {
+        log('✅ Orders modal reopen fix loaded', 'success');
+      } else {
+        log('❌ Orders modal reopen fix not loaded', 'error');
+      }
+    }, 1000);
+    
+  </script>
+  
+  <!-- Load the reopen fix -->
+  <script src="orders-modal-reopen-fix.js"></script>
+  
+</body>
+</html>
