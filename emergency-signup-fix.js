@@ -4,9 +4,9 @@
   
   console.log('🚨 EMERGENCY SIGNUP FIX LOADING...');
   
-  // IMMEDIATE OVERRIDE - Block the problematic function NOW
-  window.handleSignUp = function(e) {
-    console.log('📝 [EMERGENCY] Processing sign up...');
+  // NOTE: Emergency signup override disabled - using fix-signup-conflicts.js instead
+  window.handleSignUp_EMERGENCY_DISABLED = function(e) {
+    console.log('📝 [EMERGENCY DISABLED] Using fix-signup-conflicts.js instead');
     if (e) e.preventDefault();
     
     try {
