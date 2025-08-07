@@ -483,4 +483,4 @@ if (document.body) {
 // Make function globally available
 window.forceDesktopNow = nuclearDOMFixes;
 
-console.log('��� FORCE MOBILE DESKTOP: Nuclear approach
+console.log('🚀 FORCE MOBILE DESKTOP: Nuclear approach loaded and active');
