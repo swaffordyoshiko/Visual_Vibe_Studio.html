@@ -1,223 +1,14 @@
-// NUCLEAR MOBILE DESKTOP FIX + Mobile Glitch Fix
-console.log('🚀 NUCLEAR MOBILE DESKTOP + glitch fixes...');
+// IMMEDIATE MOBILE DESKTOP OVERRIDE + Mobile Glitch Fix
+console.log('🚀 IMMEDIATE MOBILE OVERRIDE + glitch fixes...');
 
-// INLINE NUCLEAR MOBILE DESKTOP FIX - Run immediately
+// LOAD IMMEDIATE OVERRIDE SCRIPT - Use document.write for immediate loading
 if (window.innerWidth <= 767) {
-  console.log('📱 Applying NUCLEAR mobile desktop fix...');
+  console.log('📱 Loading immediate mobile desktop override...');
 
-  // NUCLEAR CSS - Inject immediately with highest priority
-  const nuclearCSS = document.createElement('style');
-  nuclearCSS.id = 'nuclear-mobile-desktop-inline';
-  nuclearCSS.innerHTML = `
-    @media screen and (max-width: 767px) {
-      /* REMOVE mobile menu button completely */
-      #mobileMenuBtn,
-      button[onclick*="toggleMobileMenu"] {
-        display: none !important;
-        visibility: hidden !important;
-        position: absolute !important;
-        left: -9999px !important;
-        width: 0 !important;
-        height: 0 !important;
-      }
+  // Load the immediate script injector
+  document.write('<script src="immediate-script-inject.js"><\/script>');
 
-      /* HIDE mobile menu */
-      #mobileMenu {
-        display: none !important;
-        visibility: hidden !important;
-        position: absolute !important;
-        left: -9999px !important;
-      }
-
-      /* FORCE show desktop navigation */
-      nav.hidden,
-      nav.md\\:flex,
-      .hidden.md\\:flex,
-      header nav {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        position: relative !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 0.5rem !important;
-        padding: 0.5rem !important;
-      }
-
-      nav.hidden a,
-      nav.md\\:flex a,
-      .hidden.md\\:flex a,
-      header nav a {
-        display: inline-flex !important;
-        visibility: visible !important;
-        font-size: 14px !important;
-        padding: 0.5rem 0.75rem !important;
-        white-space: nowrap !important;
-      }
-
-      /* FORCE show desktop auth states */
-      #signedOutState,
-      #signedInState {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        flex-direction: row !important;
-        gap: 0.5rem !important;
-      }
-
-      /* HIDE mobile auth states */
-      #mobileSignedOutState,
-      #mobileSignedInState {
-        display: none !important;
-        visibility: hidden !important;
-        position: absolute !important;
-        left: -9999px !important;
-      }
-
-      /* FORCE desktop grids */
-      .grid.grid-cols-1.md\\:grid-cols-2 {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1rem !important;
-      }
-
-      .grid.grid-cols-1.md\\:grid-cols-3,
-      .grid.grid-cols-1.lg\\:grid-cols-3 {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.75rem !important;
-      }
-
-      @media screen and (min-width: 375px) and (max-width: 767px) {
-        .grid.grid-cols-1.md\\:grid-cols-3,
-        .grid.grid-cols-1.lg\\:grid-cols-3 {
-          grid-template-columns: repeat(3, 1fr) !important;
-          gap: 0.5rem !important;
-        }
-      }
-
-      /* SHOW hidden desktop elements */
-      .hidden.md\\:block { display: block !important; visibility: visible !important; }
-      .hidden.md\\:flex { display: flex !important; visibility: visible !important; }
-      .hidden.md\\:grid { display: grid !important; visibility: visible !important; }
-      .hidden.lg\\:block { display: block !important; visibility: visible !important; }
-      .hidden.lg\\:flex { display: flex !important; visibility: visible !important; }
-
-      /* FORCE horizontal layouts */
-      .flex.flex-col.md\\:flex-row,
-      .flex.flex-col.sm\\:flex-row {
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: 0.75rem !important;
-        justify-content: center !important;
-      }
-
-      /* HEADER layout */
-      header .max-w-7xl {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        flex-wrap: wrap !important;
-        gap: 0.5rem !important;
-      }
-
-      /* PREVENT overflow */
-      html, body { overflow-x: hidden !important; }
-    }
-  `;
-
-  // Inject CSS immediately
-  (document.head || document.documentElement).appendChild(nuclearCSS);
-
-  // NUCLEAR DOM FIXES - Apply immediately
-  function applyNuclearFixes() {
-    try {
-      // Remove mobile menu button completely
-      const mobileBtn = document.getElementById('mobileMenuBtn');
-      if (mobileBtn && mobileBtn.parentNode) {
-        mobileBtn.parentNode.removeChild(mobileBtn);
-      }
-
-      // Hide mobile menu
-      const mobileMenu = document.getElementById('mobileMenu');
-      if (mobileMenu) {
-        mobileMenu.style.display = 'none';
-        mobileMenu.style.visibility = 'hidden';
-        mobileMenu.style.position = 'absolute';
-        mobileMenu.style.left = '-9999px';
-      }
-
-      // Force show desktop navigation
-      const desktopNavs = document.querySelectorAll('nav.hidden, nav.md\\:flex, .hidden.md\\:flex, header nav');
-      desktopNavs.forEach(nav => {
-        nav.classList.remove('hidden');
-        nav.style.display = 'flex';
-        nav.style.visibility = 'visible';
-        nav.style.opacity = '1';
-      });
-
-      // Force show desktop auth states
-      const signedOut = document.getElementById('signedOutState');
-      const signedIn = document.getElementById('signedInState');
-      if (signedOut) {
-        signedOut.style.display = 'flex';
-        signedOut.style.visibility = 'visible';
-        signedOut.style.opacity = '1';
-      }
-      if (signedIn) {
-        signedIn.style.display = 'flex';
-        signedIn.style.visibility = 'visible';
-        signedIn.style.opacity = '1';
-      }
-
-      // Hide mobile auth states
-      const mobileSignedOut = document.getElementById('mobileSignedOutState');
-      const mobileSignedIn = document.getElementById('mobileSignedInState');
-      if (mobileSignedOut) {
-        mobileSignedOut.style.display = 'none';
-        mobileSignedOut.style.visibility = 'hidden';
-      }
-      if (mobileSignedIn) {
-        mobileSignedIn.style.display = 'none';
-        mobileSignedIn.style.visibility = 'hidden';
-      }
-
-      // Show hidden desktop elements
-      const hiddenElements = document.querySelectorAll('.hidden.md\\:block, .hidden.md\\:flex, .hidden.md\\:grid, .hidden.lg\\:block, .hidden.lg\\:flex');
-      hiddenElements.forEach(el => {
-        el.classList.remove('hidden');
-        const classes = el.className;
-        const display = classes.includes('flex') ? 'flex' : classes.includes('grid') ? 'grid' : 'block';
-        el.style.display = display;
-        el.style.visibility = 'visible';
-        el.style.opacity = '1';
-      });
-
-      console.log('✅ Nuclear DOM fixes applied');
-    } catch (error) {
-      console.error('❌ Nuclear DOM fix error:', error);
-    }
-  }
-
-  // Apply fixes immediately and repeatedly
-  applyNuclearFixes();
-  setTimeout(applyNuclearFixes, 100);
-  setTimeout(applyNuclearFixes, 500);
-  setTimeout(applyNuclearFixes, 1000);
-
-  // Apply on DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyNuclearFixes);
-  }
-
-  // Apply on window load
-  window.addEventListener('load', applyNuclearFixes);
-
-  // Apply periodically
-  setInterval(applyNuclearFixes, 3000);
-
-  // Make globally available
-  window.applyNuclearMobileFix = applyNuclearFixes;
-
-  console.log('✅ Nuclear mobile desktop fix loaded and active');
+  console.log('✅ Immediate override injector loaded');
 }
 
 // Mobile Glitch Fix - Immediate JavaScript Solutions
@@ -429,3 +220,23 @@ console.log('🔧 Loading mobile glitch fixes...');
           if (document.body.scrollWidth > window.innerWidth) {
             emergencyLayoutReset();
           }
+        }
+      }
+    });
+    
+    resizeObserver.observe(document.body);
+    
+    // Handle orientation changes
+    window.addEventListener('orientationchange', function() {
+      setTimeout(() => {
+        stabilizeLayout();
+        emergencyLayoutReset();
+      }, 500);
+    });
+    
+    console.log('✅ Mobile glitch fixes applied successfully!');
+  }
+  
+})();
+
+console.log('🔧 Mobile glitch fix script loaded!');
