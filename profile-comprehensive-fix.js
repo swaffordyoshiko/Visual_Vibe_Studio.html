@@ -1,5 +1,18 @@
-// Comprehensive Profile Fix - Resolves all profile saving and photo upload issues
-console.log('🔧 Loading comprehensive profile fix...');
+// UNIFIED PROFILE FIX - Load the comprehensive solution
+console.log('🔧 Loading unified profile fix from comprehensive profile fix...');
+
+// Load the unified profile fix script
+(function() {
+  const script = document.createElement('script');
+  script.src = 'unified-profile-fix.js';
+  script.onload = function() {
+    console.log('✅ Unified profile fix loaded successfully');
+  };
+  script.onerror = function() {
+    console.error('❌ Failed to load unified profile fix');
+  };
+  document.head.appendChild(script);
+})();
 
 (function() {
   'use strict';
