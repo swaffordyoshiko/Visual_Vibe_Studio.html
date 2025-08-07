@@ -612,30 +612,15 @@ if (document.readyState === 'loading') {
 
 console.log('✅ Authentication system with sync removal loaded');
 
-// ADD MOBILE MIRROR DESKTOP CSS
-(function addMobileMirrorCSS() {
-  console.log('📱 Adding mobile mirror desktop CSS...');
-
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'mobile-mirror-desktop.css';
-  link.id = 'mobile-mirror-css';
-
-  // Add to head with high priority
-  document.head.appendChild(link);
-
-  console.log('✅ Mobile mirror desktop CSS loaded');
-})();
-
-// ADD MOBILE MIRROR DESKTOP JAVASCRIPT
-(function addMobileMirrorJS() {
-  console.log('📱 Adding mobile mirror desktop JavaScript...');
+// ADD AGGRESSIVE MOBILE MIRROR SYSTEM
+(function addAggressiveMobileMirror() {
+  console.log('📱 Adding aggressive mobile mirror system...');
 
   const script = document.createElement('script');
-  script.src = 'mobile-mirror-desktop.js';
-  script.id = 'mobile-mirror-js';
+  script.src = 'aggressive-mobile-mirror.js';
+  script.id = 'aggressive-mobile-mirror';
 
   document.head.appendChild(script);
 
-  console.log('✅ Mobile mirror desktop JavaScript loading...');
+  console.log('✅ Aggressive mobile mirror system loading...');
 })();
