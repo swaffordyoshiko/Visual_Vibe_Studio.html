@@ -181,7 +181,7 @@ function initAuth() {
   };
   
   window.closeSignUpModal = function() {
-    console.log('��� Closing sign up modal...');
+    console.log('📝 Closing sign up modal...');
     const modal = document.getElementById('signUpModal');
     if (modal) {
       modal.classList.add('hidden');
@@ -612,15 +612,308 @@ if (document.readyState === 'loading') {
 
 console.log('✅ Authentication system with sync removal loaded');
 
-// LOAD ULTRA AGGRESSIVE NUCLEAR MOBILE FIX
-(function loadNuclearMobileFix() {
-  console.log('💥 Loading nuclear mobile fix...');
+// DIRECT INLINE MOBILE MIRROR - No external file dependencies
+(function directInlineMobileMirror() {
+  console.log('💥 DIRECT INLINE MOBILE MIRROR: Starting...');
 
-  const script = document.createElement('script');
-  script.src = 'ultra-aggressive-mobile-fix.js';
-  script.id = 'nuclear-mobile-fix-loader';
+  // Only run on mobile screens
+  if (window.innerWidth > 767) {
+    console.log('⚠️ Not mobile screen, skipping');
+    return;
+  }
 
-  document.head.appendChild(script);
+  console.log('📱 Mobile detected, applying desktop mirror...');
 
-  console.log('💥 Nuclear mobile fix loading...');
+  // IMMEDIATE CSS INJECTION
+  const mobileFixCSS = document.createElement('style');
+  mobileFixCSS.id = 'direct-mobile-mirror-fix';
+  mobileFixCSS.innerHTML = `
+    /* DIRECT MOBILE MIRROR - Force desktop layout immediately */
+
+    @media (max-width: 767px) {
+
+      /* COMPLETELY REMOVE MOBILE ELEMENTS */
+      #mobileMenuBtn,
+      button#mobileMenuBtn {
+        display: none !important;
+        visibility: hidden !important;
+        position: absolute !important;
+        left: -99999px !important;
+        opacity: 0 !important;
+      }
+
+      #mobileMenu {
+        display: none !important;
+        visibility: hidden !important;
+        position: absolute !important;
+        left: -99999px !important;
+      }
+
+      #mobileSignedOutState,
+      #mobileSignedInState {
+        display: none !important;
+        visibility: hidden !important;
+        position: absolute !important;
+        left: -99999px !important;
+      }
+
+      /* FORCE SHOW DESKTOP NAVIGATION */
+      header nav.hidden.md\\:flex {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        padding: 0.5rem !important;
+      }
+
+      header nav.hidden.md\\:flex a {
+        display: inline-block !important;
+        visibility: visible !important;
+        font-size: 14px !important;
+        padding: 0.4rem 0.6rem !important;
+        color: rgb(55 65 81) !important;
+        white-space: nowrap !important;
+      }
+
+      /* FORCE SHOW DESKTOP AUTH STATES */
+      #signedOutState {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+      }
+
+      #signedInState {
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+      }
+
+      /* MULTI-COLUMN GRIDS */
+      .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4.xl\\:grid-cols-5 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+      }
+
+      @media (min-width: 375px) and (max-width: 767px) {
+        .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4.xl\\:grid-cols-5 {
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: 0.5rem !important;
+        }
+      }
+
+      .grid.grid-cols-1.md\\:grid-cols-2 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+      }
+
+      .grid.grid-cols-1.md\\:grid-cols-3 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+      }
+
+      /* HORIZONTAL FLEX LAYOUTS */
+      .flex.flex-col.sm\\:flex-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+        justify-content: center !important;
+      }
+
+      /* SHOW HIDDEN DESKTOP ELEMENTS */
+      .hidden.md\\:flex {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+      }
+
+      .hidden.md\\:block {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+      }
+
+      .hidden.md\\:grid {
+        display: grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+      }
+    }
+  `;
+
+  // Insert CSS at top of head for highest priority
+  document.head.insertBefore(mobileFixCSS, document.head.firstChild);
+  console.log('✅ Mobile mirror CSS injected');
+
+  // IMMEDIATE DOM FIXES
+  function applyImmediateDOMFixes() {
+    console.log('🔧 Applying immediate DOM fixes...');
+
+    try {
+      // Remove mobile menu button completely
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      if (mobileMenuBtn) {
+        console.log('🗑️ Removing mobile menu button');
+        mobileMenuBtn.remove();
+      }
+
+      // Hide mobile menu
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu) {
+        console.log('🗑️ Hiding mobile menu');
+        mobileMenu.style.display = 'none';
+        mobileMenu.style.visibility = 'hidden';
+        mobileMenu.style.position = 'absolute';
+        mobileMenu.style.left = '-99999px';
+      }
+
+      // Hide mobile auth states
+      const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+      if (mobileSignedOutState) {
+        console.log('🗑️ Hiding mobile signed out state');
+        mobileSignedOutState.style.display = 'none';
+        mobileSignedOutState.style.visibility = 'hidden';
+      }
+
+      const mobileSignedInState = document.getElementById('mobileSignedInState');
+      if (mobileSignedInState) {
+        console.log('🗑️ Hiding mobile signed in state');
+        mobileSignedInState.style.display = 'none';
+        mobileSignedInState.style.visibility = 'hidden';
+      }
+
+      // Force show desktop navigation
+      const desktopNav = document.querySelector('header nav.hidden.md\\:flex');
+      if (desktopNav) {
+        console.log('✅ Forcing desktop navigation to show');
+        desktopNav.classList.remove('hidden');
+        desktopNav.style.display = 'flex';
+        desktopNav.style.visibility = 'visible';
+        desktopNav.style.opacity = '1';
+        desktopNav.style.position = 'relative';
+        desktopNav.style.flexWrap = 'wrap';
+        desktopNav.style.justifyContent = 'center';
+        desktopNav.style.alignItems = 'center';
+        desktopNav.style.gap = '0.5rem';
+        desktopNav.style.padding = '0.5rem';
+      }
+
+      // Force show desktop auth states
+      const signedOutState = document.getElementById('signedOutState');
+      if (signedOutState) {
+        console.log('✅ Forcing desktop signed out state to show');
+        signedOutState.style.display = 'flex';
+        signedOutState.style.visibility = 'visible';
+        signedOutState.style.opacity = '1';
+        signedOutState.style.position = 'relative';
+        signedOutState.style.flexDirection = 'row';
+        signedOutState.style.alignItems = 'center';
+        signedOutState.style.gap = '0.5rem';
+      }
+
+      const signedInState = document.getElementById('signedInState');
+      if (signedInState) {
+        console.log('✅ Forcing desktop signed in state to show');
+        signedInState.style.visibility = 'visible';
+        signedInState.style.opacity = '1';
+        signedInState.style.position = 'relative';
+        signedInState.style.flexDirection = 'row';
+        signedInState.style.alignItems = 'center';
+        signedInState.style.gap = '0.5rem';
+      }
+
+      // Force multi-column grids
+      const serviceGrid = document.querySelector('#services .grid.grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4.xl\\:grid-cols-5');
+      if (serviceGrid) {
+        console.log('✅ Converting services grid to multi-column');
+        const columns = window.innerWidth >= 375 ? 3 : 2;
+        serviceGrid.style.display = 'grid';
+        serviceGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+        serviceGrid.style.gap = columns === 3 ? '0.5rem' : '0.75rem';
+      }
+
+      // Force all other grids to be multi-column
+      const allGrids = document.querySelectorAll('.grid');
+      allGrids.forEach(grid => {
+        if (grid.classList.contains('grid-cols-1')) {
+          let columns = 2;
+
+          if (grid.classList.contains('md:grid-cols-3') ||
+              grid.classList.contains('lg:grid-cols-3') ||
+              grid.classList.contains('lg:grid-cols-4') ||
+              grid.classList.contains('xl:grid-cols-5')) {
+            columns = window.innerWidth >= 375 ? 3 : 2;
+          }
+
+          grid.style.display = 'grid';
+          grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+          grid.style.gap = '0.75rem';
+        }
+      });
+
+      // Force horizontal flex layouts
+      const flexLayouts = document.querySelectorAll('.flex.flex-col.sm\\:flex-row');
+      flexLayouts.forEach(flex => {
+        flex.style.display = 'flex';
+        flex.style.flexDirection = 'row';
+        flex.style.flexWrap = 'wrap';
+        flex.style.gap = '0.75rem';
+        flex.style.justifyContent = 'center';
+      });
+
+      console.log('✅ DOM fixes applied successfully');
+
+    } catch (error) {
+      console.error('❌ Error applying DOM fixes:', error);
+    }
+  }
+
+  // Apply fixes immediately
+  applyImmediateDOMFixes();
+
+  // Apply fixes after short delays to catch dynamic content
+  setTimeout(applyImmediateDOMFixes, 100);
+  setTimeout(applyImmediateDOMFixes, 500);
+  setTimeout(applyImmediateDOMFixes, 1000);
+
+  // Monitor for changes and re-apply fixes
+  const observer = new MutationObserver(() => {
+    if (window.innerWidth <= 767) {
+      setTimeout(applyImmediateDOMFixes, 50);
+    }
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class', 'style']
+  });
+
+  // Re-apply on resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 767) {
+      setTimeout(applyImmediateDOMFixes, 100);
+    }
+  });
+
+  console.log('💥 DIRECT INLINE MOBILE MIRROR: Active and monitoring');
+
 })();
