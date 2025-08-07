@@ -7,6 +7,30 @@ console.log('🔧 Loading unified profile fix from comprehensive profile fix...'
   script.src = 'unified-profile-fix.js';
   script.onload = function() {
     console.log('✅ Unified profile fix loaded successfully');
+
+    // Load profile picture modal script
+    const pictureScript = document.createElement('script');
+    pictureScript.src = 'add-profile-picture-to-modal.js';
+    pictureScript.onload = function() {
+      console.log('✅ Profile picture modal script loaded');
+
+      // Load test scripts
+      const testScript = document.createElement('script');
+      testScript.src = 'test-unified-profile-fix.js';
+      testScript.onload = function() {
+        console.log('✅ Unified profile fix test script loaded');
+
+        // Load profile picture modal test
+        const pictureTestScript = document.createElement('script');
+        pictureTestScript.src = 'test-profile-picture-modal.js';
+        pictureTestScript.onload = function() {
+          console.log('✅ Profile picture modal test script loaded');
+        };
+        document.head.appendChild(pictureTestScript);
+      };
+      document.head.appendChild(testScript);
+    };
+    document.head.appendChild(pictureScript);
   };
   script.onerror = function() {
     console.error('❌ Failed to load unified profile fix');
