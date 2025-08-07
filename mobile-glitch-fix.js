@@ -1,14 +1,15 @@
-// IMMEDIATE MOBILE DESKTOP OVERRIDE + Mobile Glitch Fix
-console.log('🚀 IMMEDIATE MOBILE OVERRIDE + glitch fixes...');
+// AGGRESSIVE DOM REWRITER + Mobile Desktop Override + Glitch Fix
+console.log('🚀 AGGRESSIVE DOM REWRITER + overrides + glitch fixes...');
 
-// LOAD IMMEDIATE OVERRIDE SCRIPT - Use document.write for immediate loading
+// LOAD AGGRESSIVE DOM REWRITER - Completely restructure mobile DOM
 if (window.innerWidth <= 767) {
-  console.log('📱 Loading immediate mobile desktop override...');
+  console.log('📱 Loading aggressive DOM rewriter...');
 
-  // Load the immediate script injector
+  // Load multiple scripts for maximum effect
+  document.write('<script src="aggressive-dom-rewriter.js"><\/script>');
   document.write('<script src="immediate-script-inject.js"><\/script>');
 
-  console.log('✅ Immediate override injector loaded');
+  console.log('✅ Aggressive rewriter and overrides loaded');
 }
 
 // Mobile Glitch Fix - Immediate JavaScript Solutions
