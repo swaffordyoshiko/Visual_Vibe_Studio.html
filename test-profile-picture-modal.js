@@ -130,19 +130,21 @@ function displayTestResults(results) {
   if (passedTests === totalTests) {
     console.log('✅ All profile picture modal tests passed!');
     
-    if (window.toastManager) {
-      window.toastManager.success(`Profile picture modal test passed! ${passedTests}/${totalTests} ✅`, { duration: 4000 });
-    } else {
-      alert(`Profile picture modal test passed! ${passedTests}/${totalTests} tests passed ✅`);
-    }
+    // Notifications disabled to prevent spam to end users
+    // if (window.toastManager) {
+    //   window.toastManager.success(`Profile picture modal test passed! ${passedTests}/${totalTests} ✅`, { duration: 4000 });
+    // } else {
+    //   alert(`Profile picture modal test passed! ${passedTests}/${totalTests} tests passed ✅`);
+    // }
   } else if (passedTests >= totalTests * 0.7) {
     console.log(`⚠️ Most profile picture modal tests passed. ${passedTests}/${totalTests} tests passed.`);
     
-    if (window.toastManager) {
-      window.toastManager.warning(`Profile picture modal test: ${passedTests}/${totalTests} passed ⚠️`, { duration: 4000 });
-    } else {
-      alert(`Profile picture modal test: ${passedTests}/${totalTests} tests passed ⚠️`);
-    }
+    // Notifications disabled to prevent spam to end users
+    // if (window.toastManager) {
+    //   window.toastManager.warning(`Profile picture modal test: ${passedTests}/${totalTests} passed ⚠️`, { duration: 4000 });
+    // } else {
+    //   alert(`Profile picture modal test: ${passedTests}/${totalTests} tests passed ⚠️`);
+    // }
   } else {
     console.log(`❌ Many profile picture modal tests failed. ${passedTests}/${totalTests} tests passed.`);
     
