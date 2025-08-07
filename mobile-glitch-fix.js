@@ -1,164 +1,299 @@
-// DIRECT INLINE MOBILE DESKTOP MIRROR - Force mobile to mirror desktop immediately
-console.log('🚀 DIRECT INLINE MOBILE MIRROR: Starting...');
+// MOBILE DESKTOP MIRROR CSS INJECTION - Force mobile to mirror desktop layout
+console.log('🚀 MOBILE DESKTOP MIRROR CSS: Injecting comprehensive CSS...');
 
-// Execute mobile to desktop transformation immediately on mobile devices
-if (window.innerWidth <= 767) {
-  console.log('📱 Mobile detected - executing direct transformation...');
+// Inject comprehensive CSS to force mobile to mirror desktop
+(function() {
+  console.log('📱 Injecting mobile desktop mirror CSS...');
 
-  // IMMEDIATE DOM TRANSFORMATION
-  (function() {
-    console.log('🔧 Executing immediate mobile layout transformation...');
+  const mobileMirrorCSS = document.createElement('style');
+  mobileMirrorCSS.id = 'mobile-desktop-mirror-css';
+  mobileMirrorCSS.innerHTML = `
+/* MOBILE DESKTOP MIRROR - Force mobile to mirror desktop layout */
+@media screen and (max-width: 767px) {
 
-    function transformToDesktop() {
-      try {
-        // Remove mobile menu button
-        const mobileBtn = document.querySelector('#mobileMenuBtn, button[onclick*="toggleMobileMenu"]');
-        if (mobileBtn) {
-          mobileBtn.remove();
-          console.log('✅ Mobile menu button removed');
-        }
+  /* HIDE all mobile elements */
+  #mobileMenuBtn,
+  button[onclick*="toggleMobileMenu"],
+  .md\\:hidden button {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -99999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+  }
 
-        // Remove mobile menu
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenu) {
-          mobileMenu.remove();
-          console.log('✅ Mobile menu removed');
-        }
+  #mobileMenu,
+  .md\\:hidden.absolute {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -99999px !important;
+    pointer-events: none !important;
+  }
 
-        // Force show desktop navigation
-        const desktopNav = document.querySelector('nav.hidden, nav[class*="hidden"]');
-        if (desktopNav) {
-          desktopNav.classList.remove('hidden');
-          desktopNav.classList.add('flex');
-          desktopNav.style.cssText = `
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            flex-wrap: wrap !important;
-            justify-content: center !important;
-            align-items: center !important;
-            gap: 1rem !important;
-            padding: 0.5rem !important;
-          `;
-          console.log('✅ Desktop navigation shown');
-        }
+  #mobileSignedOutState,
+  #mobileSignedInState {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -99999px !important;
+    pointer-events: none !important;
+  }
 
-        // Remove mobile auth states
-        const mobileAuthElements = ['mobileSignedOutState', 'mobileSignedInState'];
-        mobileAuthElements.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.remove();
-            console.log(`✅ ${id} removed`);
-          }
-        });
+  /* FORCE show desktop navigation */
+  nav.hidden,
+  nav.md\\:flex,
+  .hidden.md\\:flex,
+  nav[class*="hidden"][class*="md:flex"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
 
-        // Show desktop auth states
-        const desktopAuthElements = ['signedOutState', 'signedInState'];
-        desktopAuthElements.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.style.cssText = `
-              display: flex !important;
-              visibility: visible !important;
-              opacity: 1 !important;
-            `;
-            console.log(`✅ ${id} shown`);
-          }
-        });
+  nav.hidden a,
+  nav.md\\:flex a,
+  .hidden.md\\:flex a,
+  nav[class*="hidden"] a {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 14px !important;
+    padding: 0.5rem 0.75rem !important;
+    white-space: nowrap !important;
+    color: rgb(55, 65, 81) !important;
+    text-decoration: none !important;
+    border-radius: 0.375rem !important;
+    transition: all 0.2s !important;
+  }
 
-        // Transform grids to desktop layout
-        const grids = document.querySelectorAll('.grid-cols-1');
-        grids.forEach((grid, index) => {
-          const classes = grid.className;
-          if (classes.includes('md:grid-cols-2')) {
-            grid.classList.remove('grid-cols-1');
-            grid.classList.add('grid-cols-2');
-            grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-            grid.style.gap = '1rem';
-          } else if (classes.includes('md:grid-cols-3') || classes.includes('lg:grid-cols-3')) {
-            grid.classList.remove('grid-cols-1');
-            const cols = window.innerWidth >= 375 ? 3 : 2;
-            grid.classList.add(`grid-cols-${cols}`);
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            grid.style.gap = '0.75rem';
-          }
-          console.log(`✅ Grid ${index + 1} transformed`);
-        });
+  nav.hidden a:hover,
+  nav.md\\:flex a:hover,
+  .hidden.md\\:flex a:hover {
+    color: rgb(79, 70, 229) !important;
+    background-color: rgba(79, 70, 229, 0.1) !important;
+  }
 
-        // Show hidden desktop elements
-        const hiddenElements = document.querySelectorAll('.hidden.md\\:block, .hidden.md\\:flex, .hidden.lg\\:block, .hidden.lg\\:flex');
-        hiddenElements.forEach((el, index) => {
-          el.classList.remove('hidden');
-          const isFlexElement = el.className.includes('flex');
-          el.style.cssText = `
-            display: ${isFlexElement ? 'flex' : 'block'} !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-          `;
-          console.log(`✅ Hidden element ${index + 1} shown`);
-        });
+  /* FORCE show desktop auth states */
+  #signedOutState,
+  #signedInState {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+  }
 
-        // Transform flex layouts
-        const flexLayouts = document.querySelectorAll('.flex-col.md\\:flex-row, .flex-col.sm\\:flex-row');
-        flexLayouts.forEach((el, index) => {
-          el.classList.remove('flex-col');
-          el.classList.add('flex-row');
-          el.style.cssText = `
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 0.75rem !important;
-            justify-content: center !important;
-          `;
-          console.log(`✅ Flex layout ${index + 1} transformed`);
-        });
+  /* FIX logo sizing */
+  img[alt*="Visual Vibe Studio Logo"],
+  img[alt*="Logo"] {
+    height: 2rem !important;
+    width: 2rem !important;
+    max-height: 2rem !important;
+    max-width: 2rem !important;
+    object-fit: contain !important;
+  }
 
-        console.log('✅ Desktop transformation complete');
-      } catch (error) {
-        console.error('❌ Transformation error:', error);
-      }
+  /* FIX header layout */
+  header .max-w-7xl {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    padding: 0 1rem !important;
+  }
+
+  /* FIX title sizing */
+  h1.text-lg {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* SHOW all hidden desktop elements */
+  .hidden.md\\:block {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .hidden.md\\:flex {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .hidden.md\\:grid {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .hidden.lg\\:block {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .hidden.lg\\:flex {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* FORCE desktop grid layouts */
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  .grid.grid-cols-1.md\\:grid-cols-3,
+  .grid.grid-cols-1.lg\\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Larger mobile screens get more columns */
+  @media screen and (min-width: 375px) and (max-width: 767px) {
+    .grid.grid-cols-1.md\\:grid-cols-3,
+    .grid.grid-cols-1.lg\\:grid-cols-3,
+    .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 0.5rem !important;
     }
+  }
 
-    // Apply desktop CSS
-    const css = document.createElement('style');
-    css.innerHTML = `
-      @media screen and (max-width: 767px) {
-        .md\\:hidden { display: none !important; }
-        nav { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; gap: 1rem !important; }
-        nav a { font-size: 14px !important; padding: 0.5rem 0.75rem !important; }
-        .flex-col { flex-direction: row !important; flex-wrap: wrap !important; gap: 0.75rem !important; justify-content: center !important; }
-        .grid-cols-1 { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
-        @media (min-width: 375px) { .grid-cols-1 { grid-template-columns: repeat(3, 1fr) !important; } }
-        section { padding: 3rem 1rem !important; }
-        html, body { overflow-x: hidden !important; }
-        button { padding: 0.75rem 1.5rem !important; font-size: 14px !important; }
-      }
-    `;
-    document.head.appendChild(css);
+  /* FORCE horizontal flex layouts */
+  .flex.flex-col.sm\\:flex-row,
+  .flex.flex-col.md\\:flex-row {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
 
-    // Execute transformation
-    transformToDesktop();
-    setTimeout(transformToDesktop, 100);
-    setTimeout(transformToDesktop, 500);
+  /* DESKTOP text sizing */
+  .text-3xl.sm\\:text-4xl.md\\:text-5xl.lg\\:text-6xl {
+    font-size: 2rem !important;
+    line-height: 2.25rem !important;
+  }
 
-    // Monitor for changes
-    if (document.body) {
-      const observer = new MutationObserver(() => {
-        const mobileBtn = document.getElementById('mobileMenuBtn');
-        if (mobileBtn) {
-          setTimeout(transformToDesktop, 100);
-        }
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
+  .text-lg.sm\\:text-xl.md\\:text-2xl {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
 
-    window.forceMobileDesktopMirror = transformToDesktop;
-    console.log('✅ Mobile desktop mirror active');
-  })();
+  /* DESKTOP section spacing */
+  section {
+    padding: 3rem 1rem !important;
+  }
 
-} else {
-  console.log('⚠️ Desktop detected, skipping mobile transformation');
+  .py-12 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .py-16 {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  /* DESKTOP button styling */
+  button {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 14px !important;
+    border-radius: 0.5rem !important;
+    white-space: nowrap !important;
+    font-weight: 500 !important;
+  }
+
+  /* PREVENT overflow */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  /* HIDE md:hidden elements */
+  .md\\:hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -99999px !important;
+    pointer-events: none !important;
+  }
 }
+
+/* Larger mobile adjustments */
+@media screen and (min-width: 375px) and (max-width: 767px) {
+  nav.hidden a,
+  nav.md\\:flex a,
+  .hidden.md\\:flex a {
+    font-size: 15px !important;
+    padding: 0.5rem 1rem !important;
+  }
+
+  h1.text-lg {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+
+  .text-3xl.sm\\:text-4xl.md\\:text-5xl.lg\\:text-6xl {
+    font-size: 2.5rem !important;
+    line-height: 2.75rem !important;
+  }
+}
+
+/* Large mobile adjustments */
+@media screen and (min-width: 425px) and (max-width: 767px) {
+  nav.hidden a,
+  nav.md\\:flex a,
+  .hidden.md\\:flex a {
+    font-size: 16px !important;
+    padding: 0.75rem 1.25rem !important;
+  }
+
+  h1.text-lg {
+    font-size: 1.75rem !important;
+    line-height: 2.25rem !important;
+  }
+
+  .text-3xl.sm\\:text-4xl.md\\:text-5xl.lg\\:text-6xl {
+    font-size: 3rem !important;
+    line-height: 3.25rem !important;
+  }
+
+  section {
+    padding: 4rem 1.5rem !important;
+  }
+}
+  `;
+
+  // Inject CSS immediately
+  document.head.appendChild(mobileMirrorCSS);
+  console.log('✅ Mobile desktop mirror CSS injected');
+
+})();
 
 // Mobile Glitch Fix - Immediate JavaScript Solutions
 console.log('🔧 Loading mobile glitch fixes...');
