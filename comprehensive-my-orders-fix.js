@@ -422,13 +422,17 @@ console.log('📋 Loading comprehensive My Orders fix...');
     
     switch (item.type) {
       case 'order':
+        // Get a reliable identifier for the order
+        const orderId = item.orderNumber || item.id || `order-${Date.now()}`;
+        console.log('📋 Displaying order with ID:', orderId, 'Original item:', item);
+
         return `
-          <div class="border rounded-lg p-4 bg-blue-50 border-blue-200">
+          <div class="border rounded-lg p-4 bg-blue-50 border-blue-200" data-order-id="${orderId}">
             <div class="flex justify-between items-start mb-3">
               <div>
                 <h4 class="font-semibold text-gray-800 flex items-center">
                   <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded mr-2">ORDER</span>
-                  #${item.orderNumber || 'N/A'}
+                  #${item.orderNumber || item.id || 'N/A'}
                 </h4>
                 <p class="text-sm text-gray-500">${date}</p>
               </div>
@@ -436,8 +440,9 @@ console.log('📋 Loading comprehensive My Orders fix...');
                 <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   Complete
                 </span>
-                <button onclick="deleteOrder('${item.orderNumber || item.id}')"
-                        class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors">
+                <button onclick="deleteOrder('${orderId}')"
+                        class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                        title="Delete order #${orderId}">
                   🗑️ Delete
                 </button>
               </div>
@@ -460,6 +465,10 @@ console.log('📋 Loading comprehensive My Orders fix...');
                 <p class="text-sm font-medium text-gray-600">Due Date:</p>
                 <p class="text-gray-800">${item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'TBD'}</p>
               </div>
+            </div>
+
+            <div class="mt-2 text-xs text-gray-500">
+              Order ID: ${orderId} | Internal ID: ${item.id || 'N/A'}
             </div>
           </div>
         `;
@@ -588,7 +597,9 @@ console.log('📋 Loading comprehensive My Orders fix...');
   
   // DELETE FUNCTIONALITY FOR ORDERS AND REVIEWS
   window.deleteOrder = function(orderNumber) {
-    if (!orderNumber || orderNumber === 'N/A') {
+    console.log('🗑️ Delete order called with:', orderNumber);
+
+    if (!orderNumber || orderNumber === 'N/A' || orderNumber === 'undefined') {
       alert('Cannot delete order: Invalid order number');
       return;
     }
@@ -598,26 +609,44 @@ console.log('📋 Loading comprehensive My Orders fix...');
     }
 
     try {
-      console.log('🗑️ Deleting order:', orderNumber);
+      console.log('🗑️ Starting order deletion process for:', orderNumber);
+      let deletionCount = 0;
 
       // Delete from user account orders
       const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
       const userIndex = users.findIndex(u => u.id === window.currentUser.id);
       if (userIndex !== -1 && users[userIndex].orders) {
-        users[userIndex].orders = users[userIndex].orders.filter(order =>
-          order.orderNumber !== orderNumber && order.id !== orderNumber
-        );
-        localStorage.setItem('visualVibeUsers', JSON.stringify(users));
-        console.log('✅ Order deleted from user account');
+        const originalLength = users[userIndex].orders.length;
+        users[userIndex].orders = users[userIndex].orders.filter(order => {
+          const matches = order.orderNumber === orderNumber ||
+                         order.id === orderNumber ||
+                         order.orderNumber === String(orderNumber) ||
+                         order.id === String(orderNumber);
+          console.log('🔍 Checking order:', { orderNumber: order.orderNumber, id: order.id, matches });
+          return !matches;
+        });
+
+        if (users[userIndex].orders.length < originalLength) {
+          localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+          deletionCount++;
+          console.log('✅ Order deleted from user account');
+        }
       }
 
       // Delete from pending orders
       const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
-      const filteredPending = pendingOrders.filter(order =>
-        order.orderNumber !== orderNumber && order.id !== orderNumber
-      );
-      if (filteredPending.length !== pendingOrders.length) {
+      const originalPendingLength = pendingOrders.length;
+      const filteredPending = pendingOrders.filter(order => {
+        const matches = order.orderNumber === orderNumber ||
+                       order.id === orderNumber ||
+                       order.orderNumber === String(orderNumber) ||
+                       order.id === String(orderNumber);
+        return !matches;
+      });
+
+      if (filteredPending.length < originalPendingLength) {
         localStorage.setItem('pendingOrders', JSON.stringify(filteredPending));
+        deletionCount++;
         console.log('✅ Order deleted from pending orders');
       }
 
@@ -626,34 +655,84 @@ console.log('📋 Loading comprehensive My Orders fix...');
       otherOrderKeys.forEach(key => {
         try {
           const stored = JSON.parse(localStorage.getItem(key) || '[]');
-          const filtered = stored.filter(order =>
-            order.orderNumber !== orderNumber && order.id !== orderNumber
-          );
-          if (filtered.length !== stored.length) {
+          const originalLength = stored.length;
+          const filtered = stored.filter(order => {
+            const matches = order.orderNumber === orderNumber ||
+                           order.id === orderNumber ||
+                           order.orderNumber === String(orderNumber) ||
+                           order.id === String(orderNumber);
+            return !matches;
+          });
+
+          if (filtered.length < originalLength) {
             localStorage.setItem(key, JSON.stringify(filtered));
+            deletionCount++;
             console.log(`✅ Order deleted from ${key}`);
           }
         } catch (e) {
-          // Ignore errors for optional storage
+          console.log(`⚠️ Error checking ${key}:`, e.message);
         }
       });
 
-      // Show success message
-      if (window.toastManager) {
-        window.toastManager.success('Order deleted successfully!');
-      } else {
-        alert('Order deleted successfully!');
+      console.log(`📊 Total deletions made: ${deletionCount}`);
+
+      // Immediately hide the order visually for instant feedback
+      const orderElement = document.querySelector(`[data-order-id="${orderNumber}"]`);
+      if (orderElement) {
+        orderElement.style.opacity = '0.5';
+        orderElement.style.pointerEvents = 'none';
+        const deleteBtn = orderElement.querySelector('button');
+        if (deleteBtn) {
+          deleteBtn.textContent = '🔄 Deleting...';
+          deleteBtn.disabled = true;
+        }
       }
 
-      // Force refresh the My Orders display immediately
-      console.log('🔄 Refreshing My Orders display after order deletion...');
-      setTimeout(() => {
-        // Close and reopen the modal to force a complete refresh
-        const modal = document.getElementById('orderHistoryModal');
-        if (modal && !modal.classList.contains('hidden')) {
-          window.showOrderHistory();
+      if (deletionCount > 0) {
+        // Show success message
+        if (window.toastManager) {
+          window.toastManager.success(`Order #${orderNumber} deleted successfully!`);
+        } else {
+          alert(`Order #${orderNumber} deleted successfully!`);
         }
-      }, 100);
+
+        // Completely remove the element from DOM immediately
+        if (orderElement) {
+          orderElement.style.transform = 'translateX(-100%)';
+          orderElement.style.transition = 'all 0.3s ease';
+          setTimeout(() => {
+            orderElement.remove();
+          }, 300);
+        }
+
+        // Also refresh the display after animation
+        setTimeout(() => {
+          console.log('🔄 Refreshing My Orders display after deletion...');
+          const modal = document.getElementById('orderHistoryModal');
+          if (modal && !modal.classList.contains('hidden')) {
+            window.showOrderHistory();
+          }
+        }, 500);
+
+      } else {
+        // Restore visual state if deletion failed
+        if (orderElement) {
+          orderElement.style.opacity = '1';
+          orderElement.style.pointerEvents = 'auto';
+          const deleteBtn = orderElement.querySelector('button');
+          if (deleteBtn) {
+            deleteBtn.textContent = '🗑️ Delete';
+            deleteBtn.disabled = false;
+          }
+        }
+
+        console.log('⚠️ No orders were found to delete');
+        if (window.toastManager) {
+          window.toastManager.warning('Order not found or already deleted');
+        } else {
+          alert('Order not found or already deleted');
+        }
+      }
 
     } catch (error) {
       console.error('❌ Error deleting order:', error);
@@ -734,6 +813,47 @@ console.log('📋 Loading comprehensive My Orders fix...');
       console.error('❌ Error deleting review:', error);
       alert('Error deleting review. Please try again.');
     }
+  };
+
+  // DEBUG FUNCTION TO CHECK ALL ORDERS IN STORAGE
+  window.debugOrderStorage = function() {
+    console.log('🐛 DEBUG: Checking all order storage locations...');
+
+    if (!window.currentUser) {
+      console.log('❌ No current user signed in');
+      return;
+    }
+
+    console.log('👤 Current user:', window.currentUser);
+
+    // Check user account orders
+    const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+    const user = users.find(u => u.id === window.currentUser.id);
+    if (user && user.orders) {
+      console.log('📦 User account orders:', user.orders);
+    } else {
+      console.log('📦 No orders in user account');
+    }
+
+    // Check pending orders
+    const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+    const userPendingOrders = pendingOrders.filter(order =>
+      order.email === window.currentUser.email || order.phone === window.currentUser.phone
+    );
+    console.log('⏳ Pending orders for user:', userPendingOrders);
+
+    // Check other storage locations
+    const otherKeys = ['visualVibeOrders', 'customerOrders', 'orders'];
+    otherKeys.forEach(key => {
+      try {
+        const stored = JSON.parse(localStorage.getItem(key) || '[]');
+        if (stored.length > 0) {
+          console.log(`📊 ${key}:`, stored);
+        }
+      } catch (e) {
+        console.log(`📊 ${key}: Error reading`);
+      }
+    });
   };
 
   // Initialize after delay to override other scripts
