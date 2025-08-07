@@ -32,13 +32,21 @@ console.log('🔧 Loading unified profile fix from comprehensive profile fix...'
           comprehensiveOrdersScript.onload = function() {
             console.log('✅ Comprehensive My Orders fix loaded - overrides all other order scripts');
 
-            // Load profile picture modal test
-            const pictureTestScript = document.createElement('script');
-            pictureTestScript.src = 'test-profile-picture-modal.js';
-            pictureTestScript.onload = function() {
-              console.log('✅ Profile picture modal test script loaded');
+            // Load debug script for My Orders
+            const debugScript = document.createElement('script');
+            debugScript.src = 'debug-my-orders.js';
+            debugScript.onload = function() {
+              console.log('✅ My Orders debug script loaded');
+
+              // Load profile picture modal test
+              const pictureTestScript = document.createElement('script');
+              pictureTestScript.src = 'test-profile-picture-modal.js';
+              pictureTestScript.onload = function() {
+                console.log('✅ Profile picture modal test script loaded');
+              };
+              document.head.appendChild(pictureTestScript);
             };
-            document.head.appendChild(pictureTestScript);
+            document.head.appendChild(debugScript);
           };
           document.head.appendChild(comprehensiveOrdersScript);
         };
