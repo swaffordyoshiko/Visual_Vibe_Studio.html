@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Modal Existence Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4">
+      <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Profile Modal Existence Test</h1>
+      
+      <!-- Error Status -->
+      <div class="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+        <h3 class="text-lg font-bold text-red-800 mb-4">❌ Error to Fix</h3>
+        <p class="text-red-700">Profile modal not found</p>
+      </div>
+      
+      <!-- Test Controls -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-6">Test Controls</h2>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <button onclick="checkModalExists()" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700">
+            Check Modal Exists
+          </button>
+          <button onclick="setupUser()" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700">
+            Setup Test User
+          </button>
+          <button onclick="testOpenModal()" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700">
+            👤 Test Open Modal
+          </button>
+          <button onclick="forceCreateModal()" class="bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700">
+            Force Create Modal
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <button onclick="removeModal()" class="bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700">
+            Remove Modal (Test)
+          </button>
+          <button onclick="runFullTest()" class="bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-3 rounded-lg hover:from-green-700 hover:to-blue-700 font-semibold">
+            🧪 Run Full Test
+          </button>
+        </div>
+      </div>
+      
+      <!-- Modal Status -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4">Modal Status</h3>
+        <div id="modalStatus" class="space-y-2 text-sm font-mono">
+          <div>Checking...</div>
+        </div>
+      </div>
+      
+      <!-- Test Results -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-semibold mb-4">Test Results</h3>
+        <div id="testLog" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm h-48 overflow-y-auto">
+          <div class="text-cyan-400">Modal existence test ready...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const colors = {
+        info: 'text-cyan-400',
+        success: 'text-green-400', 
+        error: 'text-red-400',
+        warning: 'text-yellow-400'
+      };
+      
+      const logEntry = `[${timestamp}] ${message}`;
+      
+      const logElement = document.getElementById('testLog');
+      logElement.innerHTML += `<div class="${colors[type] || colors.info}">${logEntry}</div>`;
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+    
+    function updateModalStatus() {
+      const statusEl = document.getElementById('modalStatus');
+      const modal = document.getElementById('profileModal');
+      const form = document.getElementById('profileForm');
+      
+      let status = '';
+      if (modal) {
+        status += `<div class="text-green-600">✅ Profile Modal: EXISTS</div>`;
+        status += `<div>Classes: ${modal.className}</div>`;
+        status += `<div>Display: ${modal.style.display || 'default'}</div>`;
+        
+        if (form) {
+          status += `<div class="text-green-600">✅ Profile Form: EXISTS</div>`;
+        } else {
+          status += `<div class="text-red-600">❌ Profile Form: MISSING</div>`;
+        }
+      } else {
+        status += `<div class="text-red-600">❌ Profile Modal: NOT FOUND</div>`;
+      }
+      
+      status += `<div>Fix Loaded: ${window.profileModalExistenceFix ? 'YES' : 'NO'}</div>`;
+      status += `<div>Current User: ${window.currentUser ? window.currentUser.name : 'None'}</div>`;
+      
+      statusEl.innerHTML = status;
+    }
+    
+    function checkModalExists() {
+      log('🔍 Checking if profile modal exists...', 'info');
+      
+      const modal = document.getElementById('profileModal');
+      if (modal) {
+        log('✅ Profile modal found!', 'success');
+        
+        // Check key elements
+        const form = document.getElementById('profileForm');
+        const firstName = document.getElementById('profileFirstName');
+        const lastName = document.getElementById('profileLastName');
+        
+        if (form) log('✅ Profile form found', 'success');
+        else log('❌ Profile form missing', 'error');
+        
+        if (firstName) log('✅ First name field found', 'success');
+        else log('❌ First name field missing', 'error');
+        
+        if (lastName) log('✅ Last name field found', 'success');
+        else log('❌ Last name field missing', 'error');
+        
+      } else {
+        log('❌ Profile modal NOT found', 'error');
+      }
+      
+      updateModalStatus();
+    }
+    
+    function setupUser() {
+      window.currentUser = {
+        id: 'test_user',
+        email: 'test@modaltest.com',
+        firstName: 'Modal',
+        lastName: 'Tester',
+        name: 'Modal Tester'
+      };
+      
+      log('✅ Test user setup complete', 'success');
+      updateModalStatus();
+    }
+    
+    function testOpenModal() {
+      if (!window.currentUser) {
+        log('❌ Please setup user first', 'error');
+        return;
+      }
+      
+      log('🧪 Testing modal open...', 'info');
+      
+      // Simulate user click
+      const event = new MouseEvent('click', { bubbles: true });
+      const button = document.createElement('button');
+      button.textContent = 'Edit Profile';
+      button.onclick = () => openProfileModal();
+      document.body.appendChild(button);
+      button.dispatchEvent(event);
+      
+      setTimeout(() => {
+        try {
+          const result = openProfileModal();
+          
+          if (result === false) {
+            log('⚠️ Modal open blocked (expected if no user click)', 'warning');
+          } else {
+            const modal = document.getElementById('profileModal');
+            if (modal && !modal.classList.contains('hidden')) {
+              log('✅ Modal opened successfully', 'success');
+              
+              // Close it after a moment
+              setTimeout(() => {
+                closeProfileModal();
+                log('✅ Modal closed successfully', 'success');
+              }, 2000);
+            } else {
+              log('❌ Modal failed to open', 'error');
+            }
+          }
+        } catch (error) {
+          log(`❌ Error opening modal: ${error.message}`, 'error');
+        }
+        
+        document.body.removeChild(button);
+        updateModalStatus();
+      }, 100);
+    }
+    
+    function forceCreateModal() {
+      log('🔧 Force creating profile modal...', 'info');
+      
+      // Remove existing modal if any
+      const existingModal = document.getElementById('profileModal');
+      if (existingModal) {
+        existingModal.remove();
+        log('🗑️ Removed existing modal', 'info');
+      }
+      
+      // Trigger modal creation
+      if (window.profileModalExistenceFix && typeof window.ensureProfileModalExists === 'function') {
+        window.ensureProfileModalExists();
+      } else {
+        // Manual creation as fallback
+        const modal = document.createElement('div');
+        modal.id = 'profileModal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4';
+        modal.innerHTML = '<div class="bg-white p-6 rounded-lg"><h3>Profile Modal</h3><div id="profileForm">Form Content</div></div>';
+        document.body.appendChild(modal);
+      }
+      
+      setTimeout(() => {
+        checkModalExists();
+      }, 100);
+    }
+    
+    function removeModal() {
+      log('🗑️ Removing modal (for testing)...', 'warning');
+      
+      const modal = document.getElementById('profileModal');
+      if (modal) {
+        modal.remove();
+        log('✅ Modal removed', 'warning');
+      } else {
+        log('⚠️ No modal to remove', 'warning');
+      }
+      
+      updateModalStatus();
+    }
+    
+    function runFullTest() {
+      log('🚀 Running full modal existence test...', 'info');
+      
+      setTimeout(() => {
+        checkModalExists();
+        setTimeout(() => {
+          setupUser();
+          setTimeout(() => {
+            removeModal();
+            setTimeout(() => {
+              forceCreateModal();
+              setTimeout(() => {
+                testOpenModal();
+                setTimeout(() => {
+                  log('🎉 Full test completed!', 'success');
+                }, 3000);
+              }, 1000);
+            }, 1000);
+          }, 1000);
+        }, 500);
+      }, 500);
+    }
+    
+    // Initialize
+    log('🎯 Modal existence test initialized');
+    updateModalStatus();
+    
+    // Update status every 3 seconds
+    setInterval(updateModalStatus, 3000);
+    
+    // Check if fix loaded
+    setTimeout(() => {
+      if (window.profileModalExistenceFix) {
+        log('✅ Profile modal existence fix loaded', 'success');
+      } else {
+        log('❌ Profile modal existence fix not loaded', 'error');
+      }
+      
+      // Initial check
+      checkModalExists();
+    }, 1000);
+    
+  </script>
+  
+  <!-- Load the fix -->
+  <script src="profile-modal-existence-fix.js"></script>
+  
+</body>
+</html>
