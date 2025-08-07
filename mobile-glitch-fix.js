@@ -1,15 +1,19 @@
-// FORCE DESKTOP CLASSES + MOBILE DESKTOP MIRROR - Complete solution
-console.log('🚀 FORCE DESKTOP CLASSES + CSS MIRROR: Starting complete solution...');
+// ULTIMATE MOBILE OVERRIDE - Direct CSS injection using document.write
+console.log('🚀 ULTIMATE MOBILE OVERRIDE: Starting direct CSS injection...');
 
-// Load force desktop classes script immediately on mobile
+// Only run on mobile devices
 if (window.innerWidth <= 767) {
-  console.log('📱 Loading force desktop classes script...');
-  document.write('<script src="force-desktop-classes.js"><\/script>');
-  console.log('✅ Force desktop classes script loaded');
+  console.log('📱 Mobile detected - injecting ultimate override CSS...');
+
+  // Use document.write to inject CSS immediately with highest priority
+  document.write('<link rel="stylesheet" href="ultimate-mobile-override.css">');
+  console.log('✅ Ultimate mobile override CSS injected via document.write');
+} else {
+  console.log('⚠️ Desktop detected, skipping mobile override');
 }
 
-// MOBILE DESKTOP MIRROR CSS INJECTION - Force mobile to mirror desktop layout
-console.log('🚀 MOBILE DESKTOP MIRROR CSS: Injecting comprehensive CSS...');
+// ADDITIONAL CSS INJECTION - Fallback method
+console.log('🔧 Injecting additional CSS as fallback...');
 
 // Inject comprehensive CSS to force mobile to mirror desktop
 (function() {
