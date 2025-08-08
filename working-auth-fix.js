@@ -98,25 +98,37 @@ window.handleSignIn = function(e) {
     const password = passwordInput.value.trim();
     
     if (!email || !password) {
-        alert('Please enter both email and password.');
+        if (window.showError) {
+            window.showError('Please enter both email and password.');
+        } else {
+            alert('Please enter both email and password.');
+        }
         return;
     }
-    
+
     // Find existing user
     const user = AuthManager.findUser(email);
     if (!user) {
-        alert('No account found with this email. Please sign up first.');
+        if (window.showError) {
+            window.showError('No account found with this email. Please sign up first.');
+        } else {
+            alert('No account found with this email. Please sign up first.');
+        }
         return;
     }
-    
+
     if (user.password !== password) {
-        alert('Incorrect password. Please try again.');
+        if (window.showError) {
+            window.showError('Incorrect password. Please try again.');
+        } else {
+            alert('Incorrect password. Please try again.');
+        }
         return;
     }
     
     // Successful sign in
     const sessionUser = AuthManager.setCurrentUser(user);
-    
+
     // Update last activity
     user.lastActivity = new Date().toISOString();
     const users = AuthManager.getAllUsers();
@@ -125,15 +137,20 @@ window.handleSignIn = function(e) {
         users[userIndex] = user;
         AuthManager.saveAllUsers(users);
     }
-    
+
     // Close modal and update UI
     if (typeof window.hideSignInModal === 'function') {
         window.hideSignInModal();
     }
-    
+
     window.updateAuthUI(true, sessionUser.name);
-    
-    alert(`Welcome back, ${sessionUser.name}!`);
+
+    // Use modern notification
+    if (window.showWelcome) {
+        window.showWelcome(`Welcome back, ${sessionUser.name}!`);
+    } else {
+        alert(`Welcome back, ${sessionUser.name}!`);
+    }
     console.log('✅ Sign in successful for:', sessionUser.email);
 };
 
@@ -159,23 +176,39 @@ window.handleSignUp = function(e) {
     
     // Validation
     if (!name || !email || !password || !confirmPassword) {
-        alert('Please fill in all fields.');
+        if (window.showError) {
+            window.showError('Please fill in all fields.');
+        } else {
+            alert('Please fill in all fields.');
+        }
         return;
     }
-    
+
     if (password.length < 6) {
-        alert('Password must be at least 6 characters long.');
+        if (window.showError) {
+            window.showError('Password must be at least 6 characters long.');
+        } else {
+            alert('Password must be at least 6 characters long.');
+        }
         return;
     }
-    
+
     if (password !== confirmPassword) {
-        alert('Passwords do not match.');
+        if (window.showError) {
+            window.showError('Passwords do not match.');
+        } else {
+            alert('Passwords do not match.');
+        }
         return;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
+        if (window.showError) {
+            window.showError('Please enter a valid email address.');
+        } else {
+            alert('Please enter a valid email address.');
+        }
         return;
     }
     
@@ -197,8 +230,12 @@ window.handleSignUp = function(e) {
             const filteredUsers = users.filter(u => u.email.toLowerCase() !== email);
             AuthManager.saveAllUsers(filteredUsers);
         } else {
-            alert('An account already exists with this email. Please sign in instead.');
-            
+            if (window.showWarning) {
+                window.showWarning('An account already exists with this email. Please sign in instead.');
+            } else {
+                alert('An account already exists with this email. Please sign in instead.');
+            }
+
             // Switch to sign in and pre-fill email
             setTimeout(() => {
                 if (typeof window.switchToSignIn === 'function') {
@@ -230,10 +267,15 @@ window.handleSignUp = function(e) {
     if (typeof window.hideSignUpModal === 'function') {
         window.hideSignUpModal();
     }
-    
+
     window.updateAuthUI(true, sessionUser.name);
-    
-    alert(`Welcome to Visual Vibe Studio, ${sessionUser.name}!`);
+
+    // Use modern notification
+    if (window.showWelcome) {
+        window.showWelcome(`Welcome to Visual Vibe Studio, ${sessionUser.name}!`);
+    } else {
+        alert(`Welcome to Visual Vibe Studio, ${sessionUser.name}!`);
+    }
     console.log('✅ Sign up successful for:', sessionUser.email);
 };
 
@@ -357,7 +399,12 @@ window.signOut = function() {
     console.log('👋 Signing out user');
     AuthManager.clearCurrentUser();
     window.updateAuthUI(false);
-    alert('You have been signed out successfully.');
+
+    if (window.showSuccess) {
+        window.showSuccess('You have been signed out successfully.');
+    } else {
+        alert('You have been signed out successfully.');
+    }
 };
 
 // Modal functions (if not already defined)
@@ -528,29 +575,13 @@ function initializeAuth() {
     }
     
     console.log('✅ Working authentication system initialized!');
-    
-    // Show success notification
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #10b981;
-        color: white;
-        padding: 15px;
-        border-radius: 5px;
-        z-index: 10000;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    `;
-    notification.textContent = '✅ Authentication system fixed!';
-    document.body.appendChild(notification);
-    
+
+    // Show success notification using modern system
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
+        if (window.showSuccess) {
+            window.showSuccess('Authentication system fixed! Sign in and sign up now work properly.');
         }
-    }, 3000);
+    }, 500);
 }
 
 // Start initialization
