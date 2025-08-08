@@ -1011,6 +1011,11 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   authScript.src = 'auth-state-manager.js';
   document.head.appendChild(authScript);
 
+  // Load auth debug helper
+  const debugScript = document.createElement('script');
+  debugScript.src = 'auth-debug-helper.js';
+  document.head.appendChild(debugScript);
+
   // Also apply immediate fixes
   setTimeout(() => {
     // Update viewport
