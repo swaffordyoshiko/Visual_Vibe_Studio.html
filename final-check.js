@@ -723,15 +723,121 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   // CLOSE ORDERS MODAL
   window.closeOrderHistory = function() {
     console.log('📋 Closing orders modal...');
-    
+
     const modal = document.getElementById('orderHistoryModal');
     if (modal) {
       modal.classList.add('hidden');
       modal.style.display = 'none';
       document.body.style.overflow = '';
     }
-    
+
     ordersModalOpen = false;
+  };
+
+  // FIXED SIGN-IN MODAL FUNCTION
+  window.openSignInModal = function() {
+    console.log('🔑 Opening sign in modal...');
+
+    try {
+      const modal = document.getElementById('signInModal');
+      if (!modal) {
+        console.error('❌ Sign in modal not found');
+        alert('Sign in form not available. Please refresh the page.');
+        return false;
+      }
+
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      document.body.style.overflow = 'hidden';
+
+      const emailInput = document.getElementById('signInEmail');
+      if (emailInput) {
+        setTimeout(() => emailInput.focus(), 100);
+      }
+
+      console.log('✅ Sign in modal opened successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ Error opening sign in modal:', error);
+      alert('Error opening sign in form. Please refresh the page.');
+      return false;
+    }
+  };
+
+  // CLOSE SIGN-IN MODAL
+  window.closeSignInModal = function() {
+    console.log('🔑 Closing sign in modal...');
+
+    const modal = document.getElementById('signInModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    const form = document.getElementById('signInForm');
+    if (form) {
+      form.reset();
+    }
+  };
+
+  // SIGN UP MODAL FUNCTIONS
+  window.openSignUpModal = function() {
+    console.log('📝 Opening sign up modal...');
+
+    try {
+      const modal = document.getElementById('signUpModal');
+      if (!modal) {
+        console.error('❌ Sign up modal not found');
+        alert('Sign up form not available. Please refresh the page.');
+        return false;
+      }
+
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      document.body.style.overflow = 'hidden';
+
+      const nameInput = document.getElementById('signUpName');
+      if (nameInput) {
+        setTimeout(() => nameInput.focus(), 100);
+      }
+
+      console.log('✅ Sign up modal opened successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ Error opening sign up modal:', error);
+      alert('Error opening sign up form. Please refresh the page.');
+      return false;
+    }
+  };
+
+  window.closeSignUpModal = function() {
+    console.log('📝 Closing sign up modal...');
+
+    const modal = document.getElementById('signUpModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    const form = document.getElementById('signUpForm');
+    if (form) {
+      form.reset();
+    }
+  };
+
+  // MODAL SWITCHING FUNCTIONS
+  window.switchToSignUp = function() {
+    closeSignInModal();
+    setTimeout(openSignUpModal, 100);
+  };
+
+  window.switchToSignIn = function() {
+    closeSignUpModal();
+    setTimeout(openSignInModal, 100);
   };
   
   // UTILITY FUNCTIONS
@@ -992,11 +1098,58 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
     }
   }, 2000);
 
-  console.log('✅ FINAL CHECK COMPLETE');
+  // ERROR PROTECTION - ENSURE FUNCTIONS EXIST
+  if (!window.openSignInModal) {
+    window.openSignInModal = function() {
+      console.log('🚨 Using fallback openSignInModal');
+      const modal = document.getElementById('signInModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        document.body.style.overflow = 'hidden';
+      } else {
+        alert('Sign in form not available. Please refresh the page.');
+      }
+    };
+  }
+
+  if (!window.openSignUpModal) {
+    window.openSignUpModal = function() {
+      console.log('🚨 Using fallback openSignUpModal');
+      const modal = document.getElementById('signUpModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        document.body.style.overflow = 'hidden';
+      } else {
+        alert('Sign up form not available. Please refresh the page.');
+      }
+    };
+  }
+
+  if (!window.submitContactForm) {
+    window.submitContactForm = function() {
+      console.log('🚨 Using fallback submitContactForm');
+      alert('Contact form function not available. Please refresh the page.');
+    };
+  }
+
+  if (!window.simpleOrderSubmit) {
+    window.simpleOrderSubmit = function() {
+      console.log('🚨 Using fallback simpleOrderSubmit');
+      alert('Order form function not available. Please refresh the page.');
+      return false;
+    };
+  }
+
+  console.log('✅ FINAL CHECK COMPLETE with error protection');
   console.log('✅ Edit Profile: No auto-opening, saves all data on first attempt');
   console.log('✅ My Orders: No auto-opening, shows orders AND reviews with working delete buttons');
   console.log('✅ Picture Uploader: Only opens when clicking change picture button');
   console.log('✅ Sign-Up: Fixed phantom account conflicts, smart conflict resolution');
+  console.log('✅ Error Protection: Fallback functions created for critical functionality');
 
   // FORCE DESKTOP VIEW ON MOBILE DEVICES
   console.log('🖥️ Forcing desktop view on mobile devices...');
