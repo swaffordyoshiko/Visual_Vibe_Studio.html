@@ -9,6 +9,11 @@
   authHideScript.src = 'immediate-auth-hide.js';
   document.head.appendChild(authHideScript);
 
+  // LOAD UNIFIED AUTH SYSTEM TO FIX SIGN-IN ISSUES
+  const unifiedAuthScript = document.createElement('script');
+  unifiedAuthScript.src = 'unified-auth-system.js';
+  document.head.appendChild(unifiedAuthScript);
+
   // EMERGENCY MOBILE HIDE - FORCE DESKTOP VIEW
   console.log('🖥️ EMERGENCY MOBILE HIDE - FORCING DESKTOP VIEW...');
 
