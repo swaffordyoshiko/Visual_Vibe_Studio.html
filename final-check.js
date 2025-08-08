@@ -1016,6 +1016,11 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   debugScript.src = 'auth-debug-helper.js';
   document.head.appendChild(debugScript);
 
+  // Load auth verification test
+  const verificationScript = document.createElement('script');
+  verificationScript.src = 'auth-verification-test.js';
+  document.head.appendChild(verificationScript);
+
   // Also apply immediate fixes
   setTimeout(() => {
     // Update viewport
