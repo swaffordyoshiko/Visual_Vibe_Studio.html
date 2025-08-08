@@ -113,11 +113,11 @@ console.log('✅ Authentication UI fixed!');
             document.head.appendChild(script);
         }
         
-        // Load the simple fix (no property redefinition issues)
-        loadScript('simple-auth-fix.js', (success) => {
+        // Load the bulletproof fix (comprehensive solution)
+        loadScript('bulletproof-auth-fix.js', (success) => {
             if (success !== false) {
-                console.log('✅ Simple auth fix loaded');
-                updateStatus('✅ Authentication fixes successfully injected!', 'success');
+                console.log('✅ Bulletproof auth fix loaded');
+                updateStatus('✅ Bulletproof authentication fixes successfully injected!', 'success');
                 fixApplied = true;
 
                 // Apply the fix after a short delay
@@ -125,12 +125,12 @@ console.log('✅ Authentication UI fixed!');
                     runImmediateFix();
                 }, 1000);
             } else {
-                console.log('⚠️ Simple fix failed, trying comprehensive fix...');
+                console.log('⚠️ Bulletproof fix failed, trying instant fix...');
 
-                // Fallback to comprehensive fix
-                loadScript('auth-ui-state-fix.js', (success2) => {
+                // Fallback to instant fix
+                loadScript('instant-ui-fix.js', (success2) => {
                     if (success2 !== false) {
-                        console.log('✅ Comprehensive fix loaded');
+                        console.log('✅ Instant fix loaded');
                         updateStatus('✅ Authentication fixes successfully injected!', 'success');
                         fixApplied = true;
 
@@ -281,7 +281,7 @@ console.log('✅ Authentication UI fixed!');
         }
         
         function forceShowButtons() {
-            console.log('����️ Force showing all signed-in buttons...');
+            console.log('👁️ Force showing all signed-in buttons...');
             
             const elementsToShow = [
                 'signedInState', 'mobileSignedInState', 'welcomeBanner'
