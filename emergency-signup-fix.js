@@ -14,20 +14,38 @@
   authHideScript.src = 'immediate-auth-hide.js';
   document.head.appendChild(authHideScript);
 
-  // LOAD BULLETPROOF AUTH SYSTEM TO FIX ALL SIGN-IN ISSUES
-  const bulletproofAuthScript = document.createElement('script');
-  bulletproofAuthScript.src = 'bulletproof-auth-system.js';
-  document.head.appendChild(bulletproofAuthScript);
+  // LOAD USER FINDER FIRST TO SCAN FOR EXISTING USERS
+  const userFinderScript = document.createElement('script');
+  userFinderScript.src = 'auth-user-finder.js';
+  document.head.appendChild(userFinderScript);
 
-  // DISABLE ALL OTHER AUTH SYSTEMS
+  // LOAD ROCK-SOLID AUTH SYSTEM AS THE ONLY AUTH SYSTEM
+  const rockSolidAuthScript = document.createElement('script');
+  rockSolidAuthScript.src = 'rock-solid-auth.js';
+  document.head.appendChild(rockSolidAuthScript);
+
+  // COMPLETELY DISABLE ALL OTHER AUTH SYSTEMS
   setTimeout(() => {
-    console.log('🚫 Disabling conflicting auth systems...');
+    console.log('🚫 KILLING ALL OTHER AUTH SYSTEMS...');
 
-    // Disable specific problematic functions
-    if (window.CrossDeviceAuth) window.CrossDeviceAuth = null;
-    if (window.handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE) window.handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE = null;
+    // Kill all known auth systems
+    const authSystemsToKill = [
+      'CrossDeviceAuth', 'BulletproofAuth', 'unifiedAuth',
+      'handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE',
+      'handleSignUp_EMERGENCY_DISABLED',
+      'handleSignUp_DISABLED_FROM_FINAL_CHECK',
+      'handleSignUp_AUTH_SYSTEM_DISABLED',
+      'originalHandleSignUp', 'originalHandleSignIn'
+    ];
 
-    console.log('✅ Conflicting auth systems disabled');
+    authSystemsToKill.forEach(system => {
+      try {
+        window[system] = null;
+        delete window[system];
+      } catch (e) {}
+    });
+
+    console.log('💀 ALL OTHER AUTH SYSTEMS KILLED - ROCK-SOLID IS THE ONLY ONE');
   }, 100);
 
   // EMERGENCY MOBILE HIDE - FORCE DESKTOP VIEW
