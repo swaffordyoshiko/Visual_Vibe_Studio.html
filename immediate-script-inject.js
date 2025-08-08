@@ -5,8 +5,7 @@ console.log('📝 IMMEDIATE SCRIPT INJECT: Starting...');
 if (window.innerWidth <= 767) {
   console.log('📱 Mobile detected, injecting direct override...');
   
-  // Use document.write to inject script immediately
-  document.write('<script src="direct-mobile-override.js"><\/script>');
+  // Mobile override script removed
   
   console.log('✅ Direct mobile override script injected');
 }
