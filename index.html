@@ -11,16 +11,11 @@ window.handleEmailClick = function(event, emailAddress) {
 </script>
   <script>window.simpleOrderSubmit = function() { console.log("Fallback function called - main script will override"); return false; };</script>
   <script>window.copyToClipboard = function(text, msg) { try { if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => window.toastManager ? window.toastManager.success(msg || "Copied to clipboard!") : alert(msg || "Copied!")); } else { window.toastManager ? window.toastManager.error("Copy not supported") : alert("Copy not supported"); } } catch(e) { window.toastManager ? window.toastManager.error("Copy failed") : alert("Copy failed"); } };</script>
-<link rel="stylesheet" href="mobile-first.css">
-<link rel="stylesheet" href="mobile-glitch-fix.css">
 <link rel="stylesheet" href="responsive-critical.css">
 <link rel="stylesheet" href="toast-notifications.css">
 <link rel="stylesheet" href="responsive-fixes.css">
-<link rel="stylesheet" href="mobile-desktop-like.css">
-<script src="mobile-glitch-fix.js"></script>
 <script src="toast-notifications.js"></script>
 <script src="emergency-signup-fix.js"></script>
-<script src="critical-mobile-auth-fix.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -10585,8 +10580,6 @@ This is sent because SMS delivery may have failed.
     </div>
     <div
       class="absolute bottom-1/4 right-0 w-64 h-64 bg-gradient-to-l from-purple-100/20 to-transparent rounded-full blur-3xl animate-pulse"
-      style="animation-delay: 3s;"></div>
-  </div>
   <header class="glass-morphism shadow-xl p-4 sticky top-0 z-50 border-b border-white/20">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-3">
@@ -11860,7 +11853,6 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
 <script src="simple-order.js"></script>
 <script src="emergency-backup.js"></script>
 <script src="modern-form-notifications.js"></script>
-<script src="mobile-monitor.js"></script>
 
   <!-- Professional Section Divider -->
   <div class="section-divider"></div>
