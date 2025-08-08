@@ -5,49 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication Test - Visual Vibe Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load our auth system override -->
+    <script src="auth-system-override.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="max-w-4xl mx-auto p-4">
-        <h1 class="text-3xl font-bold text-center mb-8">Authentication System Test</h1>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-4xl w-full p-6">
+        <h1 class="text-3xl font-bold text-center mb-8 text-indigo-600">Authentication System Test</h1>
         
-        <!-- Test Results -->
-        <div id="testResults" class="mb-8 p-4 bg-white rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4">Test Results</h2>
-            <div id="results"></div>
+        <!-- Auth Status -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Current Status</h2>
+            <div id="authStatus" class="p-4 rounded bg-gray-50">
+                <p id="statusText">Loading...</p>
+                <p id="userInfo" class="mt-2 text-sm text-gray-600"></p>
+            </div>
         </div>
-        
-        <!-- Sign In/Up Buttons -->
-        <div class="text-center mb-8 space-x-4">
-            <button onclick="openSignInModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                Sign In
-            </button>
-            <button onclick="openSignUpModal()" class="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-medium">
-                Sign Up
+
+        <!-- Auth Buttons -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Sign In Section -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Sign In Test</h3>
+                <button onclick="openSignInModal()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">
+                    Open Sign In Modal
+                </button>
+            </div>
+
+            <!-- Sign Up Section -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Sign Up Test</h3>
+                <button onclick="openSignUpModal()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+                    Open Sign Up Modal
+                </button>
+            </div>
+        </div>
+
+        <!-- Sign Out -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Sign Out Test</h3>
+            <button onclick="signOut()" class="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">
+                Sign Out
             </button>
         </div>
-        
-        <!-- Current User Status -->
-        <div id="userStatus" class="mb-8 p-4 bg-white rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Current User Status</h3>
-            <div id="currentUserInfo">No user signed in</div>
-        </div>
-        
-        <!-- Test Buttons -->
-        <div class="text-center space-x-4 mb-8">
-            <button onclick="runTests()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                Run Tests
-            </button>
-            <button onclick="clearStorage()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                Clear Storage
-            </button>
+
+        <!-- Function Check -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-4">Function Availability</h3>
+            <div id="functionCheck" class="space-y-2 text-sm">
+                <p>Checking...</p>
+            </div>
         </div>
     </div>
 
     <!-- Sign In Modal -->
-    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-4" style="z-index: 9999;">
-        <div class="bg-white rounded-xl p-6 sm:p-8 max-w-md w-full">
+    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Sign In</h3>
+                <h3 class="text-2xl font-bold">Sign In</h3>
                 <button onclick="closeSignInModal()" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -55,34 +69,33 @@
                 </button>
             </div>
             
-            <form id="signInForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="signInEmail" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="your@email.com">
+            <form id="signInForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="signInEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="signInEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label for="signInPassword" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="signInPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">
+                        Sign In
+                    </button>
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="signInPassword" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your password">
-                </div>
-                
-                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
-                    Sign In
-                </button>
+                <p class="mt-4 text-center text-sm text-gray-600">
+                    Don't have an account? 
+                    <button type="button" onclick="switchToSignUp()" class="text-indigo-600 hover:text-indigo-500 font-medium">Sign up</button>
+                </p>
             </form>
-            
-            <p class="text-center text-sm text-gray-600 mt-4">
-                Don't have an account?
-                <button onclick="switchToSignUp()" class="text-indigo-600 hover:text-indigo-800 font-medium">Sign up</button>
-            </p>
         </div>
     </div>
 
     <!-- Sign Up Modal -->
-    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-4" style="z-index: 9999;">
-        <div class="bg-white rounded-xl p-6 sm:p-8 max-w-md w-full">
+    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Create Account</h3>
+                <h3 class="text-2xl font-bold">Sign Up</h3>
                 <button onclick="closeSignUpModal()" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -90,121 +103,93 @@
                 </button>
             </div>
             
-            <form id="signUpForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <input type="text" id="signUpName" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your full name">
+            <form id="signUpForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="signUpName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="signUpName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your full name">
+                    </div>
+                    <div>
+                        <label for="signUpEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="signUpEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label for="signUpPassword" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="signUpPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Create a password (min 6 characters)">
+                    </div>
+                    <div>
+                        <label for="signUpConfirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                        <input type="password" id="signUpConfirmPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Confirm your password">
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
+                        Create Account
+                    </button>
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="signUpEmail" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="your@email.com">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="signUpPassword" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Create a password" minlength="6">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                    <input type="password" id="signUpConfirmPassword" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Confirm your password">
-                </div>
-                
-                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
-                    Create Account
-                </button>
+                <p class="mt-4 text-center text-sm text-gray-600">
+                    Already have an account? 
+                    <button type="button" onclick="switchToSignIn()" class="text-indigo-600 hover:text-indigo-500 font-medium">Sign in</button>
+                </p>
             </form>
-            
-            <p class="text-center text-sm text-gray-600 mt-4">
-                Already have an account?
-                <button onclick="switchToSignIn()" class="text-indigo-600 hover:text-indigo-800 font-medium">Sign in</button>
-            </p>
         </div>
     </div>
 
-    <script src="auth-system-fix.js"></script>
-    
     <script>
-        // Test functions
-        function log(message, type = 'info') {
-            const results = document.getElementById('results');
-            const color = type === 'error' ? 'text-red-600' : type === 'success' ? 'text-green-600' : 'text-blue-600';
-            results.innerHTML += `<div class="${color}">${new Date().toLocaleTimeString()}: ${message}</div>`;
-        }
-        
-        function updateUserStatus() {
-            const userInfo = document.getElementById('currentUserInfo');
+        // Update status display
+        function updateStatus() {
+            const statusText = document.getElementById('statusText');
+            const userInfo = document.getElementById('userInfo');
+            
             if (window.currentUser) {
-                userInfo.innerHTML = `
-                    <div class="text-green-600">
-                        <strong>Signed in as:</strong> ${window.currentUser.name} (${window.currentUser.email})
-                        <br><strong>Login time:</strong> ${new Date(window.currentUser.loginTime).toLocaleString()}
-                    </div>
-                `;
+                statusText.textContent = '✅ Signed In';
+                statusText.className = 'text-green-600 font-semibold';
+                userInfo.textContent = `User: ${window.currentUser.name} (${window.currentUser.email})`;
             } else {
-                userInfo.innerHTML = '<div class="text-gray-600">No user signed in</div>';
+                statusText.textContent = '❌ Not Signed In';
+                statusText.className = 'text-red-600 font-semibold';
+                userInfo.textContent = 'No user session found';
             }
         }
-        
-        function runTests() {
-            log('🧪 Starting authentication tests...', 'info');
+
+        // Check function availability
+        function checkFunctions() {
+            const functionCheck = document.getElementById('functionCheck');
+            const functions = [
+                'openSignInModal',
+                'openSignUpModal', 
+                'handleSignIn',
+                'handleSignUp',
+                'signOut',
+                'updateAuthUI'
+            ];
             
-            // Test 1: Check if functions exist
-            const functions = ['openSignInModal', 'openSignUpModal', 'closeSignInModal', 'closeSignUpModal'];
-            functions.forEach(func => {
-                if (typeof window[func] === 'function') {
-                    log(`✅ ${func} function exists`, 'success');
-                } else {
-                    log(`❌ ${func} function missing`, 'error');
-                }
+            let html = '';
+            functions.forEach(fn => {
+                const available = typeof window[fn] === 'function';
+                html += `<p class="${available ? 'text-green-600' : 'text-red-600'}">
+                    ${available ? '✅' : '❌'} ${fn}: ${typeof window[fn]}
+                </p>`;
             });
             
-            // Test 2: Check if modal elements exist
-            const modals = ['signInModal', 'signUpModal'];
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    log(`✅ ${modalId} element exists`, 'success');
-                } else {
-                    log(`❌ ${modalId} element missing`, 'error');
-                }
-            });
-            
-            // Test 3: Check if form elements exist
-            const forms = ['signInForm', 'signUpForm'];
-            forms.forEach(formId => {
-                const form = document.getElementById(formId);
-                if (form) {
-                    log(`✅ ${formId} element exists`, 'success');
-                } else {
-                    log(`❌ ${formId} element missing`, 'error');
-                }
-            });
-            
-            log('🏁 Tests completed', 'info');
-            updateUserStatus();
+            functionCheck.innerHTML = html;
         }
-        
-        function clearStorage() {
-            localStorage.removeItem('visualVibeUsers');
-            localStorage.removeItem('currentUser');
-            window.currentUser = null;
-            log('🗑️ Storage cleared', 'info');
-            updateUserStatus();
-        }
-        
-        // Update status on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateUserStatus();
+
+        // Initialize
+        setTimeout(() => {
+            updateStatus();
+            checkFunctions();
             
-            // Listen for auth changes
-            const originalUpdateAuthUI = window.updateAuthUI;
-            window.updateAuthUI = function() {
-                if (originalUpdateAuthUI) originalUpdateAuthUI();
-                updateUserStatus();
-            };
-        });
+            // Set up refresh interval
+            setInterval(() => {
+                updateStatus();
+            }, 1000);
+        }, 100);
+
+        // Override updateAuthUI to also update our status
+        const originalUpdateAuthUI = window.updateAuthUI;
+        window.updateAuthUI = function() {
+            if (originalUpdateAuthUI) originalUpdateAuthUI();
+            setTimeout(updateStatus, 100);
+        };
     </script>
 </body>
 </html>
