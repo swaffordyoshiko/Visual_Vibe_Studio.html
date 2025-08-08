@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Sign In/Up Buttons - Visual Vibe Studio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .script-box {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .copy-btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .copy-btn:hover {
+            background: #005a87;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Fix Sign In/Up Buttons</h1>
+    
+    <p><strong>The sign in and sign up buttons are not working on the main site.</strong></p>
+    
+    <p>This fix will inject working JavaScript functions directly into the page. Follow these steps:</p>
+    
+    <h2>📋 Instructions:</h2>
+    <ol>
+        <li>Go to the main Visual Vibe Studio page</li>
+        <li>Open your browser's Developer Tools (F12 or right-click → Inspect)</li>
+        <li>Click on the "Console" tab</li>
+        <li>Copy the script below and paste it into the console</li>
+        <li>Press Enter to run the script</li>
+        <li>The sign in/up buttons should now work!</li>
+    </ol>
+    
+    <h2>🚀 Copy This Script:</h2>
+    <button class="copy-btn" onclick="copyScript()">📋 Copy Script to Clipboard</button>
+    
+    <div class="script-box" id="scriptContent">
+// INSTANT BUTTON FIX
+console.log('🔧 Fixing sign in/up buttons...');
+
+window.openSignInModal = function() {
+    console.log('🔑 Opening sign in modal...');
+    const modal = document.getElementById('signInModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        modal.style.zIndex = '99999';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        modal.classList.remove('hidden');
+        document.getElementById('signInEmail').value = '';
+        document.getElementById('signInPassword').value = '';
+        console.log('✅ Sign in modal opened');
+    } else {
+        alert('Sign in modal not found. Please refresh the page and try again.');
+    }
+};
+
+window.openSignUpModal = function() {
+    console.log('📝 Opening sign up modal...');
+    const modal = document.getElementById('signUpModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        modal.style.zIndex = '99999';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        modal.classList.remove('hidden');
+        document.getElementById('signUpName').value = '';
+        document.getElementById('signUpEmail').value = '';
+        document.getElementById('signUpPassword').value = '';
+        document.getElementById('signUpConfirmPassword').value = '';
+        console.log('✅ Sign up modal opened');
+    } else {
+        alert('Sign up modal not found. Please refresh the page and try again.');
+    }
+};
+
+window.closeSignInModal = function() {
+    const modal = document.getElementById('signInModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+};
+
+window.closeSignUpModal = function() {
+    const modal = document.getElementById('signUpModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+};
+
+window.switchToSignUp = function() {
+    window.closeSignInModal();
+    setTimeout(() => window.openSignUpModal(), 100);
+};
+
+window.switchToSignIn = function() {
+    window.closeSignUpModal();
+    setTimeout(() => window.openSignInModal(), 100);
+};
+
+window.handleSignIn = function(e) {
+    if (e) e.preventDefault();
+    const email = document.getElementById('signInEmail')?.value?.trim();
+    const password = document.getElementById('signInPassword')?.value?.trim();
+    if (!email || !password) {
+        alert('Please enter both email and password');
+        return false;
+    }
+    const userData = localStorage.getItem('vvs_user_' + email);
+    if (!userData) {
+        alert('No account found. Please sign up first.');
+        return false;
+    }
+    const user = JSON.parse(userData);
+    if (user.password !== password) {
+        alert('Incorrect password');
+        return false;
+    }
+    localStorage.setItem('vvs_user', userData);
+    window.closeSignInModal();
+    alert('Welcome back, ' + user.name + '!');
+    return false;
+};
+
+window.handleSignUp = function(e) {
+    if (e) e.preventDefault();
+    const name = document.getElementById('signUpName')?.value?.trim();
+    const email = document.getElementById('signUpEmail')?.value?.trim();
+    const password = document.getElementById('signUpPassword')?.value?.trim();
+    const confirm = document.getElementById('signUpConfirmPassword')?.value?.trim();
+    if (!name || !email || !password || !confirm) {
+        alert('Please fill in all fields');
+        return false;
+    }
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return false;
+    }
+    if (password !== confirm) {
+        alert('Passwords do not match');
+        return false;
+    }
+    if (localStorage.getItem('vvs_user_' + email)) {
+        alert('Account already exists. Please sign in instead.');
+        return false;
+    }
+    const userData = {name: name, email: email, password: password, createdAt: new Date().toISOString()};
+    localStorage.setItem('vvs_user_' + email, JSON.stringify(userData));
+    localStorage.setItem('vvs_user', JSON.stringify(userData));
+    window.closeSignUpModal();
+    alert('Welcome to Visual Vibe Studio, ' + name + '!');
+    return false;
+};
+
+window.signOut = function() {
+    localStorage.removeItem('vvs_user');
+    alert('You have been signed out');
+};
+
+// Attach form handlers
+const signInForm = document.getElementById('signInForm');
+const signUpForm = document.getElementById('signUpForm');
+if (signInForm) signInForm.onsubmit = window.handleSignIn;
+if (signUpForm) signUpForm.onsubmit = window.handleSignUp;
+
+console.log('✅ Sign in/up buttons are now working!');
+console.log('Try clicking the "Sign In" or "Sign Up" buttons in the header.');
+    </div>
+    
+    <div class="success" id="copySuccess" style="display: none;">
+        ✅ Script copied to clipboard! Now paste it into the browser console on the main page.
+    </div>
+    
+    <h2>🧪 Alternative: Test Page</h2>
+    <p>If the console method doesn't work, you can test the functionality on this dedicated test page:</p>
+    <p><a href="/test-buttons.html" target="_blank">🔗 Open Test Page</a></p>
+    
+    <h2>❓ Troubleshooting</h2>
+    <ul>
+        <li><strong>Buttons still not working?</strong> Make sure you're on the main site page and refresh after running the script.</li>
+        <li><strong>Can't open console?</strong> Press F12 or right-click on the page and select "Inspect Element", then click "Console".</li>
+        <li><strong>Script error?</strong> Try refreshing the page and running the script again.</li>
+    </ul>
+
+    <script>
+        function copyScript() {
+            const scriptContent = document.getElementById('scriptContent').textContent;
+            navigator.clipboard.writeText(scriptContent).then(function() {
+                document.getElementById('copySuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 3000);
+            }, function(err) {
+                alert('Could not copy script. Please select and copy manually.');
+            });
+        }
+    </script>
+</body>
+</html>
