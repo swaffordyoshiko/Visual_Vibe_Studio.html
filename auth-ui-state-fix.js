@@ -348,18 +348,32 @@ function fixedSignOut() {
 // STEP 6: Install fixed functions globally and override existing ones
 console.log('🔧 Installing fixed authentication functions...');
 
-// Override existing functions
-window.updateAuthUI = fixedUpdateAuthUI;
+// Safely override existing functions
+try {
+  // Check if properties can be redefined
+  const descriptor = Object.getOwnPropertyDescriptor(window, 'updateAuthUI');
+
+  if (!descriptor || descriptor.configurable !== false) {
+    // Safe to override
+    window.updateAuthUI = fixedUpdateAuthUI;
+    console.log('✅ updateAuthUI overridden safely');
+  } else {
+    // Property is non-configurable, use alternative method
+    console.log('⚠️ updateAuthUI is non-configurable, using alternative method');
+    window.updateAuthUI_fixed = fixedUpdateAuthUI;
+    window.updateAuthUI = function(...args) {
+      return window.updateAuthUI_fixed(...args);
+    };
+  }
+} catch (e) {
+  console.warn('⚠️ Error overriding updateAuthUI:', e);
+  window.updateAuthUI_fixed = fixedUpdateAuthUI;
+}
+
+// Override other functions safely
 window.openSignInModal = fixedOpenSignInModal;
 window.handleSignIn = fixedHandleSignIn;
 window.signOut = fixedSignOut;
-
-// Make functions non-writable to prevent conflicts
-Object.defineProperty(window, 'updateAuthUI', {
-  value: fixedUpdateAuthUI,
-  writable: false,
-  configurable: false
-});
 
 console.log('✅ Fixed authentication functions installed');
 
