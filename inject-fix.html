@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Fix Injector</title>
+</head>
+<body>
+    <h1>Injecting button fix...</h1>
+    <script>
+        // Load the fix script and inject it into the main page
+        fetch('/force-buttons-visible.js')
+            .then(response => response.text())
+            .then(scriptContent => {
+                // Create script element
+                const script = document.createElement('script');
+                script.textContent = scriptContent;
+                
+                // Inject into current page
+                document.head.appendChild(script);
+                
+                console.log('✅ Button fix script injected successfully');
+                
+                // Also try to inject into parent if this is in an iframe
+                try {
+                    if (window.parent && window.parent !== window) {
+                        const parentScript = window.parent.document.createElement('script');
+                        parentScript.textContent = scriptContent;
+                        window.parent.document.head.appendChild(parentScript);
+                        console.log('✅ Button fix script injected into parent window');
+                    }
+                } catch (e) {
+                    console.log('Could not inject into parent:', e.message);
+                }
+                
+                document.body.innerHTML = '<h1>✅ Button fix injected! Check the main page.</h1><p>The sign in and sign up buttons should now be working.</p>';
+            })
+            .catch(error => {
+                console.error('Failed to load fix script:', error);
+                document.body.innerHTML = '<h1>❌ Failed to inject fix</h1><p>Error: ' + error.message + '</p>';
+            });
+    </script>
+</body>
+</html>
