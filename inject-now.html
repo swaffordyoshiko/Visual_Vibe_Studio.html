@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injecting Button Fix...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            background: #f0f8ff;
+        }
+        .status {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .loading {
+            font-size: 24px;
+            color: #666;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            text-align: left;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h1>🔧 Button Fix Injector</h1>
+        <div id="status" class="loading">⚡ Loading direct button fix...</div>
+        
+        <div id="instructions" style="display: none;">
+            <h2>📋 How to Apply the Fix:</h2>
+            <p><strong>Copy this code and paste it into the browser console on the main Visual Vibe Studio page:</strong></p>
+            
+            <div class="code" id="codeBlock">
+                <!-- Code will be inserted here -->
+            </div>
+            
+            <button onclick="copyCode()">📋 Copy Code</button>
+            <br>
+            
+            <p><strong>Steps:</strong></p>
+            <ol style="text-align: left; display: inline-block;">
+                <li>Go to the main Visual Vibe Studio page</li>
+                <li>Press F12 to open Developer Tools</li>
+                <li>Click the "Console" tab</li>
+                <li>Paste the code above and press Enter</li>
+                <li>The buttons should work immediately!</li>
+            </ol>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function loadAndInjectFix() {
+            try {
+                document.getElementById('status').innerHTML = '📥 Loading button fix script...';
+                
+                // Load the direct fix script
+                const response = await fetch('/direct-button-replacement.js');
+                if (!response.ok) {
+                    throw new Error('Failed to load script');
+                }
+                
+                const scriptContent = await response.text();
+                
+                document.getElementById('status').innerHTML = '✅ Script loaded successfully!';
+                
+                // Display the code for manual injection
+                document.getElementById('codeBlock').textContent = scriptContent;
+                document.getElementById('instructions').style.display = 'block';
+                
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        <strong>✅ Ready to Fix!</strong><br>
+                        The script is loaded and ready. Copy the code above and paste it into the browser console on the main page.
+                    </div>
+                `;
+                
+                // Try to inject into parent window if this is in an iframe
+                try {
+                    if (window.parent && window.parent !== window) {
+                        const script = window.parent.document.createElement('script');
+                        script.textContent = scriptContent;
+                        window.parent.document.head.appendChild(script);
+                        
+                        document.getElementById('result').innerHTML += `
+                            <div class="success">
+                                <strong>🎉 Auto-injected into parent window!</strong><br>
+                                If you're viewing this in an iframe, the fix may already be applied to the main page.
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.log('Could not auto-inject into parent:', e.message);
+                }
+                
+            } catch (error) {
+                document.getElementById('status').innerHTML = '❌ Failed to load script';
+                document.getElementById('result').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}<br>
+                        Please try the manual console method.
+                    </div>
+                `;
+            }
+        }
+        
+        function copyCode() {
+            const codeBlock = document.getElementById('codeBlock');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Code copied to clipboard! Now paste it into the browser console on the main page.');
+            }).catch(() => {
+                // Fallback for browsers that don't support clipboard API
+                codeBlock.select();
+                document.execCommand('copy');
+                alert('✅ Code copied! Now paste it into the browser console on the main page.');
+            });
+        }
+        
+        // Start the injection process
+        loadAndInjectFix();
+    </script>
+</body>
+</html>
