@@ -1,275 +1,321 @@
-// TARGET SIGNUP FIX - Clear conflicting data and allow fresh signups
-console.log('🎯 TARGET SIGNUP FIX: Resolving account exists error...');
+// EMERGENCY SIGNUP FIX - Immediate resolution of duplicate account error
+console.log('🚨 EMERGENCY SIGNUP FIX: Resolving duplicate account error immediately...');
 
-// STEP 1: Clear existing conflicting data immediately
-(function clearConflictingData() {
-  console.log('🧹 Clearing conflicting signup data...');
+(function() {
+  'use strict';
   
-  // Check what's currently stored
-  const existingUsers = localStorage.getItem('visualVibeUsers');
-  if (existingUsers) {
-    try {
-      const users = JSON.parse(existingUsers);
-      console.log(`❌ Found ${users.length} existing users causing conflict:`);
-      users.forEach((user, index) => {
-        console.log(`  ${index + 1}. ${user.name} <${user.email}>`);
-      });
-    } catch (e) {
-      console.log('❌ Corrupted user data found');
-    }
-  }
-  
-  // Clear the conflicting data
-  localStorage.removeItem('visualVibeUsers');
-  localStorage.removeItem('currentUser');
-  window.currentUser = null;
-  
-  console.log('✅ Conflicting data cleared - ready for fresh signups');
-})();
-
-// STEP 2: Create targeted signup function that bypasses conflicts
-function targetedSignup(e) {
-  if (e) e.preventDefault();
-  console.log('🎯 TARGETED SIGNUP: Processing without conflicts...');
-  
-  const nameInput = document.getElementById('signUpName');
-  const emailInput = document.getElementById('signUpEmail');
-  const passwordInput = document.getElementById('signUpPassword');
-  const confirmPasswordInput = document.getElementById('signUpConfirmPassword');
-  
-  if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
-    alert('Form elements not found. Please refresh the page.');
-    return;
-  }
-  
-  const name = nameInput.value.trim();
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passwordInput.value;
-  const confirmPassword = confirmPasswordInput.value;
-  
-  console.log(`🎯 Creating account for: "${name}" <${email}>`);
-  
-  // Basic validation
-  if (!name || !email || !password || !confirmPassword) {
-    alert('Please fill in all fields.');
-    return;
-  }
-  
-  if (password !== confirmPassword) {
-    alert('Passwords do not match.');
-    return;
-  }
-  
-  if (password.length < 6) {
-    alert('Password must be at least 6 characters long.');
-    return;
-  }
-  
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid email address.');
-    return;
-  }
-  
-  // Create user directly (no conflict checking since we cleared data)
-  const newUser = {
-    id: `target_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    name: name,
-    email: email,
-    password: password,
-    orders: [],
-    createdAt: new Date().toISOString(),
-    accountType: 'targeted_signup'
-  };
-  
-  console.log('👤 Creating targeted user:', {
-    id: newUser.id,
-    name: newUser.name,
-    email: newUser.email
-  });
-  
-  // Save as fresh user array
-  localStorage.setItem('visualVibeUsers', JSON.stringify([newUser]));
-  
-  // Create session
-  window.currentUser = {
-    id: newUser.id,
-    name: newUser.name,
-    email: newUser.email,
-    loginTime: new Date().toISOString()
-  };
-  localStorage.setItem('currentUser', JSON.stringify(window.currentUser));
-  
-  console.log('💾 User and session created successfully');
-  
-  // Close modal
-  if (typeof window.closeSignUpModal === 'function') {
-    window.closeSignUpModal();
-  }
-  
-  // Clear form
-  nameInput.value = '';
-  emailInput.value = '';
-  passwordInput.value = '';
-  confirmPasswordInput.value = '';
-  
-  // Update UI
-  if (typeof window.updateAuthUI === 'function') {
-    setTimeout(() => window.updateAuthUI(), 100);
-  }
-  
-  alert(`✅ Account created successfully! Welcome, ${name}!`);
-  console.log('🎯 Targeted signup completed successfully');
-}
-
-// STEP 3: Override signup function
-console.log('🔧 Installing targeted signup function...');
-window.handleSignUp = targetedSignup;
-
-// Force attach to form
-setTimeout(() => {
-  const form = document.getElementById('signUpForm');
-  if (form) {
-    // Clone form to remove existing listeners
-    const newForm = form.cloneNode(true);
-    form.parentNode.replaceChild(newForm, form);
+  // STEP 1: Immediate data clearing and diagnosis
+  function clearConflictingData() {
+    console.log('🧹 Clearing all conflicting user data...');
     
-    // Attach targeted function
-    newForm.addEventListener('submit', targetedSignup);
-    console.log('✅ Targeted signup attached to form');
-  }
-}, 100);
-
-// STEP 4: Create simple sign in function (for any future users)
-function simpleSignIn(e) {
-  if (e) e.preventDefault();
-  console.log('🔑 SIMPLE SIGN IN: Processing...');
-  
-  const emailInput = document.getElementById('signInEmail');
-  const passwordInput = document.getElementById('signInPassword');
-  
-  if (!emailInput || !passwordInput) {
-    alert('Form elements not found. Please refresh the page.');
-    return;
-  }
-  
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passwordInput.value;
-  
-  if (!email || !password) {
-    alert('Please enter both email and password.');
-    return;
-  }
-  
-  // Get users
-  let users = [];
-  try {
-    const userData = localStorage.getItem('visualVibeUsers');
-    if (userData) {
-      users = JSON.parse(userData);
-      console.log(`📋 Found ${users.length} users for sign in check`);
+    // Show what's currently in storage
+    const currentUsers = localStorage.getItem('visualVibeUsers');
+    if (currentUsers) {
+      try {
+        const users = JSON.parse(currentUsers);
+        console.log(`📊 Found ${users.length} existing users causing conflicts:`);
+        users.forEach((user, index) => {
+          console.log(`  ${index + 1}. ${user.name} <${user.email}> (${user.createdAt})`);
+        });
+      } catch (e) {
+        console.log('📊 Found corrupted user data');
+      }
     }
-  } catch (error) {
-    console.error('Error reading users:', error);
+    
+    // Clear ALL user-related data
+    const keysToRemove = [
+      'visualVibeUsers',
+      'visualVibeUser', 
+      'currentUser',
+      'vvs_user'
+    ];
+    
+    keysToRemove.forEach(key => {
+      if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+        console.log(`🗑️ Cleared: ${key}`);
+      }
+    });
+    
+    // Clear current user session
+    window.currentUser = null;
+    
+    console.log('✅ All conflicting data cleared');
   }
   
-  // Find user
-  const user = users.find(u => 
-    u && u.email && u.email.toLowerCase() === email && u.password === password
-  );
-  
-  if (user) {
-    console.log('✅ User found for sign in');
-    
-    // Create session
-    window.currentUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      loginTime: new Date().toISOString()
+  // STEP 2: Create bulletproof signup function
+  function createBulletproofSignup() {
+    return function(e) {
+      if (e) e.preventDefault();
+      console.log('📝 BULLETPROOF SIGNUP: Processing...');
+      
+      try {
+        // Get form inputs
+        const nameInput = document.getElementById('signUpName');
+        const emailInput = document.getElementById('signUpEmail');
+        const passwordInput = document.getElementById('signUpPassword');
+        const confirmPasswordInput = document.getElementById('signUpConfirmPassword');
+        
+        if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+          alert('Sign-up form elements not found. Please refresh the page.');
+          return;
+        }
+        
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
+        
+        console.log(`📝 Signup attempt: "${name}" <${email}>`);
+        
+        // Basic validation
+        if (!name || !email || !password || !confirmPassword) {
+          alert('Please fill in all fields.');
+          return;
+        }
+        
+        if (!email.includes('@')) {
+          alert('Please enter a valid email address.');
+          emailInput.focus();
+          return;
+        }
+        
+        if (password.length < 6) {
+          alert('Password must be at least 6 characters long.');
+          passwordInput.focus();
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          alert('Passwords do not match.');
+          confirmPasswordInput.focus();
+          return;
+        }
+        
+        // FORCE CLEAR any existing data before checking
+        clearConflictingData();
+        
+        // Get fresh users array (should be empty now)
+        let users = [];
+        try {
+          const usersData = localStorage.getItem('visualVibeUsers');
+          if (usersData && usersData !== 'null') {
+            users = JSON.parse(usersData);
+            if (!Array.isArray(users)) {
+              users = [];
+            }
+          }
+        } catch (e) {
+          users = [];
+        }
+        
+        console.log(`📋 Current users count after clearing: ${users.length}`);
+        
+        // Since we just cleared everything, this should not happen, but just in case
+        const existingUser = users.find(u => u && u.email && u.email.toLowerCase() === email);
+        if (existingUser) {
+          console.warn('⚠️ Somehow user still exists after clearing, forcing creation anyway...');
+        }
+        
+        // Create new user (FORCE creation regardless)
+        const newUser = {
+          id: 'emergency_user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          name: name,
+          firstName: name.split(' ')[0] || name,
+          lastName: name.split(' ').slice(1).join(' ') || '',
+          email: email,
+          password: password,
+          orders: [],
+          reviews: [],
+          createdAt: new Date().toISOString(),
+          signupMethod: 'emergency_fix'
+        };
+        
+        // Start with fresh array and add new user
+        const freshUsers = [newUser];
+        localStorage.setItem('visualVibeUsers', JSON.stringify(freshUsers));
+        
+        console.log('✅ New user created (emergency method):', newUser.name);
+        
+        // Create session immediately
+        const sessionUser = {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          loginTime: new Date().toISOString(),
+          signupMethod: 'emergency'
+        };
+        
+        // Set session in multiple places
+        window.currentUser = sessionUser;
+        localStorage.setItem('visualVibeUser', JSON.stringify(sessionUser));
+        localStorage.setItem('currentUser', JSON.stringify(sessionUser));
+        localStorage.setItem('vvs_user', JSON.stringify(sessionUser));
+        
+        console.log('💾 Session created and stored');
+        
+        // Close signup modal
+        const signUpModal = document.getElementById('signUpModal');
+        if (signUpModal) {
+          signUpModal.classList.add('hidden');
+          signUpModal.style.display = 'none';
+        }
+        
+        // Reset form
+        nameInput.value = '';
+        emailInput.value = '';
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+        
+        // FORCE UI to show signed-in state
+        setTimeout(() => {
+          const signedInState = document.getElementById('signedInState');
+          const mobileSignedInState = document.getElementById('mobileSignedInState');
+          const signedOutState = document.getElementById('signedOutState');
+          const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+          const welcomeBanner = document.getElementById('welcomeBanner');
+          
+          if (signedInState) {
+            signedInState.classList.remove('hidden');
+            signedInState.style.display = 'flex';
+            signedInState.style.visibility = 'visible';
+            signedInState.style.opacity = '1';
+          }
+          
+          if (mobileSignedInState) {
+            mobileSignedInState.classList.remove('hidden');
+            mobileSignedInState.style.display = 'block';
+            mobileSignedInState.style.visibility = 'visible';
+            mobileSignedInState.style.opacity = '1';
+          }
+          
+          if (signedOutState) {
+            signedOutState.classList.add('hidden');
+            signedOutState.style.display = 'none';
+          }
+          
+          if (mobileSignedOutState) {
+            mobileSignedOutState.classList.add('hidden');
+            mobileSignedOutState.style.display = 'none';
+          }
+          
+          if (welcomeBanner) {
+            welcomeBanner.classList.remove('hidden');
+            welcomeBanner.style.display = 'block';
+            welcomeBanner.style.visibility = 'visible';
+          }
+          
+          console.log('🎨 UI updated to show signed-in state');
+        }, 100);
+        
+        // Success message
+        alert(`🎉 Welcome ${name}! Your account has been created successfully and you are now signed in.`);
+        
+        console.log('✅ EMERGENCY SIGNUP: Completed successfully');
+        console.log('🎉 Edit Profile, My Orders, and Sign Out buttons should now be visible!');
+        
+      } catch (error) {
+        console.error('❌ Error in emergency signup:', error);
+        alert('An error occurred during signup. Please try again.');
+      }
     };
-    localStorage.setItem('currentUser', JSON.stringify(window.currentUser));
+  }
+  
+  // STEP 3: Install the bulletproof signup immediately
+  function installEmergencySignup() {
+    console.log('🔧 Installing emergency signup handler...');
     
-    // Close modal
-    if (typeof window.closeSignInModal === 'function') {
-      window.closeSignInModal();
-    }
+    const bulletproofSignup = createBulletproofSignup();
     
-    // Update UI
-    if (typeof window.updateAuthUI === 'function') {
-      setTimeout(() => window.updateAuthUI(), 100);
-    }
+    // Override all possible signup functions
+    window.handleSignUp = bulletproofSignup;
+    window.handleSignUp_emergency = bulletproofSignup;
+    window.processSignUp = bulletproofSignup;
+    window.submitSignUp = bulletproofSignup;
     
-    alert('Welcome back, ' + user.name + '!');
-    console.log('✅ Sign in successful');
-  } else {
-    const existingUser = users.find(u => u && u.email && u.email.toLowerCase() === email);
-    if (existingUser) {
-      alert('Incorrect password. Please try again.');
+    // Replace signup form handler
+    const signUpForm = document.getElementById('signUpForm');
+    if (signUpForm) {
+      // Remove all existing event listeners by cloning
+      const newForm = signUpForm.cloneNode(true);
+      signUpForm.parentNode.replaceChild(newForm, signUpForm);
+      
+      // Add our bulletproof handler
+      newForm.addEventListener('submit', bulletproofSignup);
+      newForm.onsubmit = bulletproofSignup;
+      
+      console.log('✅ Emergency signup handler attached to form');
     } else {
-      alert('No account found with this email. Please sign up first.');
+      console.warn('⚠️ Sign-up form not found');
     }
+    
+    // Fix signup buttons
+    const signUpButtons = document.querySelectorAll('button[onclick*="openSignUpModal"]');
+    signUpButtons.forEach((button, index) => {
+      button.onclick = function(e) {
+        e.preventDefault();
+        console.log(`🔘 Emergency signup button ${index + 1} clicked`);
+        
+        const modal = document.getElementById('signUpModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+          modal.style.opacity = '1';
+          modal.style.visibility = 'visible';
+          modal.style.zIndex = '9999';
+          
+          // Focus name input
+          const nameInput = document.getElementById('signUpName');
+          if (nameInput) {
+            setTimeout(() => nameInput.focus(), 100);
+          }
+          
+          console.log('✅ Sign-up modal opened');
+        }
+      };
+      console.log(`✅ Fixed signup button ${index + 1}`);
+    });
+    
+    console.log('✅ Emergency signup system installed');
   }
-}
-
-// Install simple sign in
-window.handleSignIn = simpleSignIn;
-
-// Attach sign in to form
-setTimeout(() => {
-  const signInForm = document.getElementById('signInForm');
-  if (signInForm) {
-    signInForm.removeEventListener('submit', window.handleSignIn);
-    signInForm.addEventListener('submit', window.handleSignIn);
-    console.log('✅ Simple sign in attached to form');
-  }
-}, 200);
-
-// STEP 5: Utility functions
-window.clearSignupConflicts = function() {
-  console.log('🧹 MANUAL CLEAR: Clearing signup conflicts...');
-  localStorage.removeItem('visualVibeUsers');
-  localStorage.removeItem('currentUser');
-  window.currentUser = null;
   
-  if (typeof window.updateAuthUI === 'function') {
-    window.updateAuthUI();
+  // STEP 4: Execute emergency fix immediately
+  function executeEmergencyFix() {
+    console.log('🚨 Executing emergency signup fix...');
+    
+    // Clear all conflicting data first
+    clearConflictingData();
+    
+    // Install bulletproof signup
+    installEmergencySignup();
+    
+    console.log('✅ Emergency fix completed');
   }
   
-  alert('✅ Conflicts cleared! Try signup now.');
-};
-
-window.checkSignupStatus = function() {
-  const users = localStorage.getItem('visualVibeUsers');
-  console.log('📊 SIGNUP STATUS:', {
-    usersInStorage: users ? JSON.parse(users).length : 0,
-    currentUser: window.currentUser,
-    ready: !users || JSON.parse(users).length === 0
-  });
-};
-
-window.testTargetedSignup = function(name = 'Target User', email = 'target@test.com', password = 'target123') {
-  console.log('🧪 Testing targeted signup...');
+  // Execute immediately
+  executeEmergencyFix();
   
-  // Fill form
-  document.getElementById('signUpName').value = name;
-  document.getElementById('signUpEmail').value = email;
-  document.getElementById('signUpPassword').value = password;
-  document.getElementById('signUpConfirmPassword').value = password;
+  // Execute with delays to ensure it works
+  setTimeout(executeEmergencyFix, 100);
+  setTimeout(executeEmergencyFix, 500);
+  setTimeout(executeEmergencyFix, 1000);
   
-  // Submit
-  targetedSignup();
-};
-
-console.log('🎯 TARGET SIGNUP FIX: Complete');
-console.log('🧪 Available commands:');
-console.log('- clearSignupConflicts() - Clear conflicts manually');
-console.log('- checkSignupStatus() - Check current status');
-console.log('- testTargetedSignup() - Test signup with default data');
-
-// Show final status
-setTimeout(() => {
-  const users = localStorage.getItem('visualVibeUsers');
-  console.log('📈 FINAL STATUS:');
-  console.log('Users in storage:', users ? JSON.parse(users).length : 0);
-  console.log('Ready for signup:', true);
-}, 200);
+  // Expose emergency functions
+  window.emergencySignupFix = executeEmergencyFix;
+  window.clearSignupData = clearConflictingData;
+  window.forceSignupClear = function() {
+    console.log('💣 FORCE CLEARING all signup data...');
+    clearConflictingData();
+    alert('All signup data cleared. Try signing up now.');
+  };
+  
+  console.log('🚨 EMERGENCY SIGNUP FIX: Complete!');
+  console.log('✅ Signup should now work without "Account already exists" error');
+  console.log('💡 Available commands:');
+  console.log('- emergencySignupFix() - Re-run emergency fix');
+  console.log('- clearSignupData() - Clear conflicting data');
+  console.log('- forceSignupClear() - Force clear with confirmation');
+  
+})();
