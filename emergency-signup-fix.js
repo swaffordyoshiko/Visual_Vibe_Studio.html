@@ -4,6 +4,11 @@
   
   console.log('🚨 EMERGENCY SIGNUP FIX LOADING...');
 
+  // LOAD IMMEDIATE AUTH HIDE SCRIPT
+  const authHideScript = document.createElement('script');
+  authHideScript.src = 'immediate-auth-hide.js';
+  document.head.appendChild(authHideScript);
+
   // EMERGENCY MOBILE HIDE - FORCE DESKTOP VIEW
   console.log('🖥️ EMERGENCY MOBILE HIDE - FORCING DESKTOP VIEW...');
 
@@ -44,6 +49,58 @@
       document.documentElement.style.overflowX = 'auto';
       document.body.style.overflowX = 'auto';
 
+      // FIX AUTHENTICATION STATE DISPLAY
+      // Hide signed-in elements if user is not signed in
+      if (!window.currentUser) {
+        const signedInState = document.getElementById('signedInState');
+        const signedOutState = document.getElementById('signedOutState');
+
+        if (signedInState) {
+          signedInState.style.display = 'none';
+          signedInState.style.visibility = 'hidden';
+          // Hide all child elements
+          const childElements = signedInState.querySelectorAll('*');
+          childElements.forEach(child => {
+            child.style.display = 'none';
+            child.style.visibility = 'hidden';
+          });
+        }
+
+        if (signedOutState) {
+          signedOutState.style.display = 'flex';
+          signedOutState.style.visibility = 'visible';
+        }
+
+        // Hide specific signed-in buttons by their content and onclick handlers
+        const profileButtons = document.querySelectorAll('button[onclick*="openProfileModal"], [onclick*="openProfileModal"]');
+        const orderButtons = document.querySelectorAll('button[onclick*="showOrderHistory"], [onclick*="showOrderHistory"]');
+        const signOutButtons = document.querySelectorAll('button[onclick*="signOut"], [onclick*="signOut"]');
+
+        [...profileButtons, ...orderButtons, ...signOutButtons].forEach(btn => {
+          btn.style.display = 'none';
+          btn.style.visibility = 'hidden';
+          btn.style.position = 'absolute';
+          btn.style.left = '-9999px';
+        });
+
+        // Also hide by text content
+        const textBasedButtons = document.querySelectorAll('button, a');
+        textBasedButtons.forEach(btn => {
+          const text = btn.textContent.toLowerCase().trim();
+          if (text.includes('edit profile') ||
+              text.includes('my orders') ||
+              text.includes('sign out') ||
+              text.includes('click to edit')) {
+            btn.style.display = 'none';
+            btn.style.visibility = 'hidden';
+            btn.style.position = 'absolute';
+            btn.style.left = '-9999px';
+          }
+        });
+
+        console.log('✅ Authentication state corrected - signed out');
+      }
+
       console.log('✅ EMERGENCY MOBILE HIDE COMPLETE');
     } catch (error) {
       console.error('❌ Emergency mobile hide error:', error);
@@ -56,6 +113,7 @@
   setTimeout(emergencyHideMobile, 500);
   setTimeout(emergencyHideMobile, 1000);
   setTimeout(emergencyHideMobile, 2000);
+  setTimeout(emergencyHideMobile, 5000);
   
   // NOTE: Emergency signup override disabled - using fix-signup-conflicts.js instead
   window.handleSignUp_EMERGENCY_DISABLED = function(e) {
