@@ -1,0 +1,217 @@
+// INSTANT SIGNUP FIX - Copy this entire script and paste into browser console (F12 → Console)
+
+console.log('⚡ INSTANT SIGNUP FIX: Resolving duplicate account error...');
+
+// STEP 1: Clean up existing user data
+try {
+    const usersData = localStorage.getItem('visualVibeUsers');
+    if (usersData) {
+        let users = JSON.parse(usersData);
+        const originalCount = users.length;
+        
+        console.log(`📊 Found ${originalCount} existing users`);
+        
+        // Remove duplicates and corrupted data
+        const emailMap = new Map();
+        users.forEach(user => {
+            if (user && user.email && user.name) {
+                const email = user.email.toLowerCase();
+                emailMap.set(email, user);
+            }
+        });
+        
+        const cleanedUsers = Array.from(emailMap.values());
+        const finalCount = cleanedUsers.length;
+        
+        localStorage.setItem('visualVibeUsers', JSON.stringify(cleanedUsers));
+        console.log(`✅ Cleaned user data: ${originalCount} → ${finalCount} users`);
+        
+        // Show cleaned users
+        cleanedUsers.forEach((user, index) => {
+            console.log(`  ${index + 1}. ${user.name} <${user.email}>`);
+        });
+    } else {
+        console.log('📋 No existing user data found');
+    }
+} catch (e) {
+    console.warn('⚠️ Error cleaning user data, resetting to empty:', e);
+    localStorage.setItem('visualVibeUsers', JSON.stringify([]));
+}
+
+// STEP 2: Create enhanced signup function that handles conflicts
+function enhancedSignup(e) {
+    if (e) e.preventDefault();
+    console.log('📝 Enhanced signup processing...');
+    
+    const nameInput = document.getElementById('signUpName');
+    const emailInput = document.getElementById('signUpEmail');
+    const passwordInput = document.getElementById('signUpPassword');
+    const confirmPasswordInput = document.getElementById('signUpConfirmPassword');
+    
+    if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+        alert('Sign-up form not found. Please refresh the page.');
+        return;
+    }
+    
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value.trim();
+    const confirmPassword = confirmPasswordInput.value.trim();
+    
+    // Validation
+    if (!name || !email || !password || !confirmPassword) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+    }
+    
+    // Check for existing users
+    let users = [];
+    try {
+        users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+    } catch (e) {
+        users = [];
+    }
+    
+    const existingUser = users.find(u => u.email.toLowerCase() === email);
+    
+    if (existingUser) {
+        const choice = confirm(`Account exists with ${email}.\n\nClick OK to sign in instead, or Cancel to use different email.`);
+        
+        if (choice) {
+            // Switch to sign-in
+            const signUpModal = document.getElementById('signUpModal');
+            const signInModal = document.getElementById('signInModal');
+            
+            if (signUpModal) {
+                signUpModal.classList.add('hidden');
+                signUpModal.style.display = 'none';
+            }
+            
+            if (signInModal) {
+                signInModal.classList.remove('hidden');
+                signInModal.style.display = 'flex';
+                
+                const signInEmail = document.getElementById('signInEmail');
+                if (signInEmail) signInEmail.value = email;
+            }
+        } else {
+            emailInput.value = '';
+            emailInput.focus();
+        }
+        return;
+    }
+    
+    // Create new user
+    const newUser = {
+        id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        name: name,
+        email: email,
+        password: password,
+        createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+    
+    // Create session
+    window.currentUser = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        loginTime: new Date().toISOString()
+    };
+    
+    localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
+    localStorage.setItem('currentUser', JSON.stringify(window.currentUser));
+    
+    // Close modal
+    const signUpModal = document.getElementById('signUpModal');
+    if (signUpModal) {
+        signUpModal.classList.add('hidden');
+        signUpModal.style.display = 'none';
+    }
+    
+    // Reset form
+    nameInput.value = '';
+    emailInput.value = '';
+    passwordInput.value = '';
+    confirmPasswordInput.value = '';
+    
+    // Force show signed-in UI
+    const signedInState = document.getElementById('signedInState');
+    const mobileSignedInState = document.getElementById('mobileSignedInState');
+    const signedOutState = document.getElementById('signedOutState');
+    const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+    
+    if (signedInState) {
+        signedInState.classList.remove('hidden');
+        signedInState.style.display = 'flex';
+        signedInState.style.visibility = 'visible';
+    }
+    
+    if (mobileSignedInState) {
+        mobileSignedInState.classList.remove('hidden');
+        mobileSignedInState.style.display = 'block';
+        mobileSignedInState.style.visibility = 'visible';
+    }
+    
+    if (signedOutState) {
+        signedOutState.classList.add('hidden');
+        signedOutState.style.display = 'none';
+    }
+    
+    if (mobileSignedOutState) {
+        mobileSignedOutState.classList.add('hidden');
+        mobileSignedOutState.style.display = 'none';
+    }
+    
+    alert(`✅ Welcome ${name}! Account created successfully.`);
+    console.log('✅ Signup completed successfully');
+}
+
+// STEP 3: Install enhanced signup handler
+const signUpForm = document.getElementById('signUpForm');
+if (signUpForm) {
+    // Replace form to remove existing listeners
+    const newForm = signUpForm.cloneNode(true);
+    signUpForm.parentNode.replaceChild(newForm, signUpForm);
+    
+    // Add enhanced handler
+    newForm.addEventListener('submit', enhancedSignup);
+    newForm.onsubmit = enhancedSignup;
+    
+    console.log('✅ Enhanced signup handler installed');
+} else {
+    console.warn('⚠️ Sign-up form not found');
+}
+
+// Override global signup function
+window.handleSignUp = enhancedSignup;
+
+console.log('⚡ INSTANT SIGNUP FIX: Complete!');
+console.log('✅ Sign-up should now work without duplicate account errors');
+console.log('🧪 Try signing up with any email address now');
+
+// Emergency clear function
+window.clearAllAccounts = function() {
+    if (confirm('Clear ALL accounts? This cannot be undone.')) {
+        localStorage.removeItem('visualVibeUsers');
+        localStorage.removeItem('visualVibeUser');
+        localStorage.removeItem('currentUser');
+        window.currentUser = null;
+        console.log('✅ All accounts cleared');
+        alert('All accounts cleared. You can now sign up fresh.');
+    }
+};
+
+console.log('💡 Emergency command: clearAllAccounts() - to clear all data');
