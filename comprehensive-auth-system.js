@@ -18,15 +18,21 @@ console.log('🔐 Loading Comprehensive Authentication System...');
     window[system + '_disabled'] = true;
   });
 
-  // Clear existing auth functions
+  // Clear existing auth functions (except modal functions that are being protected)
   const authFunctions = [
-    'handleSignIn', 'handleSignUp', 'openSignInModal', 'openSignUpModal',
-    'closeSignInModal', 'closeSignUpModal', 'switchToSignIn', 'switchToSignUp',
+    'handleSignIn', 'handleSignUp',
     'signOut', 'updateAuthUI', 'saveUserSession', 'restoreSession'
   ];
 
   authFunctions.forEach(fn => {
-    if (window[fn]) delete window[fn];
+    if (window[fn]) {
+      try {
+        delete window[fn];
+      } catch(e) {
+        // Function may be protected, that's ok
+        console.log(`Function ${fn} is protected from deletion`);
+      }
+    }
   });
 
   console.log('🧹 Cleared all conflicting auth systems');
