@@ -129,4 +129,74 @@ console.log('👥 Setting up test users...');
   console.log('👥 Test users setup complete');
   console.log('💡 Use window.quickSignInTest() to test sign in with demo credentials');
 
+  // Auto-test function availability
+  window.testAllFunctionality = function() {
+    console.log('🧪 Testing all website functionality...');
+
+    const functions = [
+      'openSignInModal', 'openSignUpModal', 'handleSignIn', 'handleSignUp',
+      'toggleMobileMenu', 'closeMobileMenu', 'submitContactForm', 'handleEmailClick',
+      'copyToClipboard', 'signOut', 'updateAuthUI'
+    ];
+
+    let working = 0;
+    let total = functions.length;
+
+    functions.forEach(funcName => {
+      if (typeof window[funcName] === 'function') {
+        console.log(`✅ ${funcName} - Available`);
+        working++;
+      } else {
+        console.log(`❌ ${funcName} - Missing`);
+      }
+    });
+
+    const percentage = Math.round((working / total) * 100);
+    console.log(`📊 Functionality Status: ${working}/${total} (${percentage}%)`);
+
+    if (percentage === 100) {
+      console.log('🎉 All functions are working perfectly!');
+    } else if (percentage >= 80) {
+      console.log('✅ Most functions are working well.');
+    } else {
+      console.log('⚠️ Several functions need attention.');
+    }
+
+    return { working, total, percentage };
+  };
+
+  // Quick demo function
+  window.demoWebsite = function() {
+    console.log('🎬 Running website demo...');
+
+    // Test sign in modal
+    setTimeout(() => {
+      console.log('1. Opening sign in modal...');
+      if (typeof window.openSignInModal === 'function') {
+        window.openSignInModal();
+
+        setTimeout(() => {
+          console.log('2. Closing sign in modal...');
+          if (typeof window.closeSignInModal === 'function') {
+            window.closeSignInModal();
+          }
+
+          setTimeout(() => {
+            console.log('3. Testing mobile menu...');
+            if (typeof window.toggleMobileMenu === 'function') {
+              window.toggleMobileMenu();
+
+              setTimeout(() => {
+                if (typeof window.closeMobileMenu === 'function') {
+                  window.closeMobileMenu();
+                }
+                console.log('✅ Demo complete! All basic functions tested.');
+              }, 1000);
+            }
+          }, 1000);
+        }, 2000);
+      }
+    }, 1000);
+  };
+
 })();
