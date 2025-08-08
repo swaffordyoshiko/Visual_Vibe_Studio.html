@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop Override Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Test styles to show mobile vs desktop behavior */
+        .test-mobile {
+            background-color: red;
+            color: white;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .test-desktop {
+            background-color: green;
+            color: white;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        @media (max-width: 767px) {
+            .test-mobile {
+                display: block;
+            }
+            .test-desktop {
+                display: none;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .test-mobile {
+                display: none;
+            }
+            .test-desktop {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">Desktop Override Test</h1>
+        
+        <!-- Test responsive visibility -->
+        <div class="test-mobile">
+            🔴 MOBILE VIEW - You should NOT see this on phones after the override
+        </div>
+        
+        <div class="test-desktop">
+            🟢 DESKTOP VIEW - You should see this on ALL devices after the override
+        </div>
+        
+        <!-- Test Tailwind responsive classes -->
+        <div class="bg-blue-500 text-white p-4 mb-4">
+            <h2 class="text-2xl mb-2">Tailwind Responsive Test</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-blue-600 p-4 rounded">Card 1</div>
+                <div class="bg-blue-600 p-4 rounded">Card 2</div>
+                <div class="bg-blue-600 p-4 rounded">Card 3</div>
+            </div>
+        </div>
+        
+        <!-- Test navigation simulation -->
+        <nav class="bg-white shadow-lg rounded-lg p-4 mb-4">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold">Logo</div>
+                
+                <!-- Mobile menu button (should be hidden after override) -->
+                <button class="md:hidden bg-gray-200 p-2 rounded">
+                    ☰ Mobile Menu
+                </button>
+                
+                <!-- Desktop menu (should always show after override) -->
+                <div class="hidden md:flex space-x-4">
+                    <a href="#" class="hover:text-blue-600">Home</a>
+                    <a href="#" class="hover:text-blue-600">About</a>
+                    <a href="#" class="hover:text-blue-600">Services</a>
+                    <a href="#" class="hover:text-blue-600">Contact</a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Test text sizing -->
+        <div class="bg-white p-6 rounded-lg mb-4">
+            <h2 class="text-xl md:text-3xl mb-4">Responsive Text Test</h2>
+            <p class="text-sm md:text-lg">This text should be large on all devices after override</p>
+        </div>
+        
+        <!-- Test flex direction -->
+        <div class="bg-white p-6 rounded-lg mb-4">
+            <h2 class="text-xl mb-4">Flex Direction Test</h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="bg-purple-500 text-white p-4 rounded flex-1">Item 1</div>
+                <div class="bg-purple-500 text-white p-4 rounded flex-1">Item 2</div>
+                <div class="bg-purple-500 text-white p-4 rounded flex-1">Item 3</div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <button onclick="checkViewport()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">
+                Check Current Viewport Width
+            </button>
+        </div>
+        
+        <div id="viewport-info" class="text-center mt-4 p-4 bg-yellow-100 rounded-lg">
+            <!-- Viewport info will be displayed here -->
+        </div>
+    </div>
+    
+    <script>
+        function checkViewport() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const info = document.getElementById('viewport-info');
+            info.innerHTML = `
+                <strong>Current Viewport:</strong><br>
+                Width: ${width}px<br>
+                Height: ${height}px<br>
+                <em>Before override: On mobile, width is usually 375-414px</em><br>
+                <em>After override: Should force minimum 1024px width</em>
+            `;
+        }
+        
+        // Check viewport on load
+        window.addEventListener('load', checkViewport);
+        window.addEventListener('resize', checkViewport);
+    </script>
+    
+    <!-- Load the desktop override script AFTER the page content -->
+    <script src="force-desktop-mobile-override.js"></script>
+    
+    <script>
+        // Additional test after override loads
+        setTimeout(() => {
+            const mobileButton = document.querySelector('.md\\:hidden');
+            const desktopMenu = document.querySelector('.hidden.md\\:flex');
+            
+            console.log('Mobile button visible:', mobileButton ? window.getComputedStyle(mobileButton).display !== 'none' : false);
+            console.log('Desktop menu visible:', desktopMenu ? window.getComputedStyle(desktopMenu).display !== 'none' : false);
+            
+            checkViewport();
+        }, 2000);
+    </script>
+</body>
+</html>
