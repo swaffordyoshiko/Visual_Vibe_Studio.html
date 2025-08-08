@@ -3,6 +3,59 @@
   'use strict';
   
   console.log('🚨 EMERGENCY SIGNUP FIX LOADING...');
+
+  // EMERGENCY MOBILE HIDE - FORCE DESKTOP VIEW
+  console.log('🖥️ EMERGENCY MOBILE HIDE - FORCING DESKTOP VIEW...');
+
+  function emergencyHideMobile() {
+    try {
+      // Update viewport
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) {
+        viewport.content = 'width=1024, initial-scale=0.5, minimum-scale=0.3, maximum-scale=1.0, user-scalable=yes';
+      }
+
+      // Hide mobile elements
+      const mobileSelectors = ['#mobileMenu', '#mobileMenuBtn', '#mobileSignedOutState', '#mobileSignedInState', '.md\\:hidden'];
+      mobileSelectors.forEach(selector => {
+        try {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(el => {
+            el.style.display = 'none';
+            el.style.visibility = 'hidden';
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+          });
+        } catch (e) {}
+      });
+
+      // Show desktop navigation
+      const desktopNavs = document.querySelectorAll('.hidden.md\\:flex');
+      desktopNavs.forEach(el => {
+        el.classList.remove('hidden');
+        el.style.display = 'flex';
+        el.style.visibility = 'visible';
+        el.style.position = 'static';
+      });
+
+      // Force desktop width
+      document.documentElement.style.minWidth = '1024px';
+      document.body.style.minWidth = '1024px';
+      document.documentElement.style.overflowX = 'auto';
+      document.body.style.overflowX = 'auto';
+
+      console.log('✅ EMERGENCY MOBILE HIDE COMPLETE');
+    } catch (error) {
+      console.error('❌ Emergency mobile hide error:', error);
+    }
+  }
+
+  // Run immediately and repeatedly
+  emergencyHideMobile();
+  setTimeout(emergencyHideMobile, 100);
+  setTimeout(emergencyHideMobile, 500);
+  setTimeout(emergencyHideMobile, 1000);
+  setTimeout(emergencyHideMobile, 2000);
   
   // NOTE: Emergency signup override disabled - using fix-signup-conflicts.js instead
   window.handleSignUp_EMERGENCY_DISABLED = function(e) {
