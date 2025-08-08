@@ -1,0 +1,41 @@
+🔧 SIGN IN/SIGN UP BUTTON FIX INSTRUCTIONS
+
+The sign in and sign up buttons are not working due to script conflicts. Here are 3 ways to fix them:
+
+=== METHOD 1: EMERGENCY SCRIPT (RECOMMENDED) ===
+The emergency-button-fix.js script has been added to index-simple.html and should load automatically.
+If buttons still don't work, the script may not be loading properly.
+
+=== METHOD 2: CONSOLE FIX (IMMEDIATE) ===
+1. Open the website where buttons aren't working
+2. Press F12 to open browser console
+3. Paste this code and press Enter:
+
+var script = document.createElement('script');
+script.src = 'emergency-button-fix.js?' + Date.now();
+script.onload = function() { console.log('✅ Emergency fix loaded!'); };
+script.onerror = function() { console.log('❌ Script failed to load'); };
+document.head.appendChild(script);
+
+=== METHOD 3: DIRECT CONSOLE FIX ===
+If the script file doesn't load, paste this code directly in console:
+
+window.openSignInModal=function(){const m=document.createElement('div');m.id='quickSignIn';m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;';m.innerHTML='<div style="background:white;padding:2rem;border-radius:8px;max-width:400px;width:90%;"><h3 style="margin:0 0 1rem 0;font-size:1.5rem;">Sign In</h3><form onsubmit="quickSignIn(event);return false;"><input type="email" id="qEmail" placeholder="Email" required style="width:100%;margin-bottom:1rem;padding:0.75rem;border:1px solid #ccc;border-radius:4px;"><input type="password" id="qPassword" placeholder="Password" required style="width:100%;margin-bottom:1rem;padding:0.75rem;border:1px solid #ccc;border-radius:4px;"><button type="submit" style="width:100%;background:#4f46e5;color:white;padding:0.75rem;border:none;border-radius:4px;font-weight:bold;">Sign In</button></form><button onclick="this.closest(\'#quickSignIn\').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;">×</button></div>';document.body.appendChild(m);document.getElementById('qEmail').focus();};window.openSignUpModal=function(){const m=document.createElement('div');m.id='quickSignUp';m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;';m.innerHTML='<div style="background:white;padding:2rem;border-radius:8px;max-width:400px;width:90%;"><h3 style="margin:0 0 1rem 0;font-size:1.5rem;">Sign Up</h3><form onsubmit="quickSignUp(event);return false;"><input type="text" id="qName" placeholder="Full Name" required style="width:100%;margin-bottom:1rem;padding:0.75rem;border:1px solid #ccc;border-radius:4px;"><input type="email" id="qEmailUp" placeholder="Email" required style="width:100%;margin-bottom:1rem;padding:0.75rem;border:1px solid #ccc;border-radius:4px;"><input type="password" id="qPasswordUp" placeholder="Password" required style="width:100%;margin-bottom:1rem;padding:0.75rem;border:1px solid #ccc;border-radius:4px;"><button type="submit" style="width:100%;background:#4f46e5;color:white;padding:0.75rem;border:none;border-radius:4px;font-weight:bold;">Sign Up</button></form><button onclick="this.closest(\'#quickSignUp\').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;">×</button></div>';document.body.appendChild(m);document.getElementById('qName').focus();};window.quickSignIn=function(e){e.preventDefault();const email=document.getElementById('qEmail').value.trim();const password=document.getElementById('qPassword').value.trim();if(!email||!password){alert('Please fill all fields');return;}const users=JSON.parse(localStorage.getItem('visualVibeUsers')||'[]');const user=users.find(u=>u.email&&u.email.toLowerCase()===email.toLowerCase()&&u.password===password);if(user){window.currentUser=user;localStorage.setItem('visualVibeUser',JSON.stringify(user));document.getElementById('quickSignIn').remove();alert('Welcome back, '+user.name+'!');const out=document.getElementById('signedOutState');const in_=document.getElementById('signedInState');const name=document.getElementById('userName');if(out){out.style.display='none';out.classList.add('hidden');}if(in_){in_.style.display='flex';in_.classList.remove('hidden');}if(name)name.textContent=user.name;}else{alert('Invalid email or password');}};window.quickSignUp=function(e){e.preventDefault();const name=document.getElementById('qName').value.trim();const email=document.getElementById('qEmailUp').value.trim();const password=document.getElementById('qPasswordUp').value.trim();if(!name||!email||!password){alert('Please fill all fields');return;}const users=JSON.parse(localStorage.getItem('visualVibeUsers')||'[]');if(users.find(u=>u.email&&u.email.toLowerCase()===email.toLowerCase())){alert('Email already exists');return;}const newUser={id:Date.now().toString(),name:name,email:email,password:password,orders:[]};users.push(newUser);localStorage.setItem('visualVibeUsers',JSON.stringify(users));window.currentUser=newUser;localStorage.setItem('visualVibeUser',JSON.stringify(newUser));document.getElementById('quickSignUp').remove();alert('Welcome, '+name+'!');const out=document.getElementById('signedOutState');const in_=document.getElementById('signedInState');const name_=document.getElementById('userName');if(out){out.style.display='none';out.classList.add('hidden');}if(in_){in_.style.display='flex';in_.classList.remove('hidden');}if(name_)name_.textContent=newUser.name;};window.signOut=function(){window.currentUser=null;localStorage.removeItem('visualVibeUser');const out=document.getElementById('signedOutState');const in_=document.getElementById('signedInState');if(out){out.style.display='flex';out.classList.remove('hidden');}if(in_){in_.style.display='none';in_.classList.add('hidden');}alert('Signed out!');};console.log('✅ Quick fix applied!');
+
+=== EXPECTED RESULTS ===
+After applying any of these fixes:
+✅ Sign In button should open a modal
+✅ Sign Up button should open a modal  
+✅ After signing in, you should see "Edit Profile", "My Orders", and "Sign Out" buttons
+✅ Sign Out button should sign you out
+
+=== TROUBLESHOOTING ===
+- If console shows errors, try refreshing the page first
+- Make sure you're on the correct page (index-simple.html works best)
+- If still not working, there may be additional script conflicts
+
+=== FILES CREATED ===
+- emergency-button-fix.js (main fix)
+- console-fix.js (console version)  
+- button-fix-instructions.txt (this file)
+- clean-test.html (test page)
