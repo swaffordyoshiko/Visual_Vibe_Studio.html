@@ -26,6 +26,22 @@
 
   console.log('✅ DIRECT USER RECOVERY LOADED - THIS IS THE ONLY AUTH SYSTEM NOW');
 
+  // LOAD FINAL AUTH OVERRIDE TO TAKE COMPLETE CONTROL AFTER ALL OTHER SCRIPTS
+  setTimeout(() => {
+    const finalOverrideScript = document.createElement('script');
+    finalOverrideScript.src = 'final-auth-override.js';
+    document.head.appendChild(finalOverrideScript);
+    console.log('🚀 FINAL AUTH OVERRIDE LOADED - WILL TAKE COMPLETE CONTROL');
+  }, 8000); // Load after everything else
+
+  // LOAD AUTH SYSTEM TEST TO VERIFY EVERYTHING WORKS
+  setTimeout(() => {
+    const testScript = document.createElement('script');
+    testScript.src = 'auth-system-test.js';
+    document.head.appendChild(testScript);
+    console.log('🧪 AUTH SYSTEM TEST LOADED');
+  }, 10000);
+
   // COMPLETELY DISABLE ALL OTHER AUTH SYSTEMS
   setTimeout(() => {
     console.log('🚫 KILLING ALL OTHER AUTH SYSTEMS...');
