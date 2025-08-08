@@ -1,0 +1,177 @@
+/* Header Layout Fix - Ensures proper navigation button layout */
+
+/* Ensure header has proper structure and positioning */
+header.glass-morphism {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+  padding: 1rem !important;
+}
+
+/* Ensure navigation container has proper flex layout */
+header .max-w-7xl {
+  max-width: 80rem !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* Ensure logo section is properly aligned */
+header .flex.items-center.space-x-3 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+/* Ensure desktop navigation is properly displayed */
+nav.hidden.md\\:flex {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  nav.hidden.md\\:flex {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+  }
+}
+
+/* Ensure navigation links are properly styled */
+nav a {
+  color: #374151 !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease !important;
+  padding: 0.5rem 0 !important;
+}
+
+nav a:hover {
+  color: #4f46e5 !important;
+}
+
+/* Ensure user account section is properly aligned */
+#userAccountSection {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+/* Ensure sign in/sign up buttons are properly styled */
+#signedOutState {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+#signedOutState button {
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* Sign In button styling */
+#signedOutState button:first-child {
+  background-color: #4f46e5 !important;
+  color: white !important;
+}
+
+#signedOutState button:first-child:hover {
+  background-color: #4338ca !important;
+}
+
+/* Sign Up button styling */
+#signedOutState button:last-child {
+  background-color: transparent !important;
+  color: #4f46e5 !important;
+  border: 1px solid #4f46e5 !important;
+}
+
+#signedOutState button:last-child:hover {
+  background-color: #eef2ff !important;
+}
+
+/* Ensure signed in state is properly hidden initially */
+#signedInState {
+  display: none !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+/* Mobile menu button styling */
+#mobileMenuBtn {
+  display: block !important;
+  padding: 0.5rem !important;
+  color: #374151 !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+#mobileMenuBtn:hover {
+  color: #4f46e5 !important;
+}
+
+@media (min-width: 768px) {
+  #mobileMenuBtn {
+    display: none !important;
+  }
+}
+
+/* Ensure proper spacing and layout */
+.space-x-2 > * + * {
+  margin-left: 0.5rem !important;
+}
+
+.space-x-3 > * + * {
+  margin-left: 0.75rem !important;
+}
+
+.space-x-4 > * + * {
+  margin-left: 1rem !important;
+}
+
+/* Fix any potential layout issues */
+header * {
+  box-sizing: border-box !important;
+}
+
+/* Ensure header doesn't collapse */
+header {
+  min-height: 4rem !important;
+}
+
+/* Logo image styling */
+header img {
+  height: 2rem !important;
+  width: 2rem !important;
+  object-fit: contain !important;
+}
+
+@media (min-width: 640px) {
+  header img {
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+  }
+}
+
+/* Logo text styling */
+header h1 {
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  color: #4f46e5 !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 640px) {
+  header h1 {
+    font-size: 1.5rem !important;
+  }
+}
