@@ -6,7 +6,7 @@ console.log('🔐 Loading Unified Authentication Fix...');
 
   // COMPLETELY DISABLE ALL CONFLICTING SCRIPTS
   const conflictingScripts = [
-    'immediate-signup-fix', 'emergency-signup-fix', 'critical-mobile-auth-fix',
+    'immediate-signup-fix', 'emergency-signup-fix',
     'final-check', 'rock-solid-auth', 'immediate-auth-fix', 'auth-system-fix',
     'cross-device-auth', 'bulletproof-auth-system', 'unified-auth-system',
     'fix-signin-button', 'signup-error-fix', 'final-auth-override'
