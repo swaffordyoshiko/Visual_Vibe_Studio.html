@@ -14,15 +14,17 @@
   authHideScript.src = 'immediate-auth-hide.js';
   document.head.appendChild(authHideScript);
 
-  // LOAD USER FINDER FIRST TO SCAN FOR EXISTING USERS
-  const userFinderScript = document.createElement('script');
-  userFinderScript.src = 'auth-user-finder.js';
-  document.head.appendChild(userFinderScript);
+  // LOAD DIRECT USER RECOVERY AS THE PRIMARY AND ONLY AUTH SYSTEM
+  const directRecoveryScript = document.createElement('script');
+  directRecoveryScript.src = 'direct-user-recovery.js';
+  document.head.appendChild(directRecoveryScript);
 
-  // LOAD ROCK-SOLID AUTH SYSTEM AS THE ONLY AUTH SYSTEM
-  const rockSolidAuthScript = document.createElement('script');
-  rockSolidAuthScript.src = 'rock-solid-auth.js';
-  document.head.appendChild(rockSolidAuthScript);
+  // LOAD TEST USER CREATOR TO HELP WITH AUTHENTICATION TESTING
+  const testUserScript = document.createElement('script');
+  testUserScript.src = 'create-test-users.js';
+  document.head.appendChild(testUserScript);
+
+  console.log('✅ DIRECT USER RECOVERY LOADED - THIS IS THE ONLY AUTH SYSTEM NOW');
 
   // COMPLETELY DISABLE ALL OTHER AUTH SYSTEMS
   setTimeout(() => {
