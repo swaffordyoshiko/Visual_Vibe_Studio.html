@@ -1,0 +1,512 @@
+/* COMPLETE DESKTOP OVERRIDE - HIGHEST PRIORITY */
+/* This file should load last to override all mobile styles */
+
+/* FORCE DESKTOP WIDTH ON ALL DEVICES */
+html {
+  min-width: 1024px !important;
+  width: 100% !important;
+}
+
+body {
+  min-width: 1024px !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* DISABLE ALL MOBILE RESPONSIVE CLASSES */
+
+/* Hide ALL mobile-only elements */
+.md\:hidden,
+.lg\:hidden,
+.xl\:hidden,
+.sm\:block.md\:hidden,
+.block.md\:hidden,
+#mobileMenu,
+#mobileMenuBtn,
+#mobileSignedOutState,
+#mobileSignedInState {
+  display: none !important;
+}
+
+/* Show ALL desktop elements */
+.hidden.sm\:flex,
+.hidden.md\:flex,
+.hidden.lg\:flex,
+.hidden.xl\:flex {
+  display: flex !important;
+}
+
+.hidden.sm\:block,
+.hidden.md\:block,
+.hidden.lg\:block,
+.hidden.xl\:block {
+  display: block !important;
+}
+
+.hidden.sm\:grid,
+.hidden.md\:grid,
+.hidden.lg\:grid,
+.hidden.xl\:grid {
+  display: grid !important;
+}
+
+/* FORCE DESKTOP GRID LAYOUTS */
+.grid-cols-1.sm\:grid-cols-2,
+.grid-cols-1.md\:grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+.grid-cols-1.sm\:grid-cols-3,
+.grid-cols-1.md\:grid-cols-3,
+.grid-cols-1.lg\:grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+
+.grid-cols-1.sm\:grid-cols-4,
+.grid-cols-1.md\:grid-cols-4,
+.grid-cols-1.lg\:grid-cols-4,
+.grid-cols-1.xl\:grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.grid-cols-2.md\:grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+
+.grid-cols-2.lg\:grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+/* FORCE DESKTOP FLEX LAYOUTS */
+.flex-col.sm\:flex-row,
+.flex-col.md\:flex-row,
+.flex-col.lg\:flex-row {
+  flex-direction: row !important;
+}
+
+.flex-wrap.sm\:flex-nowrap,
+.flex-wrap.md\:flex-nowrap {
+  flex-wrap: nowrap !important;
+}
+
+/* FORCE DESKTOP TEXT SIZES */
+.text-sm.sm\:text-base,
+.text-sm.md\:text-base {
+  font-size: 1rem !important;
+}
+
+.text-base.sm\:text-lg,
+.text-base.md\:text-lg {
+  font-size: 1.125rem !important;
+}
+
+.text-lg.sm\:text-xl,
+.text-lg.md\:text-xl {
+  font-size: 1.25rem !important;
+}
+
+.text-xl.sm\:text-2xl,
+.text-xl.md\:text-2xl {
+  font-size: 1.5rem !important;
+}
+
+.text-2xl.sm\:text-3xl,
+.text-2xl.md\:text-3xl {
+  font-size: 1.875rem !important;
+}
+
+.text-3xl.sm\:text-4xl,
+.text-3xl.md\:text-4xl {
+  font-size: 2.25rem !important;
+}
+
+.text-4xl.sm\:text-5xl,
+.text-4xl.md\:text-5xl {
+  font-size: 3rem !important;
+}
+
+.text-5xl.sm\:text-6xl,
+.text-5xl.md\:text-6xl {
+  font-size: 3.75rem !important;
+}
+
+/* FORCE DESKTOP SPACING */
+.p-2.sm\:p-4,
+.p-2.md\:p-4 {
+  padding: 1rem !important;
+}
+
+.p-4.sm\:p-6,
+.p-4.md\:p-6 {
+  padding: 1.5rem !important;
+}
+
+.p-6.sm\:p-8,
+.p-6.md\:p-8 {
+  padding: 2rem !important;
+}
+
+.px-2.sm\:px-4,
+.px-2.md\:px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.px-4.sm\:px-6,
+.px-4.md\:px-6 {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+.py-4.sm\:py-6,
+.py-4.md\:py-6 {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+
+.py-8.sm\:py-12,
+.py-8.md\:py-12 {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.py-12.sm\:py-16,
+.py-12.md\:py-16 {
+  padding-top: 4rem !important;
+  padding-bottom: 4rem !important;
+}
+
+.py-16.sm\:py-20,
+.py-16.md\:py-20 {
+  padding-top: 5rem !important;
+  padding-bottom: 5rem !important;
+}
+
+/* FORCE DESKTOP MARGINS */
+.mt-4.sm\:mt-6,
+.mt-4.md\:mt-6 {
+  margin-top: 1.5rem !important;
+}
+
+.mb-6.sm\:mb-8,
+.mb-6.md\:mb-8 {
+  margin-bottom: 2rem !important;
+}
+
+.mx-2.sm\:mx-4,
+.mx-2.md\:mx-4 {
+  margin-left: 1rem !important;
+  margin-right: 1rem !important;
+}
+
+/* FORCE DESKTOP WIDTHS */
+.w-full.sm\:w-auto,
+.w-full.md\:w-auto {
+  width: auto !important;
+}
+
+.w-full.sm\:w-1\/2,
+.w-full.md\:w-1\/2 {
+  width: 50% !important;
+}
+
+.w-full.sm\:w-1\/3,
+.w-full.md\:w-1\/3 {
+  width: 33.333333% !important;
+}
+
+.w-full.sm\:w-1\/4,
+.w-full.md\:w-1\/4 {
+  width: 25% !important;
+}
+
+/* FORCE DESKTOP HEIGHTS */
+.h-auto.sm\:h-full,
+.h-auto.md\:h-full {
+  height: 100% !important;
+}
+
+/* OVERRIDE ALL MOBILE MEDIA QUERIES WITH DESKTOP STYLES */
+@media (max-width: 767px) {
+  /* Force minimum desktop width */
+  html, body {
+    min-width: 1024px !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+  }
+  
+  /* Force desktop navigation */
+  #mobileMenu,
+  #mobileMenuBtn,
+  #mobileSignedOutState,
+  #mobileSignedInState,
+  .md\:hidden {
+    display: none !important;
+  }
+  
+  .hidden.md\:flex {
+    display: flex !important;
+  }
+  
+  .hidden.md\:block {
+    display: block !important;
+  }
+  
+  /* Force desktop grids */
+  .grid-cols-1 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  .grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  .grid-cols-1.md\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  .grid-cols-1.lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  .grid-cols-1.xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Force desktop flex */
+  .flex-col {
+    flex-direction: row !important;
+  }
+  
+  .flex-col.md\:flex-row {
+    flex-direction: row !important;
+  }
+  
+  .flex {
+    flex-wrap: nowrap !important;
+  }
+  
+  /* Force desktop text sizes */
+  .text-6xl {
+    font-size: 3.75rem !important;
+    line-height: 1 !important;
+  }
+  
+  .text-5xl {
+    font-size: 3rem !important;
+    line-height: 1 !important;
+  }
+  
+  .text-4xl {
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  .text-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  /* Force desktop spacing */
+  .py-20 {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+  }
+  
+  .py-16 {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+  
+  .py-12 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+  
+  .py-8 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+  
+  .px-4 {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+  
+  /* Force desktop containers */
+  .container,
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl,
+  .max-w-2xl {
+    max-width: none !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* Force desktop buttons */
+  button,
+  .btn {
+    width: auto !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    min-height: auto !important;
+    min-width: auto !important;
+  }
+  
+  /* Force desktop forms */
+  input,
+  select,
+  textarea {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+    width: auto !important;
+  }
+  
+  /* Force desktop layout components */
+  .hero-section {
+    padding: 4rem 2rem !important;
+    min-height: 60vh !important;
+  }
+  
+  /* Force desktop card layouts */
+  .services-grid,
+  .testimonials-grid,
+  .features-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 2rem !important;
+  }
+  
+  #allCustomerReviews {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Force desktop modals */
+  .modal,
+  .fixed.inset-0 {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 600px !important;
+    max-width: 90vw !important;
+    height: auto !important;
+    max-height: 80vh !important;
+    inset: auto !important;
+  }
+}
+
+/* Override smaller breakpoints too */
+@media (max-width: 640px) {
+  html, body {
+    min-width: 1024px !important;
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html, body {
+    min-width: 1024px !important;
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 320px) {
+  html, body {
+    min-width: 1024px !important;
+    overflow-x: auto !important;
+  }
+}
+
+/* Ensure specific Tailwind utilities always work as desktop */
+.space-y-6 > *:first-child {
+  margin-top: 0 !important;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem !important;
+}
+
+.space-x-4 > *:first-child {
+  margin-left: 0 !important;
+}
+
+.space-x-4 > * + * {
+  margin-left: 1rem !important;
+}
+
+/* Ensure navigation always shows desktop style */
+nav {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Ensure hero section always shows desktop style */
+.hero-section {
+  min-height: 60vh !important;
+  padding: 4rem 2rem !important;
+}
+
+/* Specific overrides for common patterns */
+.prose {
+  max-width: none !important;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1 !important;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9 !important;
+}
+
+/* Ensure all images and media are responsive but not constrained */
+img,
+video,
+iframe {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Final catch-all for any remaining mobile styles */
+* {
+  box-sizing: border-box !important;
+}
+
+/* Force horizontal scrolling if content is wider than viewport */
+.overflow-x-auto {
+  overflow-x: auto !important;
+}
+
+.overflow-hidden {
+  overflow: visible !important;
+}
