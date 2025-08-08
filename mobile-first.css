@@ -7,17 +7,38 @@ html, body {
   width: 100% !important;
 }
 
-/* FORCE DESKTOP NAVIGATION ALWAYS */
-.md\\:hidden {
+/* IMMEDIATELY HIDE ALL MOBILE ELEMENTS */
+#mobileMenu,
+#mobileMenuBtn,
+#mobileSignedOutState,
+#mobileSignedInState {
   display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
 }
 
-.hidden.md\\:flex {
+/* FORCE DESKTOP NAVIGATION ALWAYS */
+.md\\:hidden,
+button.md\\:hidden,
+div.md\\:hidden {
+  display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+.hidden.md\\:flex,
+nav.hidden.md\\:flex {
   display: flex !important;
+  visibility: visible !important;
+  position: static !important;
 }
 
 .hidden.md\\:block {
   display: block !important;
+  visibility: visible !important;
+  position: static !important;
 }
 
 /* FORCE DESKTOP GRID LAYOUTS */
