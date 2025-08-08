@@ -1,182 +1,150 @@
-// NUCLEAR SIGNUP FIX - Clear everything and enable fresh signups
-console.log('💥 NUCLEAR SIGNUP FIX: Starting complete reset...');
+// CLEANUP TEST DATA - Remove all test users and notifications
+console.log('🧹 CLEANUP: Removing all test users and notifications...');
 
-// IMMEDIATE EXECUTION - Clear all user data right now
-(function immediateReset() {
-  console.log('🗑️ IMMEDIATE RESET: Clearing all user data...');
+// Function to clean up all test data
+function cleanupTestData() {
+  console.log('🗑️ Starting cleanup of test data...');
   
-  // Show what's being cleared
-  const existingUsers = localStorage.getItem('visualVibeUsers');
-  if (existingUsers) {
-    console.log('❌ CLEARING EXISTING DATA:', existingUsers);
-  }
+  // Clear all user-related data from localStorage
+  const keysToRemove = [
+    'visualVibeUsers',
+    'currentUser', 
+    'visualVibeUser',
+    'pendingOrders',
+    'testUsers',
+    'demoUsers'
+  ];
   
-  // Nuclear clear - remove everything
-  localStorage.removeItem('visualVibeUsers');
-  localStorage.removeItem('currentUser');
-  localStorage.removeItem('visualVibeUser');
-  
-  // Clear all other potentially conflicting keys
-  Object.keys(localStorage).forEach(key => {
-    if (key.toLowerCase().includes('user') || 
-        key.toLowerCase().includes('vibe') ||
-        key.toLowerCase().includes('auth')) {
+  keysToRemove.forEach(key => {
+    if (localStorage.getItem(key)) {
       localStorage.removeItem(key);
-      console.log(`🗑️ Removed: ${key}`);
+      console.log(`✅ Removed: ${key}`);
     }
   });
   
-  // Reset window variables
-  window.currentUser = null;
-  
-  console.log('✅ Nuclear clear complete - localStorage is now clean');
-})();
-
-// FRESH SIGNUP FUNCTION - No duplicate checking, just create account
-function freshSignup(e) {
-  if (e) e.preventDefault();
-  console.log('🆕 FRESH SIGNUP: Creating account (no duplicate check)...');
-  
-  // Get form data
-  const name = document.getElementById('signUpName')?.value?.trim();
-  const email = document.getElementById('signUpEmail')?.value?.trim()?.toLowerCase();
-  const password = document.getElementById('signUpPassword')?.value;
-  const confirmPassword = document.getElementById('signUpConfirmPassword')?.value;
-  
-  console.log(`🆕 Creating account for: "${name}" <${email}>`);
-  
-  // Basic validation only
-  if (!name || !email || !password || !confirmPassword) {
-    alert('Please fill in all fields.');
-    return;
-  }
-  
-  if (password !== confirmPassword) {
-    alert('Passwords do not match.');
-    return;
-  }
-  
-  if (password.length < 6) {
-    alert('Password must be at least 6 characters long.');
-    return;
-  }
-  
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid email address.');
-    return;
-  }
-  
-  // Create completely fresh user array (ignore any existing data)
-  const users = [];
-  
-  // Create new user
-  const newUser = {
-    id: `fresh_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    name: name,
-    email: email,
-    password: password,
-    orders: [],
-    createdAt: new Date().toISOString(),
-    accountType: 'fresh_nuclear'
-  };
-  
-  console.log('👤 Creating fresh user:', {
-    id: newUser.id,
-    name: newUser.name,
-    email: newUser.email
+  // Clear any other test-related keys
+  Object.keys(localStorage).forEach(key => {
+    if (key.toLowerCase().includes('test') || 
+        key.toLowerCase().includes('demo') ||
+        key.toLowerCase().includes('temp') ||
+        key.toLowerCase().includes('mock')) {
+      localStorage.removeItem(key);
+      console.log(`✅ Removed test key: ${key}`);
+    }
   });
   
-  // Add to fresh array and save
-  users.push(newUser);
-  localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+  // Reset authentication state
+  window.currentUser = null;
   
-  // Create session
-  window.currentUser = {
-    id: newUser.id,
-    name: newUser.name,
-    email: newUser.email,
-    loginTime: new Date().toISOString()
-  };
-  localStorage.setItem('currentUser', JSON.stringify(window.currentUser));
+  // Remove any test notifications from DOM
+  const testNotifications = document.querySelectorAll('[class*="notification"], [class*="toast"], [class*="alert"]');
+  testNotifications.forEach(notification => {
+    const text = notification.textContent.toLowerCase();
+    if (text.includes('test') || 
+        text.includes('demo') || 
+        text.includes('example') ||
+        text.includes('sample')) {
+      notification.remove();
+      console.log('✅ Removed test notification from DOM');
+    }
+  });
   
-  console.log('💾 Fresh user and session created');
+  // Clear any welcome banners or test messages
+  const welcomeBanner = document.getElementById('welcomeBanner');
+  if (welcomeBanner && !welcomeBanner.classList.contains('hidden')) {
+    welcomeBanner.classList.add('hidden');
+    welcomeBanner.style.display = 'none';
+    console.log('✅ Hidden welcome banner');
+  }
   
-  // Update UI if function exists
+  // Update auth UI to signed-out state
   if (typeof window.updateAuthUI === 'function') {
-    setTimeout(() => window.updateAuthUI(), 100);
+    window.updateAuthUI();
+    console.log('✅ Updated auth UI to signed-out state');
   }
   
-  // Close modal if function exists
-  if (typeof window.closeSignUpModal === 'function') {
-    window.closeSignUpModal();
+  // Show clean state
+  const signedOutState = document.getElementById('signedOutState');
+  const signedInState = document.getElementById('signedInState');
+  const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+  const mobileSignedInState = document.getElementById('mobileSignedInState');
+  
+  if (signedOutState) {
+    signedOutState.classList.remove('hidden');
+    signedOutState.style.display = 'flex';
   }
   
-  // Clear form
-  document.getElementById('signUpName').value = '';
-  document.getElementById('signUpEmail').value = '';
-  document.getElementById('signUpPassword').value = '';
-  document.getElementById('signUpConfirmPassword').value = '';
+  if (signedInState) {
+    signedInState.classList.add('hidden');
+    signedInState.style.display = 'none';
+  }
   
-  alert(`✅ SUCCESS! Fresh account created for ${name}!`);
-  console.log('✅ Fresh signup completed successfully');
+  if (mobileSignedOutState) {
+    mobileSignedOutState.classList.remove('hidden');
+    mobileSignedOutState.style.display = 'block';
+  }
+  
+  if (mobileSignedInState) {
+    mobileSignedInState.classList.add('hidden');
+    mobileSignedInState.style.display = 'none';
+  }
+  
+  console.log('🎉 CLEANUP COMPLETE: All test users and notifications removed');
+  
+  // Show summary
+  const remainingKeys = Object.keys(localStorage).length;
+  console.log(`📊 Storage summary: ${remainingKeys} keys remaining in localStorage`);
+  
+  return {
+    success: true,
+    message: 'All test data cleaned up successfully',
+    remainingKeys: remainingKeys
+  };
 }
 
-// OVERRIDE ALL SIGNUP FUNCTIONS
-console.log('🔧 Overriding all signup functions...');
-window.handleSignUp = freshSignup;
+// Execute cleanup immediately
+const result = cleanupTestData();
 
-// Force attach to form
-setTimeout(() => {
-  const form = document.getElementById('signUpForm');
-  if (form) {
-    // Remove all existing listeners by cloning
-    const newForm = form.cloneNode(true);
-    form.parentNode.replaceChild(newForm, form);
-    
-    // Attach fresh function
-    newForm.addEventListener('submit', freshSignup);
-    console.log('✅ Fresh signup function attached to form');
-  }
-}, 100);
+// Make cleanup function available globally for manual use
+window.cleanupTestData = cleanupTestData;
 
-// EMERGENCY FUNCTIONS
-window.emergencyReset = function() {
-  console.log('🚨 EMERGENCY RESET: Clearing everything...');
+// Also provide a complete reset function
+window.completeReset = function() {
+  console.log('💥 COMPLETE RESET: Clearing everything...');
   localStorage.clear();
   window.currentUser = null;
-  alert('🆕 Everything cleared! Signup should work now.');
-};
-
-window.checkStorage = function() {
-  console.log('🔍 STORAGE CHECK:', {
-    visualVibeUsers: localStorage.getItem('visualVibeUsers'),
-    currentUser: localStorage.getItem('currentUser'),
-    totalKeys: localStorage.length
-  });
-};
-
-window.testFreshSignup = function(name = 'Test User', email = 'test@fresh.com', password = 'fresh123') {
-  console.log('🧪 TESTING FRESH SIGNUP...');
   
-  // Fill form and submit
-  document.getElementById('signUpName').value = name;
-  document.getElementById('signUpEmail').value = email;
-  document.getElementById('signUpPassword').value = password;
-  document.getElementById('signUpConfirmPassword').value = password;
+  // Reset all auth UI
+  const signedOutState = document.getElementById('signedOutState');
+  const signedInState = document.getElementById('signedInState');
+  const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+  const mobileSignedInState = document.getElementById('mobileSignedInState');
   
-  freshSignup();
+  if (signedOutState) {
+    signedOutState.classList.remove('hidden');
+    signedOutState.style.display = 'flex';
+  }
+  
+  if (signedInState) {
+    signedInState.classList.add('hidden');
+    signedInState.style.display = 'none';
+  }
+  
+  if (mobileSignedOutState) {
+    mobileSignedOutState.classList.remove('hidden');
+    mobileSignedOutState.style.display = 'block';
+  }
+  
+  if (mobileSignedInState) {
+    mobileSignedInState.classList.add('hidden');
+    mobileSignedInState.style.display = 'none';
+  }
+  
+  console.log('✅ Complete reset finished');
+  alert('✅ Complete reset finished - all data cleared');
 };
 
-console.log('💥 NUCLEAR SIGNUP FIX: Complete');
-console.log('🧪 Commands available:');
-console.log('- emergencyReset() - Clear everything');
-console.log('- checkStorage() - Check current storage');
-console.log('- testFreshSignup() - Test signup with default data');
-
-// Show final state
-setTimeout(() => {
-  const users = localStorage.getItem('visualVibeUsers');
-  console.log('📊 FINAL STATE:');
-  console.log('Users in storage:', users ? JSON.parse(users).length : 0);
-  console.log('Ready for signup:', true);
-}, 200);
+console.log('✅ CLEANUP SCRIPT LOADED');
+console.log('🧪 Available commands:');
+console.log('- cleanupTestData() - Remove test users and notifications');
+console.log('- completeReset() - Clear everything and reset to clean state');
