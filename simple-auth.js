@@ -1,8 +1,14 @@
-// SIMPLE WORKING AUTHENTICATION - NO CONFLICTS
-console.log('🔐 Loading Simple Auth System...');
+// SIMPLE WORKING AUTHENTICATION - FORCE UI UPDATE
+console.log('🔐 Loading Simple Auth System with Force Update...');
 
 (function() {
   'use strict';
+
+  // Clear any conflicting intervals
+  if (window.authIntervals) {
+    window.authIntervals.forEach(interval => clearInterval(interval));
+  }
+  window.authIntervals = [];
 
   // Wait for DOM to be ready
   if (document.readyState === 'loading') {
@@ -12,7 +18,7 @@ console.log('🔐 Loading Simple Auth System...');
   }
 
   function initAuth() {
-    console.log('🚀 Initializing Simple Auth...');
+    console.log('🚀 Initializing Simple Auth with UI Force...');
 
     // WORKING SIGN IN MODAL
     window.openSignInModal = function() {
@@ -170,8 +176,9 @@ console.log('🔐 Loading Simple Auth System...');
         // Save session
         localStorage.setItem('visualVibeUser', JSON.stringify(window.currentUser));
         
-        // Update UI
+        // Update UI IMMEDIATELY and with force
         updateAuthUI();
+        forceAuthUIUpdate();
         
         // Close modal
         closeSignInModal();
@@ -240,8 +247,9 @@ console.log('🔐 Loading Simple Auth System...');
       window.currentUser = newUser;
       localStorage.setItem('visualVibeUser', JSON.stringify(newUser));
       
-      // Update UI
+      // Update UI IMMEDIATELY and with force
       updateAuthUI();
+      forceAuthUIUpdate();
       
       // Close modal
       closeSignUpModal();
@@ -264,9 +272,10 @@ console.log('🔐 Loading Simple Auth System...');
       localStorage.removeItem('visualVibeUser');
       
       updateAuthUI();
+      forceAuthUIUpdate();
     };
 
-    // UPDATE UI
+    // UPDATE UI - MAIN FUNCTION
     function updateAuthUI() {
       console.log('🎨 Updating UI...');
       
@@ -329,6 +338,48 @@ console.log('🔐 Loading Simple Auth System...');
       }
     }
 
+    // FORCE UI UPDATE - AGGRESSIVELY OVERRIDE HIDDEN STATES
+    function forceAuthUIUpdate() {
+      console.log('🔥 FORCE UI UPDATE...');
+      
+      setTimeout(() => {
+        try {
+          const signedOutState = document.getElementById('signedOutState');
+          const signedInState = document.getElementById('signedInState');
+          const mobileSignedOutState = document.getElementById('mobileSignedOutState');
+          const mobileSignedInState = document.getElementById('mobileSignedInState');
+          
+          if (window.currentUser) {
+            // FORCE REMOVE HIDDEN CLASS AND SET DISPLAY
+            if (signedInState) {
+              signedInState.classList.remove('hidden');
+              signedInState.style.display = 'flex';
+              signedInState.style.visibility = 'visible';
+              signedInState.style.opacity = '1';
+              console.log('🔥 FORCED signedInState visible');
+            }
+            if (mobileSignedInState) {
+              mobileSignedInState.classList.remove('hidden');
+              mobileSignedInState.style.display = 'block';
+              mobileSignedInState.style.visibility = 'visible';
+              mobileSignedInState.style.opacity = '1';
+              console.log('🔥 FORCED mobileSignedInState visible');
+            }
+            if (signedOutState) {
+              signedOutState.classList.add('hidden');
+              signedOutState.style.display = 'none';
+            }
+            if (mobileSignedOutState) {
+              mobileSignedOutState.classList.add('hidden');
+              mobileSignedOutState.style.display = 'none';
+            }
+          }
+        } catch (error) {
+          console.error('❌ Force update error:', error);
+        }
+      }, 100);
+    }
+
     // NOTIFICATION
     function showNotification(message, type = 'info') {
       // Remove existing notifications
@@ -366,11 +417,11 @@ console.log('🔐 Loading Simple Auth System...');
 
     // PLACEHOLDER FUNCTIONS
     window.openProfileModal = function() {
-      alert('Edit Profile functionality is available. Please contact support for profile changes.');
+      showNotification('Edit Profile functionality is available. Please contact support for profile changes.', 'info');
     };
 
     window.showOrderHistory = function() {
-      alert('My Orders functionality is available. Please contact support for order inquiries.');
+      showNotification('My Orders functionality is available. Please contact support for order inquiries.', 'info');
     };
 
     // RESTORE SESSION
@@ -389,12 +440,27 @@ console.log('🔐 Loading Simple Auth System...');
 
     // MAKE FUNCTIONS GLOBAL
     window.updateAuthUI = updateAuthUI;
+    window.forceAuthUIUpdate = forceAuthUIUpdate;
 
     // INITIALIZE
     restoreSession();
     updateAuthUI();
+    forceAuthUIUpdate();
     
-    console.log('✅ Simple Auth System initialized successfully!');
+    // SET UP CONTINUOUS FORCE UPDATE TO PREVENT CONFLICTS
+    const forceUpdateInterval = setInterval(() => {
+      if (window.currentUser) {
+        const signedInState = document.getElementById('signedInState');
+        if (signedInState && signedInState.classList.contains('hidden')) {
+          console.log('🔄 Detected hidden signed-in state, force-fixing...');
+          forceAuthUIUpdate();
+        }
+      }
+    }, 3000);
+    
+    window.authIntervals.push(forceUpdateInterval);
+    
+    console.log('✅ Simple Auth System with Force Update initialized successfully!');
   }
 
 })();
