@@ -349,6 +349,21 @@ console.log('🔐 Loading Simple Auth System...');
       }, 3000);
     }
 
+    // MOBILE MENU
+    window.toggleMobileMenu = function() {
+      const menu = document.getElementById('mobileMenu');
+      if (menu) {
+        menu.classList.toggle('hidden');
+      }
+    };
+
+    window.closeMobileMenu = function() {
+      const menu = document.getElementById('mobileMenu');
+      if (menu) {
+        menu.classList.add('hidden');
+      }
+    };
+
     // PLACEHOLDER FUNCTIONS
     window.openProfileModal = function() {
       alert('Edit Profile functionality is available. Please contact support for profile changes.');
