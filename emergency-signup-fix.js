@@ -42,6 +42,14 @@
     console.log('🧪 AUTH SYSTEM TEST LOADED');
   }, 10000);
 
+  // LOAD DEBUG SCRIPT TO CHECK CURRENT STATE
+  setTimeout(() => {
+    const debugScript = document.createElement('script');
+    debugScript.src = 'debug-auth-state.js';
+    document.head.appendChild(debugScript);
+    console.log('🔍 AUTH DEBUG LOADED');
+  }, 16000);
+
   // COMPLETELY DISABLE ALL OTHER AUTH SYSTEMS
   setTimeout(() => {
     console.log('🚫 KILLING ALL OTHER AUTH SYSTEMS...');
