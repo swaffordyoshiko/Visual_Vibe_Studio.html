@@ -210,7 +210,7 @@ if (window.innerWidth <= 767) {
     console.log('🔧 Adding desktop-style CSS...');
     
     const desktopCSS = document.createElement('style');
-    desktopCSS.id = 'mobile-desktop-mirror';
+    desktopCSS.id = 'desktop-css';
     desktopCSS.innerHTML = `
       @media screen and (max-width: 767px) {
         /* Hide any remaining mobile elements */
