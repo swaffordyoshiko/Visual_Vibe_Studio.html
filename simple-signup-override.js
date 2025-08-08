@@ -1,5 +1,6 @@
-// SIMPLE, DIRECT SIGNUP OVERRIDE - NO CONFLICTS
-console.log('🚀 Loading simple signup override...');
+// SIMPLE, DIRECT SIGNUP OVERRIDE - DISABLED (using unified-auth-system.js instead)
+console.log('🚀 SIMPLE SIGNUP OVERRIDE: DISABLED - using unified-auth-system.js instead');
+return; // Exit immediately
 
 // IMMEDIATELY disable all other signup functions
 window.handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE = window.handleSignUp;
