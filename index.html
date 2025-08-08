@@ -12,6 +12,7 @@ window.handleEmailClick = function(event, emailAddress) {
   <script>window.simpleOrderSubmit = function() { console.log("Fallback function called - main script will override"); return false; };</script>
   <script>window.copyToClipboard = function(text, msg) { try { if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => window.toastManager ? window.toastManager.success(msg || "Copied to clipboard!") : alert(msg || "Copied!")); } else { window.toastManager ? window.toastManager.error("Copy not supported") : alert("Copy not supported"); } } catch(e) { window.toastManager ? window.toastManager.error("Copy failed") : alert("Copy failed"); } };</script>
 <link rel="stylesheet" href="essential-styling.css">
+<link rel="stylesheet" href="header-layout-fix.css">
 <link rel="stylesheet" href="responsive-critical.css">
 <link rel="stylesheet" href="toast-notifications.css">
 <link rel="stylesheet" href="responsive-fixes.css">
@@ -20,6 +21,7 @@ window.handleEmailClick = function(event, emailAddress) {
 <script src="setup-test-users.js"></script>
 <script src="universal-website-fix.js"></script>
 <script src="functionality-tester.js"></script>
+<script src="remove-sync-buttons-permanent.js"></script>
 <script src="toast-notifications.js"></script>
 <script src="emergency-signup-fix.js"></script>
   <meta charset="UTF-8" />
@@ -10581,11 +10583,10 @@ This is sent because SMS delivery may have failed.
 
 <body class="relative bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 text-gray-900">
   <!-- Global Professional Background Elements -->
-    <div
-      class="absolute top-1/4 left-0 w-64 h-64 bg-gradient-to-r from-indigo-100/20 to-transparent rounded-full blur-3xl animate-pulse">
-    </div>
-    <div class="absolute bottom-1/4 right-0 w-64 h-64 bg-gradient-to-l from-purple-100/20 to-transparent rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
-  </div>
+  <div class="absolute top-1/4 left-0 w-64 h-64 bg-gradient-to-r from-indigo-100/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+  <div class="absolute bottom-1/4 right-0 w-64 h-64 bg-gradient-to-l from-purple-100/20 to-transparent rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
+
+  <header class="glass-morphism shadow-xl p-4 sticky top-0 z-50 border-b border-white/20">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-3">
         <img
@@ -11849,12 +11850,7 @@ console.log('✅ copyToClipboard function loaded:', typeof window.copyToClipboar
     </div>
   </section>
 <script src="profile-comprehensive-fix.js"></script>
-<link rel="stylesheet" href="cross-device-sync-ui.css">
 <script src="emergency-signup-fix.js"></script>
-<script src="cross-device-auth.js"></script>
-<script src="cross-device-sync-ui.js"></script>
-<script src="cross-device-auth-guide.js"></script>
-<script src="test-cross-device-auth.js"></script>
 <script src="simple-order.js"></script>
 <script src="emergency-backup.js"></script>
 <script src="modern-form-notifications.js"></script>
