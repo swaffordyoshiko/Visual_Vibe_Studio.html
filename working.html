@@ -418,6 +418,14 @@
             
             console.log('✅ Working authentication system loaded!');
             console.log('✅ All buttons should work now!');
+
+        // Load comprehensive authentication fix
+        const script = document.createElement('script');
+        script.src = 'comprehensive-auth-fix.js';
+        script.onload = function() {
+            console.log('🔧 Comprehensive authentication fix loaded!');
+        };
+        document.head.appendChild(script);
         });
     </script>
 
