@@ -113,28 +113,34 @@ console.log('✅ Authentication UI fixed!');
             document.head.appendChild(script);
         }
         
-        // Load the comprehensive fix
-        loadScript('auth-ui-state-fix.js', (success) => {
+        // Load the simple fix (no property redefinition issues)
+        loadScript('simple-auth-fix.js', (success) => {
             if (success !== false) {
-                console.log('✅ Auth UI state fix loaded');
-                
-                // Load the immediate injection fix
-                loadScript('inject-auth-fix-now.js', (success2) => {
+                console.log('✅ Simple auth fix loaded');
+                updateStatus('✅ Authentication fixes successfully injected!', 'success');
+                fixApplied = true;
+
+                // Apply the fix after a short delay
+                setTimeout(() => {
+                    runImmediateFix();
+                }, 1000);
+            } else {
+                console.log('⚠️ Simple fix failed, trying comprehensive fix...');
+
+                // Fallback to comprehensive fix
+                loadScript('auth-ui-state-fix.js', (success2) => {
                     if (success2 !== false) {
-                        console.log('✅ Immediate fix injected');
+                        console.log('✅ Comprehensive fix loaded');
                         updateStatus('✅ Authentication fixes successfully injected!', 'success');
                         fixApplied = true;
-                        
-                        // Apply the fix after a short delay
+
                         setTimeout(() => {
                             runImmediateFix();
                         }, 1000);
                     } else {
-                        updateStatus('⚠️ Partial fix applied. Use manual script below.', 'error');
+                        updateStatus('❌ Auto-injection failed. Use manual script below.', 'error');
                     }
                 });
-            } else {
-                updateStatus('❌ Auto-injection failed. Use manual script below.', 'error');
             }
         });
         
@@ -275,7 +281,7 @@ console.log('✅ Authentication UI fixed!');
         }
         
         function forceShowButtons() {
-            console.log('👁️ Force showing all signed-in buttons...');
+            console.log('����️ Force showing all signed-in buttons...');
             
             const elementsToShow = [
                 'signedInState', 'mobileSignedInState', 'welcomeBanner'
