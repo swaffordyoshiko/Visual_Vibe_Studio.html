@@ -18,6 +18,48 @@ html, body {
   left: -9999px !important;
 }
 
+/* FORCE HIDE SIGNED-IN ELEMENTS BY DEFAULT (until user signs in) */
+#signedInState {
+  display: none !important;
+}
+
+#signedInState * {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* ENSURE SIGNED-OUT ELEMENTS ARE VISIBLE BY DEFAULT */
+#signedOutState {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* SPECIFICALLY HIDE SIGNED-IN BUTTONS BY ONCLICK HANDLERS */
+button[onclick*="openProfileModal"],
+button[onclick*="showOrderHistory"],
+button[onclick*="signOut"],
+a[onclick*="openProfileModal"],
+a[onclick*="showOrderHistory"],
+a[onclick*="signOut"] {
+  display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* OVERRIDE: Only show these buttons when parent has a specific class */
+.user-authenticated button[onclick*="openProfileModal"],
+.user-authenticated button[onclick*="showOrderHistory"],
+.user-authenticated button[onclick*="signOut"],
+.user-authenticated a[onclick*="openProfileModal"],
+.user-authenticated a[onclick*="showOrderHistory"],
+.user-authenticated a[onclick*="signOut"] {
+  display: initial !important;
+  visibility: visible !important;
+  position: static !important;
+  left: auto !important;
+}
+
 /* FORCE DESKTOP NAVIGATION ALWAYS */
 .md\\:hidden,
 button.md\\:hidden,
