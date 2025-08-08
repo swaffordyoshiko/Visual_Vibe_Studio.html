@@ -997,5 +997,42 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   console.log('✅ My Orders: No auto-opening, shows orders AND reviews with working delete buttons');
   console.log('✅ Picture Uploader: Only opens when clicking change picture button');
   console.log('✅ Sign-Up: Fixed phantom account conflicts, smart conflict resolution');
+
+  // FORCE DESKTOP VIEW ON MOBILE DEVICES
+  console.log('🖥️ Forcing desktop view on mobile devices...');
+
+  // Load the desktop override script
+  const desktopScript = document.createElement('script');
+  desktopScript.src = 'force-mobile-to-desktop.js';
+  document.head.appendChild(desktopScript);
+
+  // Also apply immediate fixes
+  setTimeout(() => {
+    // Update viewport
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.content = 'width=1024, initial-scale=0.5, minimum-scale=0.3, maximum-scale=1.0, user-scalable=yes';
+    }
+
+    // Hide mobile elements immediately
+    const mobileElements = ['#mobileMenu', '#mobileMenuBtn', '#mobileSignedOutState', '#mobileSignedInState'];
+    mobileElements.forEach(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.style.display = 'none';
+        element.style.visibility = 'hidden';
+      }
+    });
+
+    // Show desktop navigation
+    const desktopNav = document.querySelector('nav.hidden.md\\:flex');
+    if (desktopNav) {
+      desktopNav.classList.remove('hidden');
+      desktopNav.style.display = 'flex';
+      desktopNav.style.visibility = 'visible';
+    }
+
+    console.log('✅ Desktop view forced on mobile devices');
+  }, 500);
   
 })();
