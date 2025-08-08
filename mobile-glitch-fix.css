@@ -1,19 +1,20 @@
-/* Mobile Glitch Fixes - Immediate Solutions */
+/* DESKTOP OVERRIDE - FORCE DESKTOP VIEW ON ALL DEVICES */
 
-/* Disable problematic animations on mobile */
+/* OVERRIDE MOBILE BEHAVIOR - FORCE DESKTOP */
 @media (max-width: 767px) {
-  
-  /* Stop all potentially problematic animations */
+
+  /* FORCE DESKTOP ANIMATIONS */
   *, *::before, *::after {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-    transition-duration: 0.1s !important;
-    transition-delay: 0s !important;
+    animation-duration: inherit !important;
+    animation-delay: inherit !important;
+    transition-duration: 0.3s !important;
+    transition-delay: inherit !important;
   }
-  
-  /* Fix overflow issues */
+
+  /* FORCE DESKTOP OVERFLOW */
   html, body {
-    overflow-x: hidden !important;
+    min-width: 1024px !important;
+    overflow-x: auto !important;
     width: 100% !important;
     position: relative !important;
   }
@@ -25,11 +26,27 @@
     animation: none !important;
   }
   
-  /* Fix floating elements */
+  /* SHOW DESKTOP DECORATIVE ELEMENTS */
   .floating-shapes,
   .floating-icon,
   .geometric-shape {
+    display: block !important;
+  }
+
+  /* HIDE MOBILE NAVIGATION */
+  #mobileMenu,
+  #mobileMenuBtn,
+  #mobileSignedOutState,
+  #mobileSignedInState,
+  .md\\:hidden {
     display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* SHOW DESKTOP NAVIGATION */
+  .hidden.md\\:flex {
+    display: flex !important;
+    visibility: visible !important;
   }
   
   /* Simplify backgrounds */
