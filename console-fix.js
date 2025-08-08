@@ -1,62 +1,92 @@
-// CONSOLE FIX - Copy and paste this entire code block into the browser console
-// This will fix the handleEmailClick error immediately
+// CONSOLE FIX - COPY AND PASTE THIS INTO BROWSER CONSOLE
+// Run this command in the browser console to immediately fix sign in/sign up buttons
 
-console.log('🚨 APPLYING IMMEDIATE CONSOLE FIX...');
+console.log('🚨 CONSOLE FIX: Fixing buttons now...');
 
-// 1. Define the missing function immediately
-window.handleEmailClick = function(event, emailAddress) {
-  console.log('📧 handleEmailClick executed via console fix');
-  if (event && event.preventDefault) event.preventDefault();
-  const email = emailAddress || 'support@visualvibestudio.store';
-  window.location.href = 'mailto:' + email;
+// Quick working sign in modal
+window.openSignInModal = function() {
+  const modal = document.createElement('div');
+  modal.id = 'consoleSignInModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;';
+  modal.innerHTML = '<div style="background:white;padding:2rem;border-radius:0.5rem;max-width:400px;width:90%;"><h3 style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;">Sign In</h3><form onsubmit="consoleSignIn(event);return false;"><input type="email" id="consoleEmail" placeholder="Email" required style="width:100%;margin-bottom:1rem;padding:0.5rem;border:1px solid #ccc;border-radius:0.25rem;"><input type="password" id="consolePassword" placeholder="Password" required style="width:100%;margin-bottom:1rem;padding:0.5rem;border:1px solid #ccc;border-radius:0.25rem;"><button type="submit" style="width:100%;background:#4f46e5;color:white;padding:0.75rem;border:none;border-radius:0.25rem;font-weight:bold;">Sign In</button></form><button onclick="this.closest(\'#consoleSignInModal\').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;">×</button></div>';
+  document.body.appendChild(modal);
+  document.getElementById('consoleEmail').focus();
 };
 
-// 2. Find and fix the problematic button right now
-const button = document.getElementById('mainSendEmailBtn');
-if (button) {
-  console.log('🎯 Found problematic button - fixing now...');
-  
-  // Remove the bad onclick
-  button.removeAttribute('onclick');
-  button.onclick = null;
-  
-  // Add safe click handler
-  button.addEventListener('click', function(event) {
-    console.log('📧 Safe email button clicked');
-    event.preventDefault();
-    window.location.href = 'mailto:support@visualvibestudio.store';
-  });
-  
-  console.log('✅ Button fixed successfully');
-} else {
-  console.log('⚠️ Button not found yet');
-}
+// Quick working sign up modal
+window.openSignUpModal = function() {
+  const modal = document.createElement('div');
+  modal.id = 'consoleSignUpModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;';
+  modal.innerHTML = '<div style="background:white;padding:2rem;border-radius:0.5rem;max-width:400px;width:90%;"><h3 style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;">Sign Up</h3><form onsubmit="consoleSignUp(event);return false;"><input type="text" id="consoleName" placeholder="Full Name" required style="width:100%;margin-bottom:1rem;padding:0.5rem;border:1px solid #ccc;border-radius:0.25rem;"><input type="email" id="consoleEmailUp" placeholder="Email" required style="width:100%;margin-bottom:1rem;padding:0.5rem;border:1px solid #ccc;border-radius:0.25rem;"><input type="password" id="consolePasswordUp" placeholder="Password (min 6)" required minlength="6" style="width:100%;margin-bottom:1rem;padding:0.5rem;border:1px solid #ccc;border-radius:0.25rem;"><button type="submit" style="width:100%;background:#4f46e5;color:white;padding:0.75rem;border:none;border-radius:0.25rem;font-weight:bold;">Sign Up</button></form><button onclick="this.closest(\'#consoleSignUpModal\').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;">×</button></div>';
+  document.body.appendChild(modal);
+  document.getElementById('consoleName').focus();
+};
 
-// 3. Fix all email buttons with handleEmailClick
-document.querySelectorAll('[onclick*="handleEmailClick"]').forEach((element, index) => {
-  console.log(`🔧 Fixing email element ${index + 1}`);
-  
-  const onclickAttr = element.getAttribute('onclick');
-  const emailMatch = onclickAttr.match(/['"]([^'"]*@[^'"]*)['"]/) || ['', 'support@visualvibestudio.store'];
-  const email = emailMatch[1];
-  
-  element.removeAttribute('onclick');
-  element.onclick = null;
-  
-  element.addEventListener('click', function(event) {
-    console.log('📧 Fixed email element clicked:', email);
-    event.preventDefault();
-    window.location.href = 'mailto:' + email;
-  });
-  
-  console.log(`✅ Fixed element ${index + 1} for email: ${email}`);
-});
+// Quick sign in handler
+window.consoleSignIn = function(e) {
+  e.preventDefault();
+  const email = document.getElementById('consoleEmail').value.trim().toLowerCase();
+  const password = document.getElementById('consolePassword').value.trim();
+  if (!email || !password) { alert('Please fill all fields'); return; }
+  const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+  const user = users.find(u => u.email && u.email.toLowerCase() === email && u.password === password);
+  if (user) {
+    window.currentUser = user;
+    localStorage.setItem('visualVibeUser', JSON.stringify(user));
+    document.getElementById('consoleSignInModal').remove();
+    alert('✅ Welcome back, ' + user.name + '!');
+    // Update UI
+    const signedOut = document.getElementById('signedOutState');
+    const signedIn = document.getElementById('signedInState');
+    const userName = document.getElementById('userName');
+    if (signedOut) { signedOut.style.display = 'none'; signedOut.classList.add('hidden'); }
+    if (signedIn) { signedIn.style.display = 'flex'; signedIn.classList.remove('hidden'); }
+    if (userName) userName.textContent = user.name;
+  } else {
+    alert('❌ Invalid email or password');
+  }
+};
 
-console.log('✅ CONSOLE FIX COMPLETE - Error should be resolved');
+// Quick sign up handler
+window.consoleSignUp = function(e) {
+  e.preventDefault();
+  const name = document.getElementById('consoleName').value.trim();
+  const email = document.getElementById('consoleEmailUp').value.trim().toLowerCase();
+  const password = document.getElementById('consolePasswordUp').value.trim();
+  if (!name || !email || !password) { alert('Please fill all fields'); return; }
+  if (password.length < 6) { alert('Password must be at least 6 characters'); return; }
+  const users = JSON.parse(localStorage.getItem('visualVibeUsers') || '[]');
+  if (users.find(u => u.email && u.email.toLowerCase() === email)) { alert('Email already exists'); return; }
+  const newUser = { id: Date.now().toString(), name: name, email: email, password: password, orders: [], createdAt: new Date().toISOString() };
+  users.push(newUser);
+  localStorage.setItem('visualVibeUsers', JSON.stringify(users));
+  window.currentUser = newUser;
+  localStorage.setItem('visualVibeUser', JSON.stringify(newUser));
+  document.getElementById('consoleSignUpModal').remove();
+  alert('✅ Welcome, ' + name + '! Account created!');
+  // Update UI
+  const signedOut = document.getElementById('signedOutState');
+  const signedIn = document.getElementById('signedInState');
+  const userName = document.getElementById('userName');
+  if (signedOut) { signedOut.style.display = 'none'; signedOut.classList.add('hidden'); }
+  if (signedIn) { signedIn.style.display = 'flex'; signedIn.classList.remove('hidden'); }
+  if (userName) userName.textContent = newUser.name;
+};
 
-// Test the fix
-if (typeof window.handleEmailClick === 'function') {
-  console.log('✅ handleEmailClick function is now available');
-} else {
-  console.error('❌ Fix failed - function still not available');
-}
+// Quick sign out
+window.signOut = function() {
+  window.currentUser = null;
+  localStorage.removeItem('visualVibeUser');
+  const signedOut = document.getElementById('signedOutState');
+  const signedIn = document.getElementById('signedInState');
+  if (signedOut) { signedOut.style.display = 'flex'; signedOut.classList.remove('hidden'); }
+  if (signedIn) { signedIn.style.display = 'none'; signedIn.classList.add('hidden'); }
+  alert('👋 Signed out successfully!');
+};
+
+// Placeholder functions
+window.openProfileModal = function() { alert('Edit Profile: Please contact support for profile changes.'); };
+window.showOrderHistory = function() { alert('My Orders: Please contact support for order inquiries.'); };
+
+console.log('✅ CONSOLE FIX APPLIED! Try clicking the sign in/sign up buttons now.');
