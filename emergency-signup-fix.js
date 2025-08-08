@@ -4,15 +4,31 @@
   
   console.log('🚨 EMERGENCY SIGNUP FIX LOADING...');
 
+  // DISABLE ALL AUTH CONFLICTS FIRST
+  const conflictDisablerScript = document.createElement('script');
+  conflictDisablerScript.src = 'disable-all-auth-conflicts.js';
+  document.head.appendChild(conflictDisablerScript);
+
   // LOAD IMMEDIATE AUTH HIDE SCRIPT
   const authHideScript = document.createElement('script');
   authHideScript.src = 'immediate-auth-hide.js';
   document.head.appendChild(authHideScript);
 
-  // LOAD UNIFIED AUTH SYSTEM TO FIX SIGN-IN ISSUES
-  const unifiedAuthScript = document.createElement('script');
-  unifiedAuthScript.src = 'unified-auth-system.js';
-  document.head.appendChild(unifiedAuthScript);
+  // LOAD BULLETPROOF AUTH SYSTEM TO FIX ALL SIGN-IN ISSUES
+  const bulletproofAuthScript = document.createElement('script');
+  bulletproofAuthScript.src = 'bulletproof-auth-system.js';
+  document.head.appendChild(bulletproofAuthScript);
+
+  // DISABLE ALL OTHER AUTH SYSTEMS
+  setTimeout(() => {
+    console.log('🚫 Disabling conflicting auth systems...');
+
+    // Disable specific problematic functions
+    if (window.CrossDeviceAuth) window.CrossDeviceAuth = null;
+    if (window.handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE) window.handleSignUp_DISABLED_BY_SIMPLE_OVERRIDE = null;
+
+    console.log('✅ Conflicting auth systems disabled');
+  }, 100);
 
   // EMERGENCY MOBILE HIDE - FORCE DESKTOP VIEW
   console.log('🖥️ EMERGENCY MOBILE HIDE - FORCING DESKTOP VIEW...');
