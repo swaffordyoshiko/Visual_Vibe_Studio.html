@@ -1002,9 +1002,7 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   console.log('🖥️ Forcing desktop view on mobile devices...');
 
   // Load the desktop override script
-  const desktopScript = document.createElement('script');
-  desktopScript.src = 'force-mobile-to-desktop.js';
-  document.head.appendChild(desktopScript);
+  // Mobile to desktop script removed
 
   // Load the auth state manager
   const authScript = document.createElement('script');
