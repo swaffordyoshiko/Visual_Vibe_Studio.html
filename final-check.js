@@ -1006,6 +1006,11 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   desktopScript.src = 'force-mobile-to-desktop.js';
   document.head.appendChild(desktopScript);
 
+  // Load the auth state manager
+  const authScript = document.createElement('script');
+  authScript.src = 'auth-state-manager.js';
+  document.head.appendChild(authScript);
+
   // Also apply immediate fixes
   setTimeout(() => {
     // Update viewport
