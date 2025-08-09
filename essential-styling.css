@@ -255,6 +255,10 @@ h1, h2, h3 {
       0.2px -0.2px 0 rgba(0, 0, 0, 0.2),
       -0.2px 0.2px 0 rgba(0, 0, 0, 0.2),
       0.2px 0.2px 0 rgba(0, 0, 0, 0.2);
+    word-break: keep-all !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    font-size: 2.5rem !important;
   }
 
   .gradient-text.text-glow {
@@ -391,9 +395,33 @@ footer {
     background: rgba(255, 255, 255, 0.3) !important;
     backdrop-filter: blur(15px) !important;
   }
-  
+
   body {
     background-size: 200% 200%;
+  }
+
+  /* Fix mobile text display */
+  .text-4xl, .text-5xl, .text-6xl {
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+  }
+
+  /* Ensure proper spacing on mobile */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Fix mobile toast positioning */
+  #toastContainer {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  #toastContainer .transform {
+    max-width: none;
   }
 }
 
