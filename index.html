@@ -57,11 +57,11 @@
             <button onclick="document.getElementById('emailModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
 
             <div style="margin-bottom: 1rem;">
-              <button onclick="window.location.href='mailto:support@visualvibestudio.store'; document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+              <button onclick="window.open('mailto:support@visualvibestudio.store', '_self'); document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <span>📧</span> Open Email App
               </button>
 
-              <button onclick="window.copyToClipboard('support@visualvibestudio.store', 'Email address copied!'); document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+              <button onclick="navigator.clipboard.writeText('support@visualvibestudio.store').then(() => { if(window.toastManager) { window.toastManager.success('✅ Email address copied to clipboard!', { duration: 3000 }); } else { alert('Email address copied!'); } }).catch(() => { if(window.toastManager) { window.toastManager.error('Failed to copy. Please copy manually: support@visualvibestudio.store'); } else { alert('Failed to copy. Email: support@visualvibestudio.store'); } }); document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <span>📋</span> Copy Email Address
               </button>
 
