@@ -2,7 +2,7 @@
   "name": "visual-vibe-studio",
   "version": "1.0.0",
   "description": "Visual Vibe Studio website",
-  "main": "visual_vibe_studio.html",
+  "main": "index-clean.html",
   "scripts": {
     "dev": "npx serve . -p 3000",
     "start": "npx serve . -p 3000"
