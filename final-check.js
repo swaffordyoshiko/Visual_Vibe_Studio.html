@@ -1151,20 +1151,8 @@ console.log('🔧 Final Check: Fixing edit profile and my orders forms...');
   // Load the desktop override script
   // Mobile to desktop script removed
 
-  // Load the auth state manager
-  const authScript = document.createElement('script');
-  authScript.src = 'auth-state-manager.js';
-  document.head.appendChild(authScript);
-
-  // Load auth debug helper
-  const debugScript = document.createElement('script');
-  debugScript.src = 'auth-debug-helper.js';
-  document.head.appendChild(debugScript);
-
-  // Load auth verification test
-  const verificationScript = document.createElement('script');
-  verificationScript.src = 'auth-verification-test.js';
-  document.head.appendChild(verificationScript);
+  // Scripts already cleaned - no additional loading needed
+  console.log('✅ Authentication scripts cleaned - no duplicates to load');
 
   // Also apply immediate fixes
   setTimeout(() => {
