@@ -139,6 +139,81 @@
       return false;
     };
 
+    // Email options modal for desktop compatibility
+    window.openEmailOptionsModal = function() {
+      const modalHTML = `
+        <div id="emailOptionsModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+          <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 500px; width: 90%; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <button onclick="document.getElementById('emailOptionsModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+
+            <h3 style="margin: 0 0 1.5rem 0; font-size: 1.5rem; font-weight: bold; color: #333; text-align: center;">📧 Contact Support</h3>
+
+            <div style="space-y: 1rem;">
+              <button onclick="window.location.href='mailto:support@visualvibestudio.store'; document.getElementById('emailOptionsModal').remove();"
+                      style="width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📧</span> Open Default Email App
+              </button>
+
+              <button onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=support@visualvibestudio.store&su=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
+                      style="width: 100%; padding: 1rem; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📬</span> Compose in Gmail
+              </button>
+
+              <button onclick="window.open('https://compose.mail.yahoo.com/?to=support@visualvibestudio.store&subject=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
+                      style="width: 100%; padding: 1rem; background: #7c3aed; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📮</span> Compose in Yahoo Mail
+              </button>
+
+              <button onclick="window.open('https://outlook.live.com/mail/0/deeplink/compose?to=support@visualvibestudio.store&subject=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
+                      style="width: 100%; padding: 1rem; background: #0078d4; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📧</span> Compose in Outlook
+              </button>
+
+              <button onclick="
+                const email = 'support@visualvibestudio.store';
+                if (navigator.clipboard && window.isSecureContext) {
+                  navigator.clipboard.writeText(email).then(() => {
+                    if (window.toastManager) {
+                      window.toastManager.success('✅ Email address copied to clipboard!');
+                    } else {
+                      alert('Email address copied to clipboard!');
+                    }
+                  });
+                } else {
+                  const textArea = document.createElement('textarea');
+                  textArea.value = email;
+                  document.body.appendChild(textArea);
+                  textArea.select();
+                  document.execCommand('copy');
+                  document.body.removeChild(textArea);
+                  if (window.toastManager) {
+                    window.toastManager.success('✅ Email address copied to clipboard!');
+                  } else {
+                    alert('Email address copied to clipboard!');
+                  }
+                }
+                document.getElementById('emailOptionsModal').remove();
+              " style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📋</span> Copy Email Address
+              </button>
+
+              <div style="text-align: center; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
+                <p style="margin: 0; font-size: 0.9rem; color: #666; font-weight: bold;">support@visualvibestudio.store</p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #888;">Available Monday-Friday, 9 AM - 6 PM CST</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove any existing modal
+      const existing = document.getElementById('emailOptionsModal');
+      if (existing) existing.remove();
+
+      // Add modal to page
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    };
+
     console.log('✅ Basic functions loaded');
 
 
@@ -397,12 +472,13 @@
       <h3 class="text-2xl font-bold text-center mb-8">Get In Touch</h3>
       
       <div class="grid md:grid-cols-2 gap-6">
-        <a href="mailto:support@visualvibestudio.store"
-           onclick="window.open(this.href, '_self'); return true;"
-           class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+        <button type="button"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                style="cursor: pointer; pointer-events: auto; position: relative; z-index: 10;"
+                onclick="openEmailOptionsModal();">
           <span class="text-xl">📧</span>
           <span>Email Support</span>
-        </a>
+        </button>
         
         <a href="tel:+14029797184" 
            class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-6 rounded-lg text-center transition-colors flex items-center justify-center space-x-2">
