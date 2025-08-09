@@ -652,7 +652,7 @@
           <!-- Submit Button -->
           <div class="md:col-span-2 text-center mt-6">
             <button type="submit" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105">
-              Get My Quote & Pricing 🚀
+              Get My Quote & Pricing ��
             </button>
             <p class="text-sm text-gray-600 mt-2">We'll calculate your total and show payment options</p>
           </div>
@@ -698,6 +698,25 @@
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+  <!-- Modern Confirmation Dialog -->
+  <div id="confirmDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
+      <div class="flex items-center mb-4">
+        <span class="text-2xl mr-3" id="confirmIcon">⚠️</span>
+        <h3 class="text-lg font-semibold text-gray-800" id="confirmTitle">Confirm Action</h3>
+      </div>
+      <p class="text-gray-600 mb-6" id="confirmMessage">Are you sure you want to proceed?</p>
+      <div class="flex justify-end space-x-3">
+        <button onclick="closeConfirmDialog()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button onclick="confirmAction()" id="confirmBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Floating Contact Button -->
   <div id="floatingContactBtn" style="position: fixed; top: 90px; right: 20px; z-index: 1000; cursor: pointer;"
@@ -898,6 +917,45 @@
         scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       } else {
         scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }
+
+    // Modern confirmation dialog system
+    let confirmCallback = null;
+
+    function showConfirmDialog(message, title = 'Confirm Action', icon = '⚠️', confirmText = 'Confirm') {
+      return new Promise((resolve) => {
+        const dialog = document.getElementById('confirmDialog');
+        const titleEl = document.getElementById('confirmTitle');
+        const messageEl = document.getElementById('confirmMessage');
+        const iconEl = document.getElementById('confirmIcon');
+        const confirmBtn = document.getElementById('confirmBtn');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        iconEl.textContent = icon;
+        confirmBtn.textContent = confirmText;
+
+        confirmCallback = resolve;
+        dialog.classList.remove('hidden');
+      });
+    }
+
+    function closeConfirmDialog() {
+      const dialog = document.getElementById('confirmDialog');
+      dialog.classList.add('hidden');
+      if (confirmCallback) {
+        confirmCallback(false);
+        confirmCallback = null;
+      }
+    }
+
+    function confirmAction() {
+      const dialog = document.getElementById('confirmDialog');
+      dialog.classList.add('hidden');
+      if (confirmCallback) {
+        confirmCallback(true);
+        confirmCallback = null;
       }
     }
 
@@ -1228,20 +1286,20 @@
         signedInState.classList.add('hidden');
       }
 
-      alert('Signed out successfully!');
+      showToast('Signed out successfully!', 'success');
     };
 
     // Add placeholder functions
     window.openProfileModal = function() {
-      alert('Profile editing feature coming soon!');
+      showToast('Profile editing feature coming soon!', 'info');
     };
 
     window.showOrderHistory = function() {
-      alert('Order history feature coming soon!');
+      showToast('Order history feature coming soon!', 'info');
     };
 
     window.openSignUpModal = function() {
-      alert('Sign up functionality available - use Sign In with test@test.com / test123 for now');
+      showToast('Sign up functionality available - use Sign In with test@test.com / test123 for now', 'info');
     };
 
     console.log('🚀 FINAL MODAL FIX: All functions loaded and ready');
@@ -1341,7 +1399,7 @@ Source: ${data.source}
               if (window.toastManager) {
                 window.toastManager.success('Your message has been sent! We\'ll contact you within 24 hours.');
               } else {
-                alert('Your message has been sent! We\'ll contact you within 24 hours.');
+                showToast('Your message has been sent! We\'ll contact you within 24 hours.', 'success');
               }
 
               // Reset form and close modal after delay
@@ -1367,7 +1425,7 @@ Source: ${data.source}
             if (window.toastManager) {
               window.toastManager.error('Sorry, there was an error sending your message. Please try calling us directly.');
             } else {
-              alert('Sorry, there was an error sending your message. Please try calling us directly at (402) 979-7184.');
+              showToast('Sorry, there was an error sending your message. Please try calling us directly at (402) 979-7184.', 'error');
             }
 
             // Reset button after delay
@@ -1408,7 +1466,7 @@ Source: ${data.source}
             if (window.toastManager) {
               window.toastManager.error('Please select at least one service.');
             } else {
-              alert('Please select at least one service.');
+              showToast('Please select at least one service.', 'warning');
             }
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
@@ -1553,7 +1611,7 @@ This order was submitted through the Visual Vibe Studio website.`,
           if (window.toastManager) {
             window.toastManager.error('Sorry, there was an error submitting your order. Please try calling us directly.');
           } else {
-            alert('Sorry, there was an error submitting your order. Please try calling us directly at (402) 979-7184.');
+            showToast('Sorry, there was an error submitting your order. Please try calling us directly at (402) 979-7184.', 'error');
           }
 
           // Reset button after delay
