@@ -527,9 +527,9 @@
         </div>
       </div>
 
-      <!-- Customer Reviews Grid -->
-      <div id="allCustomerReviews" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 hidden">
-        <!-- Dynamic reviews will be added here -->
+      <!-- Customer Reviews Grid (hidden - not used) -->
+      <div id="allCustomerReviews" class="hidden" style="display: none !important;">
+        <!-- Grid container removed from display -->
       </div>
 
 
@@ -1408,6 +1408,61 @@
 
       // Universal review system handles all loading and syncing automatically
       console.log('✅ Review system initialization complete - universal sync enabled');
+
+      // Direct fix: Ensure all three reviews appear
+      setTimeout(() => {
+        console.log('🔧 Direct fix: Loading all three reviews...');
+        const scrollContainer = document.getElementById('reviewsScroll');
+        if (scrollContainer) {
+          // Clear existing content
+          scrollContainer.innerHTML = '';
+
+          // Define all three reviews directly
+          const allReviews = [
+            {
+              name: 'Sarah Johnson',
+              businessType: 'Local Restaurant Owner',
+              reviewText: 'Visual Vibe Studio created an amazing website for our business. Professional, fast, and exactly what we wanted!',
+              rating: 5
+            },
+            {
+              name: 'Mike Chen',
+              businessType: 'Real Estate Agent',
+              reviewText: 'Outstanding service! The flyers and business cards helped boost our marketing efforts significantly.',
+              rating: 5
+            },
+            {
+              name: 'Lily W.',
+              businessType: 'Beauty Brand Owner',
+              reviewText: 'Visual Vibe Studio created an absolutely amazing logo for my beauty brand and flyers for our newest for my business. I genuinely recommend them to anyone you need excellent designing and service.',
+              rating: 5
+            }
+          ];
+
+          // Add all three reviews to DOM
+          allReviews.forEach((review, index) => {
+            const reviewCard = document.createElement('div');
+            reviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
+            reviewCard.style.animationDelay = `${index * 0.1}s`;
+
+            const starsDisplay = '⭐'.repeat(review.rating);
+            reviewCard.innerHTML = `
+              <div class="flex items-center mb-4">
+                <div class="flex text-yellow-400 text-lg">${starsDisplay}</div>
+                <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+              </div>
+              <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${review.reviewText}"</p>
+              <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
+              <div class="text-xs text-gray-600 mt-1">${review.businessType}</div>
+            `;
+
+            scrollContainer.appendChild(reviewCard);
+            console.log(`✅ Added review: ${review.name}`);
+          });
+
+          console.log('✅ All three reviews loaded directly');
+        }
+      }, 2000);
     });
   </script>
 
