@@ -525,6 +525,19 @@
         </div>
       </div>
 
+      <!-- Customer Reviews Grid -->
+      <div id="allCustomerReviews" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 hidden">
+        <!-- Dynamic reviews will be added here -->
+      </div>
+
+      <!-- Toggle Button for All Reviews -->
+      <div class="text-center mb-8">
+        <button id="viewAllCustomerReviews" onclick="toggleAllCustomerReviews()"
+                class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+          <span id="viewAllCustomerReviewsText">View All Customer Reviews</span>
+        </button>
+      </div>
+
       <!-- Write A Review Form -->
       <div class="mt-12">
         <h4 class="text-2xl font-bold text-center text-gray-800 mb-8">Write A Review</h4>
@@ -1080,6 +1093,24 @@
           newReviewCard.classList.add('visible');
         }, 100);
 
+        // Also add to the grid container for "View All Customer Reviews"
+        const allReviewsGrid = document.getElementById('allCustomerReviews');
+        const gridReviewCard = document.createElement('div');
+        gridReviewCard.className = 'testimonial-card bg-white rounded-xl p-6 shadow-lg';
+        gridReviewCard.innerHTML = `
+          <div class="flex items-center mb-4">
+            <div class="flex text-yellow-400 text-lg">
+              ${starsDisplay}
+            </div>
+            <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+          </div>
+          <p class="text-gray-700 mb-4 text-sm leading-relaxed">${reviewText}</p>
+          <div class="font-medium text-gray-800 text-sm">- ${name}</div>
+          ${title ? `<div class="text-xs text-gray-600 mt-1">${title}</div>` : ''}
+        `;
+
+        allReviewsGrid.insertBefore(gridReviewCard, allReviewsGrid.firstChild);
+
         // Store review in localStorage for persistence
         saveReviewToStorage(name, title, reviewText, rating);
       }
@@ -1126,9 +1157,9 @@
           localStorage.setItem('customerReviews', JSON.stringify(uniqueReviews));
         }
 
-        // Load unique reviews to page
+        // Load unique reviews to both containers
         uniqueReviews.forEach(review => {
-          // Directly add to DOM without duplicate check since we already cleaned up
+          // Add to scrollable reviews container
           const reviewsContainer = document.getElementById('reviewsScroll');
           const starsDisplay = '⭐'.repeat(review.rating);
 
@@ -1151,6 +1182,24 @@
           setTimeout(() => {
             newReviewCard.classList.add('visible');
           }, 100);
+
+          // Also add to the grid container for "View All Customer Reviews"
+          const allReviewsGrid = document.getElementById('allCustomerReviews');
+          const gridReviewCard = document.createElement('div');
+          gridReviewCard.className = 'testimonial-card bg-white rounded-xl p-6 shadow-lg';
+          gridReviewCard.innerHTML = `
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 text-lg">
+                ${starsDisplay}
+              </div>
+              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">${review.text}</p>
+            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
+            ${review.title ? `<div class="text-xs text-gray-600 mt-1">${review.title}</div>` : ''}
+          `;
+
+          allReviewsGrid.insertBefore(gridReviewCard, allReviewsGrid.firstChild);
         });
       }
 
@@ -1174,9 +1223,50 @@
         });
       }
 
+      // Toggle all customer reviews function
+      window.toggleAllCustomerReviews = function() {
+        const allReviewsGrid = document.getElementById('allCustomerReviews');
+        const buttonText = document.getElementById('viewAllCustomerReviewsText');
+
+        if (allReviewsGrid.classList.contains('hidden')) {
+          allReviewsGrid.classList.remove('hidden');
+          buttonText.textContent = 'Hide Customer Reviews';
+          window.showingAllCustomerReviews = true;
+        } else {
+          allReviewsGrid.classList.add('hidden');
+          buttonText.textContent = 'View All Customer Reviews';
+          window.showingAllCustomerReviews = false;
+        }
+      };
+
       // Clean existing duplicates first, then load saved reviews
       cleanExistingDuplicates();
       loadSavedReviews();
+
+      // Add test review if none exist (for demonstration)
+      setTimeout(() => {
+        const existingReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
+        const hasKaylaReview = existingReviews.some(review =>
+          review.name.toLowerCase().includes('kayla') || review.name.toLowerCase().includes('kayla l')
+        );
+
+        if (!hasKaylaReview) {
+          const testReview = {
+            name: 'Kayla L.',
+            title: 'Small Business Owner',
+            text: 'Absolutely love my new website! Visual Vibe Studio exceeded my expectations. The design is modern, professional, and exactly what my business needed. Highly recommend!',
+            rating: 5,
+            timestamp: new Date().toISOString()
+          };
+
+          existingReviews.unshift(testReview);
+          localStorage.setItem('customerReviews', JSON.stringify(existingReviews));
+
+          // Add to both containers immediately
+          addReviewToPage(testReview.name, testReview.title, testReview.text, testReview.rating);
+          console.log('Added Kayla L. review for demonstration');
+        }
+      }, 1000);
     });
   </script>
 
@@ -1517,7 +1607,7 @@ Source: ${data.source}
 
 🏢 BUSINESS DETAILS:
 • Business Name: ${formData.get('business_name')}
-• Industry: ${formData.get('industry')}
+�� Industry: ${formData.get('industry')}
 
 💼 ORDER DETAILS:
 • Services: ${selectedServices.join(', ')}
