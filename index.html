@@ -45,10 +45,41 @@
   
   <!-- Essential JavaScript Functions -->
   <script>
-    // Email click handler
+    // Email click handler with contact options
     window.handleEmailClick = function(event, emailAddress) {
       if (event && event.preventDefault) event.preventDefault();
-      window.location.href = 'mailto:' + (emailAddress || 'support@visualvibestudio.store');
+
+      // Create email options modal
+      const modalHTML = `
+        <div id="emailModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+          <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h3 style="margin: 0 0 1rem 0; font-size: 1.5rem; font-weight: bold; color: #333; text-align: center;">Contact Support</h3>
+            <button onclick="document.getElementById('emailModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+
+            <div style="margin-bottom: 1rem;">
+              <button onclick="window.location.href='mailto:support@visualvibestudio.store'; document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📧</span> Open Email App
+              </button>
+
+              <button onclick="window.copyToClipboard('support@visualvibestudio.store', 'Email address copied!'); document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📋</span> Copy Email Address
+              </button>
+
+              <div style="text-align: center; padding: 1rem; background: #f3f4f6; border-radius: 8px; margin-top: 1rem;">
+                <p style="margin: 0; font-size: 0.9rem; color: #666; font-weight: bold;">support@visualvibestudio.store</p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #888;">Available Monday-Friday, 9 AM - 6 PM CST</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove any existing modal
+      const existing = document.getElementById('emailModal');
+      if (existing) existing.remove();
+
+      // Add modal to page
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
     };
 
     // Clipboard functionality
