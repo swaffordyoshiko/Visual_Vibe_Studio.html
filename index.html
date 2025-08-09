@@ -1584,7 +1584,7 @@
             `;
 
             scrollContainer.appendChild(reviewCard);
-            console.log(`✅ Added review: ${review.name}`);
+            console.log(`��� Added review: ${review.name}`);
           });
 
           console.log('✅ All three reviews loaded directly');
@@ -1806,9 +1806,66 @@
     // Floating Contact Form Functions
     window.openFloatingForm = function() {
       const modal = document.getElementById('floatingContactModal');
-      if (modal) {
+      const button = document.getElementById('floatingContactBtn');
+
+      if (modal && button) {
+        // Show modal first
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+
+        // Get button position after modal is displayed
+        const buttonRect = button.getBoundingClientRect();
+        const modalInner = modal.querySelector('div');
+
+        // Calculate position to place modal near the button
+        const isSmallScreen = window.innerWidth < 768;
+        const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
+
+        if (isSmallScreen) {
+          // On mobile, center the modal
+          modal.style.alignItems = 'center';
+          modal.style.justifyContent = 'center';
+          modal.style.padding = '1rem';
+          if (modalInner) {
+            modalInner.style.position = 'relative';
+            modalInner.style.top = 'auto';
+            modalInner.style.right = 'auto';
+            modalInner.style.transform = 'none';
+            modalInner.style.margin = '0';
+          }
+        } else {
+          // On desktop, position near the floating button
+          modal.style.alignItems = 'flex-start';
+          modal.style.justifyContent = 'flex-end';
+          modal.style.padding = '20px';
+
+          if (modalInner) {
+            // Calculate optimal position
+            const modalWidth = 420; // Expected modal width
+            const modalHeight = 600; // Approximate modal height
+
+            // Position from the top, accounting for button position and available space
+            let topPosition = Math.max(20, buttonRect.top - 20);
+
+            // Ensure modal doesn't go below viewport
+            if (topPosition + modalHeight > windowHeight - 40) {
+              topPosition = Math.max(20, windowHeight - modalHeight - 40);
+            }
+
+            // Ensure modal doesn't go off-screen horizontally
+            let rightPosition = 20;
+            if (modalWidth + 40 > windowWidth) {
+              rightPosition = Math.max(10, (windowWidth - modalWidth) / 2);
+            }
+
+            modalInner.style.position = 'relative';
+            modalInner.style.top = `${topPosition}px`;
+            modalInner.style.right = `${rightPosition}px`;
+            modalInner.style.transform = 'none';
+            modalInner.style.margin = '0';
+          }
+        }
       }
     };
 
@@ -1819,6 +1876,15 @@
         document.body.style.overflow = 'auto';
       }
     };
+
+    // Reposition modal on window resize
+    window.addEventListener('resize', function() {
+      const modal = document.getElementById('floatingContactModal');
+      if (modal && modal.style.display === 'flex') {
+        // Re-trigger positioning
+        openFloatingForm();
+      }
+    });
 
     // Handle contact form submission to Zapier
     document.addEventListener('DOMContentLoaded', function() {
