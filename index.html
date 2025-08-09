@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -98,11 +97,14 @@
           <!-- Signed In State -->
           <div id="signedInState" class="flex items-center space-x-3 hidden">
             <button onclick="openProfileModal()" class="flex items-center space-x-2 hover:bg-gray-50 p-2 rounded-lg transition-colors group">
-              <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                👤
-              </div>
-              <span id="userName" class="text-gray-700 group-hover:text-gray-900">User</span>
-            </button>
+            <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              👤
+            </div>
+            <div class="flex flex-col">
+              <span id="userName" class="text-gray-700 group-hover:text-gray-900 text-sm font-medium">User</span>
+              <span class="text-xs text-gray-500">Edit Profile</span>
+            </div>
+          </button>
             <button onclick="showOrderHistory()" class="text-gray-600 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
               My Orders
             </button>
@@ -294,6 +296,9 @@
   <!-- ESSENTIAL SCRIPTS ONLY - NO DELETED FILES -->
   <script src="toast-notifications.js"></script>
   <script src="simple-auth.js"></script>
+  <script src="fix-auth-ui-final.js"></script>
+  <script src="direct-auth-fix.js"></script>
+  <script src="nuclear-auth-fix.js"></script>
   <script src="final-check.js"></script>
 
   <!-- Scroll Reveal Animation -->
