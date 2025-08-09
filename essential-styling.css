@@ -414,6 +414,92 @@ footer {
   transition: color 0.2s ease;
 }
 
+/* Scrollable Reviews Styling */
+.reviews-container {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.reviews-scroll {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.reviews-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.review-card {
+  min-width: 300px;
+  max-width: 350px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.scroll-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.scroll-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.scroll-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.scroll-btn:active {
+  transform: translateY(0);
+}
+
+/* Toast Notifications */
+#toastContainer {
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .review-card {
+    min-width: 250px;
+    max-width: 280px;
+  }
+
+  .reviews-scroll {
+    gap: 1rem;
+  }
+
+  #toastContainer {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .toast {
+    max-width: none;
+  }
+}
+
 .animate-performance {
   will-change: transform, opacity;
   transform: translateZ(0);
