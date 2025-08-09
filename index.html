@@ -2201,11 +2201,24 @@ This order was submitted through the Visual Vibe Studio website.`,
       if (isSmallScreen) {
         modalPositioning = 'display: flex; align-items: center; justify-content: center; padding: 1rem;';
       } else {
-        modalPositioning = 'display: flex; align-items: flex-start; justify-content: center; padding-top: 50px;';
-        // Scroll to order form to ensure it's visible
-        if (orderFormElement) {
-          orderFormElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        modalPositioning = 'display: block;';
+        // Position modal near the order form after it's added to DOM
+        setTimeout(() => {
+          const modal = document.getElementById('orderConfirmationModal');
+          const modalInner = modal ? modal.querySelector('div') : null;
+
+          if (orderFormElement && modalInner) {
+            const formRect = orderFormElement.getBoundingClientRect();
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+            // Position the modal near the order form
+            modalInner.style.position = 'absolute';
+            modalInner.style.top = (formRect.top + scrollY - 20) + 'px';
+            modalInner.style.left = '50%';
+            modalInner.style.transform = 'translateX(-50%)';
+            modalInner.style.zIndex = '10000';
+          }
+        }, 10);
       }
 
       const confirmationHTML = `
@@ -2214,7 +2227,7 @@ This order was submitted through the Visual Vibe Studio website.`,
 
             <!-- Success Header -->
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 2rem; border-radius: 16px 16px 0 0; text-align: center; position: relative;">
-              <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+              <div style="font-size: 3rem; margin-bottom: 1rem;">���</div>
               <h3 style="margin: 0; color: white; font-size: 1.8rem; font-weight: bold;">Order Submitted Successfully!</h3>
               <p style="margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.9); font-size: 1rem;">Thank you ${orderData.customerName.split(' ')[0]}! Your order has been received.</p>
               <button onclick="document.getElementById('orderConfirmationModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; opacity: 0.8;">&times;</button>
