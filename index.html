@@ -484,29 +484,33 @@
     <!-- Reviews Section -->
     <section id="reviews" class="mb-16">
       <h3 class="text-3xl font-bold text-center text-gray-800 mb-12">What Our Clients Say</h3>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="glass-morphism p-8 floating-card reveal">
-          <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400 text-xl">
-              ⭐⭐⭐⭐⭐
+      <div class="reviews-container mb-8">
+        <div class="reviews-scroll" id="reviewsScroll">
+          <div class="review-card glass-morphism p-6 floating-card reveal flex-shrink-0">
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 text-lg">
+                ⭐⭐⭐⭐⭐
+              </div>
             </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Visual Vibe Studio created an amazing website for our business. Professional, fast, and exactly what we wanted!"</p>
+            <div class="font-medium text-gray-800 text-sm">- Sarah Johnson</div>
+            <div class="text-xs text-gray-600 mt-1">Local Restaurant Owner</div>
           </div>
-          <p class="text-gray-700 mb-4">"Visual Vibe Studio created an amazing website for our business. Professional,
-            fast, and exactly what we wanted!"</p>
-          <div class="font-medium text-gray-800">- Sarah Johnson</div>
-          <div class="text-sm text-gray-600">Local Restaurant Owner</div>
-        </div>
 
-        <div class="glass-morphism p-8 floating-card reveal" style="animation-delay: 0.5s;">
-          <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400 text-xl">
-              ⭐⭐⭐⭐⭐
+          <div class="review-card glass-morphism p-6 floating-card reveal flex-shrink-0" style="animation-delay: 0.5s;">
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 text-lg">
+                ⭐⭐⭐⭐⭐
+              </div>
             </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Outstanding service! The flyers and business cards helped boost our marketing efforts significantly."</p>
+            <div class="font-medium text-gray-800 text-sm">- Mike Chen</div>
+            <div class="text-xs text-gray-600 mt-1">Real Estate Agent</div>
           </div>
-          <p class="text-gray-700 mb-4">"Outstanding service! The flyers and business cards helped boost our marketing
-            efforts significantly."</p>
-          <div class="font-medium text-gray-800">- Mike Chen</div>
-          <div class="text-sm text-gray-600">Real Estate Agent</div>
+        </div>
+        <div class="scroll-indicators">
+          <button class="scroll-btn scroll-left" onclick="scrollReviews('left')">&larr;</button>
+          <button class="scroll-btn scroll-right" onclick="scrollReviews('right')">&rarr;</button>
         </div>
       </div>
 
@@ -681,6 +685,9 @@
     </section>
   </main>
 
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
   <!-- Floating Contact Button -->
   <div id="floatingContactBtn" style="position: fixed; top: 90px; right: 20px; z-index: 1000; cursor: pointer;"
     onclick="openFloatingForm()">
@@ -825,6 +832,64 @@
 
   <!-- Review Form JavaScript -->
   <script>
+    // Toast notification system
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+
+      const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+      };
+
+      const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        warning: 'bg-yellow-500',
+        info: 'bg-blue-500'
+      };
+
+      toast.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 transform translate-x-full transition-transform duration-300 ease-out max-w-sm`;
+      toast.innerHTML = `
+        <span class="text-xl">${icons[type]}</span>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 text-xl leading-none">&times;</button>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      // Trigger animation
+      setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+      }, 10);
+
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.classList.add('translate-x-full');
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.remove();
+            }
+          }, 300);
+        }
+      }, 5000);
+    }
+
+    // Scroll reviews functionality
+    function scrollReviews(direction) {
+      const scrollContainer = document.getElementById('reviewsScroll');
+      const scrollAmount = 320; // Width of one review card plus gap
+
+      if (direction === 'left') {
+        scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      } else {
+        scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }
+
     // Review form functionality
     let selectedRating = 0;
 
@@ -890,7 +955,7 @@
         const reviewText = document.getElementById('reviewText').value.trim();
 
         if (!name || !reviewText || selectedRating === 0) {
-          alert('Please fill in all required fields and select a rating.');
+          showToast('Please fill in all required fields and select a rating.', 'warning');
           return;
         }
 
@@ -904,32 +969,42 @@
         updateRatingText();
 
         // Show success message
-        alert('Thank you for your review! It has been added to our testimonials.');
+        showToast('Thank you for your review! It has been added to our testimonials.', 'success');
       });
 
       function addReviewToPage(name, title, reviewText, rating) {
-        const reviewsGrid = document.querySelector('#reviews .grid');
+        const reviewsContainer = document.getElementById('reviewsScroll');
+
+        // Check if a review from this customer already exists
+        const existingReviews = reviewsContainer.querySelectorAll('.review-card');
+        for (let review of existingReviews) {
+          const existingName = review.querySelector('.font-medium').textContent.replace('- ', '');
+          if (existingName.toLowerCase() === name.toLowerCase()) {
+            showToast(`${name} has already submitted a review.`, 'info');
+            return;
+          }
+        }
 
         // Create star display
         const starsDisplay = '⭐'.repeat(rating);
 
         // Create new review card
         const newReviewCard = document.createElement('div');
-        newReviewCard.className = 'glass-morphism p-8 floating-card reveal new-review';
+        newReviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
         newReviewCard.innerHTML = `
           <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400 text-xl">
+            <div class="flex text-yellow-400 text-lg">
               ${starsDisplay}
             </div>
-            <span class="ml-2 text-sm text-green-600 font-medium">NEW</span>
+            <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
           </div>
-          <p class="text-gray-700 mb-4">"${reviewText}"</p>
-          <div class="font-medium text-gray-800">- ${name}</div>
-          ${title ? `<div class="text-sm text-gray-600">${title}</div>` : ''}
+          <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
+          <div class="font-medium text-gray-800 text-sm">- ${name}</div>
+          ${title ? `<div class="text-xs text-gray-600 mt-1">${title}</div>` : ''}
         `;
 
-        // Add the new review to the beginning of the grid
-        reviewsGrid.insertBefore(newReviewCard, reviewsGrid.firstChild);
+        // Add the new review to the beginning of the scroll container
+        reviewsContainer.insertBefore(newReviewCard, reviewsContainer.firstChild);
 
         // Trigger reveal animation
         setTimeout(() => {
@@ -942,25 +1017,96 @@
 
       function saveReviewToStorage(name, title, reviewText, rating) {
         let reviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
-        reviews.unshift({
-          name: name,
-          title: title,
-          text: reviewText,
-          rating: rating,
-          date: new Date().toISOString()
-        });
-        localStorage.setItem('customerReviews', JSON.stringify(reviews));
+
+        // Check if a review from this customer already exists in storage
+        const existingIndex = reviews.findIndex(review =>
+          review.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (existingIndex === -1) {
+          // No existing review, add the new one
+          reviews.unshift({
+            name: name,
+            title: title,
+            text: reviewText,
+            rating: rating,
+            date: new Date().toISOString()
+          });
+          localStorage.setItem('customerReviews', JSON.stringify(reviews));
+        }
       }
 
       // Load saved reviews on page load
       function loadSavedReviews() {
-        const reviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
+        let reviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
+
+        // Remove duplicates from storage (keep only the most recent review per customer)
+        const uniqueReviews = [];
+        const seenNames = new Set();
+
         reviews.forEach(review => {
-          addReviewToPage(review.name, review.title, review.text, review.rating);
+          const nameLower = review.name.toLowerCase();
+          if (!seenNames.has(nameLower)) {
+            seenNames.add(nameLower);
+            uniqueReviews.push(review);
+          }
+        });
+
+        // Save cleaned up reviews back to storage
+        if (uniqueReviews.length !== reviews.length) {
+          localStorage.setItem('customerReviews', JSON.stringify(uniqueReviews));
+        }
+
+        // Load unique reviews to page
+        uniqueReviews.forEach(review => {
+          // Directly add to DOM without duplicate check since we already cleaned up
+          const reviewsContainer = document.getElementById('reviewsScroll');
+          const starsDisplay = '⭐'.repeat(review.rating);
+
+          const newReviewCard = document.createElement('div');
+          newReviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
+          newReviewCard.innerHTML = `
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 text-lg">
+                ${starsDisplay}
+              </div>
+              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${review.text}"</p>
+            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
+            ${review.title ? `<div class="text-xs text-gray-600 mt-1">${review.title}</div>` : ''}
+          `;
+
+          reviewsContainer.insertBefore(newReviewCard, reviewsContainer.firstChild);
+
+          setTimeout(() => {
+            newReviewCard.classList.add('visible');
+          }, 100);
         });
       }
 
-      // Load saved reviews
+      // Clean up any existing duplicate reviews on page load
+      function cleanExistingDuplicates() {
+        const reviewsContainer = document.getElementById('reviewsScroll');
+        const existingReviews = reviewsContainer.querySelectorAll('.review-card');
+        const seenNames = new Set();
+
+        existingReviews.forEach(review => {
+          const nameElement = review.querySelector('.font-medium');
+          if (nameElement) {
+            const name = nameElement.textContent.replace('- ', '').toLowerCase();
+            if (seenNames.has(name)) {
+              // Remove duplicate
+              review.remove();
+            } else {
+              seenNames.add(name);
+            }
+          }
+        });
+      }
+
+      // Clean existing duplicates first, then load saved reviews
+      cleanExistingDuplicates();
       loadSavedReviews();
     });
   </script>
