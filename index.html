@@ -710,6 +710,12 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
+  <!-- Universal sync status indicator -->
+  <div id="universalSyncIndicator" class="universal-sync-indicator">
+    <div class="pulse"></div>
+    <span>Reviews sync across all devices</span>
+  </div>
+
   <!-- Modern Confirmation Dialog -->
   <div id="confirmDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
@@ -843,7 +849,7 @@
 
   <!-- ESSENTIAL SCRIPTS ONLY - NO DELETED FILES -->
   <script src="toast-notifications.js"></script>
-  <script src="review-storage.js"></script>
+  <script src="universal-review-sync.js"></script>
   <script src="email-copy-notification.js"></script>
   <script src="final-check.js"></script>
 
@@ -1057,9 +1063,6 @@
 
           const savedReview = await window.reviewAPI.submitReview(reviewData);
 
-          // Add to page display
-          addReviewToPage(name, title, reviewText, selectedRating);
-
           // Reset form
           this.reset();
           selectedRating = 0;
@@ -1069,6 +1072,13 @@
 
           // Show success message
           showToast('Thank you for your review! It\'s now visible to all visitors across all devices.', 'success');
+
+          // Show sync indicator
+          if (window.showSyncIndicator) {
+            setTimeout(() => {
+              showSyncIndicator('Your review is now live across all devices!');
+            }, 1000);
+          }
 
         } catch (error) {
           console.error('❌ Error submitting review:', error);
@@ -1352,127 +1362,52 @@
         })();
       }
 
-      // Initialize when storage system is ready
+      // Initialize universal review system
       setTimeout(() => {
-        if (window.reviewStorage) {
-          console.log('🔄 Initializing reviews after storage is ready');
-          initializeReviews();
+        if (window.universalReviewSync) {
+          console.log('🌐 Universal review system is ready');
+          // The universal system automatically loads and displays reviews
         } else {
-          console.log('📦 Initializing reviews without storage system');
-          initializeReviews();
+          console.log('⏳ Waiting for universal review system...');
+          // Fallback: try again in 1 second
+          setTimeout(() => {
+            if (window.universalReviewSync) {
+              console.log('🌐 Universal review system loaded');
+            }
+          }, 1000);
         }
-      }, 1500);
-
-      // Listen for storage changes to sync reviews across tabs/devices
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'customerReviews') {
-          console.log('Reviews updated in another tab/device - syncing...');
-          refreshAllReviewDisplays();
-        }
-      });
-
-      // Periodic sync check every 30 seconds to ensure reviews stay synchronized
-      setInterval(() => {
-        const currentReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
-        const displayedReviews = document.querySelectorAll('.new-review').length;
-
-        if (currentReviews.length !== displayedReviews) {
-          console.log('Review count mismatch detected - syncing...');
-          refreshAllReviewDisplays();
-        }
-      }, 30000);
-
-      // Load real customer reviews
-      setTimeout(() => {
-        const existingReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
-
-        // Add real Lily W. review if missing
-        const hasLilyReview = existingReviews.some(review =>
-          review.name.toLowerCase().includes('lily') &&
-          review.text.includes('beauty brand')
-        );
-
-        if (!hasLilyReview) {
-          // Remove any existing test Lily W. review first
-          const filteredReviews = existingReviews.filter(review =>
-            !(review.name.toLowerCase().includes('lily w') || review.name.toLowerCase().includes('lily'))
-          );
-
-          const realLilyReview = {
-            name: 'Lily W.',
-            title: 'Beauty Brand Owner',
-            text: 'Visual Vibe Studio created an absolutely amazing logo for my beauty brand and flyers for our newest for my business. I genuinely recommend them to anyone you need excellent designing and service.',
-            rating: 5,
-            timestamp: new Date().toISOString()
-          };
-
-          filteredReviews.unshift(realLilyReview);
-          localStorage.setItem('customerReviews', JSON.stringify(filteredReviews));
-          console.log('Added real Lily W. review');
-        }
-
-        // Load existing reviews - handled by initializeReviews instead
-        // refreshAllReviewDisplays();
       }, 1000);
 
-      // Function to refresh all review displays and ensure sync
-      function refreshAllReviewDisplays() {
-        // Clear existing reviews from both containers
-        const reviewsContainer = document.getElementById('reviewsScroll');
-        const allReviewsGrid = document.getElementById('allCustomerReviews');
+      // Listen for universal review sync events
+      window.addEventListener('universalReviewSync', function(e) {
+        console.log('🔄 Universal review sync event received');
+        // Show sync indicator when reviews are updated
+        showSyncIndicator('New review synced across all devices!');
+      });
 
-        // Remove only NEW review cards, keep original static ones
-        reviewsContainer.querySelectorAll('.new-review').forEach(card => card.remove());
-        allReviewsGrid.querySelectorAll('.testimonial-card').forEach(card => card.remove());
+      // Show sync indicator function
+      function showSyncIndicator(message = 'Reviews sync across all devices') {
+        const indicator = document.getElementById('universalSyncIndicator');
+        if (indicator) {
+          const span = indicator.querySelector('span');
+          if (span) span.textContent = message;
 
-        // Reload from storage
-        const savedReviews = window.reviewStorage ? window.reviewStorage.getAllReviews() : JSON.parse(localStorage.getItem('customerReviews') || '[]');
+          indicator.classList.add('show');
 
-        savedReviews.forEach(review => {
-          const starsDisplay = '⭐'.repeat(review.rating);
-
-          // Handle both API and localStorage data structures
-          const reviewText = review.reviewText || review.text;
-          const businessType = review.businessType || review.title;
-
-          // Add to scrollable container
-          const newReviewCard = document.createElement('div');
-          newReviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
-          newReviewCard.innerHTML = `
-            <div class="flex items-center mb-4">
-              <div class="flex text-yellow-400 text-lg">
-                ${starsDisplay}
-              </div>
-              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
-            </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
-            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
-            ${businessType ? `<div class="text-xs text-gray-600 mt-1">${businessType}</div>` : ''}
-          `;
-          reviewsContainer.insertBefore(newReviewCard, reviewsContainer.firstChild);
-
-          // Add to grid container
-          const gridReviewCard = document.createElement('div');
-          gridReviewCard.className = 'testimonial-card bg-white rounded-xl p-6 shadow-lg';
-          gridReviewCard.innerHTML = `
-            <div class="flex items-center mb-4">
-              <div class="flex text-yellow-400 text-lg">
-                ${starsDisplay}
-              </div>
-              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
-            </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
-            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
-            ${businessType ? `<div class="text-xs text-gray-600 mt-1">${businessType}</div>` : ''}
-          `;
-          allReviewsGrid.insertBefore(gridReviewCard, allReviewsGrid.firstChild);
-        });
-
-        console.log(`Refreshed displays with ${savedReviews.length} reviews`);
+          // Hide after 4 seconds
+          setTimeout(() => {
+            indicator.classList.remove('show');
+          }, 4000);
+        }
       }
 
-      // Make function globally accessible
-      window.refreshAllReviewDisplays = refreshAllReviewDisplays;
+      // Show initial sync indicator when page loads
+      setTimeout(() => {
+        showSyncIndicator();
+      }, 2000);
+
+      // Universal review system handles all loading and syncing automatically
+      console.log('✅ Review system initialization complete - universal sync enabled');
     });
   </script>
 
@@ -1808,7 +1743,7 @@ Source: ${data.source}
 
 👤 CUSTOMER DETAILS:
 • Name: ${formData.get('first_name')} ${formData.get('last_name')}
-• Email: ${formData.get('customer_email')}
+�� Email: ${formData.get('customer_email')}
 • Phone: ${formData.get('customer_phone')}
 
 🏢 BUSINESS DETAILS:
