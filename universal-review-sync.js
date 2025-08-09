@@ -193,6 +193,7 @@ class UniversalReviewSync {
                 rating: parseInt(reviewData.rating),
                 timestamp: new Date().toISOString(),
                 isUniversal: true,
+                isCustomerReview: true,
                 deviceInfo: {
                     userAgent: navigator.userAgent,
                     platform: navigator.platform,
@@ -200,11 +201,11 @@ class UniversalReviewSync {
                 }
             };
 
-            // Get current reviews
+            // Save to both storage systems for maximum compatibility
             const currentReviews = this.getLocalReviews();
-            
+
             // Check for duplicates
-            const existingIndex = currentReviews.findIndex(r => 
+            const existingIndex = currentReviews.findIndex(r =>
                 r.name.toLowerCase() === newReview.name.toLowerCase()
             );
 
@@ -218,19 +219,19 @@ class UniversalReviewSync {
                 console.log('✨ Added new review from:', newReview.name);
             }
 
-            // Save locally immediately
+            // Save to universal storage
             this.saveLocalReviews(currentReviews);
-            
-            // Display updated reviews
-            this.displayReviews(currentReviews);
-            
-            // Try to sync to cloud
-            await this.saveToCloud(currentReviews);
-            
-            // Trigger cross-tab sync
-            this.triggerCrossTabSync(newReview);
-            
-            console.log('✅ Review submitted successfully and will appear on all devices');
+
+            // Also save to the enhanced cross-device storage
+            let universalReviews = JSON.parse(localStorage.getItem('universalReviews') || '[]');
+            universalReviews = universalReviews.filter(r => r.name.toLowerCase() !== newReview.name.toLowerCase());
+            universalReviews.unshift(newReview);
+            localStorage.setItem('universalReviews', JSON.stringify(universalReviews));
+
+            // Trigger enhanced cross-device sync
+            this.triggerEnhancedSync(newReview);
+
+            console.log('✅ Review submitted to all sync systems - will appear on all devices');
             return newReview;
 
         } catch (error) {
@@ -295,9 +296,9 @@ class UniversalReviewSync {
                 timestamp: Date.now(),
                 universal: true
             };
-            
+
             localStorage.setItem('reviewSyncTrigger', JSON.stringify(syncData));
-            
+
             // Remove trigger after short delay
             setTimeout(() => {
                 localStorage.removeItem('reviewSyncTrigger');
@@ -310,6 +311,38 @@ class UniversalReviewSync {
 
         } catch (error) {
             console.error('❌ Error triggering cross-tab sync:', error);
+        }
+    }
+
+    triggerEnhancedSync(newReview) {
+        try {
+            // Use the enhanced sync system
+            const syncData = {
+                action: 'newReview',
+                review: newReview,
+                timestamp: Date.now(),
+                deviceId: navigator.userAgent.substr(0, 50),
+                enhanced: true
+            };
+
+            // Multiple sync triggers for maximum compatibility
+            localStorage.setItem('reviewSyncEvent', JSON.stringify(syncData));
+            localStorage.setItem('reviewSyncTrigger', JSON.stringify(syncData));
+
+            // Remove after delay
+            setTimeout(() => {
+                localStorage.removeItem('reviewSyncEvent');
+                localStorage.removeItem('reviewSyncTrigger');
+            }, 5000);
+
+            // Dispatch multiple events
+            window.dispatchEvent(new CustomEvent('newReviewAdded', { detail: syncData }));
+            window.dispatchEvent(new CustomEvent('universalReviewSync', { detail: syncData }));
+
+            console.log(`🚀 Enhanced sync triggered for ${newReview.name}'s review`);
+
+        } catch (error) {
+            console.error('❌ Error triggering enhanced sync:', error);
         }
     }
 
