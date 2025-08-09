@@ -237,8 +237,36 @@
 
     // Email options modal for desktop compatibility
     window.openEmailOptionsModal = function() {
+      // Position the modal near the Email Support button
+      const contactSection = document.getElementById('contact');
+      const isSmallScreen = window.innerWidth < 768;
+
+      let modalPositioning = '';
+      if (isSmallScreen) {
+        modalPositioning = 'display: flex; align-items: center; justify-content: center; padding: 1rem;';
+      } else {
+        modalPositioning = 'display: block;';
+        // Position modal near the contact section after it's added to DOM
+        setTimeout(() => {
+          const modal = document.getElementById('emailOptionsModal');
+          const modalInner = modal ? modal.querySelector('div') : null;
+
+          if (contactSection && modalInner) {
+            const sectionRect = contactSection.getBoundingClientRect();
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+            // Position the modal near the contact section
+            modalInner.style.position = 'absolute';
+            modalInner.style.top = (sectionRect.top + scrollY - 20) + 'px';
+            modalInner.style.left = '50%';
+            modalInner.style.transform = 'translateX(-50%)';
+            modalInner.style.zIndex = '10000';
+          }
+        }, 10);
+      }
+
       const modalHTML = `
-        <div id="emailOptionsModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div id="emailOptionsModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); ${modalPositioning} z-index: 9999;">
           <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 500px; width: 90%; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
             <button onclick="document.getElementById('emailOptionsModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
 
