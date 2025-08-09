@@ -1061,7 +1061,17 @@
             rating: selectedRating
           };
 
+          // Submit to universal sync system
           const savedReview = await window.reviewAPI.submitReview(reviewData);
+
+          // Immediately add to direct scroll area for instant feedback
+          addNewReviewToScroll(reviewData);
+
+          // Save to localStorage for cross-device sync
+          saveReviewForCrossDeviceSync(reviewData);
+
+          // Trigger cross-device sync events
+          triggerCrossDeviceSync(reviewData);
 
           // Reset form
           this.reset();
@@ -1089,6 +1099,123 @@
           submitBtn.disabled = false;
         }
       });
+
+      // Enhanced cross-device sync functions
+      function addNewReviewToScroll(reviewData) {
+        const scrollContainer = document.getElementById('reviewsScroll');
+        if (!scrollContainer) return;
+
+        // Check for duplicate reviews
+        const existingReviews = scrollContainer.querySelectorAll('.review-card');
+        for (let review of existingReviews) {
+          const existingName = review.querySelector('.font-medium').textContent.replace('- ', '');
+          if (existingName.toLowerCase() === reviewData.name.toLowerCase()) {
+            console.log(`Review from ${reviewData.name} already exists, updating...`);
+            // Remove existing review
+            review.remove();
+            break;
+          }
+        }
+
+        // Create new review card
+        const reviewCard = document.createElement('div');
+        reviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
+        reviewCard.style.animationDelay = '0s';
+
+        const starsDisplay = '⭐'.repeat(reviewData.rating);
+        reviewCard.innerHTML = `
+          <div class="flex items-center mb-4">
+            <div class="flex text-yellow-400 text-lg">${starsDisplay}</div>
+            <span class="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-medium">LATEST</span>
+          </div>
+          <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewData.reviewText}"</p>
+          <div class="font-medium text-gray-800 text-sm">- ${reviewData.name}</div>
+          <div class="text-xs text-gray-600 mt-1">${reviewData.businessType || 'Customer'}</div>
+        `;
+
+        // Add to the beginning of the scroll container
+        scrollContainer.insertBefore(reviewCard, scrollContainer.firstChild);
+
+        // Add animation
+        setTimeout(() => {
+          reviewCard.classList.add('animate-pulse');
+          setTimeout(() => {
+            reviewCard.classList.remove('animate-pulse');
+          }, 2000);
+        }, 100);
+
+        console.log(`✅ Added new review from ${reviewData.name} to scroll area`);
+      }
+
+      function saveReviewForCrossDeviceSync(reviewData) {
+        try {
+          // Get existing reviews from localStorage
+          let allReviews = JSON.parse(localStorage.getItem('universalReviews') || '[]');
+
+          // Add device and timestamp information
+          const reviewWithMeta = {
+            ...reviewData,
+            id: 'review_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            timestamp: new Date().toISOString(),
+            deviceInfo: {
+              userAgent: navigator.userAgent,
+              platform: navigator.platform,
+              timestamp: Date.now()
+            },
+            isCustomerReview: true
+          };
+
+          // Remove any existing review from same customer
+          allReviews = allReviews.filter(review =>
+            review.name.toLowerCase() !== reviewData.name.toLowerCase()
+          );
+
+          // Add new review to the beginning
+          allReviews.unshift(reviewWithMeta);
+
+          // Keep only last 50 reviews to prevent storage bloat
+          if (allReviews.length > 50) {
+            allReviews = allReviews.slice(0, 50);
+          }
+
+          // Save back to localStorage
+          localStorage.setItem('universalReviews', JSON.stringify(allReviews));
+          console.log(`💾 Saved review from ${reviewData.name} for cross-device sync`);
+
+        } catch (error) {
+          console.error('❌ Error saving review for cross-device sync:', error);
+        }
+      }
+
+      function triggerCrossDeviceSync(reviewData) {
+        try {
+          // Trigger storage event for other tabs
+          const syncData = {
+            action: 'newReview',
+            review: reviewData,
+            timestamp: Date.now(),
+            deviceId: navigator.userAgent.substr(0, 50)
+          };
+
+          // Use a specific sync key
+          localStorage.setItem('reviewSyncEvent', JSON.stringify(syncData));
+
+          // Remove sync event after short delay
+          setTimeout(() => {
+            localStorage.removeItem('reviewSyncEvent');
+          }, 5000);
+
+          // Dispatch custom event for same page
+          window.dispatchEvent(new CustomEvent('newReviewAdded', {
+            detail: syncData
+          }));
+
+          console.log(`🔄 Triggered cross-device sync for ${reviewData.name}'s review`);
+
+        } catch (error) {
+          console.error('❌ Error triggering cross-device sync:', error);
+        }
+      }
 
       function addReviewToPage(name, title, reviewText, rating) {
         const reviewsContainer = document.getElementById('reviewsScroll');
@@ -1463,6 +1590,92 @@
           console.log('✅ All three reviews loaded directly');
         }
       }, 2000);
+
+      // Cross-device sync listeners
+      function setupCrossDeviceSync() {
+        // Listen for storage changes (reviews from other tabs/devices)
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'reviewSyncEvent' && e.newValue) {
+            try {
+              const syncData = JSON.parse(e.newValue);
+              if (syncData.action === 'newReview') {
+                console.log('🔄 New review detected from another device/tab:', syncData.review.name);
+
+                // Add the review to current scroll area
+                addNewReviewToScroll(syncData.review);
+
+                // Show notification
+                if (window.showSyncIndicator) {
+                  showSyncIndicator(`New review from ${syncData.review.name} synced!`);
+                }
+              }
+            } catch (error) {
+              console.error('❌ Error processing cross-device sync:', error);
+            }
+          }
+
+          // Also listen for direct localStorage changes
+          if (e.key === 'universalReviews' && e.newValue) {
+            console.log('🔄 Universal reviews updated, refreshing...');
+            loadAllReviewsFromStorage();
+          }
+        });
+
+        // Listen for custom events on same page
+        window.addEventListener('newReviewAdded', function(e) {
+          console.log('🔄 New review event received on same page');
+          // Review already added by submission function
+        });
+
+        // Periodic sync check (every 30 seconds)
+        setInterval(() => {
+          const lastCheck = localStorage.getItem('lastReviewCheck') || '0';
+          const now = Date.now();
+
+          if (now - parseInt(lastCheck) > 30000) {
+            console.log('🔄 Periodic sync check...');
+            loadAllReviewsFromStorage();
+            localStorage.setItem('lastReviewCheck', now.toString());
+          }
+        }, 30000);
+
+        console.log('✅ Cross-device sync listeners activated');
+      }
+
+      function loadAllReviewsFromStorage() {
+        try {
+          const stored = localStorage.getItem('universalReviews');
+          if (stored) {
+            const allReviews = JSON.parse(stored);
+            const customerReviews = allReviews.filter(review => review.isCustomerReview);
+
+            if (customerReviews.length > 0) {
+              console.log(`📥 Loading ${customerReviews.length} customer reviews from storage`);
+
+              // Get current scroll container
+              const scrollContainer = document.getElementById('reviewsScroll');
+              if (scrollContainer) {
+                // Remove only customer reviews (keep defaults)
+                const existingCustomerReviews = scrollContainer.querySelectorAll('.review-card:has(.bg-blue-500)');
+                existingCustomerReviews.forEach(review => review.remove());
+
+                // Add all customer reviews from storage
+                customerReviews.forEach((review, index) => {
+                  addNewReviewToScroll(review);
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error loading reviews from storage:', error);
+        }
+      }
+
+      // Initialize cross-device sync
+      setTimeout(() => {
+        setupCrossDeviceSync();
+        loadAllReviewsFromStorage();
+      }, 3000);
     });
   </script>
 
