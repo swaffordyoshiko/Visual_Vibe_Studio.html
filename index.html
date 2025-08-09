@@ -63,39 +63,72 @@
 
               <button onclick="
                 const email = 'support@visualvibestudio.store';
-                if (navigator.clipboard && window.isSecureContext) {
-                  navigator.clipboard.writeText(email).then(() => {
-                    if (window.toastManager) {
-                      window.toastManager.success('✅ Email address copied to clipboard!', { duration: 3000 });
+                console.log('📧 Copy email button clicked');
+
+                // Enhanced copy function for desktop
+                function copyEmailAndShowNotification() {
+                  try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                      navigator.clipboard.writeText(email).then(() => {
+                        console.log('📧 Email copied via navigator.clipboard');
+                        if (window.showEmailCopySuccess) {
+                          window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
+                        } else if (window.toastManager) {
+                          window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
+                        } else {
+                          alert('✅ Email address copied to clipboard!');
+                        }
+                      }).catch(() => {
+                        console.log('📧 Fallback to execCommand copy');
+                        fallbackCopy();
+                      });
                     } else {
-                      alert('Email address copied!');
+                      console.log('📧 Using fallback copy method');
+                      fallbackCopy();
                     }
-                  }).catch(() => {
-                    const textArea = document.createElement('textarea');
-                    textArea.value = email;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    if (window.toastManager) {
-                      window.toastManager.success('✅ Email address copied to clipboard!', { duration: 3000 });
-                    } else {
-                      alert('Email address copied!');
-                    }
-                  });
-                } else {
-                  const textArea = document.createElement('textarea');
-                  textArea.value = email;
-                  document.body.appendChild(textArea);
-                  textArea.select();
-                  document.execCommand('copy');
-                  document.body.removeChild(textArea);
-                  if (window.toastManager) {
-                    window.toastManager.success('✅ Email address copied to clipboard!', { duration: 3000 });
-                  } else {
-                    alert('Email address copied!');
+                  } catch (error) {
+                    console.log('📧 Error in copy, using fallback:', error);
+                    fallbackCopy();
                   }
                 }
+
+                function fallbackCopy() {
+                  const textArea = document.createElement('textarea');
+                  textArea.value = email;
+                  textArea.style.position = 'fixed';
+                  textArea.style.left = '-999999px';
+                  textArea.style.top = '-999999px';
+                  document.body.appendChild(textArea);
+                  textArea.focus();
+                  textArea.select();
+
+                  try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                      console.log('📧 Fallback copy successful');
+                      if (window.showEmailCopySuccess) {
+                        window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
+                      } else if (window.toastManager) {
+                        window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
+                      } else {
+                        alert('✅ Email address copied to clipboard!');
+                      }
+                    } else {
+                      throw new Error('execCommand failed');
+                    }
+                  } catch (err) {
+                    console.log('📧 All copy methods failed:', err);
+                    if (window.toastManager) {
+                      window.toastManager.error('Copy failed. Email: support@visualvibestudio.store', { duration: 6000 });
+                    } else {
+                      alert('Copy failed. Email: support@visualvibestudio.store');
+                    }
+                  }
+
+                  document.body.removeChild(textArea);
+                }
+
+                copyEmailAndShowNotification();
                 document.getElementById('emailModal').remove();
               " style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <span>📋</span> Copy Email Address
@@ -118,18 +151,69 @@
       document.body.insertAdjacentHTML('beforeend', modalHTML);
     };
 
-    // Clipboard functionality
+    // Enhanced clipboard functionality
     window.copyToClipboard = function(text, msg) {
+      console.log('📋 Copy to clipboard called:', text);
       try {
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(() =>
-            window.toastManager ? window.toastManager.success(msg || "Copied to clipboard!") : alert(msg || "Copied!")
-          );
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            const message = msg || "Copied to clipboard!";
+            if (window.showEmailCopySuccess && (text.includes('@') || message.includes('email') || message.includes('Email'))) {
+              window.showEmailCopySuccess(message);
+            } else if (window.toastManager) {
+              window.toastManager.success(message);
+            } else {
+              alert(message);
+            }
+          }).catch(() => {
+            // Fallback method
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+              const successful = document.execCommand('copy');
+              if (successful) {
+                const message = msg || "Copied to clipboard!";
+                if (window.showEmailCopySuccess && (text.includes('@') || message.includes('email') || message.includes('Email'))) {
+                  window.showEmailCopySuccess(message);
+                } else if (window.toastManager) {
+                  window.toastManager.success(message);
+                } else {
+                  alert(message);
+                }
+              } else {
+                throw new Error('execCommand failed');
+              }
+            } catch (err) {
+              if (window.toastManager) {
+                window.toastManager.error("Copy failed");
+              } else {
+                alert("Copy failed");
+              }
+            }
+
+            document.body.removeChild(textArea);
+          });
         } else {
-          window.toastManager ? window.toastManager.error("Copy not supported") : alert("Copy not supported");
+          if (window.toastManager) {
+            window.toastManager.error("Copy not supported in this browser");
+          } else {
+            alert("Copy not supported in this browser");
+          }
         }
       } catch(e) {
-        window.toastManager ? window.toastManager.error("Copy failed") : alert("Copy failed");
+        console.error('Copy error:', e);
+        if (window.toastManager) {
+          window.toastManager.error("Copy failed");
+        } else {
+          alert("Copy failed");
+        }
       }
     };
 
@@ -171,27 +255,72 @@
 
               <button onclick="
                 const email = 'support@visualvibestudio.store';
-                if (navigator.clipboard && window.isSecureContext) {
-                  navigator.clipboard.writeText(email).then(() => {
-                    if (window.toastManager) {
-                      window.toastManager.success('✅ Email address copied to clipboard!');
+                console.log('📧 Email options copy button clicked');
+
+                // Enhanced copy function for desktop
+                function copyEmailAndShowNotification() {
+                  try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                      navigator.clipboard.writeText(email).then(() => {
+                        console.log('📧 Email copied via navigator.clipboard');
+                        if (window.showEmailCopySuccess) {
+                          window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
+                        } else if (window.toastManager) {
+                          window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
+                        } else {
+                          alert('✅ Email address copied to clipboard!');
+                        }
+                      }).catch(() => {
+                        console.log('📧 Fallback to execCommand copy');
+                        fallbackCopy();
+                      });
                     } else {
-                      alert('Email address copied to clipboard!');
+                      console.log('📧 Using fallback copy method');
+                      fallbackCopy();
                     }
-                  });
-                } else {
-                  const textArea = document.createElement('textarea');
-                  textArea.value = email;
-                  document.body.appendChild(textArea);
-                  textArea.select();
-                  document.execCommand('copy');
-                  document.body.removeChild(textArea);
-                  if (window.toastManager) {
-                    window.toastManager.success('✅ Email address copied to clipboard!');
-                  } else {
-                    alert('Email address copied to clipboard!');
+                  } catch (error) {
+                    console.log('📧 Error in copy, using fallback:', error);
+                    fallbackCopy();
                   }
                 }
+
+                function fallbackCopy() {
+                  const textArea = document.createElement('textarea');
+                  textArea.value = email;
+                  textArea.style.position = 'fixed';
+                  textArea.style.left = '-999999px';
+                  textArea.style.top = '-999999px';
+                  document.body.appendChild(textArea);
+                  textArea.focus();
+                  textArea.select();
+
+                  try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                      console.log('📧 Fallback copy successful');
+                      if (window.showEmailCopySuccess) {
+                        window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
+                      } else if (window.toastManager) {
+                        window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
+                      } else {
+                        alert('✅ Email address copied to clipboard!');
+                      }
+                    } else {
+                      throw new Error('execCommand failed');
+                    }
+                  } catch (err) {
+                    console.log('📧 All copy methods failed:', err);
+                    if (window.toastManager) {
+                      window.toastManager.error('Copy failed. Email: support@visualvibestudio.store', { duration: 6000 });
+                    } else {
+                      alert('Copy failed. Email: support@visualvibestudio.store');
+                    }
+                  }
+
+                  document.body.removeChild(textArea);
+                }
+
+                copyEmailAndShowNotification();
                 document.getElementById('emailOptionsModal').remove();
               " style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <span>📋</span> Copy Email Address
@@ -602,6 +731,7 @@
 
   <!-- ESSENTIAL SCRIPTS ONLY - NO DELETED FILES -->
   <script src="toast-notifications.js"></script>
+  <script src="email-copy-notification.js"></script>
   <script src="final-check.js"></script>
 
   <!-- Scroll Reveal Animation -->
