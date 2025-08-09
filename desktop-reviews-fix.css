@@ -1,0 +1,268 @@
+/* Desktop Reviews Section Fix - Overrides aggressive desktop CSS */
+
+/* Ensure reviews section doesn't get broken by desktop overrides */
+#reviews {
+  display: block !important;
+  margin-bottom: 4rem !important;
+}
+
+/* Fix reviews container layout */
+.reviews-container {
+  position: relative !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Fix horizontal scroll layout for reviews */
+.reviews-scroll {
+  display: flex !important;
+  gap: 1.5rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth !important;
+  padding: 1rem 0 !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  /* Override aggressive grid layouts */
+  grid-template-columns: none !important;
+}
+
+.reviews-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Ensure review cards maintain proper sizing on desktop */
+.review-card {
+  min-width: 300px !important;
+  max-width: 350px !important;
+  width: 320px !important;
+  height: auto !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  background: white !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(229, 231, 235, 1) !important;
+  margin: 0 !important;
+  /* Prevent desktop grid override */
+  grid-column: none !important;
+  grid-row: none !important;
+}
+
+/* Fix review card content */
+.review-card .text-gray-600 {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin-bottom: 1rem !important;
+}
+
+.review-card .font-medium {
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.review-card .text-xs {
+  font-size: 0.75rem !important;
+  color: #6B7280 !important;
+}
+
+/* Fix scroll buttons */
+.scroll-indicators {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  margin-top: 1rem !important;
+}
+
+.scroll-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 1.2rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+  /* Override desktop button styles */
+  min-width: 40px !important;
+  padding: 0 !important;
+}
+
+.scroll-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Fix grid view for "View All Reviews" */
+#allCustomerReviews {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 1.5rem !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Fix grid review cards */
+#allCustomerReviews .testimonial-card {
+  background: white !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(229, 231, 235, 1) !important;
+  height: auto !important;
+  min-height: 200px !important;
+}
+
+/* Fix toggle button */
+#viewAllCustomerReviews {
+  background-color: #4F46E5 !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+  width: auto !important;
+  min-width: auto !important;
+}
+
+#viewAllCustomerReviews:hover {
+  background-color: #4338CA !important;
+}
+
+/* Ensure reviews load and display properly */
+.new-review {
+  animation: fadeInUp 0.5s ease-out !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Override any conflicting desktop CSS for reviews specifically */
+@media (min-width: 768px) {
+  /* Force reviews to use horizontal scroll layout, not grid */
+  .reviews-scroll {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    flex-direction: row !important;
+  }
+  
+  /* Ensure review cards stay as flex items */
+  .reviews-scroll .review-card {
+    flex: 0 0 auto !important;
+    grid-column: none !important;
+    grid-row: none !important;
+  }
+  
+  /* Grid view should use CSS Grid */
+  #allCustomerReviews {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* Universal sync status indicator */
+.universal-sync-indicator {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  background: linear-gradient(135deg, #10B981, #059669) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  opacity: 0 !important;
+  transform: translateY(20px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.universal-sync-indicator.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.universal-sync-indicator .pulse {
+  width: 8px !important;
+  height: 8px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  animation: pulse 2s infinite !important;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+/* Enhanced review cards for universal system */
+.review-card.universal {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.review-card.universal::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, transparent, #10B981, transparent) !important;
+  animation: universalGlow 3s infinite !important;
+}
+
+@keyframes universalGlow {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Fix for desktop override conflicts */
+@media (max-width: 767px) {
+  /* Even on forced desktop mode, maintain review functionality */
+  .reviews-scroll {
+    display: flex !important;
+    overflow-x: auto !important;
+    grid-template-columns: none !important;
+  }
+
+  .review-card {
+    min-width: 280px !important;
+    flex-shrink: 0 !important;
+  }
+
+  #allCustomerReviews {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  }
+
+  .universal-sync-indicator {
+    bottom: 80px !important;
+    right: 10px !important;
+    left: 10px !important;
+    width: auto !important;
+    text-align: center !important;
+  }
+}
