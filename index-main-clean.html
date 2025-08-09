@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="description" content="Professional design services for your business. Custom websites, flyers, and business cards. Starting from $50. Visual Vibe Studio - Building brands that stand out." />
+  <meta name="keywords" content="web design, business cards, flyers, graphic design, business branding, visual design" />
+  <meta name="author" content="Visual Vibe Studio" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:title" content="Visual Vibe Studio - Professional Design Services" />
+  <meta property="og:description" content="Custom websites, flyers, and business cards. Professional designs that make your business stand out." />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="/" />
+  <meta property="twitter:title" content="Visual Vibe Studio - Professional Design Services" />
+  <meta property="twitter:description" content="Custom websites, flyers, and business cards. Professional designs that make your business stand out." />
+
+  <title>Visual Vibe Studio | Professional Design Services | www.visualvibestudio.store</title>
+  
+  <!-- External Resources -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- Essential CSS Files ONLY -->
+  <link rel="stylesheet" href="essential-styling.css">
+  <link rel="stylesheet" href="header-layout-fix.css">
+  <link rel="stylesheet" href="responsive-critical.css">
+  <link rel="stylesheet" href="toast-notifications.css">
+  <link rel="stylesheet" href="responsive-fixes.css">
+  
+  <!-- Essential JavaScript Functions -->
+  <script>
+    // Email click handler
+    window.handleEmailClick = function(event, emailAddress) {
+      if (event && event.preventDefault) event.preventDefault();
+      window.location.href = 'mailto:' + (emailAddress || 'support@visualvibestudio.store');
+    };
+
+    // Clipboard functionality
+    window.copyToClipboard = function(text, msg) {
+      try {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => 
+            window.toastManager ? window.toastManager.success(msg || "Copied to clipboard!") : alert(msg || "Copied!")
+          );
+        } else {
+          window.toastManager ? window.toastManager.error("Copy not supported") : alert("Copy not supported");
+        }
+      } catch(e) {
+        window.toastManager ? window.toastManager.error("Copy failed") : alert("Copy failed");
+      }
+    };
+
+    // Simple order submission fallback
+    window.simpleOrderSubmit = function() {
+      console.log("Fallback function called - main script will override");
+      return false;
+    };
+  </script>
+</head>
+
+<body class="bg-gray-50 font-sans">
+  <!-- Header with Authentication -->
+  <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Visual Vibe Studio</h1>
+      </div>
+      
+      <!-- Desktop Authentication -->
+      <div class="hidden md:flex items-center space-x-4">
+        <!-- Signed Out State -->
+        <div id="signedOutState" class="flex items-center space-x-2">
+          <button onclick="openSignInModal()" class="bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+            Sign In
+          </button>
+          <button onclick="openSignUpModal()" class="border border-indigo-600 text-indigo-600 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium">
+            Sign Up
+          </button>
+        </div>
+        
+        <!-- Signed In State -->
+        <div id="signedInState" class="flex items-center space-x-3 hidden">
+          <button onclick="openProfileModal()" class="flex items-center space-x-2 hover:bg-gray-50 p-2 rounded-lg transition-colors group">
+            <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              👤
+            </div>
+            <span id="userName" class="text-gray-700 group-hover:text-gray-900">User</span>
+          </button>
+          <button onclick="showOrderHistory()" class="text-gray-600 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+            My Orders
+          </button>
+          <button onclick="signOut()" class="text-gray-600 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+            Sign Out
+          </button>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu Button -->
+      <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="md:hidden bg-white border-t hidden">
+      <div class="px-4 py-4 space-y-3">
+        <!-- Mobile Signed Out State -->
+        <div id="mobileSignedOutState" class="space-y-3">
+          <button onclick="openSignInModal(); closeMobileMenu();" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+            Sign In
+          </button>
+          <button onclick="openSignUpModal(); closeMobileMenu();" class="w-full border border-indigo-600 text-indigo-600 px-4 py-3 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium">
+            Sign Up
+          </button>
+        </div>
+        
+        <!-- Mobile Signed In State -->
+        <div id="mobileSignedInState" class="space-y-3 hidden">
+          <button onclick="openProfileModal(); closeMobileMenu();" class="w-full flex items-center justify-center space-x-2 hover:bg-gray-50 p-3 rounded-lg transition-colors">
+            <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              👤
+            </div>
+            <span>Edit Profile</span>
+          </button>
+          <button onclick="showOrderHistory(); closeMobileMenu();" class="w-full text-gray-600 hover:text-gray-800 py-3 text-sm">
+            My Orders
+          </button>
+          <button onclick="signOut(); closeMobileMenu();" class="w-full text-gray-600 hover:text-gray-800 py-3 text-sm">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <section class="text-center mb-16">
+      <h1 class="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+        Visual Vibe Studio
+      </h1>
+      <h2 class="text-2xl md:text-3xl font-semibold text-gray-700 mb-6">
+        Professional Design Services
+      </h2>
+      <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+        Custom websites, flyers, and business cards. Professional designs that make your business stand out.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button onclick="document.getElementById('services').scrollIntoView({behavior: 'smooth'})" 
+                class="bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-indigo-700 transition-colors">
+          View Services
+        </button>
+        <button onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})" 
+                class="border border-indigo-600 text-indigo-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-indigo-50 transition-colors">
+          Get Quote
+        </button>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="mb-16">
+      <h3 class="text-3xl font-bold text-center text-gray-800 mb-12">Our Services</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-xl p-8 shadow-lg text-center">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-2xl">🌐</span>
+          </div>
+          <h4 class="text-xl font-bold mb-4">Website Design</h4>
+          <p class="text-gray-600 mb-6">Professional, responsive websites that convert visitors into customers.</p>
+          <p class="text-2xl font-bold text-indigo-600">Starting at $200</p>
+        </div>
+        
+        <div class="bg-white rounded-xl p-8 shadow-lg text-center">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-2xl">📄</span>
+          </div>
+          <h4 class="text-xl font-bold mb-4">Flyers & Brochures</h4>
+          <p class="text-gray-600 mb-6">Eye-catching marketing materials that promote your business effectively.</p>
+          <p class="text-2xl font-bold text-indigo-600">Starting at $50</p>
+        </div>
+        
+        <div class="bg-white rounded-xl p-8 shadow-lg text-center">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-2xl">💼</span>
+          </div>
+          <h4 class="text-xl font-bold mb-4">Business Cards</h4>
+          <p class="text-gray-600 mb-6">Professional business cards that make a lasting first impression.</p>
+          <p class="text-2xl font-bold text-indigo-600">Starting at $75</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-white rounded-xl shadow-lg p-8 max-w-2xl mx-auto">
+      <h3 class="text-2xl font-bold text-center mb-8">Get In Touch</h3>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <button onclick="handleEmailClick(event)" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+          <span class="text-xl">📧</span>
+          <span>Email Support</span>
+        </button>
+        
+        <a href="tel:+14029797184" 
+           class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-6 rounded-lg text-center transition-colors flex items-center justify-center space-x-2">
+          <span class="text-xl">📞</span>
+          <span>Call (402) 979-7184</span>
+        </a>
+      </div>
+      
+      <div class="mt-8 text-center text-gray-600">
+        <p class="mb-2">Email: support@visualvibestudio.store</p>
+        <p>Available Monday-Friday, 9 AM - 6 PM CST</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12 mt-16">
+    <div class="container mx-auto px-4 text-center">
+      <h4 class="text-xl font-bold mb-4">Visual Vibe Studio</h4>
+      <p class="text-gray-300 mb-6">Professional design services that make your business stand out.</p>
+      <div class="flex justify-center space-x-6 mb-6">
+        <button onclick="handleEmailClick(event)" class="text-gray-300 hover:text-white transition-colors">
+          Email
+        </button>
+        <a href="tel:+14029797184" class="text-gray-300 hover:text-white transition-colors">
+          Phone
+        </a>
+      </div>
+      <p class="text-sm text-gray-400">
+        &copy; 2025 Visual Vibe Studio | www.visualvibestudio.store. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ESSENTIAL SCRIPTS ONLY - NO DELETED FILES -->
+  <script src="toast-notifications.js"></script>
+  <script src="simple-auth.js"></script>
+  <script src="final-check.js"></script>
+
+  <!-- Error handling -->
+  <script>
+    window.addEventListener("error", function (e) {
+      console.error("JavaScript error:", e.error, "at", e.filename, ":", e.lineno);
+    });
+    
+    // Ensure clean environment
+    console.log("✅ Clean main file loaded - no duplicate scripts");
+  </script>
+</body>
+</html>
