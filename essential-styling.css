@@ -311,7 +311,7 @@ footer {
 /* Floating Contact Form Responsive */
 @media (max-width: 768px) {
   #floatingContactBtn {
-    bottom: 15px !important;
+    top: 15px !important;
     right: 15px !important;
   }
 
