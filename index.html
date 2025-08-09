@@ -1113,6 +1113,24 @@
 
         // Store review in localStorage for persistence
         saveReviewToStorage(name, title, reviewText, rating);
+
+        // Ensure the review appears in "View All Customer Reviews" section
+        if (window.showingAllCustomerReviews) {
+          // If grid is currently visible, make sure it's refreshed
+          setTimeout(() => {
+            const allReviewsGrid = document.getElementById('allCustomerReviews');
+            if (!allReviewsGrid.classList.contains('hidden')) {
+              console.log('Grid is visible - review automatically added');
+            }
+          }, 200);
+        }
+
+        // Trigger browser storage event to sync across tabs/devices
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'customerReviews',
+          newValue: localStorage.getItem('customerReviews'),
+          storageArea: localStorage
+        }));
       }
 
       function saveReviewToStorage(name, title, reviewText, rating) {
@@ -1242,6 +1260,25 @@
       // Clean existing duplicates first, then load saved reviews
       cleanExistingDuplicates();
       loadSavedReviews();
+
+      // Listen for storage changes to sync reviews across tabs/devices
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'customerReviews') {
+          console.log('Reviews updated in another tab/device - syncing...');
+          refreshAllReviewDisplays();
+        }
+      });
+
+      // Periodic sync check every 30 seconds to ensure reviews stay synchronized
+      setInterval(() => {
+        const currentReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
+        const displayedReviews = document.querySelectorAll('.new-review').length;
+
+        if (currentReviews.length !== displayedReviews) {
+          console.log('Review count mismatch detected - syncing...');
+          refreshAllReviewDisplays();
+        }
+      }, 30000);
 
       // Load real customer reviews
       setTimeout(() => {
