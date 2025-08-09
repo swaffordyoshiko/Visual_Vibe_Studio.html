@@ -1243,15 +1243,17 @@
       cleanExistingDuplicates();
       loadSavedReviews();
 
-      // Add test review if none exist (for demonstration)
+      // Add test reviews if none exist (for demonstration)
       setTimeout(() => {
         const existingReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
+
+        // Add Kayla L. review if missing
         const hasKaylaReview = existingReviews.some(review =>
           review.name.toLowerCase().includes('kayla') || review.name.toLowerCase().includes('kayla l')
         );
 
         if (!hasKaylaReview) {
-          const testReview = {
+          const kaylaReview = {
             name: 'Kayla L.',
             title: 'Small Business Owner',
             text: 'Absolutely love my new website! Visual Vibe Studio exceeded my expectations. The design is modern, professional, and exactly what my business needed. Highly recommend!',
@@ -1259,14 +1261,86 @@
             timestamp: new Date().toISOString()
           };
 
-          existingReviews.unshift(testReview);
-          localStorage.setItem('customerReviews', JSON.stringify(existingReviews));
-
-          // Add to both containers immediately
-          addReviewToPage(testReview.name, testReview.title, testReview.text, testReview.rating);
+          existingReviews.unshift(kaylaReview);
           console.log('Added Kayla L. review for demonstration');
         }
+
+        // Add Lily W. review if missing
+        const hasLilyReview = existingReviews.some(review =>
+          review.name.toLowerCase().includes('lily') || review.name.toLowerCase().includes('lily w')
+        );
+
+        if (!hasLilyReview) {
+          const lilyReview = {
+            name: 'Lily W.',
+            title: 'Marketing Director',
+            text: 'The team at Visual Vibe Studio created stunning business cards and flyers for our company. The quality and attention to detail were exceptional. Will definitely work with them again!',
+            rating: 5,
+            timestamp: new Date().toISOString()
+          };
+
+          existingReviews.unshift(lilyReview);
+          console.log('Added Lily W. review for demonstration');
+        }
+
+        // Save updated reviews and refresh display
+        localStorage.setItem('customerReviews', JSON.stringify(existingReviews));
+
+        // Force refresh of both containers to ensure sync
+        refreshAllReviewDisplays();
       }, 1000);
+
+      // Function to refresh all review displays and ensure sync
+      function refreshAllReviewDisplays() {
+        // Clear existing reviews from both containers
+        const reviewsContainer = document.getElementById('reviewsScroll');
+        const allReviewsGrid = document.getElementById('allCustomerReviews');
+
+        // Remove only NEW review cards, keep original static ones
+        reviewsContainer.querySelectorAll('.new-review').forEach(card => card.remove());
+        allReviewsGrid.querySelectorAll('.testimonial-card').forEach(card => card.remove());
+
+        // Reload from localStorage
+        const savedReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
+
+        savedReviews.forEach(review => {
+          const starsDisplay = '⭐'.repeat(review.rating);
+
+          // Add to scrollable container
+          const newReviewCard = document.createElement('div');
+          newReviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
+          newReviewCard.innerHTML = `
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 text-lg">
+                ${starsDisplay}
+              </div>
+              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">${review.text}</p>
+            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
+            ${review.title ? `<div class="text-xs text-gray-600 mt-1">${review.title}</div>` : ''}
+          `;
+          reviewsContainer.insertBefore(newReviewCard, reviewsContainer.firstChild);
+
+          // Add to grid container
+          const gridReviewCard = document.createElement('div');
+          gridReviewCard.className = 'testimonial-card bg-white rounded-xl p-6 shadow-lg';
+          gridReviewCard.innerHTML = `
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 text-lg">
+                ${starsDisplay}
+              </div>
+              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">${review.text}</p>
+            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
+            ${review.title ? `<div class="text-xs text-gray-600 mt-1">${review.title}</div>` : ''}
+          `;
+          allReviewsGrid.insertBefore(gridReviewCard, allReviewsGrid.firstChild);
+        });
+
+        console.log(`Refreshed displays with ${savedReviews.length} reviews`);
+      }
     });
   </script>
 
@@ -1392,7 +1466,7 @@
       showToast('Sign up functionality available - use Sign In with test@test.com / test123 for now', 'info');
     };
 
-    console.log('🚀 FINAL MODAL FIX: All functions loaded and ready');
+    console.log('��� FINAL MODAL FIX: All functions loaded and ready');
 
     // Floating Contact Form Functions
     window.openFloatingForm = function() {
