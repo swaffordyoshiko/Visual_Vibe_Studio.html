@@ -1243,50 +1243,36 @@
       cleanExistingDuplicates();
       loadSavedReviews();
 
-      // Add test reviews if none exist (for demonstration)
+      // Load real customer reviews
       setTimeout(() => {
         const existingReviews = JSON.parse(localStorage.getItem('customerReviews') || '[]');
 
-        // Add Kayla L. review if missing
-        const hasKaylaReview = existingReviews.some(review =>
-          review.name.toLowerCase().includes('kayla') || review.name.toLowerCase().includes('kayla l')
-        );
-
-        if (!hasKaylaReview) {
-          const kaylaReview = {
-            name: 'Kayla L.',
-            title: 'Small Business Owner',
-            text: 'Absolutely love my new website! Visual Vibe Studio exceeded my expectations. The design is modern, professional, and exactly what my business needed. Highly recommend!',
-            rating: 5,
-            timestamp: new Date().toISOString()
-          };
-
-          existingReviews.unshift(kaylaReview);
-          console.log('Added Kayla L. review for demonstration');
-        }
-
-        // Add Lily W. review if missing
+        // Add real Lily W. review if missing
         const hasLilyReview = existingReviews.some(review =>
-          review.name.toLowerCase().includes('lily') || review.name.toLowerCase().includes('lily w')
+          review.name.toLowerCase().includes('lily') &&
+          review.text.includes('beauty brand')
         );
 
         if (!hasLilyReview) {
-          const lilyReview = {
+          // Remove any existing test Lily W. review first
+          const filteredReviews = existingReviews.filter(review =>
+            !(review.name.toLowerCase().includes('lily w') || review.name.toLowerCase().includes('lily'))
+          );
+
+          const realLilyReview = {
             name: 'Lily W.',
-            title: 'Marketing Director',
-            text: 'The team at Visual Vibe Studio created stunning business cards and flyers for our company. The quality and attention to detail were exceptional. Will definitely work with them again!',
+            title: 'Beauty Brand Owner',
+            text: 'Visual Vibe Studio created an absolutely amazing logo for my beauty brand and flyers for our newest for my business. I genuinely recommend them to anyone you need excellent designing and service.',
             rating: 5,
             timestamp: new Date().toISOString()
           };
 
-          existingReviews.unshift(lilyReview);
-          console.log('Added Lily W. review for demonstration');
+          filteredReviews.unshift(realLilyReview);
+          localStorage.setItem('customerReviews', JSON.stringify(filteredReviews));
+          console.log('Added real Lily W. review');
         }
 
-        // Save updated reviews and refresh display
-        localStorage.setItem('customerReviews', JSON.stringify(existingReviews));
-
-        // Force refresh of both containers to ensure sync
+        // Load existing reviews
         refreshAllReviewDisplays();
       }, 1000);
 
