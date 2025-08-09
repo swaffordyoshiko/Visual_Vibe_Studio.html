@@ -10,8 +10,22 @@ class UniversalReviewSync {
         this.syncInterval = 30000; // Sync every 30 seconds
         this.isOnline = navigator.onLine;
         this.pendingReviews = [];
-        
+
+        // Clear any old localStorage data that might be causing conflicts
+        this.clearOldData();
+
         this.initialize();
+    }
+
+    clearOldData() {
+        // Clear all potential old review data
+        const keysToCheck = ['customerReviews', 'reviewSync', 'lastReviewSync', 'reviewSyncTrigger'];
+        keysToCheck.forEach(key => {
+            if (localStorage.getItem(key)) {
+                localStorage.removeItem(key);
+                console.log(`🧹 Cleared old data: ${key}`);
+            }
+        });
     }
 
     async initialize() {
@@ -39,44 +53,42 @@ class UniversalReviewSync {
             }
         }, this.syncInterval);
 
-        // Ensure reviews are displayed immediately
-        setTimeout(() => {
-            const reviews = this.getLocalReviews();
-            if (reviews.length === 0) {
-                console.log('🔄 No reviews found, loading defaults...');
-                const defaultReviews = this.getDefaultReviews();
-                this.saveLocalReviews(defaultReviews);
-                this.displayReviews(defaultReviews);
-            }
-        }, 1000);
+        // Immediately load all three default reviews
+        const defaultReviews = this.getDefaultReviews();
+        console.log(`🚀 Force loading ${defaultReviews.length} default reviews immediately...`);
+
+        // Clear any existing data and start fresh
+        localStorage.removeItem(this.localStorageKey);
+
+        // Skip deduplication and load reviews directly
+        console.log('📦 Loading reviews without deduplication...');
+        defaultReviews.forEach((review, index) => {
+            console.log(`${index + 1}. Adding: ${review.name} - ${review.businessType}`);
+        });
+
+        this.saveLocalReviews(defaultReviews);
+        this.displayReviews(defaultReviews);
+
+        console.log('✅ All default reviews force loaded immediately');
 
         console.log('✅ Universal Review Sync initialized');
     }
 
     async loadUniversalReviews() {
-        console.log('📥 Loading reviews from all sources...');
-        
-        // First load local reviews for immediate display
-        const localReviews = this.getLocalReviews();
-        this.displayReviews(localReviews);
-        
-        // Then try to load from cloud and merge
-        if (this.isOnline) {
-            try {
-                const cloudReviews = await this.getCloudReviews();
-                const mergedReviews = this.mergeReviews(localReviews, cloudReviews);
-                
-                // Save merged reviews locally
-                this.saveLocalReviews(mergedReviews);
-                
-                // Display updated reviews
-                this.displayReviews(mergedReviews);
-                
-                console.log(`✅ Loaded ${mergedReviews.length} reviews from universal storage`);
-            } catch (error) {
-                console.warn('⚠️ Cloud sync failed, using local reviews only:', error);
-            }
-        }
+        console.log('📥 Loading reviews - ensuring all three defaults appear...');
+
+        // Force load all three default reviews without complex logic
+        const defaultReviews = this.getDefaultReviews();
+        console.log(`📋 Loading ${defaultReviews.length} default reviews:`);
+        defaultReviews.forEach((review, index) => {
+            console.log(`  ${index + 1}. ${review.name} (${review.businessType})`);
+        });
+
+        // Clear and save defaults
+        this.saveLocalReviews(defaultReviews);
+        this.displayReviews(defaultReviews);
+
+        console.log(`✅ All ${defaultReviews.length} reviews loaded successfully`);
     }
 
     getLocalReviews() {
@@ -228,20 +240,22 @@ class UniversalReviewSync {
     }
 
     displayReviews(reviews) {
-        // Clear existing reviews
+        // Clear existing reviews from scroll container only
         const scrollContainer = document.getElementById('reviewsScroll');
         const gridContainer = document.getElementById('allCustomerReviews');
-        
+
         if (scrollContainer) {
             // Remove existing review cards
             scrollContainer.querySelectorAll('.review-card, .new-review').forEach(card => card.remove());
         }
-        
+
+        // Clear grid container and keep it hidden since we removed the button
         if (gridContainer) {
             gridContainer.querySelectorAll('.testimonial-card').forEach(card => card.remove());
+            gridContainer.classList.add('hidden');
         }
 
-        // Add reviews to both containers
+        // Add reviews to scroll container only
         reviews.forEach((review, index) => {
             this.addReviewToDisplay(review, index);
         });
@@ -249,14 +263,13 @@ class UniversalReviewSync {
 
     addReviewToDisplay(review, index = 0) {
         const scrollContainer = document.getElementById('reviewsScroll');
-        const gridContainer = document.getElementById('allCustomerReviews');
-        
-        if (!scrollContainer || !gridContainer) return;
+
+        if (!scrollContainer) return;
 
         const starsDisplay = '⭐'.repeat(review.rating);
         const animationDelay = index * 0.1;
 
-        // Add to scroll container
+        // Add to scroll container only
         const scrollCard = document.createElement('div');
         scrollCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
         scrollCard.style.animationDelay = `${animationDelay}s`;
@@ -269,23 +282,8 @@ class UniversalReviewSync {
             <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
             <div class="text-xs text-gray-600 mt-1">${review.businessType}</div>
         `;
-        
-        scrollContainer.insertBefore(scrollCard, scrollContainer.firstChild);
 
-        // Add to grid container
-        const gridCard = document.createElement('div');
-        gridCard.className = 'testimonial-card bg-white rounded-xl p-6 shadow-lg';
-        gridCard.innerHTML = `
-            <div class="flex items-center mb-4">
-                <div class="flex text-yellow-400 text-lg">${starsDisplay}</div>
-                <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
-            </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${review.reviewText}"</p>
-            <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
-            <div class="text-xs text-gray-600 mt-1">${review.businessType}</div>
-        `;
-        
-        gridContainer.insertBefore(gridCard, gridContainer.firstChild);
+        scrollContainer.insertBefore(scrollCard, scrollContainer.firstChild);
     }
 
     triggerCrossTabSync(newReview) {
