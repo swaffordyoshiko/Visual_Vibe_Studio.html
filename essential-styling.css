@@ -1,5 +1,11 @@
 /* Enhanced Professional Styling - Beautiful Backgrounds & Effects */
 
+/* Remove any potential border-radius from viewport elements */
+html, body {
+  border-radius: 0 !important;
+  overflow-x: hidden;
+}
+
 /* Animated Background with Gradient */
 body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #667eea 50%, #f093fb 75%, #f5576c 100%);
@@ -71,6 +77,27 @@ header {
   -webkit-backdrop-filter: blur(25px) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0 !important; /* Remove oval shaping for better flow */
+}
+
+/* Remove border-radius from header elements */
+header * {
+  border-radius: 0 !important;
+}
+
+/* Restore minimal border-radius only for specific buttons that need it */
+header button:not(.no-radius) {
+  border-radius: 6px !important;
+}
+
+/* Aggressive removal of any border-radius that might cause oval shapes */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Specifically target elements that might inherit border-radius */
+.container, .mx-auto, .flex, .sticky, .top-0, .z-40, .z-50 {
+  border-radius: 0 !important;
 }
 
 /* Enhanced Button Styling with Glow Effects */
@@ -293,10 +320,25 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Welcome Banner Enhancement */
+/* Simple Professional Welcome Banner */
 #welcomeBanner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#welcomeBanner p {
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Welcome Banner */
+@media (max-width: 768px) {
+  #welcomeBanner p {
+    font-size: 14px;
+    padding: 0 1rem;
+  }
 }
 
 /* Portfolio Grid Enhancements */
