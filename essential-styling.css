@@ -295,3 +295,33 @@ footer {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.7);
 }
+
+/* Floating Contact Button Animation */
+@keyframes pulse-float {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+  }
+}
+
+/* Floating Contact Form Responsive */
+@media (max-width: 768px) {
+  #floatingContactBtn {
+    bottom: 15px !important;
+    right: 15px !important;
+  }
+
+  #floatingContactBtn > div {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  #floatingContactModal > div {
+    width: 95% !important;
+    margin: 1rem !important;
+  }
+}
