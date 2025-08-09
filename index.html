@@ -278,6 +278,99 @@
     </section>
   </main>
 
+  <!-- Floating Contact Button -->
+  <div id="floatingContactBtn" style="position: fixed; top: 20px; right: 20px; z-index: 1000; cursor: pointer;" onclick="openFloatingForm()">
+    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); animation: pulse-float 2s ease-in-out infinite;">
+      <span style="color: white; font-size: 24px;">📝</span>
+    </div>
+  </div>
+
+  <!-- Floating Contact Form Modal -->
+  <div id="floatingContactModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 16px 16px 0 0; text-align: center; position: relative;">
+        <h3 style="margin: 0; color: white; font-size: 1.5rem; font-weight: bold;">Quick Contact Form</h3>
+        <p style="margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.9); font-size: 0.9rem;">Get a personalized quote for your project</p>
+        <button onclick="closeFloatingForm()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; opacity: 0.8;">&times;</button>
+      </div>
+
+      <!-- Form -->
+      <form id="floatingContactForm" style="padding: 2rem;">
+        <div style="display: grid; gap: 1rem;">
+          <!-- Name -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Full Name *</label>
+            <input type="text" name="customer_name" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;" placeholder="Your full name">
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Email Address *</label>
+            <input type="email" name="customer_email" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;" placeholder="your.email@example.com">
+          </div>
+
+          <!-- Mobile -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Mobile Number *</label>
+            <input type="tel" name="customer_mobile" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;" placeholder="(XXX) XXX-XXXX">
+          </div>
+
+          <!-- Response Preference -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Preferred Contact Method *</label>
+            <select name="response_preference" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box; background: white;">
+              <option value="">Choose preferred contact method</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone Call</option>
+              <option value="text">Text Message</option>
+            </select>
+          </div>
+
+          <!-- Project Type -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Project Type *</label>
+            <select name="project_type" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box; background: white;">
+              <option value="">Select project type</option>
+              <option value="website">Website Design</option>
+              <option value="flyers">Flyers & Brochures</option>
+              <option value="business_cards">Business Cards</option>
+              <option value="logo">Logo Design</option>
+              <option value="multiple">Multiple Services</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <!-- Urgency -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Project Urgency *</label>
+            <select name="urgency" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box; background: white;">
+              <option value="">Select urgency level</option>
+              <option value="low">Low - Within 2-4 weeks</option>
+              <option value="medium">Medium - Within 1-2 weeks</option>
+              <option value="high">High - Within a few days</option>
+              <option value="urgent">Urgent - ASAP</option>
+            </select>
+          </div>
+
+          <!-- Message -->
+          <div>
+            <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Project Details</label>
+            <textarea name="customer_message" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; resize: vertical; box-sizing: border-box;" placeholder="Tell us about your project, budget, specific requirements, etc."></textarea>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; transition: transform 0.2s;">
+            Send My Request 🚀
+          </button>
+          <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">We'll respond within 24 hours</p>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="bg-gray-800 text-white py-12 mt-16">
     <div class="container mx-auto px-4 text-center">
@@ -443,6 +536,118 @@
     };
 
     console.log('🚀 FINAL MODAL FIX: All functions loaded and ready');
+
+    // Floating Contact Form Functions
+    window.openFloatingForm = function() {
+      const modal = document.getElementById('floatingContactModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    };
+
+    window.closeFloatingForm = function() {
+      const modal = document.getElementById('floatingContactModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    };
+
+    // Handle form submission to Zapier
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('floatingContactForm');
+      if (form) {
+        form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          const submitButton = form.querySelector('button[type="submit"]');
+          const originalText = submitButton.innerHTML;
+
+          // Show loading state
+          submitButton.innerHTML = 'Sending... ⏳';
+          submitButton.disabled = true;
+
+          try {
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {
+              customer_name: formData.get('customer_name'),
+              customer_mobile: formData.get('customer_mobile'),
+              customer_email: formData.get('customer_email'),
+              response_preference: formData.get('response_preference'),
+              project_type: formData.get('project_type'),
+              urgency: formData.get('urgency'),
+              customer_message: formData.get('customer_message') || 'No additional details provided',
+              timestamp: new Date().toISOString(),
+              source: 'Visual Vibe Studio Website'
+            };
+
+            // Send to Zapier webhook
+            const response = await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+              // Success
+              submitButton.innerHTML = 'Message Sent! ✅';
+              submitButton.style.background = '#10b981';
+
+              // Show success message
+              if (window.toastManager) {
+                window.toastManager.success('Your message has been sent! We\'ll contact you within 24 hours.');
+              } else {
+                alert('Your message has been sent! We\'ll contact you within 24 hours.');
+              }
+
+              // Reset form and close modal after delay
+              setTimeout(() => {
+                form.reset();
+                closeFloatingForm();
+                submitButton.innerHTML = originalText;
+                submitButton.style.background = '';
+                submitButton.disabled = false;
+              }, 2000);
+
+            } else {
+              throw new Error('Network response was not ok');
+            }
+
+          } catch (error) {
+            console.error('Error sending form:', error);
+
+            // Error state
+            submitButton.innerHTML = 'Error - Try Again ❌';
+            submitButton.style.background = '#ef4444';
+
+            if (window.toastManager) {
+              window.toastManager.error('Sorry, there was an error sending your message. Please try calling us directly.');
+            } else {
+              alert('Sorry, there was an error sending your message. Please try calling us directly at (402) 979-7184.');
+            }
+
+            // Reset button after delay
+            setTimeout(() => {
+              submitButton.innerHTML = originalText;
+              submitButton.style.background = '';
+              submitButton.disabled = false;
+            }, 3000);
+          }
+        });
+      }
+    });
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('floatingContactModal');
+      if (e.target === modal) {
+        closeFloatingForm();
+      }
+    });
   </script>
 
 </body>
