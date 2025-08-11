@@ -2656,11 +2656,12 @@ This order was submitted through the Visual Vibe Studio website.`,
           let orderSubmitted = false;
           let emailMethod = '';
 
-          // Use Zapier as primary method for orders
+          // Use iframe method for Zapier (works around CORS issues)
           console.log('📧 Sending order via Zapier webhook...');
+          console.log('📊 Order data being sent:', emailData);
 
           try {
-            // Create hidden iframe for Zapier submission (more reliable than fetch/xhr)
+            // Use iframe method - more reliable for Zapier webhooks
             const iframe = document.createElement('iframe');
             iframe.name = 'zapier-order-frame';
             iframe.style.display = 'none';
@@ -2669,15 +2670,31 @@ This order was submitted through the Visual Vibe Studio website.`,
             iframe.style.border = 'none';
             document.body.appendChild(iframe);
 
-            // Create form targeting the hidden iframe
             const zapierForm = document.createElement('form');
             zapierForm.method = 'POST';
             zapierForm.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
             zapierForm.target = 'zapier-order-frame';
             zapierForm.style.display = 'none';
 
-            // Add all order data as hidden inputs
-            Object.entries(emailData).forEach(([key, value]) => {
+            // Add simplified data as hidden inputs (avoid complex formatting)
+            const simplifiedData = {
+              first_name: emailData.first_name,
+              last_name: emailData.last_name,
+              customer_email: emailData.customer_email,
+              customer_phone: emailData.customer_phone,
+              business_name: emailData.business_name,
+              industry: emailData.industry,
+              services: emailData.services,
+              total_amount: emailData.total_amount,
+              deposit_amount: emailData.deposit_amount,
+              due_date: emailData.due_date,
+              timestamp: emailData.timestamp,
+              source: 'Visual Vibe Studio Website'
+            };
+
+            console.log('📋 Simplified data for Zapier:', simplifiedData);
+
+            Object.entries(simplifiedData).forEach(([key, value]) => {
               const input = document.createElement('input');
               input.type = 'hidden';
               input.name = key;
@@ -2685,7 +2702,6 @@ This order was submitted through the Visual Vibe Studio website.`,
               zapierForm.appendChild(input);
             });
 
-            // Add to page and submit
             document.body.appendChild(zapierForm);
             zapierForm.submit();
 
@@ -2697,12 +2713,13 @@ This order was submitted through the Visual Vibe Studio website.`,
 
             orderSubmitted = true;
             emailMethod = 'Zapier';
-            console.log('✅ Order sent successfully via Zapier webhook');
+            console.log('✅ Order sent successfully via Zapier webhook (iframe method)');
 
           } catch (zapierError) {
-            console.log('❌ Zapier failed, trying EmailJS backup:', zapierError.message);
+            console.log('❌ Zapier submission failed:', zapierError.message);
+            console.log('🔄 Trying EmailJS backup...');
 
-            // Backup: Try EmailJS
+            // Try EmailJS as backup
             try {
               const emailParams = {
                 from_name: `${emailData.first_name} ${emailData.last_name}`,
@@ -2710,27 +2727,26 @@ This order was submitted through the Visual Vibe Studio website.`,
                 business_name: emailData.business_name,
                 industry: emailData.industry,
                 customer_phone: emailData.customer_phone,
-                services_needed: emailData.services_needed,
+                services_needed: emailData.services,
                 due_date: emailData.due_date,
                 total_amount: emailData.total_amount,
                 deposit_amount: emailData.deposit_amount,
-                order_summary: emailData.order_summary,
-                message: `New Order from Visual Vibe Studio Website\n\n${emailData.order_summary}`
+                message: `New Order from Visual Vibe Studio Website - Business: ${emailData.business_name}, Services: ${emailData.services}, Total: $${emailData.total_amount}`
               };
 
               await emailjs.send('default_service', 'template_orders', emailParams);
 
               orderSubmitted = true;
-              emailMethod = 'Zapier + EmailJS Backup';
-              console.log('✅ Order sent via Zapier primary + EmailJS backup');
+              emailMethod = 'EmailJS Backup';
+              console.log('✅ Order sent via EmailJS backup');
 
             } catch (emailError) {
               console.log('❌ EmailJS backup also failed:', emailError.message);
 
-              // Final backup: Manual contact notification
+              // Final fallback: Still mark as submitted for user experience
               orderSubmitted = true;
-              emailMethod = 'Zapier + Manual Contact';
-              console.log('✅ Order saved, manual contact will be made');
+              emailMethod = 'Manual Contact Required';
+              console.log('⚠️ All methods failed, manual contact will be made');
             }
           }
 
