@@ -288,7 +288,7 @@
 
               <button onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=support@visualvibestudio.store&su=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
                       style="width: 100%; padding: 1rem; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span>📬</span> Compose in Gmail
+                <span>��</span> Compose in Gmail
               </button>
 
               <button onclick="window.open('https://compose.mail.yahoo.com/?to=support@visualvibestudio.store&subject=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
@@ -682,7 +682,7 @@
         <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.4s; position: relative; z-index: 10;">
           <div
             class="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 neon-glow">
-            <span class="text-xl text-white">���</span>
+            <span class="text-xl text-white">💳</span>
           </div>
           <h4 class="text-lg font-bold mb-3 text-gray-800">Business Cards</h4>
           <p class="text-gray-700 mb-4 text-sm">Professional business cards that make a lasting first impression.</p>
@@ -1086,11 +1086,11 @@
   </div>
 
   <!-- Floating Contact Button -->
-  <div id="floatingContactBtn" style="position: fixed; top: 90px; right: 20px; z-index: 1000; cursor: pointer;"
+  <div id="floatingContactBtn" style="position: fixed; top: 90px; right: 20px; z-index: 10001; cursor: pointer; display: block !important;"
     onclick="openFloatingForm()">
     <div
       style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); animation: pulse-float 2s ease-in-out infinite;">
-      <span style="color: white; font-size: 24px;">����</span>
+      <span style="color: white; font-size: 24px;">📝</span>
     </div>
   </div>
 
@@ -1527,7 +1527,7 @@
         reviewCard.className = 'review-card glass-morphism p-6 floating-card reveal new-review flex-shrink-0';
         reviewCard.style.animationDelay = '0s';
 
-        const starsDisplay = '⭐'.repeat(reviewData.rating);
+        const starsDisplay = '���'.repeat(reviewData.rating);
         reviewCard.innerHTML = `
           <div class="flex items-center mb-4">
             <div class="flex text-yellow-400 text-lg">${starsDisplay}</div>
@@ -2165,7 +2165,7 @@
         }
 
         alert('✅ Signed in successfully!');
-        console.log('✅ Sign in successful, UI updated');
+        console.log('��� Sign in successful, UI updated');
 
       } else {
         alert('❌ Invalid credentials. Use test@test.com / test123');
@@ -2656,58 +2656,80 @@ This order was submitted through the Visual Vibe Studio website.`,
           let orderSubmitted = false;
           let emailMethod = '';
 
-          // Use EmailJS as primary method since it's reliable and already loaded
-          console.log('📧 Sending order via EmailJS...');
+          // Use Zapier as primary method for orders
+          console.log('📧 Sending order via Zapier webhook...');
 
           try {
-            // Send via EmailJS (reliable method)
-            const emailParams = {
-              from_name: `${emailData.first_name} ${emailData.last_name}`,
-              customer_email: emailData.customer_email,
-              business_name: emailData.business_name,
-              industry: emailData.industry,
-              customer_phone: emailData.customer_phone,
-              services_needed: emailData.services_needed,
-              due_date: emailData.due_date,
-              total_amount: emailData.total_amount,
-              deposit_amount: emailData.deposit_amount,
-              order_summary: emailData.order_summary,
-              message: `New Order from Visual Vibe Studio Website\n\n${emailData.order_summary}`
-            };
+            // Create hidden iframe for Zapier submission (more reliable than fetch/xhr)
+            const iframe = document.createElement('iframe');
+            iframe.name = 'zapier-order-frame';
+            iframe.style.display = 'none';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
 
-            await emailjs.send('default_service', 'template_orders', emailParams);
+            // Create form targeting the hidden iframe
+            const zapierForm = document.createElement('form');
+            zapierForm.method = 'POST';
+            zapierForm.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
+            zapierForm.target = 'zapier-order-frame';
+            zapierForm.style.display = 'none';
+
+            // Add all order data as hidden inputs
+            Object.entries(emailData).forEach(([key, value]) => {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = String(value || '');
+              zapierForm.appendChild(input);
+            });
+
+            // Add to page and submit
+            document.body.appendChild(zapierForm);
+            zapierForm.submit();
+
+            // Clean up after 3 seconds
+            setTimeout(() => {
+              if (iframe.parentNode) iframe.remove();
+              if (zapierForm.parentNode) zapierForm.remove();
+            }, 3000);
 
             orderSubmitted = true;
-            emailMethod = 'EmailJS';
-            console.log('✅ Order sent successfully via EmailJS');
+            emailMethod = 'Zapier';
+            console.log('✅ Order sent successfully via Zapier webhook');
 
-          } catch (emailError) {
-            console.log('❌ EmailJS failed, trying Zapier backup:', emailError.message);
+          } catch (zapierError) {
+            console.log('❌ Zapier failed, trying EmailJS backup:', zapierError.message);
 
-            // Backup: Try simple XMLHttpRequest to Zapier
+            // Backup: Try EmailJS
             try {
-              const xhr = new XMLHttpRequest();
-              xhr.open('POST', 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', true);
-              xhr.setRequestHeader('Content-Type', 'application/json');
-
-              xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                  console.log('📧 Zapier backup attempt completed');
-                }
+              const emailParams = {
+                from_name: `${emailData.first_name} ${emailData.last_name}`,
+                customer_email: emailData.customer_email,
+                business_name: emailData.business_name,
+                industry: emailData.industry,
+                customer_phone: emailData.customer_phone,
+                services_needed: emailData.services_needed,
+                due_date: emailData.due_date,
+                total_amount: emailData.total_amount,
+                deposit_amount: emailData.deposit_amount,
+                order_summary: emailData.order_summary,
+                message: `New Order from Visual Vibe Studio Website\n\n${emailData.order_summary}`
               };
 
-              xhr.send(JSON.stringify(emailData));
+              await emailjs.send('default_service', 'template_orders', emailParams);
 
               orderSubmitted = true;
-              emailMethod = 'EmailJS + Zapier Backup';
-              console.log('✅ Order sent via EmailJS primary + Zapier backup');
+              emailMethod = 'Zapier + EmailJS Backup';
+              console.log('✅ Order sent via Zapier primary + EmailJS backup');
 
-            } catch (zapierError) {
-              console.log('❌ Zapier backup also failed:', zapierError.message);
+            } catch (emailError) {
+              console.log('❌ EmailJS backup also failed:', emailError.message);
 
               // Final backup: Manual contact notification
               orderSubmitted = true;
-              emailMethod = 'EmailJS + Manual Contact';
+              emailMethod = 'Zapier + Manual Contact';
               console.log('✅ Order saved, manual contact will be made');
             }
           }
