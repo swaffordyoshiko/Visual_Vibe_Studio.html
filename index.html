@@ -401,6 +401,108 @@
       if (menu) menu.classList.add('hidden');
     };
 
+    // Business Cards Dropdown Toggle
+    window.toggleBusinessCardsDropdown = function() {
+      const dropdown = document.getElementById('businessCardsDropdown');
+      const arrow = document.querySelector('.business-cards-dropdown-arrow');
+
+      console.log('Dropdown toggle clicked!', dropdown);
+
+      if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        dropdown.style.display = 'block';
+        dropdown.style.visibility = 'visible';
+        dropdown.style.opacity = '1';
+        arrow.style.transform = 'rotate(180deg)';
+        console.log('Dropdown should now be visible');
+      } else {
+        dropdown.classList.add('hidden');
+        dropdown.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+        console.log('Dropdown hidden');
+      }
+    };
+
+    // Flyers Dropdown Toggle
+    window.toggleFlyersDropdown = function() {
+      const dropdown = document.getElementById('flyersDropdown');
+      const arrow = document.querySelector('.flyers-dropdown-arrow');
+
+      console.log('Flyers dropdown toggle clicked!', dropdown);
+
+      if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        dropdown.style.display = 'block';
+        dropdown.style.visibility = 'visible';
+        dropdown.style.opacity = '1';
+        arrow.style.transform = 'rotate(180deg)';
+        console.log('Flyers dropdown should now be visible');
+      } else {
+        dropdown.classList.add('hidden');
+        dropdown.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+        console.log('Flyers dropdown hidden');
+      }
+    };
+
+    // Brochures Dropdown Toggle
+    window.toggleBrochuresDropdown = function() {
+      const dropdown = document.getElementById('brochuresDropdown');
+      const arrow = document.querySelector('.brochures-dropdown-arrow');
+
+      console.log('Brochures dropdown toggle clicked!', dropdown);
+
+      if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        dropdown.style.display = 'block';
+        dropdown.style.visibility = 'visible';
+        dropdown.style.opacity = '1';
+        arrow.style.transform = 'rotate(180deg)';
+        console.log('Brochures dropdown should now be visible');
+      } else {
+        dropdown.classList.add('hidden');
+        dropdown.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+        console.log('Brochures dropdown hidden');
+      }
+    };
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+      // Business Cards Dropdown
+      const businessDropdown = document.getElementById('businessCardsDropdown');
+      const businessButton = document.querySelector('.business-cards-dropdown-btn');
+
+      if (businessDropdown && !businessDropdown.contains(event.target) && !businessButton.contains(event.target)) {
+        businessDropdown.classList.add('hidden');
+        businessDropdown.style.display = 'none';
+        const businessArrow = document.querySelector('.business-cards-dropdown-arrow');
+        if (businessArrow) businessArrow.style.transform = 'rotate(0deg)';
+      }
+
+      // Flyers Dropdown
+      const flyersDropdown = document.getElementById('flyersDropdown');
+      const flyersButton = document.querySelector('.flyers-dropdown-btn');
+
+      if (flyersDropdown && !flyersDropdown.contains(event.target) && !flyersButton.contains(event.target)) {
+        flyersDropdown.classList.add('hidden');
+        flyersDropdown.style.display = 'none';
+        const flyersArrow = document.querySelector('.flyers-dropdown-arrow');
+        if (flyersArrow) flyersArrow.style.transform = 'rotate(0deg)';
+      }
+
+      // Brochures Dropdown
+      const brochuresDropdown = document.getElementById('brochuresDropdown');
+      const brochuresButton = document.querySelector('.brochures-dropdown-btn');
+
+      if (brochuresDropdown && !brochuresDropdown.contains(event.target) && !brochuresButton.contains(event.target)) {
+        brochuresDropdown.classList.add('hidden');
+        brochuresDropdown.style.display = 'none';
+        const brochuresArrow = document.querySelector('.brochures-dropdown-arrow');
+        if (brochuresArrow) brochuresArrow.style.transform = 'rotate(0deg)';
+      }
+    });
+
 
 
 
@@ -499,34 +601,177 @@
           <p class="pricing-highlight text-sm">Starting at $100</p>
         </div>
 
-        <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.2s;">
+        <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.2s; position: relative; z-index: 10;">
           <div
             class="w-14 h-14 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 neon-glow">
             <span class="text-xl text-white">📄</span>
           </div>
           <h4 class="text-lg font-bold mb-3 text-gray-800">Flyers</h4>
           <p class="text-gray-700 mb-4 text-sm">Eye-catching flyers that promote your business effectively.</p>
-          <p class="pricing-highlight text-sm">Starting at $65</p>
+          <p class="pricing-highlight text-sm">Starting at $64.99</p>
+
+          <!-- Dropdown Button -->
+          <div class="mt-4 relative">
+            <button onclick="toggleFlyersDropdown()" class="flyers-dropdown-btn w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+              View All Options
+              <span class="flyers-dropdown-arrow transition-transform">▼</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="flyersDropdown" class="flyers-dropdown absolute left-0 right-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden max-h-80 overflow-y-auto">
+              <!-- Flyer Options -->
+              <div class="p-3">
+                <h5 class="font-bold text-green-600 text-sm mb-2">Full Color Flyers</h5>
+
+                <div class="flyer-option p-2 hover:bg-green-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color</div>
+                  <div class="text-xs text-gray-600">8.5in X 11in, Laser Recycled (28lb.), Laser (32lb.), Single-Sided</div>
+                  <div class="text-xs font-bold text-green-600">50 Count: $64.99</div>
+                </div>
+
+                <div class="flyer-option p-2 hover:bg-green-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color</div>
+                  <div class="text-xs text-gray-600">8.5in X 11in, Laser Recycled (28lb.), Laser (32lb.), Double-Sided</div>
+                  <div class="text-xs font-bold text-green-600">50 Count: $81.99</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.3s;">
+        <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.3s; position: relative; z-index: 10;">
           <div
             class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 neon-glow">
             <span class="text-xl text-white">📋</span>
           </div>
           <h4 class="text-lg font-bold mb-3 text-gray-800">Brochures</h4>
           <p class="text-gray-700 mb-4 text-sm">Professional brochures that showcase your services in detail.</p>
-          <p class="pricing-highlight text-sm">Starting at $80</p>
+          <p class="pricing-highlight text-sm">Starting at $57.50</p>
+
+          <!-- Dropdown Button -->
+          <div class="mt-4 relative">
+            <button onclick="toggleBrochuresDropdown()" class="brochures-dropdown-btn w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+              View All Options
+              <span class="brochures-dropdown-arrow transition-transform">▼</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="brochuresDropdown" class="brochures-dropdown absolute left-0 right-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden max-h-80 overflow-y-auto">
+              <!-- Brochure Options -->
+              <div class="p-3">
+                <h5 class="font-bold text-purple-600 text-sm mb-2">Full Color Brochures</h5>
+
+                <div class="brochure-option p-2 hover:bg-purple-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color</div>
+                  <div class="text-xs text-gray-600">8.5in X 11in, Laser (32lb.), Double-Sided, Tri-Fold, Z-Fold, 1/2 Fold</div>
+                  <div class="text-xs font-bold text-purple-600">25 Count: $57.50</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.4s;">
+        <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.4s; position: relative; z-index: 10;">
           <div
             class="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 neon-glow">
             <span class="text-xl text-white">💼</span>
           </div>
           <h4 class="text-lg font-bold mb-3 text-gray-800">Business Cards</h4>
           <p class="text-gray-700 mb-4 text-sm">Professional business cards that make a lasting first impression.</p>
-          <p class="pricing-highlight text-sm">Starting at $50</p>
+          <p class="pricing-highlight text-sm">Starting at $38.99</p>
+
+          <!-- Dropdown Button -->
+          <div class="mt-4 relative">
+            <button onclick="toggleBusinessCardsDropdown()" class="business-cards-dropdown-btn w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+              View All Options
+              <span class="business-cards-dropdown-arrow transition-transform">▼</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="businessCardsDropdown" class="business-cards-dropdown absolute left-0 right-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden max-h-80 overflow-y-auto">
+              <!-- Premium Section -->
+              <div class="p-3 border-b border-gray-100">
+                <h5 class="font-bold text-orange-600 text-sm mb-2">Premium Cards</h5>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Premium Business Cards</div>
+                  <div class="text-xs text-gray-600">Single Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $44.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Premium Business Cards</div>
+                  <div class="text-xs text-gray-600">Double Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $64.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Ultra Thick 34 pt. Business Cards</div>
+                  <div class="text-xs text-gray-600">Single Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $79.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Ultra Thick 34 pt. Business Cards</div>
+                  <div class="text-xs text-gray-600">Double Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $99.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Magnetic Business Cards</div>
+                  <div class="text-xs text-gray-600">Single Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">25 cards for $44.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Foldover Business Cards</div>
+                  <div class="text-xs text-gray-600">Double Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $86.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Color Core Business Cards</div>
+                  <div class="text-xs text-gray-600">Double Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $75.48</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Color Core Business Cards</div>
+                  <div class="text-xs text-gray-600">Double Sided, Flat, Round Corners</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $80.71</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Soft Touch Business Cards</div>
+                  <div class="text-xs text-gray-600">Single Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $74.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Full Color Soft Touch Business Cards</div>
+                  <div class="text-xs text-gray-600">Double Sided, Flat</div>
+                  <div class="text-xs font-bold text-orange-600">100 cards for $87.99</div>
+                </div>
+              </div>
+
+              <!-- Quick Section -->
+              <div class="p-3">
+                <h5 class="font-bold text-orange-600 text-sm mb-2">Quick Cards</h5>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Color, Black & White</div>
+                  <div class="text-xs text-gray-600">3.5in X 2in, Gloss Cover, Matte Cover, Single-Sided</div>
+                  <div class="text-xs font-bold text-orange-600">100 Count: $38.99</div>
+                </div>
+
+                <div class="business-card-option p-2 hover:bg-orange-50 rounded text-left">
+                  <div class="font-medium text-xs text-gray-800">Color, Black & White</div>
+                  <div class="text-xs text-gray-600">3.5in X 2in, Gloss Cover, Matte Cover, Double-Sided</div>
+                  <div class="text-xs font-bold text-orange-600">100 Count: $42.49</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="glass-morphism service-card p-6 text-center floating-card neon-glow" style="animation-delay: 0.5s;">
@@ -583,7 +828,7 @@
                 <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="2">⭐</span>
                 <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="3">⭐</span>
                 <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="4">⭐</span>
-                <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">⭐</span>
+                <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">��</span>
                 <span class="ml-3 text-gray-600" id="ratingText">Click to rate</span>
               </div>
               <input type="hidden" id="selectedRating" required>
@@ -663,21 +908,54 @@
 
             <div>
               <label class="block font-medium text-gray-700 mb-2">Services Needed *</label>
-              <div class="space-y-2">
+              <div class="space-y-3">
+                <!-- Website Design -->
                 <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Website Design" class="mr-2"> Website Design ($100+)
+                  <input type="checkbox" name="services" value="Website Design" class="mr-2"> <span class="font-medium">Website Design</span> (Starting at $100)
                 </label>
+
+                <!-- Business Cards Section -->
+                <div class="ml-4 space-y-1">
+                  <div class="font-medium text-gray-800 text-sm mb-1">Business Cards:</div>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Premium Business Cards" class="mr-2"> Premium Business Cards <span class="text-gray-600">($44.99 - $99.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Quick Business Cards" class="mr-2"> Quick Business Cards <span class="text-gray-600">($38.99 - $42.49)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Custom Business Cards" class="mr-2"> Custom Business Cards <span class="text-gray-600">(Quote Required)</span>
+                  </label>
+                </div>
+
+                <!-- Flyers Section -->
+                <div class="ml-4 space-y-1">
+                  <div class="font-medium text-gray-800 text-sm mb-1">Flyers:</div>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Flyers Single Sided" class="mr-2"> Flyers - Single Sided <span class="text-gray-600">($64.99/50 count)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Flyers Double Sided" class="mr-2"> Flyers - Double Sided <span class="text-gray-600">($81.99/50 count)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Custom Flyers" class="mr-2"> Custom Flyers <span class="text-gray-600">(Quote Required)</span>
+                  </label>
+                </div>
+
+                <!-- Brochures Section -->
+                <div class="ml-4 space-y-1">
+                  <div class="font-medium text-gray-800 text-sm mb-1">Brochures:</div>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Brochures Tri-Fold" class="mr-2"> Brochures - Tri-Fold/Z-Fold/Half-Fold <span class="text-gray-600">($57.50/25 count)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Custom Brochures" class="mr-2"> Custom Brochures <span class="text-gray-600">(Quote Required)</span>
+                  </label>
+                </div>
+
+                <!-- Logo Design -->
                 <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Flyers" class="mr-2"> Flyers ($65+)
-                </label>
-                <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Brochures" class="mr-2"> Brochures ($80+)
-                </label>
-                <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Business Cards" class="mr-2"> Business Cards ($50+)
-                </label>
-                <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Logo Design" class="mr-2"> Logo Design ($25+)
+                  <input type="checkbox" name="services" value="Logo Design" class="mr-2"> <span class="font-medium">Logo Design</span> (Starting at $25)
                 </label>
               </div>
             </div>
@@ -823,12 +1101,30 @@
             <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333;">Project Type *</label>
             <select name="project_type" required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box; background: white;">
               <option value="">Select project type</option>
-              <option value="website">Website Design</option>
-              <option value="flyers">Flyers & Brochures</option>
-              <option value="business_cards">Business Cards</option>
-              <option value="logo">Logo Design</option>
-              <option value="multiple">Multiple Services</option>
-              <option value="other">Other</option>
+              <option value="website" style="font-weight: bold;">Website Design</option>
+
+              <!-- Business Cards Options -->
+              <optgroup label="Business Cards">
+                <option value="business_cards_premium">Premium Business Cards (Full Color/Ultra Thick/Magnetic/etc.)</option>
+                <option value="business_cards_quick">Quick Business Cards (Standard)</option>
+                <option value="business_cards_custom">Custom Business Cards (Need specific details)</option>
+              </optgroup>
+
+              <!-- Flyers Options -->
+              <optgroup label="Flyers">
+                <option value="flyers_single">Flyers - Single Sided</option>
+                <option value="flyers_double">Flyers - Double Sided</option>
+                <option value="flyers_custom">Custom Flyers (Need specific details)</option>
+              </optgroup>
+
+              <!-- Brochures Options -->
+              <optgroup label="Brochures">
+                <option value="brochures_trifold">Brochures - Tri-Fold/Z-Fold/Half-Fold</option>
+                <option value="brochures_custom">Custom Brochures (Need specific details)</option>
+              </optgroup>
+
+              <option value="logo" style="font-weight: bold;">Logo Design</option>
+              <option value="other" style="font-weight: bold;">Other</option>
             </select>
           </div>
 
@@ -1520,7 +1816,7 @@
       // Initialize universal review system
       setTimeout(() => {
         if (window.universalReviewSync) {
-          console.log('🌐 Universal review system is ready');
+          console.log('��� Universal review system is ready');
           // The universal system automatically loads and displays reviews
         } else {
           console.log('⏳ Waiting for universal review system...');
@@ -1535,7 +1831,7 @@
 
       // Listen for universal review sync events
       window.addEventListener('universalReviewSync', function(e) {
-        console.log('🔄 Universal review sync event received');
+        console.log('���� Universal review sync event received');
         // Show sync indicator when reviews are updated
         showSyncIndicator('New review synced across all devices!');
       });
@@ -2264,7 +2560,7 @@ This order was submitted through the Visual Vibe Studio website.`,
             <!-- Order Summary -->
             <div style="padding: 2rem;">
               <div style="background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <h4 style="margin: 0 0 1rem 0; font-size: 1.3rem; font-weight: bold; color: #1f2937;">���� Order Summary</h4>
+                <h4 style="margin: 0 0 1rem 0; font-size: 1.3rem; font-weight: bold; color: #1f2937;">����� Order Summary</h4>
                 <div style="space-y: 0.5rem;">
                   <p style="margin: 0.3rem 0; color: #374151;"><strong>Business:</strong> ${orderData.businessName}</p>
                   <p style="margin: 0.3rem 0; color: #374151;"><strong>Services:</strong> ${orderData.services}</p>
