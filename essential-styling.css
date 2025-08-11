@@ -610,6 +610,353 @@ footer {
   }
 }
 
+/* Business Cards Dropdown Styling */
+.business-cards-dropdown {
+  background: white !important;
+  border: 2px solid #f97316 !important;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.2),
+    0 5px 15px rgba(249, 115, 22, 0.3) !important;
+  z-index: 1000 !important;
+  animation: dropdownSlide 0.3s ease-out;
+  position: absolute !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 280px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  top: 100% !important;
+  margin-top: 8px !important;
+}
+
+.business-cards-dropdown.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Ensure parent service card allows overflow */
+.service-card {
+  overflow: visible !important;
+}
+
+/* Custom scrollbar for dropdown */
+.business-cards-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.business-cards-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.business-cards-dropdown::-webkit-scrollbar-thumb {
+  background: #f97316;
+  border-radius: 3px;
+}
+
+.business-cards-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.business-card-option {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #374151 !important;
+}
+
+.business-card-option:hover {
+  background: #fef3c7 !important;
+  transform: translateX(2px);
+}
+
+.business-card-option .font-medium {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+.business-card-option .text-xs {
+  color: #6b7280 !important;
+}
+
+.business-cards-dropdown-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.business-cards-dropdown-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.business-cards-dropdown-btn:hover::before {
+  left: 100%;
+}
+
+.business-cards-dropdown-arrow {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+/* Section headers styling */
+.business-cards-dropdown h5 {
+  color: #f97316 !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Flyers Dropdown Styling */
+.flyers-dropdown {
+  background: white !important;
+  border: 2px solid #10b981 !important;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.2),
+    0 5px 15px rgba(16, 185, 129, 0.3) !important;
+  z-index: 1000 !important;
+  animation: dropdownSlide 0.3s ease-out;
+  position: absolute !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 280px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  top: 100% !important;
+  margin-top: 8px !important;
+}
+
+.flyers-dropdown.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.flyer-option {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #374151 !important;
+}
+
+.flyer-option:hover {
+  background: #d1fae5 !important;
+  transform: translateX(2px);
+}
+
+.flyer-option .font-medium {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+.flyer-option .text-xs {
+  color: #6b7280 !important;
+}
+
+.flyers-dropdown-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.flyers-dropdown-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.flyers-dropdown-btn:hover::before {
+  left: 100%;
+}
+
+.flyers-dropdown-arrow {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+/* Custom scrollbar for flyers dropdown */
+.flyers-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.flyers-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.flyers-dropdown::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 3px;
+}
+
+.flyers-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+.flyers-dropdown h5 {
+  color: #10b981 !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Brochures Dropdown Styling */
+.brochures-dropdown {
+  background: white !important;
+  border: 2px solid #8b5cf6 !important;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.2),
+    0 5px 15px rgba(139, 92, 246, 0.3) !important;
+  z-index: 1000 !important;
+  animation: dropdownSlide 0.3s ease-out;
+  position: absolute !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 280px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  top: 100% !important;
+  margin-top: 8px !important;
+}
+
+.brochures-dropdown.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.brochure-option {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #374151 !important;
+}
+
+.brochure-option:hover {
+  background: #f3e8ff !important;
+  transform: translateX(2px);
+}
+
+.brochure-option .font-medium {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+.brochure-option .text-xs {
+  color: #6b7280 !important;
+}
+
+.brochures-dropdown-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.brochures-dropdown-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.brochures-dropdown-btn:hover::before {
+  left: 100%;
+}
+
+.brochures-dropdown-arrow {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+/* Custom scrollbar for brochures dropdown */
+.brochures-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.brochures-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.brochures-dropdown::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
+  border-radius: 3px;
+}
+
+.brochures-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #7c3aed;
+}
+
+.brochures-dropdown h5 {
+  color: #8b5cf6 !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Dropdown mobile responsiveness */
+@media (max-width: 768px) {
+  .business-cards-dropdown, .flyers-dropdown, .brochures-dropdown {
+    max-height: 200px !important;
+    width: 260px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 12px;
+  }
+
+  .business-card-option, .flyer-option, .brochure-option {
+    padding: 6px !important;
+  }
+
+  .business-card-option .font-medium, .flyer-option .font-medium, .brochure-option .font-medium {
+    font-size: 11px !important;
+  }
+
+  .business-card-option .text-xs, .flyer-option .text-xs, .brochure-option .text-xs {
+    font-size: 10px !important;
+  }
+
+  .business-cards-dropdown h5, .flyers-dropdown h5, .brochures-dropdown h5 {
+    font-size: 12px !important;
+  }
+}
+
 /* Floating Contact Form Responsive */
 @media (max-width: 768px) {
   #floatingContactBtn {
