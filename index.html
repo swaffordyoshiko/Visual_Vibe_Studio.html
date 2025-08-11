@@ -94,7 +94,7 @@
                         if (window.showEmailCopySuccess) {
                           window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
                         } else if (window.toastManager) {
-                          window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
+                          window.toastManager.success('��� Email address copied to clipboard!', { duration: 4000 });
                         } else {
                           alert('✅ Email address copied to clipboard!');
                         }
@@ -2024,7 +2024,7 @@
 
         // Listen for custom events on same page
         window.addEventListener('newReviewAdded', function(e) {
-          console.log('��� New review event received on same page');
+          console.log('����� New review event received on same page');
           // Review already added by submission function
         });
 
@@ -2682,94 +2682,51 @@ This order was submitted through the Visual Vibe Studio website.`,
           let orderSubmitted = false;
           let emailMethod = '';
 
-          // Method 1: Try EmailJS (most reliable for client-side)
+          // Try Zapier webhook with simple approach that works
           try {
-            if (window.emailjs) {
-              console.log('📧 Attempting EmailJS delivery...');
+            console.log('📧 Sending to Zapier webhook...');
 
-              const emailJSParams = {
-                to_email: 'support@visualvibestudio.store',
-                from_name: 'Visual Vibe Studio Orders',
-                subject: emailData.subject,
-                message: emailData.body,
-                customer_name: `${formData.get('first_name')} ${formData.get('last_name')}`,
-                customer_email: formData.get('customer_email'),
-                business_name: formData.get('business_name'),
-                services: selectedServices.join(', '),
-                total_amount: totalAmount.toFixed(2),
-                deposit_amount: depositAmount.toFixed(2)
-              };
+            // Simple fetch without timeout or abort controller
+            await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(emailData),
+              mode: 'no-cors'
+            });
 
-              await emailjs.send('service_id', 'template_id', emailJSParams);
-              orderSubmitted = true;
-              emailMethod = 'EmailJS';
-              console.log('✅ EmailJS delivery successful');
-            }
-          } catch (emailJSError) {
-            console.log('❌ EmailJS failed:', emailJSError);
-          }
+            // With no-cors, if we reach here without throwing, assume success
+            orderSubmitted = true;
+            emailMethod = 'Zapier Webhook';
+            console.log('✅ Order sent to Zapier webhook successfully');
 
-          // Method 2: Try Zapier webhook (if EmailJS failed)
-          if (!orderSubmitted) {
+          } catch (error) {
+            console.log('❌ Zapier webhook error:', error.message);
+
+            // Try with FormData as backup
             try {
-              console.log('📧 Attempting Zapier webhook delivery...');
+              console.log('📧 Trying FormData approach...');
 
-              const response = await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
+              const formData = new FormData();
+              Object.keys(emailData).forEach(key => {
+                formData.append(key, String(emailData[key]));
+              });
+
+              await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(emailData),
+                body: formData,
                 mode: 'no-cors'
               });
 
-              // With no-cors mode, we can't check response.ok, so assume success
               orderSubmitted = true;
-              emailMethod = 'Zapier Webhook';
-              console.log('✅ Zapier webhook delivery assumed successful');
+              emailMethod = 'Zapier Webhook (FormData)';
+              console.log('✅ Order sent via FormData to Zapier');
 
-            } catch (zapierError) {
-              console.log('❌ Zapier webhook failed:', zapierError);
+            } catch (formError) {
+              console.log('❌ FormData approach failed:', formError.message);
+              orderSubmitted = false;
             }
-          }
-
-          // Method 3: Enhanced fallback with better user guidance
-          if (!orderSubmitted) {
-            console.log('📧 Using enhanced fallback method...');
-
-            // Create a comprehensive email template
-            const mailtoSubject = encodeURIComponent(emailData.subject);
-            const mailtoBody = encodeURIComponent(emailData.body);
-            const mailtoLink = `mailto:support@visualvibestudio.store?subject=${mailtoSubject}&body=${mailtoBody}`;
-
-            // Show instructions to user
-            const fallbackMessage = `
-              📧 Email Delivery Notice:
-
-              We're having trouble with our automated email system.
-              Please help us by:
-
-              1. Clicking the email link that just opened
-              2. Sending the email from your email client
-              3. OR calling us at (402) 979-7184
-              4. OR copying this info and emailing support@visualvibestudio.store
-
-              Your order details are ready to send!
-            `;
-
-            // Open email client
-            window.open(mailtoLink, '_blank');
-
-            // Show user instructions
-            if (window.toastManager) {
-              window.toastManager.info(fallbackMessage, { duration: 10000 });
-            } else {
-              alert(fallbackMessage);
-            }
-
-            orderSubmitted = true;
-            emailMethod = 'Manual Email Fallback';
-            console.log('✅ Fallback method initiated - user guidance provided');
           }
 
           if (orderSubmitted) {
@@ -2877,8 +2834,8 @@ This order was submitted through the Visual Vibe Studio website.`,
     window.showOrderConfirmation = function(orderData) {
       const venmoPayLink = `https://venmo.com/u/Yoshiko-Swafford?txn=pay&amount=${orderData.depositAmount}&note=Deposit for ${orderData.businessName}`;
 
-      // Position the modal near the order form
-      const orderFormElement = document.getElementById('order-form');
+      // Position the modal near the "Get My Quote & Pricing" button
+      const submitButton = document.querySelector('#orderForm button[type="submit"]');
       const isSmallScreen = window.innerWidth < 768;
 
       let modalPositioning = '';
@@ -2886,18 +2843,18 @@ This order was submitted through the Visual Vibe Studio website.`,
         modalPositioning = 'display: flex; align-items: center; justify-content: center; padding: 1rem;';
       } else {
         modalPositioning = 'display: block;';
-        // Position modal near the order form after it's added to DOM
+        // Position modal near the submit button after it's added to DOM
         setTimeout(() => {
           const modal = document.getElementById('orderConfirmationModal');
           const modalInner = modal ? modal.querySelector('div') : null;
 
-          if (orderFormElement && modalInner) {
-            const formRect = orderFormElement.getBoundingClientRect();
+          if (submitButton && modalInner) {
+            const buttonRect = submitButton.getBoundingClientRect();
             const scrollY = window.pageYOffset || document.documentElement.scrollTop;
 
-            // Position the modal near the order form
+            // Position the modal near the submit button
             modalInner.style.position = 'absolute';
-            modalInner.style.top = (formRect.top + scrollY - 20) + 'px';
+            modalInner.style.top = (buttonRect.top + scrollY - 20) + 'px';
             modalInner.style.left = '50%';
             modalInner.style.transform = 'translateX(-50%)';
             modalInner.style.zIndex = '10000';
