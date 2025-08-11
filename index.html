@@ -1090,7 +1090,7 @@
     onclick="openFloatingForm()">
     <div
       style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); animation: pulse-float 2s ease-in-out infinite;">
-      <span style="color: white; font-size: 24px;">📝</span>
+      <span style="color: white; font-size: 24px;">����</span>
     </div>
   </div>
 
@@ -2508,9 +2508,18 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
       }
     });
 
-    // Handle order form submission
+    // Initialize order form button state on page load
     const orderForm = document.getElementById('orderForm');
     if (orderForm) {
+      // Ensure button shows correct initial text
+      const submitButton = orderForm.querySelector('button[type="submit"]');
+      if (submitButton) {
+        submitButton.innerHTML = 'Get My Quote & Pricing 💰';
+        submitButton.style.background = '';
+        submitButton.disabled = false;
+        console.log('🔄 Order form button initialized');
+      }
+
       orderForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -2705,7 +2714,7 @@ This order was submitted through the Visual Vibe Studio website.`,
 
           if (orderSubmitted) {
             // Success - show which method worked
-            submitButton.innerHTML = `Order Submitted! ✅ (via ${emailMethod})`;
+            submitButton.innerHTML = `Order Submitted! ✅`;
             submitButton.style.background = '#10b981';
 
             console.log(`✅ Order submitted successfully via ${emailMethod}`);
@@ -2734,7 +2743,7 @@ This order was submitted through the Visual Vibe Studio website.`,
             // Graceful fallback - still show order confirmation even if webhook failed
             console.log('⚠️ Webhook failed but showing order confirmation with manual contact notice');
 
-            submitButton.innerHTML = 'Order Received! ✅ (Manual Processing)';
+            submitButton.innerHTML = 'Order Received! ✅';
             submitButton.style.background = '#f59e0b'; // Orange for manual processing
 
             showOrderConfirmation({
@@ -2837,8 +2846,8 @@ This order was submitted through the Visual Vibe Studio website.`,
     window.showOrderConfirmation = function(orderData) {
       const venmoPayLink = `https://venmo.com/u/Yoshiko-Swafford?txn=pay&amount=${orderData.depositAmount}&note=Deposit for ${orderData.businessName}`;
 
-      // Position the modal near the "Get My Quote & Pricing" button
-      const submitButton = document.querySelector('#orderForm button[type="submit"]');
+      // Position the modal near the order form section
+      const orderFormSection = document.getElementById('order-form');
       const isSmallScreen = window.innerWidth < 768;
 
       let modalPositioning = '';
@@ -2846,18 +2855,18 @@ This order was submitted through the Visual Vibe Studio website.`,
         modalPositioning = 'display: flex; align-items: center; justify-content: center; padding: 1rem;';
       } else {
         modalPositioning = 'display: block;';
-        // Position modal near the submit button after it's added to DOM
+        // Position modal near the order form section after it's added to DOM
         setTimeout(() => {
           const modal = document.getElementById('orderConfirmationModal');
           const modalInner = modal ? modal.querySelector('div') : null;
 
-          if (submitButton && modalInner) {
-            const buttonRect = submitButton.getBoundingClientRect();
+          if (orderFormSection && modalInner) {
+            const formRect = orderFormSection.getBoundingClientRect();
             const scrollY = window.pageYOffset || document.documentElement.scrollTop;
 
-            // Position the modal near the submit button
+            // Position the modal near the order form section
             modalInner.style.position = 'absolute';
-            modalInner.style.top = (buttonRect.top + scrollY - 20) + 'px';
+            modalInner.style.top = (formRect.top + scrollY + 50) + 'px';
             modalInner.style.left = '50%';
             modalInner.style.transform = 'translateX(-50%)';
             modalInner.style.zIndex = '10000';
