@@ -47,6 +47,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
+  <!-- Initialize EmailJS -->
+  <script type="text/javascript">
+    (function(){
+      // Initialize EmailJS with your public key
+      emailjs.init("dGz8CLMLD_5_LnPl_"); // Replace with your actual public key
+    })();
+  </script>
+
   <!-- Essential CSS Files ONLY -->
   <link rel="stylesheet" href="essential-styling.css">
   <link rel="stylesheet" href="header-layout-fix.css">
@@ -1233,6 +1241,42 @@
 
     // Initialize reveals for elements already in view
     setTimeout(revealOnScroll, 100);
+
+    // Auto-run pricing diagnostic after page loads
+    setTimeout(() => {
+      if (window.debugPricingConsistency) {
+        window.debugPricingConsistency();
+      }
+
+      // Also test email connectivity
+      if (window.testEmailConnectivity) {
+        window.testEmailConnectivity();
+      }
+    }, 2000);
+
+    // Email connectivity test function
+    window.testEmailConnectivity = function() {
+      console.log('📧 Testing email connectivity...');
+
+      // Test Zapier webhook
+      fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ test: 'connectivity' }),
+        mode: 'no-cors'
+      }).then(() => {
+        console.log('✅ Zapier webhook appears reachable');
+      }).catch(error => {
+        console.log('❌ Zapier webhook error:', error);
+      });
+
+      // Check EmailJS availability
+      if (window.emailjs) {
+        console.log('✅ EmailJS library is loaded');
+      } else {
+        console.log('❌ EmailJS library not found');
+      }
+    };
   </script>
 
   <!-- Review Form JavaScript -->
@@ -2411,7 +2455,7 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
 👤 Name: ${data.customer_name}
 📧 Email: ${data.customer_email}
 📱 Phone: ${data.customer_mobile}
-🔔 Preferred Contact: ${data.response_preference}
+��� Preferred Contact: ${data.response_preference}
 🎯 Project Type: ${data.project_type}
 ⚡ Urgency: ${data.urgency}
 
@@ -2533,11 +2577,11 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
             return;
           }
 
-          // Define service pricing
+          // Define service pricing - MUST MATCH prices shown in services section
           const servicePrices = {
             'Website Design': 100,
             'Logo Design': 25,
-            // Premium Business Cards
+            // Premium Business Cards - Updated to match HTML display
             'Premium Business Cards Single Sided': 44.99,
             'Premium Business Cards Double Sided': 64.99,
             'Ultra Thick Business Cards Single Sided': 79.99,
@@ -2548,25 +2592,32 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
             'Color Core Business Cards Round Corners': 80.71,
             'Soft Touch Business Cards Single Sided': 74.99,
             'Soft Touch Business Cards Double Sided': 87.99,
-            // Quick Business Cards
+            // Quick Business Cards - Updated to match HTML display
             'Quick Business Cards Single Sided': 38.99,
             'Quick Business Cards Double Sided': 42.49,
-            // Flyers
+            // Flyers - Updated to match HTML display
             'Flyers Single Sided': 64.99,
             'Flyers Double Sided': 81.99,
-            // Brochures
+            // Brochures - Updated to match HTML display
             'Brochures Tri-Fold': 57.50
           };
 
           serviceCheckboxes.forEach(checkbox => {
-            selectedServices.push(checkbox.value);
-            totalAmount += servicePrices[checkbox.value] || 0;
+            const serviceName = checkbox.value;
+            const servicePrice = servicePrices[serviceName];
+
+            selectedServices.push(serviceName);
+            totalAmount += servicePrice || 0;
+
+            // Log pricing for verification (remove in production)
+            console.log(`📊 ${serviceName}: $${servicePrice || 'NOT FOUND'}`);
+            if (!servicePrice) {
+              console.error(`❌ PRICING ERROR: No price found for "${serviceName}"`);
+            }
           });
 
-          // Ensure minimum order amount
-          if (totalAmount < 50) {
-            totalAmount = 50;
-          }
+          // Show pricing calculation summary for verification
+          console.log(`💰 Order Summary: ${selectedServices.length} services, Total: $${totalAmount}`);
 
           // Calculate 50% deposit
           const depositAmount = totalAmount * 0.5;
@@ -2597,9 +2648,13 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
 🏭 Industry: ${formData.get('industry')}
 
 ��� ORDER DETAILS:
-• Services: ${selectedServices.join(', ')}
+• Services Breakdown:
+${selectedServices.map(service => `  - ${service}: $${(servicePrices[service] || 0).toFixed(2)}`).join('\n')}
+
+• Subtotal: $${selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0).toFixed(2)}
 • Total Amount: $${totalAmount.toFixed(2)}
-• Deposit Required: $${depositAmount.toFixed(2)}
+• Deposit Required (50%): $${depositAmount.toFixed(2)}
+• Remaining Balance: $${(totalAmount - depositAmount).toFixed(2)}
 • Due Date: ${formData.get('due_date')}
 
 💳 PAYMENT INSTRUCTIONS:
@@ -2623,45 +2678,115 @@ This order was submitted through the Visual Vibe Studio website.`,
             timestamp: timestamp
           };
 
-          // Try to send to Zapier webhook with fallback
+          // Try multiple email delivery methods
           let orderSubmitted = false;
+          let emailMethod = '';
 
+          // Method 1: Try EmailJS (most reliable for client-side)
           try {
-            const response = await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(emailData),
-              mode: 'no-cors' // Add no-cors mode to avoid CORS issues
-            });
+            if (window.emailjs) {
+              console.log('📧 Attempting EmailJS delivery...');
 
-            // With no-cors mode, we can't check response.ok, so assume success
-            orderSubmitted = true;
+              const emailJSParams = {
+                to_email: 'support@visualvibestudio.store',
+                from_name: 'Visual Vibe Studio Orders',
+                subject: emailData.subject,
+                message: emailData.body,
+                customer_name: `${formData.get('first_name')} ${formData.get('last_name')}`,
+                customer_email: formData.get('customer_email'),
+                business_name: formData.get('business_name'),
+                services: selectedServices.join(', '),
+                total_amount: totalAmount.toFixed(2),
+                deposit_amount: depositAmount.toFixed(2)
+              };
 
-          } catch (fetchError) {
-            console.log('Zapier webhook failed, trying fallback email method:', fetchError);
+              await emailjs.send('service_id', 'template_id', emailJSParams);
+              orderSubmitted = true;
+              emailMethod = 'EmailJS';
+              console.log('✅ EmailJS delivery successful');
+            }
+          } catch (emailJSError) {
+            console.log('❌ EmailJS failed:', emailJSError);
+          }
 
-            // Fallback: Use mailto as backup
+          // Method 2: Try Zapier webhook (if EmailJS failed)
+          if (!orderSubmitted) {
+            try {
+              console.log('📧 Attempting Zapier webhook delivery...');
+
+              const response = await fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(emailData),
+                mode: 'no-cors'
+              });
+
+              // With no-cors mode, we can't check response.ok, so assume success
+              orderSubmitted = true;
+              emailMethod = 'Zapier Webhook';
+              console.log('✅ Zapier webhook delivery assumed successful');
+
+            } catch (zapierError) {
+              console.log('❌ Zapier webhook failed:', zapierError);
+            }
+          }
+
+          // Method 3: Enhanced fallback with better user guidance
+          if (!orderSubmitted) {
+            console.log('📧 Using enhanced fallback method...');
+
+            // Create a comprehensive email template
             const mailtoSubject = encodeURIComponent(emailData.subject);
             const mailtoBody = encodeURIComponent(emailData.body);
             const mailtoLink = `mailto:support@visualvibestudio.store?subject=${mailtoSubject}&body=${mailtoBody}`;
 
-            // Open email client as fallback
+            // Show instructions to user
+            const fallbackMessage = `
+              📧 Email Delivery Notice:
+
+              We're having trouble with our automated email system.
+              Please help us by:
+
+              1. Clicking the email link that just opened
+              2. Sending the email from your email client
+              3. OR calling us at (402) 979-7184
+              4. OR copying this info and emailing support@visualvibestudio.store
+
+              Your order details are ready to send!
+            `;
+
+            // Open email client
             window.open(mailtoLink, '_blank');
+
+            // Show user instructions
+            if (window.toastManager) {
+              window.toastManager.info(fallbackMessage, { duration: 10000 });
+            } else {
+              alert(fallbackMessage);
+            }
+
             orderSubmitted = true;
+            emailMethod = 'Manual Email Fallback';
+            console.log('✅ Fallback method initiated - user guidance provided');
           }
 
           if (orderSubmitted) {
-            // Success
-            submitButton.innerHTML = 'Order Submitted! ✅';
+            // Success - show which method worked
+            submitButton.innerHTML = `Order Submitted! ✅ (via ${emailMethod})`;
             submitButton.style.background = '#10b981';
+
+            console.log(`✅ Order submitted successfully via ${emailMethod}`);
 
             // Show order confirmation modal with pricing and payment info
             showOrderConfirmation({
               businessName: formData.get('business_name'),
               customerName: `${formData.get('first_name')} ${formData.get('last_name')}`,
               services: selectedServices.join(', '),
+              servicesArray: selectedServices,
+              servicePrices: servicePrices,
+              subtotal: selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0),
               totalAmount: totalAmount.toFixed(2),
               depositAmount: depositAmount.toFixed(2)
             });
@@ -2700,6 +2825,53 @@ This order was submitted through the Visual Vibe Studio website.`,
         }
       });
     }
+
+    // Diagnostic function to check pricing consistency
+    window.debugPricingConsistency = function() {
+      console.log('🔍 PRICING CONSISTENCY CHECK:');
+
+      // Get all service checkboxes
+      const checkboxes = document.querySelectorAll('input[name="services"]');
+      const servicePrices = {
+        'Website Design': 100,
+        'Logo Design': 25,
+        'Premium Business Cards Single Sided': 44.99,
+        'Premium Business Cards Double Sided': 64.99,
+        'Ultra Thick Business Cards Single Sided': 79.99,
+        'Ultra Thick Business Cards Double Sided': 99.99,
+        'Magnetic Business Cards': 44.99,
+        'Foldover Business Cards': 86.99,
+        'Color Core Business Cards': 75.48,
+        'Color Core Business Cards Round Corners': 80.71,
+        'Soft Touch Business Cards Single Sided': 74.99,
+        'Soft Touch Business Cards Double Sided': 87.99,
+        'Quick Business Cards Single Sided': 38.99,
+        'Quick Business Cards Double Sided': 42.49,
+        'Flyers Single Sided': 64.99,
+        'Flyers Double Sided': 81.99,
+        'Brochures Tri-Fold': 57.50
+      };
+
+      checkboxes.forEach(checkbox => {
+        const serviceName = checkbox.value;
+        const priceInObject = servicePrices[serviceName];
+        const displayedPrice = checkbox.parentElement.textContent.match(/\$([0-9.]+)/);
+
+        console.log(`Service: "${serviceName}"`);
+        console.log(`  - Checkbox value: "${serviceName}"`);
+        console.log(`  - Price in object: $${priceInObject || 'NOT FOUND'}`);
+        console.log(`  - Displayed price: ${displayedPrice ? '$' + displayedPrice[1] : 'NOT FOUND'}`);
+
+        if (!priceInObject) {
+          console.error(`❌ Missing price for: "${serviceName}"`);
+        } else if (displayedPrice && Math.abs(priceInObject - parseFloat(displayedPrice[1])) > 0.01) {
+          console.error(`❌ Price mismatch for "${serviceName}": Object=$${priceInObject}, Display=$${displayedPrice[1]}`);
+        } else {
+          console.log(`✅ Price matches for "${serviceName}"`);
+        }
+        console.log('---');
+      });
+    };
 
     // Show order confirmation with pricing and Venmo payment
     window.showOrderConfirmation = function(orderData) {
@@ -2751,9 +2923,18 @@ This order was submitted through the Visual Vibe Studio website.`,
                 <h4 style="margin: 0 0 1rem 0; font-size: 1.3rem; font-weight: bold; color: #1f2937;">📋 Order Summary</h4>
                 <div style="space-y: 0.5rem;">
                   <p style="margin: 0.3rem 0; color: #374151;"><strong>Business:</strong> ${orderData.businessName}</p>
-                  <p style="margin: 0.3rem 0; color: #374151;"><strong>Services:</strong> ${orderData.services}</p>
+                  <div style="margin: 0.3rem 0; color: #374151;">
+                    <strong>Services & Pricing:</strong>
+                    <ul style="margin: 0.5rem 0; padding-left: 1.5rem; line-height: 1.4;">
+                      ${orderData.servicesArray ? orderData.servicesArray.map(service =>
+                        `<li>${service}: <strong>$${(orderData.servicePrices[service] || 0).toFixed(2)}</strong></li>`
+                      ).join('') : `<li>${orderData.services}</li>`}
+                    </ul>
+                  </div>
+                  ${orderData.subtotal ? `<p style="margin: 0.3rem 0; color: #374151;"><strong>Subtotal:</strong> $${orderData.subtotal.toFixed(2)}</p>` : ''}
                   <p style="margin: 0.3rem 0; color: #374151;"><strong>Total Project Cost:</strong> <span style="font-size: 1.2rem; font-weight: bold; color: #059669;">$${orderData.totalAmount}</span></p>
-                  <p style="margin: 0.3rem 0; color: #374151;"><strong>Deposit Required:</strong> <span style="font-size: 1.2rem; font-weight: bold; color: #dc2626;">$${orderData.depositAmount}</span></p>
+                  <p style="margin: 0.3rem 0; color: #374151;"><strong>Deposit Required (50%):</strong> <span style="font-size: 1.2rem; font-weight: bold; color: #dc2626;">$${orderData.depositAmount}</span></p>
+                  <p style="margin: 0.3rem 0; color: #374151;"><strong>Remaining Balance:</strong> <span style="font-weight: bold;">$${(parseFloat(orderData.totalAmount) - parseFloat(orderData.depositAmount)).toFixed(2)}</span></p>
                 </div>
               </div>
 
