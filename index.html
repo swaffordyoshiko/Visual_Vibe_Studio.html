@@ -784,11 +784,20 @@
           <p class="pricing-highlight text-sm">Starting at $25</p>
         </div>
       </div>
+
+      <!-- Professional Note -->
+      <div class="mt-12 text-center">
+        <div class="glass-morphism p-8 max-w-2xl mx-auto">
+          <p class="text-lg text-gray-700 leading-relaxed">
+            <strong>Need a custom solution?</strong> We specialize in creating custom design services tailored to your unique requirements. Contact us with your project details, and our team will provide you with a comprehensive quote and timeline to bring your vision to life.
+          </p>
+        </div>
+      </div>
     </section>
 
     <!-- Reviews Section -->
     <section id="reviews" class="mb-16">
-      <h3 class="text-3xl font-bold text-center text-gray-800 mb-12">What Our Clients Say</h3>
+      <h3 class="text-3xl font-bold text-center text-gray-800 mb-12">What Our Customers Say</h3>
       <div class="reviews-container mb-8">
         <div class="reviews-scroll" id="reviewsScroll">
 
@@ -1474,7 +1483,7 @@
         reviewCard.innerHTML = `
           <div class="flex items-center mb-4">
             <div class="flex text-yellow-400 text-lg">${starsDisplay}</div>
-            <span class="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-medium">LATEST</span>
+
           </div>
           <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewData.reviewText}"</p>
           <div class="font-medium text-gray-800 text-sm">- ${reviewData.name}</div>
@@ -1589,7 +1598,7 @@
             <div class="flex text-yellow-400 text-lg">
               ${starsDisplay}
             </div>
-            <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+
           </div>
           <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
           <div class="font-medium text-gray-800 text-sm">- ${name}</div>
@@ -1613,7 +1622,7 @@
             <div class="flex text-yellow-400 text-lg">
               ${starsDisplay}
             </div>
-            <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+
           </div>
           <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
           <div class="font-medium text-gray-800 text-sm">- ${name}</div>
@@ -1738,7 +1747,7 @@
               <div class="flex text-yellow-400 text-lg">
                 ${starsDisplay}
               </div>
-              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+  
             </div>
             <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
             <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
@@ -1760,7 +1769,7 @@
               <div class="flex text-yellow-400 text-lg">
                 ${starsDisplay}
               </div>
-              <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+  
             </div>
             <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${reviewText}"</p>
             <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
@@ -1924,7 +1933,7 @@
             reviewCard.innerHTML = `
               <div class="flex items-center mb-4">
                 <div class="flex text-yellow-400 text-lg">${starsDisplay}</div>
-                <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">NEW</span>
+    
               </div>
               <p class="text-gray-700 mb-4 text-sm leading-relaxed">"${review.reviewText}"</p>
               <div class="font-medium text-gray-800 text-sm">- ${review.name}</div>
@@ -2263,7 +2272,7 @@
               source: 'Visual Vibe Studio Website'
             };
 
-            // Send to Zapier webhook with fallback
+            // Send to Zapier webhook with improved error handling
             let contactSubmitted = false;
 
             try {
@@ -2272,31 +2281,37 @@
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
-                mode: 'no-cors' // Add no-cors mode to avoid CORS issues
+                body: JSON.stringify(data)
               });
 
-              // With no-cors mode, assume success
-              contactSubmitted = true;
+              if (response.ok) {
+                contactSubmitted = true;
+                console.log('Contact form submitted successfully to Zapier');
+              } else {
+                throw new Error(`Zapier webhook failed with status: ${response.status}`);
+              }
 
             } catch (fetchError) {
-              console.log('Contact form Zapier webhook failed, using fallback email:', fetchError);
+              console.log('SMS sending failed, using fallback email:', fetchError);
 
               // Fallback: Open email client
-              const mailtoSubject = encodeURIComponent('New Contact Form Submission');
+              const mailtoSubject = encodeURIComponent('🚨 URGENT: New Contact Form Submission');
               const mailtoBody = encodeURIComponent(`
-Contact Form Submission:
+CONTACT FORM SUBMISSION - SEND SMS MANUALLY:
 
-Name: ${data.customer_name}
-Email: ${data.customer_email}
-Phone: ${data.customer_mobile}
-Preferred Contact: ${data.response_preference}
-Project Type: ${data.project_type}
-Urgency: ${data.urgency}
-Message: ${data.customer_message}
+👤 Name: ${data.customer_name}
+📧 Email: ${data.customer_email}
+📱 Phone: ${data.customer_mobile}
+🔔 Preferred Contact: ${data.response_preference}
+🎯 Project Type: ${data.project_type}
+⚡ Urgency: ${data.urgency}
 
-Submitted: ${data.timestamp}
-Source: ${data.source}
+💬 Message: ${data.customer_message}
+
+⏰ Submitted: ${data.timestamp}
+📍 Source: ${data.source}
+
+*** SMS NOTIFICATION FAILED - PLEASE CONTACT CUSTOMER DIRECTLY ***
               `);
               const mailtoLink = `mailto:support@visualvibestudio.store?subject=${mailtoSubject}&body=${mailtoBody}`;
               window.open(mailtoLink, '_blank');
