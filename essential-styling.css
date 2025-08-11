@@ -982,3 +982,12 @@ footer {
     }
   }
 }
+
+/* Order Form Services Checkbox Spacing */
+#orderForm label.flex.items-center .font-medium {
+  margin-right: 0.75rem;
+}
+
+#orderForm label.flex.items-center span:not(.font-medium) {
+  white-space: pre;
+}
