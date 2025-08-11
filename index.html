@@ -828,7 +828,7 @@
                 <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="2">⭐</span>
                 <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="3">⭐</span>
                 <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="4">⭐</span>
-                <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">��</span>
+                <span class="star cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">⭐</span>
                 <span class="ml-3 text-gray-600" id="ratingText">Click to rate</span>
               </div>
               <input type="hidden" id="selectedRating" required>
@@ -910,21 +910,52 @@
               <label class="block font-medium text-gray-700 mb-2">Services Needed *</label>
               <div class="space-y-3">
                 <!-- Website Design -->
-                <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Website Design" class="mr-2"> <span class="font-medium">Website Design</span> (Starting at $100)
-                </label>
+                <div class="ml-4">
+                  <label class="flex items-center">
+                    <input type="checkbox" name="services" value="Website Design" class="mr-2"> <span class="font-medium">Website Design</span> <span>(Starting at $100)</span>
+                  </label>
+                </div>
 
                 <!-- Business Cards Section -->
                 <div class="ml-4 space-y-1">
-                  <div class="font-medium text-gray-800 text-sm mb-1">Business Cards:</div>
+                  <div class="font-medium text-gray-800 text-sm mb-1">Premium Business Cards:</div>
                   <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Premium Business Cards" class="mr-2"> Premium Business Cards <span class="text-gray-600">($44.99 - $99.99)</span>
+                    <input type="checkbox" name="services" value="Premium Business Cards Single Sided" class="mr-2"> Full Color Premium, Single Sided, Flat - 100 cards <span class="text-gray-600">($44.99)</span>
                   </label>
                   <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Quick Business Cards" class="mr-2"> Quick Business Cards <span class="text-gray-600">($38.99 - $42.49)</span>
+                    <input type="checkbox" name="services" value="Premium Business Cards Double Sided" class="mr-2"> Full Color Premium, Double Sided, Flat - 100 cards <span class="text-gray-600">($64.99)</span>
                   </label>
                   <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Custom Business Cards" class="mr-2"> Custom Business Cards <span class="text-gray-600">(Quote Required)</span>
+                    <input type="checkbox" name="services" value="Ultra Thick Business Cards Single Sided" class="mr-2"> Ultra Thick 34 pt., Single Sided, Flat - 100 cards <span class="text-gray-600">($79.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Ultra Thick Business Cards Double Sided" class="mr-2"> Ultra Thick 34 pt., Double Sided, Flat - 100 cards <span class="text-gray-600">($99.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Magnetic Business Cards" class="mr-2"> Full Color Magnetic, Single Sided, Flat - 25 cards <span class="text-gray-600">($44.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Foldover Business Cards" class="mr-2"> Full Color Foldover, Double Sided, Flat - 100 cards <span class="text-gray-600">($86.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Color Core Business Cards" class="mr-2"> Full Color Color Core, Double Sided, Flat - 100 cards <span class="text-gray-600">($75.48)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Color Core Business Cards Round Corners" class="mr-2"> Full Color Color Core, Double Sided, Round Corners - 100 cards <span class="text-gray-600">($80.71)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Soft Touch Business Cards Single Sided" class="mr-2"> Full Color Soft Touch, Single Sided, Flat - 100 cards <span class="text-gray-600">($74.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Soft Touch Business Cards Double Sided" class="mr-2"> Full Color Soft Touch, Double Sided, Flat - 100 cards <span class="text-gray-600">($87.99)</span>
+                  </label>
+
+                  <div class="font-medium text-gray-800 text-sm mb-1 mt-3">Quick Business Cards:</div>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Quick Business Cards Single Sided" class="mr-2"> Color/B&W, 3.5"×2", Gloss/Matte Cover, Single-Sided - 100 Count <span class="text-gray-600">($38.99)</span>
+                  </label>
+                  <label class="flex items-center text-sm">
+                    <input type="checkbox" name="services" value="Quick Business Cards Double Sided" class="mr-2"> Color/B&W, 3.5"×2", Gloss/Matte Cover, Double-Sided - 100 Count <span class="text-gray-600">($42.49)</span>
                   </label>
                 </div>
 
@@ -932,13 +963,10 @@
                 <div class="ml-4 space-y-1">
                   <div class="font-medium text-gray-800 text-sm mb-1">Flyers:</div>
                   <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Flyers Single Sided" class="mr-2"> Flyers - Single Sided <span class="text-gray-600">($64.99/50 count)</span>
+                    <input type="checkbox" name="services" value="Flyers Single Sided" class="mr-2"> Full Color, 8.5"×11", Laser Recycled/Laser, Single-Sided - 50 Count <span class="text-gray-600">($64.99)</span>
                   </label>
                   <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Flyers Double Sided" class="mr-2"> Flyers - Double Sided <span class="text-gray-600">($81.99/50 count)</span>
-                  </label>
-                  <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Custom Flyers" class="mr-2"> Custom Flyers <span class="text-gray-600">(Quote Required)</span>
+                    <input type="checkbox" name="services" value="Flyers Double Sided" class="mr-2"> Full Color, 8.5"×11", Laser Recycled/Laser, Double-Sided - 50 Count <span class="text-gray-600">($81.99)</span>
                   </label>
                 </div>
 
@@ -946,17 +974,16 @@
                 <div class="ml-4 space-y-1">
                   <div class="font-medium text-gray-800 text-sm mb-1">Brochures:</div>
                   <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Brochures Tri-Fold" class="mr-2"> Brochures - Tri-Fold/Z-Fold/Half-Fold <span class="text-gray-600">($57.50/25 count)</span>
-                  </label>
-                  <label class="flex items-center text-sm">
-                    <input type="checkbox" name="services" value="Custom Brochures" class="mr-2"> Custom Brochures <span class="text-gray-600">(Quote Required)</span>
+                    <input type="checkbox" name="services" value="Brochures Tri-Fold" class="mr-2"> Full Color, 8.5"×11", Laser, Double-Sided, Tri-Fold/Z-Fold/Half-Fold - 25 Count <span class="text-gray-600">($57.50)</span>
                   </label>
                 </div>
 
                 <!-- Logo Design -->
-                <label class="flex items-center">
-                  <input type="checkbox" name="services" value="Logo Design" class="mr-2"> <span class="font-medium">Logo Design</span> (Starting at $25)
-                </label>
+                <div class="ml-4">
+                  <label class="flex items-center">
+                    <input type="checkbox" name="services" value="Logo Design" class="mr-2"> <span class="font-medium">Logo Design</span> <span>(Starting at $25)</span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -1107,20 +1134,17 @@
               <optgroup label="Business Cards">
                 <option value="business_cards_premium">Premium Business Cards (Full Color/Ultra Thick/Magnetic/etc.)</option>
                 <option value="business_cards_quick">Quick Business Cards (Standard)</option>
-                <option value="business_cards_custom">Custom Business Cards (Need specific details)</option>
               </optgroup>
 
               <!-- Flyers Options -->
               <optgroup label="Flyers">
                 <option value="flyers_single">Flyers - Single Sided</option>
                 <option value="flyers_double">Flyers - Double Sided</option>
-                <option value="flyers_custom">Custom Flyers (Need specific details)</option>
               </optgroup>
 
               <!-- Brochures Options -->
               <optgroup label="Brochures">
                 <option value="brochures_trifold">Brochures - Tri-Fold/Z-Fold/Half-Fold</option>
-                <option value="brochures_custom">Custom Brochures (Need specific details)</option>
               </optgroup>
 
               <option value="logo" style="font-weight: bold;">Logo Design</option>
@@ -1212,7 +1236,7 @@
       const icons = {
         success: '✅',
         error: '❌',
-        warning: '⚠️',
+        warning: '⚠��',
         info: 'ℹ️'
       };
 
@@ -1415,7 +1439,7 @@
           }
 
         } catch (error) {
-          console.error('❌ Error submitting review:', error);
+          console.error('��� Error submitting review:', error);
           showToast('Error submitting review. Please try again.', 'error');
         } finally {
           // Re-enable form
@@ -1934,7 +1958,7 @@
                 }
               }
             } catch (error) {
-              console.error('❌ Error processing cross-device sync:', error);
+              console.error('��� Error processing cross-device sync:', error);
             }
           }
 
@@ -1963,7 +1987,7 @@
           }
         }, 30000);
 
-        console.log('✅ Cross-device sync listeners activated');
+        console.log('��� Cross-device sync listeners activated');
       }
 
       function loadAllReviewsFromStorage() {
@@ -2365,9 +2389,26 @@ Source: ${data.source}
           // Define service pricing
           const servicePrices = {
             'Website Design': 100,
-            'Flyers & Brochures': 65,
-            'Business Cards': 50,
-            'Logo Design': 75
+            'Logo Design': 25,
+            // Premium Business Cards
+            'Premium Business Cards Single Sided': 44.99,
+            'Premium Business Cards Double Sided': 64.99,
+            'Ultra Thick Business Cards Single Sided': 79.99,
+            'Ultra Thick Business Cards Double Sided': 99.99,
+            'Magnetic Business Cards': 44.99,
+            'Foldover Business Cards': 86.99,
+            'Color Core Business Cards': 75.48,
+            'Color Core Business Cards Round Corners': 80.71,
+            'Soft Touch Business Cards Single Sided': 74.99,
+            'Soft Touch Business Cards Double Sided': 87.99,
+            // Quick Business Cards
+            'Quick Business Cards Single Sided': 38.99,
+            'Quick Business Cards Double Sided': 42.49,
+            // Flyers
+            'Flyers Single Sided': 64.99,
+            'Flyers Double Sided': 81.99,
+            // Brochures
+            'Brochures Tri-Fold': 57.50
           };
 
           serviceCheckboxes.forEach(checkbox => {
@@ -2401,14 +2442,14 @@ Source: ${data.source}
 
 👤 CUSTOMER DETAILS:
 • Name: ${formData.get('first_name')} ${formData.get('last_name')}
-�� Email: ${formData.get('customer_email')}
+📧 Email: ${formData.get('customer_email')}
 • Phone: ${formData.get('customer_phone')}
 
 🏢 BUSINESS DETAILS:
 • Business Name: ${formData.get('business_name')}
-��� Industry: ${formData.get('industry')}
+🏭 Industry: ${formData.get('industry')}
 
-💼 ORDER DETAILS:
+��� ORDER DETAILS:
 • Services: ${selectedServices.join(', ')}
 • Total Amount: $${totalAmount.toFixed(2)}
 • Deposit Required: $${depositAmount.toFixed(2)}
@@ -2551,7 +2592,7 @@ This order was submitted through the Visual Vibe Studio website.`,
 
             <!-- Success Header -->
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 2rem; border-radius: 16px 16px 0 0; text-align: center; position: relative;">
-              <div style="font-size: 3rem; margin-bottom: 1rem;">���</div>
+              <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
               <h3 style="margin: 0; color: white; font-size: 1.8rem; font-weight: bold;">Order Submitted Successfully!</h3>
               <p style="margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.9); font-size: 1rem;">Thank you ${orderData.customerName.split(' ')[0]}! Your order has been received.</p>
               <button onclick="document.getElementById('orderConfirmationModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; opacity: 0.8;">&times;</button>
@@ -2560,7 +2601,7 @@ This order was submitted through the Visual Vibe Studio website.`,
             <!-- Order Summary -->
             <div style="padding: 2rem;">
               <div style="background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <h4 style="margin: 0 0 1rem 0; font-size: 1.3rem; font-weight: bold; color: #1f2937;">����� Order Summary</h4>
+                <h4 style="margin: 0 0 1rem 0; font-size: 1.3rem; font-weight: bold; color: #1f2937;">📋 Order Summary</h4>
                 <div style="space-y: 0.5rem;">
                   <p style="margin: 0.3rem 0; color: #374151;"><strong>Business:</strong> ${orderData.businessName}</p>
                   <p style="margin: 0.3rem 0; color: #374151;"><strong>Services:</strong> ${orderData.services}</p>
