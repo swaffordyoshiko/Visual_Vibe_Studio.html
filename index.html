@@ -2656,28 +2656,54 @@ This order was submitted through the Visual Vibe Studio website.`,
           let orderSubmitted = false;
           let emailMethod = '';
 
-          // Use iframe method for Zapier (works around CORS issues)
-          console.log('📧 Sending order via Zapier webhook...');
-          console.log('📊 Order data being sent:', emailData);
+          // Send to Zapier webhook - FORCE SUBMISSION
+          console.log('🚀 FORCING ORDER SUBMISSION TO ZAPIER...');
 
           try {
-            // Use iframe method - more reliable for Zapier webhooks
+            // Method 1: Try fetch with no-cors (will work even if CORS blocks response)
+            fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                first_name: emailData.first_name,
+                last_name: emailData.last_name,
+                customer_email: emailData.customer_email,
+                customer_phone: emailData.customer_phone,
+                business_name: emailData.business_name,
+                industry: emailData.industry,
+                services: emailData.services,
+                total_amount: emailData.total_amount,
+                deposit_amount: emailData.deposit_amount,
+                due_date: emailData.due_date,
+                timestamp: emailData.timestamp
+              })
+            }).then(() => {
+              console.log('✅ ZAPIER FETCH COMPLETED (no-cors mode)');
+            }).catch(err => {
+              console.log('⚠️ Fetch completed with error (normal for no-cors):', err.message);
+            });
+
+            // Method 2: Simultaneous iframe backup
             const iframe = document.createElement('iframe');
-            iframe.name = 'zapier-order-frame';
+            iframe.name = 'zapier-backup-frame';
             iframe.style.display = 'none';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = 'none';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '-9999px';
+            iframe.style.width = '1px';
+            iframe.style.height = '1px';
             document.body.appendChild(iframe);
 
             const zapierForm = document.createElement('form');
             zapierForm.method = 'POST';
             zapierForm.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
-            zapierForm.target = 'zapier-order-frame';
+            zapierForm.target = 'zapier-backup-frame';
             zapierForm.style.display = 'none';
 
-            // Add simplified data as hidden inputs (avoid complex formatting)
-            const simplifiedData = {
+            // Add all form fields
+            const formFields = {
               first_name: emailData.first_name,
               last_name: emailData.last_name,
               customer_email: emailData.customer_email,
@@ -2688,13 +2714,12 @@ This order was submitted through the Visual Vibe Studio website.`,
               total_amount: emailData.total_amount,
               deposit_amount: emailData.deposit_amount,
               due_date: emailData.due_date,
-              timestamp: emailData.timestamp,
-              source: 'Visual Vibe Studio Website'
+              timestamp: emailData.timestamp
             };
 
-            console.log('📋 Simplified data for Zapier:', simplifiedData);
+            console.log('📋 SENDING THIS DATA TO ZAPIER:', formFields);
 
-            Object.entries(simplifiedData).forEach(([key, value]) => {
+            Object.entries(formFields).forEach(([key, value]) => {
               const input = document.createElement('input');
               input.type = 'hidden';
               input.name = key;
@@ -2705,50 +2730,22 @@ This order was submitted through the Visual Vibe Studio website.`,
             document.body.appendChild(zapierForm);
             zapierForm.submit();
 
-            // Clean up after 3 seconds
+            console.log('📤 DUAL SUBMISSION COMPLETED - FETCH + IFRAME');
+
+            // Clean up after 5 seconds
             setTimeout(() => {
-              if (iframe.parentNode) iframe.remove();
               if (zapierForm.parentNode) zapierForm.remove();
-            }, 3000);
+              if (iframe.parentNode) iframe.remove();
+            }, 5000);
 
             orderSubmitted = true;
-            emailMethod = 'Zapier';
-            console.log('✅ Order sent successfully via Zapier webhook (iframe method)');
+            emailMethod = 'Zapier (Dual Method)';
 
-          } catch (zapierError) {
-            console.log('❌ Zapier submission failed:', zapierError.message);
-            console.log('🔄 Trying EmailJS backup...');
-
-            // Try EmailJS as backup
-            try {
-              const emailParams = {
-                from_name: `${emailData.first_name} ${emailData.last_name}`,
-                customer_email: emailData.customer_email,
-                business_name: emailData.business_name,
-                industry: emailData.industry,
-                customer_phone: emailData.customer_phone,
-                services_needed: emailData.services,
-                due_date: emailData.due_date,
-                total_amount: emailData.total_amount,
-                deposit_amount: emailData.deposit_amount,
-                message: `New Order from Visual Vibe Studio Website - Business: ${emailData.business_name}, Services: ${emailData.services}, Total: $${emailData.total_amount}`
-              };
-
-              await emailjs.send('default_service', 'template_orders', emailParams);
-
-              orderSubmitted = true;
-              emailMethod = 'EmailJS Backup';
-              console.log('✅ Order sent via EmailJS backup');
-
-            } catch (emailError) {
-              console.log('❌ EmailJS backup also failed:', emailError.message);
-
-              // Final fallback: Still mark as submitted for user experience
-              orderSubmitted = true;
-              emailMethod = 'Manual Contact Required';
-              console.log('⚠️ All methods failed, manual contact will be made');
-            }
+          } catch (error) {
+            console.error('❌ BOTH ZAPIER METHODS FAILED:', error);
+            orderSubmitted = false;
           }
+
 
           if (orderSubmitted) {
             // Success - show which method worked
