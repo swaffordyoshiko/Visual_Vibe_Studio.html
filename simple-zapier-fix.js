@@ -204,7 +204,17 @@ window.submitOrderFormToZapier = async function(formData, serviceDetails) {
         deposit_amount: serviceDetails.depositAmount || '0',
         due_date: formData.due_date || '',
         submission_type: 'Order Form',
-        timestamp: new Date().toISOString(),
+        timestamp: formData.timestamp || new Date().toLocaleDateString('en-US', {
+          timeZone: 'America/Chicago',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }) + ' ' + new Date().toLocaleTimeString('en-US', {
+          timeZone: 'America/Chicago',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) + ' CST',
         full_order_details: serviceDetails.orderSummary || ''
       };
 
@@ -248,7 +258,7 @@ window.submitOrderFormToZapier = async function(formData, serviceDetails) {
         if (!submissionCompleted) {
           console.log('⚠️ Order form submission completed (no iframe confirmation)');
         }
-        console.log('✅ Order form submitted to Zapier via direct POST');
+        console.log('�� Order form submitted to Zapier via direct POST');
         resolve({ success: true });
       }, 3000);
 
