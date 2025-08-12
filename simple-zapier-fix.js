@@ -121,6 +121,7 @@ window.submitOrderFormToZapier = async function(formData, serviceDetails) {
         industry: formData.industry || '',
         services: serviceDetails.selectedServices.join(', '),
         total_amount: serviceDetails.totalAmount || '0',
+        deposit_amount: serviceDetails.depositAmount || '0',
         due_date: formData.due_date || '',
         submission_type: 'Order Form',
         timestamp: new Date().toISOString(),
