@@ -283,12 +283,12 @@
             <div style="space-y: 1rem;">
               <button onclick="window.location.href='mailto:support@visualvibestudio.store'; document.getElementById('emailOptionsModal').remove();"
                       style="width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span>��</span> Open Default Email App
+                <span>📮</span> Open Default Email App
               </button>
 
               <button onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=support@visualvibestudio.store&su=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
                       style="width: 100%; padding: 1rem; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span>��</span> Compose in Gmail
+                <span>📧</span> Compose in Gmail
               </button>
 
               <button onclick="window.open('https://compose.mail.yahoo.com/?to=support@visualvibestudio.store&subject=Support%20Request', '_blank'); document.getElementById('emailOptionsModal').remove();"
@@ -314,7 +314,7 @@
                         if (window.showEmailCopySuccess) {
                           window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
                         } else if (window.toastManager) {
-                          window.toastManager.success('�� Email address copied to clipboard!', { duration: 4000 });
+                          window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
                         } else {
                           alert('✅ Email address copied to clipboard!');
                         }
@@ -349,7 +349,7 @@
                       if (window.showEmailCopySuccess) {
                         window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
                       } else if (window.toastManager) {
-                        window.toastManager.success('��� Email address copied to clipboard!', { duration: 4000 });
+                        window.toastManager.success('✅ Email address copied to clipboard!', { duration: 4000 });
                       } else {
                         alert('✅ Email address copied to clipboard!');
                       }
@@ -1090,7 +1090,7 @@
     onclick="openFloatingForm()">
     <div
       style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); animation: pulse-float 2s ease-in-out infinite;">
-      <span style="color: white; font-size: 24px;">📝</span>
+      <span style="color: white; font-size: 24px;">��</span>
     </div>
   </div>
 
@@ -2525,8 +2525,14 @@
       }
     }
 
-    // Contact form initialization is handled by the main script after Zapier functions load
-    // Removed duplicate DOMContentLoaded listener to prevent race conditions
+    // Initialize contact form after DOM is loaded (backup method)
+    document.addEventListener('DOMContentLoaded', function() {
+      // Only initialize if not already done
+      if (!contactFormInitialized) {
+        console.log('🔄 DOMContentLoaded backup initialization for contact form');
+        setTimeout(initializeContactForm, 500);
+      }
+    });
 
     // Initialize order form button state on page load - wait for scripts
     let orderFormInitialized = false;
@@ -2837,8 +2843,14 @@ This order was submitted through the Visual Vibe Studio website.`,
       }
     }
 
-    // Order form initialization is handled by the main script after Zapier functions load
-    // Removed duplicate DOMContentLoaded listener to prevent race conditions
+    // Initialize order form after DOM is loaded (backup method)
+    document.addEventListener('DOMContentLoaded', function() {
+      // Only initialize if not already done
+      if (!orderFormInitialized) {
+        console.log('🔄 DOMContentLoaded backup initialization for order form');
+        setTimeout(initializeOrderForm, 500);
+      }
+    });
 
     // Diagnostic function to check pricing consistency
     window.debugPricingConsistency = function() {
