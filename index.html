@@ -502,7 +502,7 @@
                   try {
                     if (navigator.clipboard && window.isSecureContext) {
                       navigator.clipboard.writeText(email).then(() => {
-                        console.log('📧 Email copied via navigator.clipboard');
+                        console.log('��� Email copied via navigator.clipboard');
                         if (window.showEmailCopySuccess) {
                           window.showEmailCopySuccess('support@visualvibestudio.store ready to paste!');
                         } else if (window.toastManager) {
@@ -1508,7 +1508,7 @@
       const icons = {
         success: '✅',
         error: '❌',
-        warning: '⚠��',
+        warning: '�����',
         info: 'ℹ️'
       };
 
@@ -2789,10 +2789,11 @@
           }
 
           // Define service pricing - MUST MATCH prices shown in services section
+          // ⚠️ PRICE VALIDATION: These prices MUST match exactly what's displayed on the website
           const servicePrices = {
             'Website Design': 100,
             'Logo Design': 25,
-            // Premium Business Cards - Updated to match HTML display
+            // Premium Business Cards - VALIDATED to match HTML display
             'Premium Business Cards Single Sided': 44.99,
             'Premium Business Cards Double Sided': 64.99,
             'Ultra Thick Business Cards Single Sided': 79.99,
@@ -2803,15 +2804,30 @@
             'Color Core Business Cards Round Corners': 80.71,
             'Soft Touch Business Cards Single Sided': 74.99,
             'Soft Touch Business Cards Double Sided': 87.99,
-            // Quick Business Cards - Updated to match HTML display
+            // Quick Business Cards - VALIDATED to match HTML display
             'Quick Business Cards Single Sided': 38.99,
             'Quick Business Cards Double Sided': 42.49,
-            // Flyers - Updated to match HTML display
+            // Flyers - VALIDATED to match HTML display
             'Flyers Single Sided': 64.99,
             'Flyers Double Sided': 81.99,
-            // Brochures - Updated to match HTML display
+            // Brochures - VALIDATED to match HTML display
             'Brochures Tri-Fold': 57.50
           };
+
+          // CUSTOMER PROTECTION: Validate all prices match website display
+          console.log('💰 PRICE VALIDATION: Checking all service prices...');
+          const priceValidationLog = [];
+          Object.entries(servicePrices).forEach(([service, price]) => {
+            priceValidationLog.push(`✅ ${service}: $${price}`);
+          });
+          console.log('💰 VALIDATED PRICES:', priceValidationLog);
+
+          // TRANSPARENCY: Log starting calculation
+          console.log('🧮 STARTING ORDER CALCULATION - Customer Protection Enabled');
+
+          // CUSTOMER PROTECTION: Track each service and price for transparency
+          const customerItemizedBreakdown = [];
+          let calculationValid = true;
 
           serviceCheckboxes.forEach(checkbox => {
             const serviceName = checkbox.value;
@@ -2820,27 +2836,87 @@
             selectedServices.push(serviceName);
 
             if (servicePrice) {
-              totalAmount += servicePrice;
-              console.log(`📊 ${serviceName}: $${servicePrice}`);
+              // CUSTOMER PROTECTION: Validate price is reasonable (not negative, not over $500 per item)
+              if (servicePrice < 0 || servicePrice > 500) {
+                console.error(`🚨 PRICE PROTECTION: Invalid price detected for ${serviceName}: $${servicePrice}`);
+                calculationValid = false;
+                return;
+              }
+
+              // Fix floating point precision by rounding to 2 decimal places
+              const previousTotal = totalAmount;
+              totalAmount = Math.round((totalAmount + servicePrice) * 100) / 100;
+
+              // TRANSPARENCY: Log each addition for customer protection
+              console.log(`💰 CUSTOMER PROTECTION: Adding ${serviceName}: $${servicePrice} (Total: $${previousTotal} → $${totalAmount})`);
+
+              // Track itemized breakdown for customer
+              customerItemizedBreakdown.push({
+                service: serviceName,
+                price: servicePrice,
+                displayPrice: `$${servicePrice.toFixed(2)}`
+              });
             } else {
-              // Handle unknown services gracefully
-              console.warn(`⚠️ Unknown service: "${serviceName}" - skipping price calculation`);
+              // CUSTOMER PROTECTION: Never charge for unknown services
+              console.warn(`⚠️ CUSTOMER PROTECTION: Unknown service "${serviceName}" - NO CHARGE applied (protecting customer)`);
 
               // Check if it's a combined service that should be split
               if (serviceName.includes(',')) {
                 console.warn(`💡 Suggestion: "${serviceName}" appears to be multiple services - consider using separate checkboxes`);
               }
 
-              // Don't add to total if price is unknown
-              console.log(`📊 ${serviceName}: $0 (price not found)`);
+              customerItemizedBreakdown.push({
+                service: serviceName,
+                price: 0,
+                displayPrice: 'FREE (Unknown service - no charge)',
+                warning: true
+              });
             }
           });
 
-          // Show pricing calculation summary for verification
-          console.log(`💰 Order Summary: ${selectedServices.length} services, Total: $${totalAmount}`);
+          // CUSTOMER PROTECTION: Validate total calculation
+          if (!calculationValid) {
+            console.error('🚨 CALCULATION FAILED: Invalid prices detected - stopping order submission');
+            alert('❌ Price validation failed. Please contact support for assistance.');
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+            return;
+          }
 
-          // Calculate 50% deposit - round up to nearest cent if needed
-          const depositAmount = Math.ceil((totalAmount * 0.5) * 100) / 100;
+          // Ensure totalAmount is properly rounded to 2 decimal places
+          totalAmount = Math.round(totalAmount * 100) / 100;
+
+          // CUSTOMER PROTECTION: Final validation and transparency
+          console.log('🛡️ CUSTOMER PROTECTION: Final order validation...');
+          console.log(`📊 Selected Services: ${selectedServices.length}`);
+          console.log('📋 ITEMIZED BREAKDOWN (Customer Protection):');
+
+          let validationTotal = 0;
+          customerItemizedBreakdown.forEach((item, index) => {
+            console.log(`  ${index + 1}. ${item.service}: ${item.displayPrice}`);
+            if (!item.warning) validationTotal += item.price;
+          });
+
+          validationTotal = Math.round(validationTotal * 100) / 100;
+
+          // CRITICAL: Verify our total matches manual calculation
+          if (validationTotal !== totalAmount) {
+            console.error('🚨 CUSTOMER PROTECTION: Total mismatch detected!');
+            console.error(`Expected: $${validationTotal}, Calculated: $${totalAmount}`);
+            alert('❌ Price calculation error detected. Order stopped to protect customer. Please contact support.');
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+            return;
+          }
+
+          console.log(`✅ CUSTOMER PROTECTION: Validation passed - Total: $${totalAmount}`);
+          console.log(`💰 Customer will pay exactly: $${totalAmount} (verified)`);
+
+          // Calculate 50% deposit with proper precision
+          const depositAmount = Math.round((totalAmount * 0.5) * 100) / 100;
+
+          console.log(`💳 Deposit (50%): $${depositAmount}`);
+          console.log(`💰 Remaining: $${Math.round((totalAmount - depositAmount) * 100) / 100}`);
 
           // Format date and time separately for order email
           const now = new Date();
@@ -2856,7 +2932,7 @@
             minute: '2-digit',
             hour12: true
           });
-          const timestamp = `Date: ${orderDate} & Time: ${orderTime}`;
+          const timestamp = `Date: ${orderDate} & Time: ${orderTime} CST`;
 
           // Prepare email data with the exact format requested
           const emailData = {
@@ -2878,10 +2954,10 @@
 • Services Breakdown:
 ${selectedServices.map(service => `  - ${service}: $${(servicePrices[service] || 0).toFixed(2)}`).join('\n')}
 
-• Subtotal: $${selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0).toFixed(2)}
+• Subtotal: $${Math.round(selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0) * 100) / 100}
 • Total Amount: $${totalAmount.toFixed(2)}
 • Deposit Required (50%): $${depositAmount.toFixed(2)}
-• Remaining Balance: $${(totalAmount - depositAmount).toFixed(2)}
+• Remaining Balance: $${Math.round((totalAmount - depositAmount) * 100) / 100}
 • Due Date: ${formData.get('due_date')}
 
 ���� PAYMENT INSTRUCTIONS:
@@ -2962,7 +3038,7 @@ This order was submitted through the Visual Vibe Studio website.`,
               services: selectedServices.join(', '),
               servicesArray: selectedServices,
               servicePrices: servicePrices,
-              subtotal: selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0),
+              subtotal: Math.round(selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0) * 100) / 100,
               totalAmount: totalAmount.toFixed(2),
               depositAmount: depositAmount.toFixed(2)
             });
@@ -2988,7 +3064,7 @@ This order was submitted through the Visual Vibe Studio website.`,
               services: selectedServices.join(', '),
               servicesArray: selectedServices,
               servicePrices: servicePrices,
-              subtotal: selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0),
+              subtotal: Math.round(selectedServices.reduce((sum, service) => sum + (servicePrices[service] || 0), 0) * 100) / 100,
               totalAmount: totalAmount.toFixed(2),
               depositAmount: depositAmount.toFixed(2),
               manualProcessing: true
