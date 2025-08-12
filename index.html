@@ -1250,13 +1250,28 @@
       //   window.debugPricingConsistency();
       // }
 
-      // Verify simple Zapier fix is loaded
+      // Verify simple Zapier fix is loaded and initialize forms
       if (window.submitContactFormToZapier && window.submitOrderFormToZapier && window.directZapierSubmit) {
         console.log('✅ Simple Zapier fix loaded successfully');
         console.log('📱 Contact Form → SMS via Zapier');
         console.log('📧 Order Form → Email via Zapier');
+
+        // Force initialize forms now that Zapier functions are confirmed
+        setTimeout(() => {
+          initializeContactForm();
+          initializeOrderForm();
+        }, 100);
       } else {
-        console.warn('⚠️ Simple Zapier fix not loaded - using fallback methods');
+        console.warn('⚠️ Simple Zapier fix not loaded - retrying initialization');
+        setTimeout(() => {
+          if (window.submitContactFormToZapier && window.submitOrderFormToZapier) {
+            console.log('✅ Zapier functions now available, initializing forms...');
+            initializeContactForm();
+            initializeOrderForm();
+          } else {
+            console.error('❌ Zapier functions still not available after retry');
+          }
+        }, 1000);
       }
 
       // Also test email connectivity
@@ -1292,6 +1307,34 @@
         console.log('❌ EmailJS library not found');
       }
     };
+  </script>
+
+  <!-- Final Form Initialization -->
+  <script>
+    // Ensure forms are initialized after all scripts are loaded
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        console.log('🔄 Final form initialization check...');
+
+        // Check if Zapier functions are available
+        if (typeof window.submitContactFormToZapier === 'function' &&
+            typeof window.submitOrderFormToZapier === 'function') {
+          console.log('✅ Zapier functions confirmed available');
+
+          // Force initialize forms if not already done
+          if (typeof initializeContactForm === 'function') initializeContactForm();
+          if (typeof initializeOrderForm === 'function') initializeOrderForm();
+
+        } else {
+          console.error('❌ Zapier functions not available even after page load');
+          console.log('📊 Available functions:', {
+            submitContactFormToZapier: typeof window.submitContactFormToZapier,
+            submitOrderFormToZapier: typeof window.submitOrderFormToZapier,
+            directZapierSubmit: typeof window.directZapierSubmit
+          });
+        }
+      }, 500);
+    });
   </script>
 
   <!-- Review Form JavaScript -->
@@ -2343,10 +2386,10 @@
       }
     });
 
-    // Handle contact form submission to Zapier
-    document.addEventListener('DOMContentLoaded', function() {
+    // Handle contact form submission to Zapier - wait for all scripts to load
+    function initializeContactForm() {
       const form = document.getElementById('floatingContactForm');
-      if (form) {
+      if (form && window.submitContactFormToZapier) {
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
 
@@ -2482,12 +2525,19 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
             }, 3000);
           }
         });
+      } else {
+        console.log('⚠️ Contact form or Zapier function not ready, retrying in 1 second...');
+        setTimeout(initializeContactForm, 1000);
       }
-    });
+    }
 
-    // Initialize order form button state on page load
-    const orderForm = document.getElementById('orderForm');
-    if (orderForm) {
+    // Initialize contact form after DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeContactForm);
+
+    // Initialize order form button state on page load - wait for scripts
+    function initializeOrderForm() {
+      const orderForm = document.getElementById('orderForm');
+      if (orderForm && window.submitOrderFormToZapier) {
       // Ensure button shows correct initial text
       const submitButton = orderForm.querySelector('button[type="submit"]');
       if (submitButton) {
@@ -2769,7 +2819,14 @@ This order was submitted through the Visual Vibe Studio website.`,
           }, 3000);
         }
       });
+      } else {
+        console.log('⚠️ Order form or Zapier function not ready, retrying in 1 second...');
+        setTimeout(initializeOrderForm, 1000);
+      }
     }
+
+    // Initialize order form after DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeOrderForm);
 
     // Diagnostic function to check pricing consistency
     window.debugPricingConsistency = function() {
