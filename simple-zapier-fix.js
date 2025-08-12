@@ -1,7 +1,7 @@
 // Simple Zapier Fix - Direct webhook integration
 console.log('🚀 Simple Zapier fix loaded');
 
-// Zapier webhook URLs
+// Zapier webhook URLs - Contact form uses u4i7xid, Order form uses u4a5f95
 const ZAPIER_CONTACT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
 const ZAPIER_ORDER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
 
