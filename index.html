@@ -874,7 +874,7 @@
         <form id="orderForm" class="grid md:grid-cols-2 gap-6">
           <!-- Customer Information -->
           <div class="space-y-4">
-            <h4 class="text-xl font-bold text-gray-800 mb-4">👤 Customer Information</h4>
+            <h4 class="text-xl font-bold text-gray-800 mb-4">��� Customer Information</h4>
 
             <div>
               <label class="block font-medium text-gray-700 mb-2">First Name *</label>
@@ -2387,10 +2387,22 @@
     });
 
     // Handle contact form submission to Zapier - wait for all scripts to load
+    let contactFormInitialized = false;
     function initializeContactForm() {
+      if (contactFormInitialized) {
+        console.log('✅ Contact form already initialized, skipping...');
+        return;
+      }
+
       const form = document.getElementById('floatingContactForm');
       if (form && window.submitContactFormToZapier) {
-        form.addEventListener('submit', async function(e) {
+        // Remove any existing event listeners first
+        const existingHandler = form.contactFormHandler;
+        if (existingHandler) {
+          form.removeEventListener('submit', existingHandler);
+        }
+
+        const submitHandler = async function(e) {
           e.preventDefault();
 
           const submitButton = form.querySelector('button[type="submit"]');
@@ -2524,7 +2536,13 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
               formResetTimeout = null;
             }, 3000);
           }
-        });
+        };
+
+        // Store the handler reference and add the event listener
+        form.contactFormHandler = submitHandler;
+        form.addEventListener('submit', submitHandler);
+        contactFormInitialized = true;
+        console.log('✅ Contact form initialized successfully (single event listener)');
       } else {
         console.log('⚠️ Contact form or Zapier function not ready, retrying in 1 second...');
         setTimeout(initializeContactForm, 1000);
@@ -2535,7 +2553,13 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
     document.addEventListener('DOMContentLoaded', initializeContactForm);
 
     // Initialize order form button state on page load - wait for scripts
+    let orderFormInitialized = false;
     function initializeOrderForm() {
+      if (orderFormInitialized) {
+        console.log('✅ Order form already initialized, skipping...');
+        return;
+      }
+
       const orderForm = document.getElementById('orderForm');
       if (orderForm && window.submitOrderFormToZapier) {
       // Ensure button shows correct initial text
@@ -2547,7 +2571,13 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
         console.log('🔄 Order form button initialized');
       }
 
-      orderForm.addEventListener('submit', async function(e) {
+      // Remove any existing event listeners first
+      const existingHandler = orderForm.orderFormHandler;
+      if (existingHandler) {
+        orderForm.removeEventListener('submit', existingHandler);
+      }
+
+      const submitHandler = async function(e) {
         e.preventDefault();
 
         const submitButton = orderForm.querySelector('button[type="submit"]');
@@ -2667,7 +2697,7 @@ ${selectedServices.map(service => `  - ${service}: $${(servicePrices[service] ||
 • Remaining Balance: $${(totalAmount - depositAmount).toFixed(2)}
 • Due Date: ${formData.get('due_date')}
 
-💳 PAYMENT INSTRUCTIONS:
+���� PAYMENT INSTRUCTIONS:
 Customer should send $${depositAmount.toFixed(2)} via Venmo to @Yoshiko-Swafford
 
 ⏰ ORDER SUBMITTED: ${timestamp}
@@ -2818,7 +2848,13 @@ This order was submitted through the Visual Vibe Studio website.`,
             submitButton.disabled = false;
           }, 3000);
         }
-      });
+      };
+
+      // Store the handler reference and add the event listener
+      orderForm.orderFormHandler = submitHandler;
+      orderForm.addEventListener('submit', submitHandler);
+      orderFormInitialized = true;
+      console.log('✅ Order form initialized successfully (single event listener)');
       } else {
         console.log('⚠️ Order form or Zapier function not ready, retrying in 1 second...');
         setTimeout(initializeOrderForm, 1000);
