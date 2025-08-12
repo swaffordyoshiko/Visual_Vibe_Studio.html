@@ -2609,8 +2609,8 @@
           // Show pricing calculation summary for verification
           console.log(`💰 Order Summary: ${selectedServices.length} services, Total: $${totalAmount}`);
 
-          // Calculate 50% deposit
-          const depositAmount = totalAmount * 0.5;
+          // Calculate 50% deposit - round up to nearest cent if needed
+          const depositAmount = Math.ceil((totalAmount * 0.5) * 100) / 100;
 
           const timestamp = new Date().toLocaleString('en-US', {
             timeZone: 'America/Chicago',
