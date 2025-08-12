@@ -2997,7 +2997,8 @@ This order was submitted through the Visual Vibe Studio website.`,
               customer_phone: formData.get('customer_phone'),
               business_name: formData.get('business_name'),
               industry: formData.get('industry'),
-              due_date: formData.get('due_date')
+              due_date: formData.get('due_date'),
+              timestamp: timestamp
             };
 
             const serviceDetails = {
@@ -3183,7 +3184,7 @@ This order was submitted through the Visual Vibe Studio website.`,
             console.error(`  - Element location: ${checkbox.parentElement.closest('section, div[id]')?.id || 'unknown section'}`);
           }
         } else if (displayedPrice && Math.abs(priceInObject - parseFloat(displayedPrice[1])) > 0.01) {
-          console.error(`❌ Price mismatch for "${serviceName}": Object=$${priceInObject}, Display=$${displayedPrice[1]}`);
+          console.error(`�� Price mismatch for "${serviceName}": Object=$${priceInObject}, Display=$${displayedPrice[1]}`);
         } else {
           console.log(`✅ Price matches for "${serviceName}"`);
         }
