@@ -78,7 +78,7 @@
 
             <div style="margin-bottom: 1rem;">
               <button onclick="window.location.href='mailto:support@visualvibestudio.store'; document.getElementById('emailModal').remove();" style="width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span>📧</span> Open Email App
+                <span>���</span> Open Email App
               </button>
 
               <button onclick="
@@ -2716,8 +2716,15 @@ This order was submitted through the Visual Vibe Studio website.`,
             });
 
             // Show notification about manual processing
-            if (window.toastManager) {
+            if (window.toastManager && typeof window.toastManager.warning === 'function') {
               window.toastManager.warning('Order saved locally. We\'ll contact you within 24 hours to confirm details.', { duration: 8000 });
+            } else {
+              // Fallback to simple showToast function
+              if (window.showToast) {
+                window.showToast('Order saved locally. We\'ll contact you within 24 hours to confirm details.', 'warning');
+              } else {
+                alert('Order saved locally. We\'ll contact you within 24 hours to confirm details.');
+              }
             }
 
             // Reset form after delay
