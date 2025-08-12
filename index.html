@@ -1213,6 +1213,7 @@
   </footer>
 
   <!-- ESSENTIAL SCRIPTS ONLY - NO DELETED FILES -->
+  <script src="simple-zapier-fix.js"></script>
   <script src="toast-notifications.js"></script>
   <script src="universal-review-sync.js"></script>
   <script src="email-copy-notification.js"></script>
@@ -1242,10 +1243,20 @@
     // Initialize reveals for elements already in view
     setTimeout(revealOnScroll, 100);
 
-    // Auto-run pricing diagnostic after page loads
+    // Auto-run pricing diagnostic after page loads (disabled to prevent errors)
     setTimeout(() => {
-      if (window.debugPricingConsistency) {
-        window.debugPricingConsistency();
+      // Debug function disabled - can be manually called with debugPricingConsistency()
+      // if (window.debugPricingConsistency) {
+      //   window.debugPricingConsistency();
+      // }
+
+      // Verify simple Zapier fix is loaded
+      if (window.submitContactFormToZapier && window.submitOrderFormToZapier && window.directZapierSubmit) {
+        console.log('✅ Simple Zapier fix loaded successfully');
+        console.log('📱 Contact Form → SMS via Zapier');
+        console.log('📧 Order Form → Email via Zapier');
+      } else {
+        console.warn('⚠️ Simple Zapier fix not loaded - using fallback methods');
       }
 
       // Also test email connectivity
@@ -2225,7 +2236,7 @@
         const form = document.getElementById('floatingContactForm');
         const submitButton = form ? form.querySelector('button[type="submit"]') : null;
         if (submitButton) {
-          submitButton.innerHTML = 'Send My Request ���';
+          submitButton.innerHTML = 'Send My Request 🚀';
           submitButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
           submitButton.style.display = 'block';
           submitButton.style.visibility = 'visible';
@@ -2361,56 +2372,22 @@
               source: 'Visual Vibe Studio Website'
             };
 
-            // Send via Zapier using hidden iframe method
+            // Send via simple direct Zapier submission
             let contactSubmitted = false;
 
             try {
-              console.log('📧 Sending contact form via Zapier...');
+              console.log('📧 Submitting contact form to Zapier...');
+              const zapierResult = await window.submitContactFormToZapier(formData);
 
-              // Create hidden iframe for submission
-              const iframe = document.createElement('iframe');
-              iframe.name = 'zapier-contact-frame';
-              iframe.style.display = 'none';
-              iframe.style.width = '0';
-              iframe.style.height = '0';
-              iframe.style.border = 'none';
-              document.body.appendChild(iframe);
-
-              // Create form targeting the hidden iframe
-              const zapierForm = document.createElement('form');
-              zapierForm.method = 'POST';
-              zapierForm.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/';
-              zapierForm.target = 'zapier-contact-frame';
-              zapierForm.style.display = 'none';
-
-              // Add all contact data as hidden inputs
-              Object.entries(data).forEach(([key, value]) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = String(value || '');
-                zapierForm.appendChild(input);
-              });
-
-              // Add to page and submit
-              document.body.appendChild(zapierForm);
-              zapierForm.submit();
-
-              // Clean up after submission
-              setTimeout(() => {
-                if (document.body.contains(zapierForm)) {
-                  document.body.removeChild(zapierForm);
-                }
-                if (document.body.contains(iframe)) {
-                  document.body.removeChild(iframe);
-                }
-              }, 2000);
-
-              contactSubmitted = true;
-              console.log('✅ Contact form sent successfully via Zapier');
-
-            } catch (zapierError) {
-              console.log('❌ Zapier submission failed:', zapierError.message);
+              if (zapierResult && zapierResult.success) {
+                contactSubmitted = true;
+                console.log('✅ Contact form sent successfully to Zapier');
+              } else {
+                console.log('❌ Zapier submission failed:', zapierResult?.error || 'Unknown error');
+                contactSubmitted = false;
+              }
+            } catch (error) {
+              console.log('❌ Error calling Zapier function:', error.message);
               contactSubmitted = false;
             }
 
@@ -2581,12 +2558,21 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
             const servicePrice = servicePrices[serviceName];
 
             selectedServices.push(serviceName);
-            totalAmount += servicePrice || 0;
 
-            // Log pricing for verification (remove in production)
-            console.log(`📊 ${serviceName}: $${servicePrice || 'NOT FOUND'}`);
-            if (!servicePrice) {
-              console.error(`❌ PRICING ERROR: No price found for "${serviceName}"`);
+            if (servicePrice) {
+              totalAmount += servicePrice;
+              console.log(`📊 ${serviceName}: $${servicePrice}`);
+            } else {
+              // Handle unknown services gracefully
+              console.warn(`⚠️ Unknown service: "${serviceName}" - skipping price calculation`);
+
+              // Check if it's a combined service that should be split
+              if (serviceName.includes(',')) {
+                console.warn(`💡 Suggestion: "${serviceName}" appears to be multiple services - consider using separate checkboxes`);
+              }
+
+              // Don't add to total if price is unknown
+              console.log(`📊 ${serviceName}: $0 (price not found)`);
             }
           });
 
@@ -2656,93 +2642,29 @@ This order was submitted through the Visual Vibe Studio website.`,
           let orderSubmitted = false;
           let emailMethod = '';
 
-          // Send to Zapier webhook - FORCE SUBMISSION
-          console.log('🚀 FORCING ORDER SUBMISSION TO ZAPIER...');
+          // Submit order via simple direct Zapier integration
+          console.log('🚀 Submitting order to Zapier...');
 
           try {
-            // Method 1: Try fetch with no-cors (will work even if CORS blocks response)
-            fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                first_name: emailData.first_name,
-                last_name: emailData.last_name,
-                customer_email: emailData.customer_email,
-                customer_phone: emailData.customer_phone,
-                business_name: emailData.business_name,
-                industry: emailData.industry,
-                services: emailData.services,
-                total_amount: emailData.total_amount,
-                deposit_amount: emailData.deposit_amount,
-                due_date: emailData.due_date,
-                timestamp: emailData.timestamp
-              })
-            }).then(() => {
-              console.log('✅ ZAPIER FETCH COMPLETED (no-cors mode)');
-            }).catch(err => {
-              console.log('⚠️ Fetch completed with error (normal for no-cors):', err.message);
-            });
-
-            // Method 2: Simultaneous iframe backup
-            const iframe = document.createElement('iframe');
-            iframe.name = 'zapier-backup-frame';
-            iframe.style.display = 'none';
-            iframe.style.position = 'absolute';
-            iframe.style.left = '-9999px';
-            iframe.style.width = '1px';
-            iframe.style.height = '1px';
-            document.body.appendChild(iframe);
-
-            const zapierForm = document.createElement('form');
-            zapierForm.method = 'POST';
-            zapierForm.action = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
-            zapierForm.target = 'zapier-backup-frame';
-            zapierForm.style.display = 'none';
-
-            // Add all form fields
-            const formFields = {
-              first_name: emailData.first_name,
-              last_name: emailData.last_name,
-              customer_email: emailData.customer_email,
-              customer_phone: emailData.customer_phone,
-              business_name: emailData.business_name,
-              industry: emailData.industry,
-              services: emailData.services,
-              total_amount: emailData.total_amount,
-              deposit_amount: emailData.deposit_amount,
-              due_date: emailData.due_date,
-              timestamp: emailData.timestamp
+            const serviceDetails = {
+              services: selectedServices,
+              servicePrices: servicePrices,
+              totalAmount: totalAmount,
+              depositAmount: depositAmount
             };
 
-            console.log('📋 SENDING THIS DATA TO ZAPIER:', formFields);
+            const zapierResult = await window.submitOrderFormToZapier(formData, serviceDetails);
 
-            Object.entries(formFields).forEach(([key, value]) => {
-              const input = document.createElement('input');
-              input.type = 'hidden';
-              input.name = key;
-              input.value = String(value || '');
-              zapierForm.appendChild(input);
-            });
-
-            document.body.appendChild(zapierForm);
-            zapierForm.submit();
-
-            console.log('📤 DUAL SUBMISSION COMPLETED - FETCH + IFRAME');
-
-            // Clean up after 5 seconds
-            setTimeout(() => {
-              if (zapierForm.parentNode) zapierForm.remove();
-              if (iframe.parentNode) iframe.remove();
-            }, 5000);
-
-            orderSubmitted = true;
-            emailMethod = 'Zapier (Dual Method)';
-
+            if (zapierResult && zapierResult.success) {
+              orderSubmitted = true;
+              emailMethod = 'Simple Zapier Integration';
+              console.log('✅ Order submitted successfully to Zapier');
+            } else {
+              console.log('❌ Zapier submission failed:', zapierResult?.error || 'Unknown error');
+              orderSubmitted = false;
+            }
           } catch (error) {
-            console.error('❌ BOTH ZAPIER METHODS FAILED:', error);
+            console.log('❌ Error calling Zapier function:', error.message);
             orderSubmitted = false;
           }
 
@@ -2811,7 +2733,7 @@ This order was submitted through the Visual Vibe Studio website.`,
           console.error('Error submitting order:', error);
 
           // Error state
-          submitButton.innerHTML = 'Error - Try Again ❌';
+          submitButton.innerHTML = 'Error - Try Again ���';
           submitButton.style.background = '#ef4444';
 
           if (window.toastManager) {
@@ -2836,6 +2758,7 @@ This order was submitted through the Visual Vibe Studio website.`,
 
       // Get all service checkboxes
       const checkboxes = document.querySelectorAll('input[name="services"]');
+      console.log(`Found ${checkboxes.length} service checkboxes`);
       const servicePrices = {
         'Website Design': 100,
         'Logo Design': 25,
@@ -2856,18 +2779,28 @@ This order was submitted through the Visual Vibe Studio website.`,
         'Brochures Tri-Fold': 57.50
       };
 
-      checkboxes.forEach(checkbox => {
+      checkboxes.forEach((checkbox, index) => {
         const serviceName = checkbox.value;
         const priceInObject = servicePrices[serviceName];
         const displayedPrice = checkbox.parentElement.textContent.match(/\$([0-9.]+)/);
 
-        console.log(`Service: "${serviceName}"`);
+        console.log(`[${index + 1}/${checkboxes.length}] Service: "${serviceName}"`);
+        console.log(`  - Checkbox ID: ${checkbox.id || 'no ID'}`);
         console.log(`  - Checkbox value: "${serviceName}"`);
+        console.log(`  - Parent element: ${checkbox.parentElement.tagName.toLowerCase()}`);
         console.log(`  - Price in object: $${priceInObject || 'NOT FOUND'}`);
         console.log(`  - Displayed price: ${displayedPrice ? '$' + displayedPrice[1] : 'NOT FOUND'}`);
 
         if (!priceInObject) {
-          console.error(`❌ Missing price for: "${serviceName}"`);
+          // Check if this is a combined service name (comma-separated)
+          if (serviceName.includes(',')) {
+            console.warn(`⚠️ Combined service detected: "${serviceName}"`);
+            console.warn(`  - Element location: ${checkbox.parentElement.closest('section, div[id]')?.id || 'unknown section'}`);
+            console.warn(`  - This should be split into individual services`);
+          } else {
+            console.error(`❌ Missing price for: "${serviceName}"`);
+            console.error(`  - Element location: ${checkbox.parentElement.closest('section, div[id]')?.id || 'unknown section'}`);
+          }
         } else if (displayedPrice && Math.abs(priceInObject - parseFloat(displayedPrice[1])) > 0.01) {
           console.error(`❌ Price mismatch for "${serviceName}": Object=$${priceInObject}, Display=$${displayedPrice[1]}`);
         } else {
