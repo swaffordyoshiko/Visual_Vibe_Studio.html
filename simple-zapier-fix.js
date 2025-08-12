@@ -6,7 +6,16 @@ const ZAPIER_CONTACT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/24056566/u4
 const ZAPIER_ORDER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/';
 
 // Contact form submission to Zapier using direct POST (works around CORS)
+let lastContactSubmission = 0;
 window.submitContactFormToZapier = async function(formData) {
+  // Prevent duplicate submissions within 5 seconds
+  const now = Date.now();
+  if (now - lastContactSubmission < 5000) {
+    console.log('⚠️ Contact form submission blocked - too soon since last submission');
+    return { success: false, error: 'Duplicate submission prevented' };
+  }
+  lastContactSubmission = now;
+
   console.log('📱 Submitting contact form to Zapier for SMS...');
 
   return new Promise((resolve) => {
@@ -48,16 +57,31 @@ window.submitContactFormToZapier = async function(formData) {
       document.body.appendChild(tempForm);
 
       // Submit the form
+      console.log('📤 Sending contact form to Zapier webhook:', ZAPIER_CONTACT_WEBHOOK);
       tempForm.submit();
 
-      // Clean up after a short delay
+      // Set up tracking for submission completion
+      let submissionCompleted = false;
+
+      // Listen for iframe events (limited due to CORS but helps with cleanup)
+      iframe.onload = () => {
+        if (!submissionCompleted) {
+          submissionCompleted = true;
+          console.log('✅ Contact form iframe loaded - submission likely successful');
+        }
+      };
+
+      // Clean up after a delay and resolve
       setTimeout(() => {
         if (tempForm.parentNode) document.body.removeChild(tempForm);
         if (iframe.parentNode) document.body.removeChild(iframe);
-      }, 3000);
 
-      console.log('✅ Contact form submitted to Zapier via direct POST');
-      resolve({ success: true });
+        if (!submissionCompleted) {
+          console.log('⚠️ Contact form submission completed (no iframe confirmation)');
+        }
+        console.log('✅ Contact form submitted to Zapier via direct POST');
+        resolve({ success: true });
+      }, 3000);
 
     } catch (error) {
       console.log('❌ Contact form Zapier error:', error.message);
@@ -67,7 +91,16 @@ window.submitContactFormToZapier = async function(formData) {
 };
 
 // Order form submission to Zapier using direct POST (works around CORS)
+let lastOrderSubmission = 0;
 window.submitOrderFormToZapier = async function(formData, serviceDetails) {
+  // Prevent duplicate submissions within 5 seconds
+  const now = Date.now();
+  if (now - lastOrderSubmission < 5000) {
+    console.log('⚠️ Order form submission blocked - too soon since last submission');
+    return { success: false, error: 'Duplicate submission prevented' };
+  }
+  lastOrderSubmission = now;
+
   console.log('📧 Submitting order form to Zapier for email...');
 
   return new Promise((resolve) => {
@@ -112,16 +145,31 @@ window.submitOrderFormToZapier = async function(formData, serviceDetails) {
       document.body.appendChild(tempForm);
 
       // Submit the form
+      console.log('📤 Sending order form to Zapier webhook:', ZAPIER_ORDER_WEBHOOK);
       tempForm.submit();
 
-      // Clean up after a short delay
+      // Set up tracking for submission completion
+      let submissionCompleted = false;
+
+      // Listen for iframe events (limited due to CORS but helps with cleanup)
+      iframe.onload = () => {
+        if (!submissionCompleted) {
+          submissionCompleted = true;
+          console.log('✅ Order form iframe loaded - submission likely successful');
+        }
+      };
+
+      // Clean up after a delay and resolve
       setTimeout(() => {
         if (tempForm.parentNode) document.body.removeChild(tempForm);
         if (iframe.parentNode) document.body.removeChild(iframe);
-      }, 3000);
 
-      console.log('✅ Order form submitted to Zapier via direct POST');
-      resolve({ success: true });
+        if (!submissionCompleted) {
+          console.log('⚠️ Order form submission completed (no iframe confirmation)');
+        }
+        console.log('✅ Order form submitted to Zapier via direct POST');
+        resolve({ success: true });
+      }, 3000);
 
     } catch (error) {
       console.log('❌ Order form Zapier error:', error.message);
