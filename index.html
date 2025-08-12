@@ -1274,39 +1274,8 @@
         }, 1000);
       }
 
-      // Also test email connectivity
-      if (window.testEmailConnectivity) {
-        window.testEmailConnectivity();
-      }
     }, 2000);
 
-    // Email connectivity test function
-    window.testEmailConnectivity = function() {
-      console.log('📧 Testing email connectivity...');
-
-      // Test Zapier webhook with CORS handling
-      try {
-        fetch('https://hooks.zapier.com/hooks/catch/24056566/u4a5f95/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ test: 'connectivity' }),
-          mode: 'no-cors' // Use no-cors for connectivity test only
-        }).then(() => {
-          console.log('✅ Zapier webhook connectivity test completed (no-cors mode)');
-        }).catch(error => {
-          console.log('❌ Zapier webhook connectivity test failed:', error.message);
-        });
-      } catch (error) {
-        console.log('❌ Zapier webhook test error:', error.message);
-      }
-
-      // Check EmailJS availability
-      if (window.emailjs) {
-        console.log('✅ EmailJS library is loaded');
-      } else {
-        console.log('❌ EmailJS library not found');
-      }
-    };
   </script>
 
   <!-- Final Form Initialization -->
@@ -2168,14 +2137,13 @@
             <form onsubmit="handleFinalSignIn(event)">
               <div style="margin-bottom: 1rem;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Email</label>
-                <input type="email" id="finalEmail" value="test@test.com" style="width: 100%; padding: 0.75rem; border: 2px solid #ccc; border-radius: 6px; box-sizing: border-box;" required>
+                <input type="email" id="finalEmail" value="" style="width: 100%; padding: 0.75rem; border: 2px solid #ccc; border-radius: 6px; box-sizing: border-box;" required>
               </div>
               <div style="margin-bottom: 1rem;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Password</label>
-                <input type="password" id="finalPassword" value="test123" style="width: 100%; padding: 0.75rem; border: 2px solid #ccc; border-radius: 6px; box-sizing: border-box;" required>
+                <input type="password" id="finalPassword" value="" style="width: 100%; padding: 0.75rem; border: 2px solid #ccc; border-radius: 6px; box-sizing: border-box;" required>
               </div>
               <button type="submit" style="width: 100%; padding: 0.75rem; background: #4f46e5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; box-sizing: border-box;">Sign In</button>
-              <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #666;">Pre-filled with test credentials</div>
             </form>
           </div>
         </div>
@@ -2194,7 +2162,7 @@
 
       console.log('Attempting sign in with:', email);
 
-      if (email === 'test@test.com' && password === 'test123') {
+      if (email && password) {
         // Remove modal
         document.getElementById('finalSignInModal').remove();
 
@@ -2215,14 +2183,14 @@
         }
 
         if (userName) {
-          userName.textContent = 'Test User';
+          userName.textContent = email.split('@')[0];
         }
 
         alert('✅ Signed in successfully!');
         console.log('��� Sign in successful, UI updated');
 
       } else {
-        alert('❌ Invalid credentials. Use test@test.com / test123');
+        alert('❌ Please enter both email and password');
       }
     }
 
@@ -2257,7 +2225,7 @@
     };
 
     window.openSignUpModal = function() {
-      showToast('Sign up functionality available - use Sign In with test@test.com / test123 for now', 'info');
+      showToast('Sign up functionality coming soon!', 'info');
     };
 
     console.log('��� FINAL MODAL FIX: All functions loaded and ready');
