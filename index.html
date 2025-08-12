@@ -2409,7 +2409,7 @@
           const originalText = submitButton.innerHTML;
 
           // Show loading state
-          submitButton.innerHTML = 'Sending... ���';
+          submitButton.innerHTML = 'Sending... 📤';
           submitButton.disabled = true;
 
           try {
@@ -2448,40 +2448,16 @@
 
             // Contact submission is handled by EmailJS above
 
-            // If all webhook attempts failed, use email fallback with detailed error info
+            // If Zapier submission failed, log the failure details for debugging
             if (!contactSubmitted) {
-              console.log('📧 Using email fallback due to webhook failure');
-              const mailtoSubject = encodeURIComponent('��� URGENT: New Contact Form Submission (Zapier Failed)');
-              const mailtoBody = encodeURIComponent(`
-CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
+              console.log('❌ Zapier webhook failed - detailed error info:');
+              console.log('📧 Contact form data that failed to submit:', data);
+              console.log('🚨 ZAPIER WEBHOOK STATUS:');
+              console.log('• URL: https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/');
+              console.log('• This means SMS notifications to your phone are NOT working');
+              console.log('⚠️ ACTION REQUIRED: Check Zapier webhook configuration');
 
-👤 Name: ${data.customer_name}
-📧 Email: ${data.customer_email}
-📱 Phone: ${data.customer_mobile}
-��� Preferred Contact: ${data.response_preference}
-🎯 Project Type: ${data.project_type}
-⚡ Urgency: ${data.urgency}
-
-💬 Message: ${data.customer_message}
-
-⏰ Submitted: ${data.timestamp}
-📍 Source: ${data.source}
-
-🚨 ZAPIER WEBHOOK STATUS:
-• URL: https://hooks.zapier.com/hooks/catch/24056566/u4i7xid/
-• Error: EmailJS method used instead
-• This means SMS notifications to your phone are NOT working
-
-⚠️ ACTION REQUIRED:
-1. Contact customer immediately at ${data.customer_mobile}
-2. Check Zapier webhook configuration
-3. Verify webhook is active and properly connected
-
-*** MANUAL SMS NEEDED - WEBHOOK NOT FUNCTIONING ***
-              `);
-              // Log for manual review instead of opening mailto
-              console.log('📧 Contact form data saved for manual review:', data);
-              contactSubmitted = true;
+              // DO NOT set contactSubmitted = true here - let it remain false to show real error
             }
 
             if (contactSubmitted) {
@@ -2549,8 +2525,8 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
       }
     }
 
-    // Initialize contact form after DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializeContactForm);
+    // Contact form initialization is handled by the main script after Zapier functions load
+    // Removed duplicate DOMContentLoaded listener to prevent race conditions
 
     // Initialize order form button state on page load - wait for scripts
     let orderFormInitialized = false;
@@ -2687,7 +2663,7 @@ CONTACT FORM SUBMISSION - ZAPIER WEBHOOK FAILED:
 • Business Name: ${formData.get('business_name')}
 🏭 Industry: ${formData.get('industry')}
 
-��� ORDER DETAILS:
+���� ORDER DETAILS:
 • Services Breakdown:
 ${selectedServices.map(service => `  - ${service}: $${(servicePrices[service] || 0).toFixed(2)}`).join('\n')}
 
@@ -2861,8 +2837,8 @@ This order was submitted through the Visual Vibe Studio website.`,
       }
     }
 
-    // Initialize order form after DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializeOrderForm);
+    // Order form initialization is handled by the main script after Zapier functions load
+    // Removed duplicate DOMContentLoaded listener to prevent race conditions
 
     // Diagnostic function to check pricing consistency
     window.debugPricingConsistency = function() {
